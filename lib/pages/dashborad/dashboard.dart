@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -72,7 +73,9 @@ class DashboardState extends State<Dashboard> {
   Map volWarnings;
   String msg = "";
   bool showMainMenu = false;
-  ExtendedNetworkImageProvider backgroundImageProvider = ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}");
+  ExtendedNetworkImageProvider backgroundImageProvider =
+      ExtendedNetworkImageProvider(Util.baseUrl +
+          "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}");
   Uint8List backgroundImage;
   @override
   void initState() {
@@ -81,7 +84,10 @@ class DashboardState extends State<Dashboard> {
         showMainMenu = value != "challengerv";
       });
     });
-    showFirstLaunchDialog();
+    if (Platform.isAndroid) {
+      showFirstLaunchDialog();
+    }
+
     getNotifyStrings();
     getInfo().then((_) {
       getData();
@@ -124,8 +130,9 @@ class DashboardState extends State<Dashboard> {
                       child: Column(
                         children: [
                           Text(
-                            "群晖助手公众号",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                            "${Util.appName}公众号",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(
                             height: 16,
@@ -137,8 +144,10 @@ class DashboardState extends State<Dashboard> {
                             ),
                             bevel: 20,
                             curveType: CurveType.flat,
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: Text("关注公众号，获取最新群晖助手更新内容、操作说明，浏览广告内容，还可以获取现金红包奖励！"),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            child: Text(
+                                "关注公众号，获取最新${Util.appName}更新内容、操作说明，浏览广告内容，还可以获取现金红包奖励！"),
                           ),
                           SizedBox(
                             height: 20,
@@ -148,14 +157,16 @@ class DashboardState extends State<Dashboard> {
                               Expanded(
                                 child: NeuButton(
                                   onPressed: () async {
-                                    ClipboardData data = new ClipboardData(text: "群晖助手");
+                                    ClipboardData data = new ClipboardData(
+                                        text: "${Util.appName}");
                                     Clipboard.setData(data);
                                     Util.toast("已复制到剪贴板");
                                     Navigator.of(context).pop();
                                     Util.setStorage("first_launch", "0");
                                   },
                                   decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   bevel: 20,
@@ -176,7 +187,8 @@ class DashboardState extends State<Dashboard> {
                                     Util.setStorage("first_launch", "0");
                                   },
                                   decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   bevel: 20,
@@ -231,8 +243,13 @@ class DashboardState extends State<Dashboard> {
     if (res['success']) {
       setState(() {
         converter = res['data'];
-        if (converter != null && (converter['photo_remain'] + converter['thumb_remain'] + converter['video_remain'] > 0)) {
-          Future.delayed(Duration(seconds: 5)).then((value) => getMediaConverter());
+        if (converter != null &&
+            (converter['photo_remain'] +
+                    converter['thumb_remain'] +
+                    converter['video_remain'] >
+                0)) {
+          Future.delayed(Duration(seconds: 5))
+              .then((value) => getMediaConverter());
         }
       });
     }
@@ -243,14 +260,22 @@ class DashboardState extends State<Dashboard> {
     if (init['success']) {
       setState(() {
         if (init['data']['UserSettings'] != null) {
-          if (init['data']['UserSettings']['SYNO.SDS._Widget.Instance'] != null) {
-            widgets = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['modulelist'] ?? [];
-            restoreSizePos = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['restoreSizePos'];
+          if (init['data']['UserSettings']['SYNO.SDS._Widget.Instance'] !=
+              null) {
+            widgets = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']
+                    ['modulelist'] ??
+                [];
+            restoreSizePos = init['data']['UserSettings']
+                ['SYNO.SDS._Widget.Instance']['restoreSizePos'];
           }
-          applications = init['data']['UserSettings']['Desktop']['appview_order'] ?? init['data']['UserSettings']['Desktop']['valid_appview_order'];
-          if (init['data']['UserSettings']['Desktop']['ShortcutItems'] != null) {
+          applications = init['data']['UserSettings']['Desktop']
+                  ['appview_order'] ??
+              init['data']['UserSettings']['Desktop']['valid_appview_order'];
+          if (init['data']['UserSettings']['Desktop']['ShortcutItems'] !=
+              null) {
             setState(() {
-              shortcutItems = init['data']['UserSettings']['Desktop']['ShortcutItems'];
+              shortcutItems =
+                  init['data']['UserSettings']['Desktop']['ShortcutItems'];
             });
           }
         }
@@ -452,7 +477,8 @@ class DashboardState extends State<Dashboard> {
                         duration: Duration(milliseconds: 200),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          image: wallpaperProvider.showWallpaper && backgroundImage != null
+                          image: wallpaperProvider.showWallpaper &&
+                                  backgroundImage != null
                               ? DecorationImage(
                                   image: MemoryImage(backgroundImage),
                                   fit: BoxFit.cover,
@@ -460,11 +486,14 @@ class DashboardState extends State<Dashboard> {
                               : null,
                         ),
                       ),
-                      if (Theme.of(context).scaffoldBackgroundColor == Colors.black)
+                      if (Theme.of(context).scaffoldBackgroundColor ==
+                          Colors.black)
                         Container(
                           height: 170,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
+                            color: Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withOpacity(0.5),
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
@@ -474,9 +503,16 @@ class DashboardState extends State<Dashboard> {
                           padding: EdgeInsets.all(20),
                           child: DefaultTextStyle(
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyText2.color,
+                              color:
+                                  Theme.of(context).textTheme.bodyText2.color,
                               shadows: [
-                                wallpaperProvider.showWallpaper && backgroundImage != null ? BoxShadow(color: Colors.white, blurRadius: 10, spreadRadius: 5) : null,
+                                wallpaperProvider.showWallpaper &&
+                                        backgroundImage != null
+                                    ? BoxShadow(
+                                        color: Colors.white,
+                                        blurRadius: 10,
+                                        spreadRadius: 5)
+                                    : null,
                               ],
                             ),
                             child: Column(
@@ -493,7 +529,9 @@ class DashboardState extends State<Dashboard> {
                                     ),
                                     Text(
                                       "系统状态",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
@@ -519,7 +557,8 @@ class DashboardState extends State<Dashboard> {
                                     Text("$hostname"),
                                   ],
                                 ),
-                                if (system != null && system['sys_temp'] != null)
+                                if (system != null &&
+                                    system['sys_temp'] != null)
                                   Padding(
                                     padding: EdgeInsets.only(top: 5),
                                     child: Row(
@@ -527,19 +566,32 @@ class DashboardState extends State<Dashboard> {
                                         Text("散热状态："),
                                         Text(
                                           "${system['sys_temp']}℃ ${system['temperature_warning'] == null ? (system['sys_temp'] > 80 ? "警告" : "正常") : (system['temperature_warning'] ? "警告" : "正常")}",
-                                          style: TextStyle(color: system['temperature_warning'] == null ? (system['sys_temp'] > 80 ? Colors.red : Colors.green) : (system['temperature_warning'] ? Colors.red : Colors.green)),
+                                          style: TextStyle(
+                                              color: system[
+                                                          'temperature_warning'] ==
+                                                      null
+                                                  ? (system['sys_temp'] > 80
+                                                      ? Colors.red
+                                                      : Colors.green)
+                                                  : (system[
+                                                          'temperature_warning']
+                                                      ? Colors.red
+                                                      : Colors.green)),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
                                   ),
-                                if (system != null && system['up_time'] != null && system['up_time'] != "")
+                                if (system != null &&
+                                    system['up_time'] != null &&
+                                    system['up_time'] != "")
                                   Padding(
                                     padding: EdgeInsets.only(top: 5),
                                     child: Row(
                                       children: [
                                         Text("运行时间："),
-                                        Text("${Util.parseOpTime(system['up_time'])}"),
+                                        Text(
+                                            "${Util.parseOpTime(system['up_time'])}"),
                                       ],
                                     ),
                                   ),
@@ -556,7 +608,8 @@ class DashboardState extends State<Dashboard> {
           ),
         ),
       );
-    } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget" && connectedUsers.length > 0) {
+    } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget" &&
+        connectedUsers.length > 0) {
       return NeuCard(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         bevel: 20,
@@ -630,7 +683,8 @@ class DashboardState extends State<Dashboard> {
                     ),
                     Text(
                       "计划任务",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -679,7 +733,8 @@ class DashboardState extends State<Dashboard> {
                     ),
                     Text(
                       "最新日志",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -743,7 +798,8 @@ class DashboardState extends State<Dashboard> {
                     ),
                     Text(
                       "资源监控",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -783,7 +839,8 @@ class DashboardState extends State<Dashboard> {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.blue,
-                              currentValue: utilization['cpu']['user_load'] + utilization['cpu']['system_load'],
+                              currentValue: utilization['cpu']['user_load'] +
+                                  utilization['cpu']['system_load'],
                               displayText: '%',
                             ),
                           ),
@@ -855,7 +912,8 @@ class DashboardState extends State<Dashboard> {
                           color: Colors.blue,
                         ),
                         Text(
-                          Util.formatSize(utilization['network'][0]['tx']) + "/S",
+                          Util.formatSize(utilization['network'][0]['tx']) +
+                              "/S",
                           style: TextStyle(color: Colors.blue),
                         ),
                         SizedBox(
@@ -866,7 +924,8 @@ class DashboardState extends State<Dashboard> {
                           color: Colors.green,
                         ),
                         Text(
-                          Util.formatSize(utilization['network'][0]['rx']) + "/S",
+                          Util.formatSize(utilization['network'][0]['rx']) +
+                              "/S",
                           style: TextStyle(color: Colors.green),
                         ),
                       ],
@@ -904,14 +963,19 @@ class DashboardState extends State<Dashboard> {
                             LineChartData(
                               lineTouchData: LineTouchData(
                                 touchTooltipData: LineTouchTooltipData(
-                                    tooltipBgColor: Colors.white.withOpacity(0.6),
+                                    tooltipBgColor:
+                                        Colors.white.withOpacity(0.6),
                                     tooltipRoundedRadius: 20,
                                     fitInsideHorizontally: true,
                                     fitInsideVertically: true,
                                     getTooltipItems: (items) {
                                       return [
-                                        LineTooltipItem("上传：${Util.formatSize(items[0].y.floor())}", TextStyle(color: Colors.blue)),
-                                        LineTooltipItem("下载：${Util.formatSize(items[1].y.floor())}", TextStyle(color: Colors.green)),
+                                        LineTooltipItem(
+                                            "上传：${Util.formatSize(items[0].y.floor())}",
+                                            TextStyle(color: Colors.blue)),
+                                        LineTooltipItem(
+                                            "下载：${Util.formatSize(items[1].y.floor())}",
+                                            TextStyle(color: Colors.green)),
                                       ];
                                     }),
                               ),
@@ -941,11 +1005,16 @@ class DashboardState extends State<Dashboard> {
                               ),
                               // maxY: 20,
                               minY: 0,
-                              borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
+                              borderData: FlBorderData(
+                                  show: true,
+                                  border: Border.all(
+                                      color: Colors.black12, width: 1)),
                               lineBarsData: [
                                 LineChartBarData(
                                   spots: networks.map((network) {
-                                    return FlSpot(networks.indexOf(network).toDouble(), network[0]['tx'].toDouble());
+                                    return FlSpot(
+                                        networks.indexOf(network).toDouble(),
+                                        network[0]['tx'].toDouble());
                                   }).toList(),
                                   isCurved: true,
                                   colors: [
@@ -963,7 +1032,9 @@ class DashboardState extends State<Dashboard> {
                                 ),
                                 LineChartBarData(
                                   spots: networks.map((network) {
-                                    return FlSpot(networks.indexOf(network).toDouble(), network[0]['rx'].toDouble());
+                                    return FlSpot(
+                                        networks.indexOf(network).toDouble(),
+                                        network[0]['rx'].toDouble());
                                   }).toList(),
                                   isCurved: true,
                                   colors: [
@@ -1034,7 +1105,8 @@ class DashboardState extends State<Dashboard> {
                         ),
                         Text(
                           "存储",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -1075,7 +1147,8 @@ class DashboardState extends State<Dashboard> {
                         ),
                         Text(
                           "缓存",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -1153,7 +1226,8 @@ class DashboardState extends State<Dashboard> {
 
   Widget _buildUserItem(user) {
     user['running'] = user['running'] ?? false;
-    DateTime loginTime = DateTime.parse(user['time'].toString().replaceAll("/", "-"));
+    DateTime loginTime =
+        DateTime.parse(user['time'].toString().replaceAll("/", "-"));
     DateTime currentTime = DateTime.now();
     Map timeLong = Util.timeLong(currentTime.difference(loginTime).inSeconds);
     return NeuCard(
@@ -1204,7 +1278,10 @@ class DashboardState extends State<Dashboard> {
                         width: double.infinity,
                         bevel: 5,
                         curveType: CurveType.emboss,
-                        decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                        decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(22))),
                         child: Padding(
                           padding: EdgeInsets.all(20),
                           child: Column(
@@ -1212,14 +1289,20 @@ class DashboardState extends State<Dashboard> {
                             children: <Widget>[
                               Text(
                                 "终止连接",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 12,
                               ),
                               Text(
                                 "确认要终止此连接？",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400),
                               ),
                               SizedBox(
                                 height: 22,
@@ -1233,7 +1316,10 @@ class DashboardState extends State<Dashboard> {
                                         setState(() {
                                           user['running'] = true;
                                         });
-                                        var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
+                                        var res = await Api.kickConnection({
+                                          "who": user['who'],
+                                          "from": user['from']
+                                        });
                                         setState(() {
                                           user['running'] = false;
                                         });
@@ -1243,14 +1329,18 @@ class DashboardState extends State<Dashboard> {
                                         }
                                       },
                                       decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(25),
                                       ),
                                       bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10),
                                       child: Text(
                                         "终止连接",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.redAccent),
                                       ),
                                     ),
                                   ),
@@ -1263,11 +1353,13 @@ class DashboardState extends State<Dashboard> {
                                         Navigator.of(context).pop();
                                       },
                                       decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(25),
                                       ),
                                       bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10),
                                       child: Text(
                                         "取消",
                                         style: TextStyle(fontSize: 18),
@@ -1471,7 +1563,9 @@ class DashboardState extends State<Dashboard> {
               // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
+                colors: int.parse(volume['size']['used']) /
+                            int.parse(volume['size']['total']) <=
+                        0.9
                     ? [
                         Colors.blue,
                         Colors.blueAccent,
@@ -1485,10 +1579,17 @@ class DashboardState extends State<Dashboard> {
               circularStrokeCap: CircularStrokeCap.round,
               lineWidth: 12,
               backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
+              percent: int.parse(volume['size']['used']) /
+                  int.parse(volume['size']['total']),
               center: Text(
                 "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+                style: TextStyle(
+                    color: int.parse(volume['size']['used']) /
+                                int.parse(volume['size']['total']) <=
+                            0.9
+                        ? Colors.blue
+                        : Colors.red,
+                    fontSize: 22),
               ),
             ),
           ),
@@ -1536,15 +1637,18 @@ class DashboardState extends State<Dashboard> {
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
+                Text(
+                    "已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
+                Text(
+                    "可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text(
+                    "容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -1580,7 +1684,9 @@ class DashboardState extends State<Dashboard> {
               // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
+                colors: int.parse(volume['size']['used']) /
+                            int.parse(volume['size']['total']) <=
+                        0.9
                     ? [
                         Colors.blue,
                         Colors.blueAccent,
@@ -1594,10 +1700,17 @@ class DashboardState extends State<Dashboard> {
               circularStrokeCap: CircularStrokeCap.round,
               lineWidth: 12,
               backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
+              percent: int.parse(volume['size']['used']) /
+                  int.parse(volume['size']['total']),
               center: Text(
                 "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+                style: TextStyle(
+                    color: int.parse(volume['size']['used']) /
+                                int.parse(volume['size']['total']) <=
+                            0.9
+                        ? Colors.blue
+                        : Colors.red,
+                    fontSize: 22),
               ),
             ),
           ),
@@ -1627,15 +1740,18 @@ class DashboardState extends State<Dashboard> {
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
+                Text(
+                    "已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
+                Text(
+                    "可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text(
+                    "容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -1653,7 +1769,14 @@ class DashboardState extends State<Dashboard> {
             Navigator.of(context).pop();
             Navigator.of(context).push(CupertinoPageRoute(
                 builder: (context) {
-                  return ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
+                  return ControlPanel(
+                      system,
+                      volumes,
+                      disks,
+                      appNotify['SYNO.SDS.AdminCenter.Application'] == null
+                          ? null
+                          : appNotify['SYNO.SDS.AdminCenter.Application']
+                              ['fn']);
                 },
                 settings: RouteSettings(name: "control_panel")));
           },
@@ -1685,7 +1808,8 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-                if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null)
+                if (appNotify != null &&
+                    appNotify['SYNO.SDS.AdminCenter.Application'] != null)
                   Positioned(
                     right: 30,
                     child: Badge(
@@ -1768,7 +1892,8 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-                if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null)
+                if (appNotify != null &&
+                    appNotify['SYNO.SDS.PkgManApp.Instance'] != null)
                   Positioned(
                     right: 30,
                     child: Badge(
@@ -1935,7 +2060,8 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-                if (appNotify != null && appNotify['SYNO.SDS.SecurityScan.Instance'] != null)
+                if (appNotify != null &&
+                    appNotify['SYNO.SDS.SecurityScan.Instance'] != null)
                   Positioned(
                     right: 30,
                     child: Badge(
@@ -2406,7 +2532,8 @@ class DashboardState extends State<Dashboard> {
               return Packages(system['firmware_ver']);
             },
             settings: RouteSettings(name: "packages"));
-        if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
+        if (appNotify != null &&
+            appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
           unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
         }
         break;
@@ -2415,10 +2542,17 @@ class DashboardState extends State<Dashboard> {
         name = "控制面板";
         route = CupertinoPageRoute(
             builder: (context) {
-              return ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
+              return ControlPanel(
+                  system,
+                  volumes,
+                  disks,
+                  appNotify['SYNO.SDS.AdminCenter.Application'] == null
+                      ? null
+                      : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
             },
             settings: RouteSettings(name: "control_panel"));
-        if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
+        if (appNotify != null &&
+            appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
           unread = appNotify['SYNO.SDS.AdminCenter.Application']['unread'];
         }
         break;
@@ -2617,7 +2751,11 @@ class DashboardState extends State<Dashboard> {
                             width: double.infinity,
                             bevel: 5,
                             curveType: CurveType.emboss,
-                            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                            decoration: NeumorphicDecoration(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(22))),
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -2625,7 +2763,10 @@ class DashboardState extends State<Dashboard> {
                                 children: <Widget>[
                                   Text(
                                     "外接设备",
-                                    style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                   SizedBox(
                                     height: 12,
@@ -2636,18 +2777,24 @@ class DashboardState extends State<Dashboard> {
                                       Expanded(
                                         child: NeuButton(
                                           onPressed: () async {
-                                            Navigator.of(context).push(CupertinoPageRoute(
-                                                builder: (context) {
-                                                  return ExternalDevice();
-                                                },
-                                                settings: RouteSettings(name: "external_device")));
+                                            Navigator.of(context).push(
+                                                CupertinoPageRoute(
+                                                    builder: (context) {
+                                                      return ExternalDevice();
+                                                    },
+                                                    settings: RouteSettings(
+                                                        name:
+                                                            "external_device")));
                                           },
                                           decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            borderRadius:
+                                                BorderRadius.circular(25),
                                           ),
                                           bevel: 5,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10),
                                           child: Text(
                                             "查看详情",
                                             style: TextStyle(fontSize: 18),
@@ -2663,11 +2810,14 @@ class DashboardState extends State<Dashboard> {
                                             Navigator.of(context).pop();
                                           },
                                           decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            borderRadius:
+                                                BorderRadius.circular(25),
                                           ),
                                           bevel: 5,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10),
                                           child: Text(
                                             "取消",
                                             style: TextStyle(fontSize: 18),
@@ -2693,7 +2843,11 @@ class DashboardState extends State<Dashboard> {
                   ),
                 ),
               ),
-            if (converter != null && (converter['photo_remain'] + converter['thumb_remain'] + converter['video_remain'] > 0))
+            if (converter != null &&
+                (converter['photo_remain'] +
+                        converter['thumb_remain'] +
+                        converter['video_remain'] >
+                    0))
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
                 child: NeuButton(
@@ -2729,7 +2883,8 @@ class DashboardState extends State<Dashboard> {
               padding: EdgeInsets.all(10),
               bevel: 5,
               onPressed: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (context) {
                   return WidgetSetting(widgets, restoreSizePos);
                 })).then((res) {
                   if (res != null) {
@@ -2814,16 +2969,22 @@ class DashboardState extends State<Dashboard> {
                   ? ListView(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       children: [
-                        if (shortcutItems.where((element) => supportedShortcuts.contains(element['className'])).length > 0)
+                        if (shortcutItems
+                                .where((element) => supportedShortcuts
+                                    .contains(element['className']))
+                                .length >
+                            0)
                           Consumer<ShortcutProvider>(
                             builder: (context, shortcutProvider, _) {
                               return shortcutProvider.showShortcut
                                   ? NeuCard(
-                                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 15),
                                       bevel: 20,
                                       curveType: CurveType.flat,
                                       decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Container(
@@ -2831,7 +2992,8 @@ class DashboardState extends State<Dashboard> {
                                         child: ListView.builder(
                                           scrollDirection: Axis.horizontal,
                                           itemBuilder: (context, i) {
-                                            return _buildShortcutItem(shortcutItems[i]);
+                                            return _buildShortcutItem(
+                                                shortcutItems[i]);
                                           },
                                           itemCount: shortcutItems.length,
                                         ),
@@ -2859,14 +3021,17 @@ class DashboardState extends State<Dashboard> {
                           SizedBox(
                             width: 200,
                             child: NeuButton(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
                               decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               bevel: 5,
                               onPressed: () {
-                                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                Navigator.of(context).push(
+                                    CupertinoPageRoute(builder: (context) {
                                   return WidgetSetting(widgets, restoreSizePos);
                                 })).then((res) {
                                   if (res != null) {
@@ -2897,7 +3062,8 @@ class DashboardState extends State<Dashboard> {
                       SizedBox(
                         width: 200,
                         child: NeuButton(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
                           decoration: NeumorphicDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),

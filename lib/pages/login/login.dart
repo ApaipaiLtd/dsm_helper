@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
   @override
   initState() {
     _privacyRecognizer = TapGestureRecognizer();
-    checkUpdate();
+
     Util.getStorage("read").then((value) {
       if (value.isNotBlank && value == "1") {
         setState(() {
@@ -62,6 +62,13 @@ class _LoginState extends State<Login> {
         });
       }
     });
+    if (Platform.isAndroid) {
+      checkUpdate();
+    } else {
+      setState(() {
+        read = true;
+      });
+    }
     Util.getStorage("servers").then((serverString) {
       if (serverString.isNotBlank) {
         servers = jsonDecode(serverString);
@@ -117,7 +124,8 @@ class _LoginState extends State<Login> {
   checkUpdate() async {
     if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      var res = await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
+      var res =
+          await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
       print(res);
       if (res['code'] == 1) {
         setState(() {
@@ -214,7 +222,8 @@ class _LoginState extends State<Login> {
           }
         } else {
           //登录有效，进入首页
-          Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil("/home", (route) => false);
         }
       }
     }
@@ -236,7 +245,8 @@ class _LoginState extends State<Login> {
       login = true;
     });
     if (host.contains(".")) {
-      String baseUri = "${https ? "https" : "http"}://${host.trim()}:${port.trim()}";
+      String baseUri =
+          "${https ? "https" : "http"}://${host.trim()}:${port.trim()}";
       doLogin(baseUri);
     } else {
       qcLogin();
@@ -252,29 +262,36 @@ class _LoginState extends State<Login> {
         qcAddresses.add("http://${res['server']['fqdn']}/");
       }
       if (res['server']['external']["ip"] != null) {
-        qcAddresses.add("http://${res['server']['external']["ip"]}:${res['service']['ext_port']}/");
+        qcAddresses.add(
+            "http://${res['server']['external']["ip"]}:${res['service']['ext_port']}/");
       }
       if (res['service']['relay_ip'] != null) {
-        qcAddresses.add("http://${res['service']['relay_ip']}:${res['service']['relay_port']}/");
+        qcAddresses.add(
+            "http://${res['service']['relay_ip']}:${res['service']['relay_port']}/");
       }
       if (res['server']['ddns'] != "NULL") {
-        qcAddresses.add("http://${res['server']['ddns']}:${res['service']['ext_port']}/");
+        qcAddresses.add(
+            "http://${res['server']['ddns']}:${res['service']['ext_port']}/");
       }
       if (res['server']['interface'].length > 0) {
         for (var interface in res['server']['interface']) {
-          qcAddresses.add("http://${interface['ip']}:${res['service']['port']}/");
+          qcAddresses
+              .add("http://${interface['ip']}:${res['service']['port']}/");
           if (interface['ipv6'].length > 0) {
             for (var v6 in interface['ipv6']) {
-              qcAddresses.add("http://[${v6['address']}]:${res['service']['port']}/");
+              qcAddresses
+                  .add("http://[${v6['address']}]:${res['service']['port']}/");
             }
           }
         }
       }
       if (res['service']['relay_ip'] == null) {
-        var cnRes = await Api.quickConnectCn(host, baseUrl: res['env']['control_host']);
+        var cnRes =
+            await Api.quickConnectCn(host, baseUrl: res['env']['control_host']);
         if (cnRes['errno'] == 0) {
           if (cnRes['service']['relay_ip'] != null) {
-            qcAddresses.add("http://${cnRes['service']['relay_ip']}:${cnRes['service']['relay_port']}/");
+            qcAddresses.add(
+                "http://${cnRes['service']['relay_ip']}:${cnRes['service']['relay_port']}/");
           }
         }
       }
@@ -293,7 +310,9 @@ class _LoginState extends State<Login> {
           }
         });
       }
-    } else if (res['errno'] == 4 && res['errinfo'] == "get_server_info.go:105[]" && res['sites'].length > 0) {
+    } else if (res['errno'] == 4 &&
+        res['errinfo'] == "get_server_info.go:105[]" &&
+        res['sites'].length > 0) {
       qcLogin(qcHost: res['sites'][0]);
     } else {
       Util.toast("无法连接到服务器，请检查QuickConnect ID是否正确");
@@ -304,7 +323,13 @@ class _LoginState extends State<Login> {
   }
 
   doLogin(String baseUri) async {
-    var res = await Api.login(host: baseUri, account: account, password: password, otpCode: otpCode, cancelToken: cancelToken, rememberDevice: rememberDevice);
+    var res = await Api.login(
+        host: baseUri,
+        account: account,
+        password: password,
+        otpCode: otpCode,
+        cancelToken: cancelToken,
+        rememberDevice: rememberDevice);
     setState(() {
       login = false;
     });
@@ -335,7 +360,10 @@ class _LoginState extends State<Login> {
       //添加服务器记录
       bool exist = false;
       for (int i = 0; i < servers.length; i++) {
-        if (servers[i]['https'] == https && servers[i]['host'] == host && servers[i]['port'] == port && servers[i]['account'] == account) {
+        if (servers[i]['https'] == https &&
+            servers[i]['host'] == host &&
+            servers[i]['port'] == port &&
+            servers[i]['account'] == account) {
           print("账号已存在，更新信息");
           if (rememberPassword) {
             servers[i]['password'] = password;
@@ -376,7 +404,8 @@ class _LoginState extends State<Login> {
       }
       Util.setStorage("servers", jsonEncode(servers));
       if (widget.type == "login") {
-        Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/home", (route) => false);
       } else {
         Navigator.of(context).pop(true);
       }
@@ -413,7 +442,8 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.all(10),
                   bevel: 5,
                   onPressed: () {
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                    Navigator.of(context)
+                        .push(CupertinoPageRoute(builder: (context) {
                       return Update(updateInfo);
                     }));
                   },
@@ -441,7 +471,8 @@ class _LoginState extends State<Login> {
                     padding: EdgeInsets.all(10),
                     bevel: 5,
                     onPressed: () {
-                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (context) {
                         return Accounts();
                       }));
                     },
@@ -483,10 +514,12 @@ class _LoginState extends State<Login> {
                           https = !https;
                           if (https && port == "5000") {
                             port = "5001";
-                            _portController.value = TextEditingValue(text: port);
+                            _portController.value =
+                                TextEditingValue(text: port);
                           } else if (!https && port == "5001") {
                             port = "5000";
-                            _portController.value = TextEditingValue(text: port);
+                            _portController.value =
+                                TextEditingValue(text: port);
                           }
                         });
                       },
@@ -498,7 +531,8 @@ class _LoginState extends State<Login> {
                           ),
                           Text(
                             "协议",
-                            style: TextStyle(fontSize: 12, color: Colors.grey, height: 1),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey, height: 1),
                           ),
                           Text(
                             https ? "https" : "http",
@@ -623,7 +657,8 @@ class _LoginState extends State<Login> {
                       ),
                       bevel: 12,
                       curveType: CurveType.flat,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: NeuTextField(
                         controller: _otpController,
                         onChanged: (v) => otpCode = v,
@@ -651,10 +686,12 @@ class _LoginState extends State<Login> {
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: rememberDevice ? CurveType.emboss : CurveType.flat,
+                        curveType:
+                            rememberDevice ? CurveType.emboss : CurveType.flat,
                         bevel: 12,
                         height: 68,
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: Row(
                           children: [
                             Text("记住设备"),
@@ -692,10 +729,12 @@ class _LoginState extends State<Login> {
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: rememberPassword ? CurveType.emboss : CurveType.flat,
+                      curveType:
+                          rememberPassword ? CurveType.emboss : CurveType.flat,
                       bevel: 12,
                       height: 60,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
                         children: [
                           Text("记住密码"),
@@ -731,7 +770,8 @@ class _LoginState extends State<Login> {
                       curveType: autoLogin ? CurveType.emboss : CurveType.flat,
                       bevel: 12,
                       height: 60,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
                         children: [
                           Text("自动登录"),
@@ -786,6 +826,7 @@ class _LoginState extends State<Login> {
             // SizedBox(
             //   height: 20,
             // ),
+
             NeuButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: NeumorphicDecoration(
@@ -831,57 +872,62 @@ class _LoginState extends State<Login> {
             SizedBox(
               height: 20,
             ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  read = !read;
-                  Util.setStorage("read", read ? "1" : "0");
-                });
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  NeuCard(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(5),
+            if (Platform.isAndroid)
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    read = !read;
+                    Util.setStorage("read", read ? "1" : "0");
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    NeuCard(
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      height: 20,
+                      width: 20,
+                      alignment: Alignment.center,
+                      curveType: read ? CurveType.emboss : CurveType.flat,
+                      child: read
+                          ? Icon(
+                              CupertinoIcons.checkmark_alt,
+                              color: Color(0xffff9813),
+                              size: 14,
+                            )
+                          : SizedBox(),
                     ),
-                    height: 20,
-                    width: 20,
-                    alignment: Alignment.center,
-                    curveType: read ? CurveType.emboss : CurveType.flat,
-                    child: read
-                        ? Icon(
-                            CupertinoIcons.checkmark_alt,
-                            color: Color(0xffff9813),
-                            size: 14,
-                          )
-                        : SizedBox(),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: "我已阅读并同意 "),
-                        TextSpan(
-                          text: "${Util.appName}用户协议和隐私政策",
-                          style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue, fontSize: 12),
-                          recognizer: _privacyRecognizer
-                            ..onTap = () {
-                              Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                return License();
-                              }));
-                            },
-                        ),
-                      ],
-                      style: TextStyle(fontSize: 12),
+                    SizedBox(
+                      width: 10,
                     ),
-                  ),
-                ],
-              ),
-            )
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: "我已阅读并同意 "),
+                          TextSpan(
+                            text: "${Util.appName}用户协议和隐私政策",
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.blue,
+                                fontSize: 12),
+                            recognizer: _privacyRecognizer
+                              ..onTap = () {
+                                Navigator.of(context).push(
+                                    CupertinoPageRoute(builder: (context) {
+                                  return License();
+                                }));
+                              },
+                          ),
+                        ],
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              )
           ],
         ),
       ),

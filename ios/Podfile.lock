@@ -55,7 +55,7 @@ PODS:
     - Flutter
   - "permission_handler (5.1.0+2)":
     - Flutter
-  - photo_manager (0.0.1):
+  - photo_manager (1.0.0):
     - Flutter
     - FlutterMacOS
   - Reachability (3.2)
@@ -180,7 +180,7 @@ SPEC CHECKSUMS:
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  photo_manager: 61cdd6835af271b9ad1bb533fccf71d5db02fff3
+  photo_manager: 84fa94fbeb82e607333ea9a13c43b58e0903a463
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   receive_sharing_intent: c0d87310754e74c0f9542947e7cbdf3a0335a3b1
   SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25

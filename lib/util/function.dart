@@ -122,7 +122,8 @@ class Util {
       int diff = 0;
 
       while (position < minLength) {
-        diff = int.parse(versionNames1[position]) - int.parse(versionNames2[position]);
+        diff = int.parse(versionNames1[position]) -
+            int.parse(versionNames2[position]);
         if (diff != 0) {
           break;
         }
@@ -153,7 +154,11 @@ class Util {
   }
 
   static Color getAdjustColor(Color baseColor, double amount) {
-    Map<String, int> colors = {'r': baseColor.red, 'g': baseColor.green, 'b': baseColor.blue};
+    Map<String, int> colors = {
+      'r': baseColor.red,
+      'g': baseColor.green,
+      'b': baseColor.blue
+    };
 
     colors = colors.map((key, value) {
       if (value + amount < 0) {
@@ -210,7 +215,38 @@ class Util {
       "swf",
       "f4v"
     ];
-    List<String> music = ["aac", "flac", "m4a", "m4b", "aif", "ogg", "pcm", "wav", "cda", "mid", "mp2", "mka", "mpc", "ape", "ra", "ac3", "dts", "wma", "mp3", "mp1", "mp2", "mpa", "ram", "m4p", "aiff", "dsf", "dff", "m3u", "wpl", "aiff"];
+    List<String> music = [
+      "aac",
+      "flac",
+      "m4a",
+      "m4b",
+      "aif",
+      "ogg",
+      "pcm",
+      "wav",
+      "cda",
+      "mid",
+      "mp2",
+      "mka",
+      "mpc",
+      "ape",
+      "ra",
+      "ac3",
+      "dts",
+      "wma",
+      "mp3",
+      "mp1",
+      "mp2",
+      "mpa",
+      "ram",
+      "m4p",
+      "aiff",
+      "dsf",
+      "dff",
+      "m3u",
+      "wpl",
+      "aiff"
+    ];
     List<String> ps = ["psd"];
     List<String> html = ["html", "htm", "shtml", "url"];
     List<String> word = ["doc", "docx"];
@@ -218,7 +254,23 @@ class Util {
     List<String> excel = ["xls", "xlsx"];
     List<String> text = ["txt", "log"];
     List<String> zip = ["zip", "gz", "tar", "tgz", "tbz", "bz2", "rar", "7z"];
-    List<String> code = ["py", "php", "c", "java", "jsp", "js", "css", "sql", "nfo", "xml", "kt", "conf", "json", "md", "sh"];
+    List<String> code = [
+      "py",
+      "php",
+      "c",
+      "java",
+      "jsp",
+      "js",
+      "css",
+      "sql",
+      "nfo",
+      "xml",
+      "kt",
+      "conf",
+      "json",
+      "md",
+      "sh"
+    ];
     List<String> pdf = ["pdf"];
     List<String> apk = ["apk"];
     List<String> iso = ["iso"];
@@ -256,11 +308,21 @@ class Util {
     }
   }
 
-  static Future<dynamic> get(String url, {Map<String, dynamic> data, bool login: true, String host, Map<String, dynamic> headers, CancelToken cancelToken, bool checkSsl, String cookie, int timeout = 20, bool decode: true}) async {
+  static Future<dynamic> get(String url,
+      {Map<String, dynamic> data,
+      bool login: true,
+      String host,
+      Map<String, dynamic> headers,
+      CancelToken cancelToken,
+      bool checkSsl,
+      String cookie,
+      int timeout = 20,
+      bool decode: true}) async {
     headers = headers ?? {};
     headers['Cookie'] = cookie ?? Util.cookie;
 
-    headers["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
+    headers["Accept-Language"] =
+        "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
     headers['origin'] = host ?? baseUrl;
     headers['referer'] = host ?? baseUrl;
     print(headers);
@@ -273,7 +335,8 @@ class Util {
     );
     //忽略Https校验
     if (!(checkSsl ?? Util.checkSsl)) {
-      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (client) {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
@@ -282,9 +345,11 @@ class Util {
 
     Response response;
     try {
-      response = await dio.get(url, queryParameters: data, cancelToken: cancelToken);
+      response =
+          await dio.get(url, queryParameters: data, cancelToken: cancelToken);
       if (url == "auth.cgi") {
-        if (response.headers.map['set-cookie'] != null && response.headers.map['set-cookie'].length > 0) {
+        if (response.headers.map['set-cookie'] != null &&
+            response.headers.map['set-cookie'].length > 0) {
           List cookies = [];
           //从原始cookie中提取did
           String did = "";
@@ -299,7 +364,8 @@ class Util {
           }
           bool haveDid = false;
           for (int i = 0; i < response.headers.map['set-cookie'].length; i++) {
-            Cookie cookie = Cookie.fromSetCookieValue(response.headers.map['set-cookie'][i]);
+            Cookie cookie = Cookie.fromSetCookieValue(
+                response.headers.map['set-cookie'][i]);
             cookies.add("${cookie.name}=${cookie.value}");
             if (cookie.name == "did") {
               haveDid = true;
@@ -339,10 +405,19 @@ class Util {
     }
   }
 
-  static Future<dynamic> post(String url, {Map<String, dynamic> data, bool login: true, String host, CancelToken cancelToken, Map<String, dynamic> headers, bool checkSsl, String cookie, int timeout = 20}) async {
+  static Future<dynamic> post(String url,
+      {Map<String, dynamic> data,
+      bool login: true,
+      String host,
+      CancelToken cancelToken,
+      Map<String, dynamic> headers,
+      bool checkSsl,
+      String cookie,
+      int timeout = 20}) async {
     headers = headers ?? {};
     headers['Cookie'] = cookie ?? Util.cookie;
-    headers["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
+    headers["Accept-Language"] =
+        "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
     headers['origin'] = host ?? baseUrl;
     headers['referer'] = host ?? baseUrl;
     Dio dio = new Dio(
@@ -360,7 +435,8 @@ class Util {
     // };
     //忽略Https校验
     if (!(checkSsl ?? Util.checkSsl)) {
-      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (client) {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
@@ -381,7 +457,13 @@ class Util {
     }
   }
 
-  static Future<dynamic> upload(String url, {Map<String, dynamic> data, bool login: true, String host, CancelToken cancelToken, Function(int, int) onSendProgress, Map<String, dynamic> headers}) async {
+  static Future<dynamic> upload(String url,
+      {Map<String, dynamic> data,
+      bool login: true,
+      String host,
+      CancelToken cancelToken,
+      Function(int, int) onSendProgress,
+      Map<String, dynamic> headers}) async {
     headers = headers ?? {};
     headers['Cookie'] = Util.cookie;
     headers['Accept-Encoding'] = "gzip, deflate";
@@ -406,7 +488,8 @@ class Util {
     // };
     //忽略Https校验
     if (!checkSsl) {
-      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (client) {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
@@ -456,14 +539,18 @@ class Util {
     }
   }
 
-  static Future<dynamic> downloadPkg(String saveName, String url, onReceiveProgress, CancelToken cancelToken) async {
+  static Future<dynamic> downloadPkg(String saveName, String url,
+      onReceiveProgress, CancelToken cancelToken) async {
     Dio dio = new Dio();
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
     Response response;
 
     try {
-      response = await dio.download(url, tempPath + "/" + saveName, deleteOnError: true, onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
+      response = await dio.download(url, tempPath + "/" + saveName,
+          deleteOnError: true,
+          onReceiveProgress: onReceiveProgress,
+          cancelToken: cancelToken);
       print(response);
       return {"code": 1, "msg": "下载完成", "data": tempPath + "/" + saveName};
     } on DioError catch (error) {
@@ -518,7 +605,12 @@ class Util {
     saveName = getUniqueName(savePath, saveName);
     print(saveName);
 
-    String taskId = await FlutterDownloader.enqueue(url: url, fileName: saveName, savedDir: savePath, showNotification: true, openFileFromNotification: true);
+    String taskId = await FlutterDownloader.enqueue(
+        url: url,
+        fileName: saveName,
+        savedDir: savePath,
+        showNotification: true,
+        openFileFromNotification: true);
     return taskId;
   }
 
@@ -545,7 +637,7 @@ class Util {
 
   static Future<bool> setStorage(String name, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(name, value);
+    return prefs.setString(name, value ?? "");
   }
 
   static Future<String> getStorage(String name) async {
@@ -558,7 +650,8 @@ class Util {
     return prefs.remove(name);
   }
 
-  static Future<Map> saveImage(String url, {BuildContext context, bool showLoading: true}) async {
+  static Future<Map> saveImage(String url,
+      {BuildContext context, bool showLoading: true}) async {
     var hide;
     try {
       bool permission = false;
@@ -578,8 +671,11 @@ class Util {
         hide = showWeuiLoadingToast(context: context, message: Text("保存中"));
       }
       File image = await getCachedImageFile(url);
-      File save = await image.copy(image.path + DateTime.now().millisecondsSinceEpoch.toString() + ".png");
-      bool result = await GallerySaver.saveImage(save.path, albumName: Util.appName);
+      File save = await image.copy(image.path +
+          DateTime.now().millisecondsSinceEpoch.toString() +
+          ".png");
+      bool result =
+          await GallerySaver.saveImage(save.path, albumName: Util.appName);
       if (showLoading) {
         hide();
       }
@@ -612,7 +708,8 @@ class Util {
 
   static checkUpdate(bool showMsg, BuildContext context) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    var res = await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
+    var res =
+        await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
     if (res['code'] == 1) {
       Navigator.of(context).push(CupertinoPageRoute(
           builder: (context) {

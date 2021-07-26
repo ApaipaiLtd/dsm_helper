@@ -71,7 +71,7 @@ class _AboutState extends State<About> {
                     Column(
                       children: [
                         Text(
-                          "${Platform.isIOS ? "NAS助手" : "群晖助手"}",
+                          "${Util.appName}",
                           style: TextStyle(fontSize: 32),
                         ),
                         if (packageInfo != null)
@@ -146,9 +146,11 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
-                            launch('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
+                            launch(
+                                'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
                           },
                           child: Text("加群"),
                         ),
@@ -179,7 +181,7 @@ class _AboutState extends State<About> {
                             width: 10,
                           ),
                           Text(
-                            "公众号：群晖助手",
+                            "公众号：${Util.appName}",
                             style: TextStyle(fontSize: 16),
                           ),
                           Spacer(),
@@ -188,9 +190,11 @@ class _AboutState extends State<About> {
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
                             onPressed: () {
-                              ClipboardData data = new ClipboardData(text: "群晖助手");
+                              ClipboardData data =
+                                  new ClipboardData(text: "群晖助手");
                               Clipboard.setData(data);
                               Util.toast("已复制到剪贴板");
                             },
@@ -302,9 +306,11 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
-                            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                            Navigator.of(context)
+                                .push(CupertinoPageRoute(builder: (context) {
                               return Browser(
                                 url: "https://gitee.com/challengerV/dsm_helper",
                               );
@@ -357,9 +363,11 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
-                            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                            Navigator.of(context)
+                                .push(CupertinoPageRoute(builder: (context) {
                               return Browser(
                                 url: "https://flutter.dev",
                               );
@@ -402,7 +410,8 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
                             Navigator.of(context).push(CupertinoPageRoute(
                                 builder: (context) {
