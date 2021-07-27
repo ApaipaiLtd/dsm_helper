@@ -115,49 +115,51 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                NeuCard(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
+                if (account != "challengerv") ...[
+                  SizedBox(
+                    height: 20,
                   ),
-                  curveType: CurveType.flat,
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/icons/qq.png",
-                          width: 20,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "QQ群：240557031",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Spacer(),
-                        NeuButton(
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
+                  NeuCard(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    curveType: CurveType.flat,
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            "assets/icons/qq.png",
+                            width: 20,
                           ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          onPressed: () {
-                            launch(
-                                'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
-                          },
-                          child: Text("加群"),
-                        ),
-                      ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "QQ群：240557031",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Spacer(),
+                          NeuButton(
+                            decoration: NeumorphicDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            onPressed: () {
+                              launch(
+                                  'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
+                            },
+                            child: Text("加群"),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
                 if (account != "challengerv") ...[
                   SizedBox(
                     height: 20,
