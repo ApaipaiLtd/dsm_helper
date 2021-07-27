@@ -786,9 +786,11 @@ packages:
   umeng_analytics_plugin:
     dependency: "direct main"
     description:
-      name: umeng_analytics_plugin
-      url: "https://pub.flutter-io.cn"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "34263df483fed09d4b9dd0f8fd5290224d73ede8"
+      url: "https://gitee.com/challengerV/umeng_analytics_plugin.git"
+    source: git
     version: "1.0.3"
   url_launcher:
     dependency: "direct main"
