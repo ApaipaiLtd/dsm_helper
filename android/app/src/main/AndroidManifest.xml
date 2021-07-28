@@ -78,6 +78,6 @@
         </provider>
     </application>
     <queries>
-        <package android:name="com.tencent.mm" />   // 指定微信包名
+        <package android:name="com.tencent.mm" />
     </queries>
 </manifest>

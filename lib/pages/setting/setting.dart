@@ -5,12 +5,13 @@ import 'package:dsm_helper/pages/control_panel/ssh/ssh.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/confirm_logout.dart';
 import 'package:dsm_helper/pages/provider/dark_mode.dart';
+import 'package:dsm_helper/pages/setting/feedback.dart';
 import 'package:dsm_helper/pages/setting/helper_setting.dart';
 import 'package:dsm_helper/pages/terminal/select_server.dart';
 import 'package:dsm_helper/pages/user/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Feedback;
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:provider/provider.dart';
@@ -852,80 +853,86 @@ class _SettingState extends State<Setting> {
                 width: (MediaQuery.of(context).size.width - 80) / 3,
                 child: NeuButton(
                   onPressed: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (context) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: NeuCard(
-                            width: double.infinity,
-                            bevel: 5,
-                            curveType: CurveType.emboss,
-                            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    "您将进入“阿派派软件”微信小程序进行问题反馈。是否确定要继续？",
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: 22,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: NeuButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            launchWeChatMiniProgram(username: "gh_6c07712ef0fb");
-                                          },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 5,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Text(
-                                            "进入小程序",
-                                            style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 16,
-                                      ),
-                                      Expanded(
-                                        child: NeuButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                          },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 5,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Text(
-                                            "取消",
-                                            style: TextStyle(fontSize: 18),
+                    if (account == "challengerv") {
+                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                        return Feedback();
+                      }));
+                    } else {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: NeuCard(
+                              width: double.infinity,
+                              bevel: 5,
+                              curveType: CurveType.emboss,
+                              decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      "您将进入“阿派派软件”微信小程序进行问题反馈。是否确定要继续？",
+                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                      height: 22,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: NeuButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                              launchWeChatMiniProgram(username: "gh_6c07712ef0fb");
+                                            },
+                                            decoration: NeumorphicDecoration(
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
+                                            ),
+                                            bevel: 5,
+                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                            child: Text(
+                                              "进入小程序",
+                                              style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                ],
+                                        SizedBox(
+                                          width: 16,
+                                        ),
+                                        Expanded(
+                                          child: NeuButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                            },
+                                            decoration: NeumorphicDecoration(
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
+                                            ),
+                                            bevel: 5,
+                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                            child: Text(
+                                              "取消",
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
+                          );
+                        },
+                      );
+                    }
                   },
                   // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   padding: EdgeInsets.symmetric(vertical: 20),

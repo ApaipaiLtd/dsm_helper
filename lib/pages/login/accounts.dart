@@ -18,6 +18,7 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   List servers = [];
   Timer timer;
+  bool visible = true;
   @override
   void initState() {
     getData();
@@ -199,7 +200,7 @@ class _AccountsState extends State<Accounts> {
                                     ),
                                   ],
                                   Text(
-                                    "${server['account']}",
+                                    "${visible ? server['account'] : "*****"}",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                 ],
@@ -216,7 +217,7 @@ class _AccountsState extends State<Accounts> {
                                       size: 12,
                                     ),
                                   Text(
-                                    "${server['host']}",
+                                    "${visible ? server['host'] : "*****"}",
                                     style: TextStyle(color: Colors.grey),
                                   ),
                                 ],
@@ -457,6 +458,26 @@ class _AccountsState extends State<Accounts> {
         leading: AppBackButton(context),
         title: Text("选择账号"),
         actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  visible = !visible;
+                });
+              },
+              child: NeuCard(
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                curveType: visible ? CurveType.flat : CurveType.concave,
+                padding: EdgeInsets.all(10),
+                bevel: 5,
+                child: Icon(visible ? CupertinoIcons.eye_slash_fill : CupertinoIcons.eye_fill),
+              ),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: NeuButton(
