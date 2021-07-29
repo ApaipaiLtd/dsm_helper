@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dsm_helper/pages/common/gesture_password.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
+import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ class HelperSetting extends StatefulWidget {
 }
 
 class _HelperSettingState extends State<HelperSetting> {
+  String account = "";
   final LocalAuthentication auth = LocalAuthentication();
   bool launchAuth = false;
   bool password = false;
@@ -28,6 +30,9 @@ class _HelperSettingState extends State<HelperSetting> {
   BiometricType biometricsType = BiometricType.fingerprint;
   @override
   void initState() {
+    Util.getStorage("account").then((value) {
+      setState(() => account = value);
+    });
     initAuth();
     super.initState();
   }
@@ -439,6 +444,42 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ),
+          if (account == "challengerv") ...[
+            SizedBox(
+              height: 20,
+            ),
+            NeuButton(
+              onPressed: () {
+                Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (context) {
+                      return Logout();
+                    },
+                    settings: RouteSettings(name: "logout")));
+              },
+              // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.all(20),
+              decoration: NeumorphicDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              bevel: 20,
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/icons/logout.png",
+                    width: 25,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    "注销账号",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ],
           SizedBox(
             height: 20,
           ),

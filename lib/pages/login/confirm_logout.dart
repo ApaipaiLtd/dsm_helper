@@ -27,14 +27,14 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "注销登录",
+                "退出登录",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
               SizedBox(
                 height: 12,
               ),
               Text(
-                "确认要注销登录吗？",
+                "确认要退出登录当前账号吗？",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
               ),
               SizedBox(
@@ -92,7 +92,7 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
                       bevel: 5,
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text(
-                        "注销登录",
+                        "退出登录",
                         style: TextStyle(fontSize: 18, color: Colors.redAccent),
                       ),
                     ),
