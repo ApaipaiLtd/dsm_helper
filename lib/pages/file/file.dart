@@ -5,6 +5,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/pages/common/pdf_viewer.dart';
 import 'package:dsm_helper/pages/common/text_editor.dart';
+import 'package:dsm_helper/pages/common/video_player.dart';
 import 'package:dsm_helper/pages/file/favorite.dart';
 import 'package:dsm_helper/pages/file/remote_folder.dart';
 import 'package:dsm_helper/pages/file/search.dart';
@@ -1242,13 +1243,13 @@ class FilesState extends State<Files> {
           case FileType.movie:
             List<int> utf8Str = utf8.encode(file['path']);
             String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
-            AndroidIntent intent = AndroidIntent(
-              action: 'action_view',
-              data: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open",
-              arguments: {},
-              type: "video/*",
-            );
-            await intent.launch();
+            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+              return VideoPlayer(
+                url: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open",
+                name: file['name'],
+              );
+            }));
+
             break;
           case FileType.music:
             AndroidIntent intent = AndroidIntent(

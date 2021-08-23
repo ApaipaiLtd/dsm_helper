@@ -45,10 +45,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
 
   getData() async {
     var res = await Api.fileService();
+    print(res);
     if (res['success']) {
       setState(() {
         loading = false;
       });
+      if (res['data']['has_fail']) {
+        Util.toast("加载失败");
+        Navigator.of(context).pop();
+        return;
+      }
       List result = res['data']['result'];
       result.forEach((item) {
         if (item['success'] == true) {

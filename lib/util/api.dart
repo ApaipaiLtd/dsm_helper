@@ -50,7 +50,7 @@ class Api {
       "version": 4,
       "api": "SYNO.API.Auth",
       "method": "login",
-      "session": "webui",
+      "session": "FileStation",
       "enable_device_token": rememberDevice ? "yes" : "no",
     };
     return await Util.get("auth.cgi", host: host, data: data, cancelToken: cancelToken, cookie: cookie);

@@ -74,8 +74,7 @@ class _FavoriteState extends State<Favorite> {
                           width: double.infinity,
                           bevel: 5,
                           curveType: CurveType.emboss,
-                          decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                          decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                           child: Padding(
                             padding: EdgeInsets.all(20),
                             child: Column(
@@ -164,9 +163,7 @@ class _FavoriteState extends State<Favorite> {
                                                                         Util.toast("重命名成功");
                                                                         getData();
                                                                       } else {
-                                                                        if (res['error']['errors'] != null &&
-                                                                            res['error']['errors'].length > 0 &&
-                                                                            res['error']['errors'][0]['code'] == 414) {
+                                                                        if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
                                                                           Util.toast("重命名失败：指定的名称已存在");
                                                                         } else {
                                                                           Util.toast("重命名失败");
@@ -253,9 +250,7 @@ class _FavoriteState extends State<Favorite> {
                                                   padding: EdgeInsets.all(22),
                                                   bevel: 5,
                                                   curveType: CurveType.emboss,
-                                                  decoration: NeumorphicDecoration(
-                                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                                      borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                                  decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                                   child: Column(
                                                     mainAxisSize: MainAxisSize.min,
                                                     children: <Widget>[
@@ -409,12 +404,12 @@ class _FavoriteState extends State<Favorite> {
 
   @override
   Widget build(BuildContext context) {
-    return favoriteLoading
-        ? Container(
-            width: MediaQuery.of(context).size.width * 0.7,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.white,
-            child: Center(
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.7,
+      height: MediaQuery.of(context).size.height,
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: favoriteLoading
+          ? Center(
               child: NeuCard(
                 padding: EdgeInsets.all(50),
                 curveType: CurveType.flat,
@@ -427,23 +422,23 @@ class _FavoriteState extends State<Favorite> {
                   radius: 14,
                 ),
               ),
+            )
+          : Container(
+              height: double.infinity,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: favorites.length > 0
+                  ? ListView.builder(
+                      padding: EdgeInsets.only(left: 20, right: 20, top: MediaQuery.of(context).padding.top),
+                      itemBuilder: (context, i) {
+                        return _buildFavoriteItem(favorites[i]);
+                      },
+                      itemCount: favorites.length,
+                    )
+                  : Center(
+                      child: Text("暂无收藏"),
+                    ),
             ),
-          )
-        : Container(
-            height: double.infinity,
-            color: Colors.white,
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: favorites.length > 0
-                ? ListView.builder(
-                    padding: EdgeInsets.only(left: 20, right: 20, top: MediaQuery.of(context).padding.top),
-                    itemBuilder: (context, i) {
-                      return _buildFavoriteItem(favorites[i]);
-                    },
-                    itemCount: favorites.length,
-                  )
-                : Center(
-                    child: Text("暂无收藏"),
-                  ),
-          );
+    );
   }
 }

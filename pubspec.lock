@@ -208,6 +208,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  fijkplayer:
+    dependency: "direct main"
+    description:
+      name: fijkplayer
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.10.0"
   file:
     dependency: transitive
     description:
