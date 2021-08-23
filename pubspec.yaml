@@ -57,7 +57,7 @@ dependencies:
   provider: ^5.0.0
   wave: ^0.2.0
   dartssh: ^1.0.3+3
-  xterm: ^2.0.0
+  xterm: ^2.5.0-pre
   umeng_analytics_plugin:
     git: https://gitee.com/challengerV/umeng_analytics_plugin.git
   photo_manager: ^1.2.8

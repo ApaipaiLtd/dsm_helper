@@ -16,13 +16,19 @@ class VideoPlayer extends StatefulWidget {
 
 class _VideoPlayerState extends State<VideoPlayer> {
   final FijkPlayer player = FijkPlayer();
-
+  bool fullScreen = false;
   _VideoPlayerState();
 
   @override
   void initState() {
     super.initState();
     player.setDataSource(widget.url, autoPlay: true);
+    player.addListener(() {
+      FijkValue value = player.value;
+      setState(() {
+        fullScreen = value.fullScreen;
+      });
+    });
   }
 
   @override
@@ -65,7 +71,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
             alignment: Alignment.center,
             child: FijkView(
               player: player,
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: fullScreen
+                  ? Colors.black
+                  : Theme.of(context).scaffoldBackgroundColor,
             ),
           ),
           SizedBox(

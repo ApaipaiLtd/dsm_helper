@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:xterm/buffer/buffer.dart';
 import 'package:xterm/flutter.dart';
 import 'package:xterm/theme/terminal_themes.dart';
 import 'package:xterm/xterm.dart';
@@ -19,47 +23,18 @@ class Ssh extends StatefulWidget {
 
 class _SshState extends State<Ssh> {
   Terminal terminal;
-  SSHClient client;
+  SSHTerminalBackend backend;
   @override
   void initState() {
-    terminal = Terminal(onInput: onInput, theme: TerminalThemes.whiteOnBlack);
-    connect();
+    backend = SSHTerminalBackend("http://${widget.host}:${widget.port}",
+        widget.username, widget.password);
+    terminal = Terminal(backend: backend, maxLines: 10000);
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void onInput(String input) {
-    client?.sendChannelData(utf8.encode(input));
-  }
-
-  void connect() {
-    terminal.write('连接中 ${widget.host}:${widget.port}...');
-    try {
-      client = SSHClient(
-        hostport: Uri.parse("http://${widget.host}:${widget.port}"),
-        login: widget.username,
-        print: print,
-        termWidth: 80,
-        termHeight: 25,
-        termvar: 'xterm-256color',
-        getPassword: () => utf8.encode(widget.password),
-        response: (transport, data) {
-          terminal.write(data);
-        },
-        success: () {
-          terminal.write('连接成功.\n');
-        },
-        disconnected: () {
-          terminal.write('断开连接.');
-        },
-      );
-    } catch (e) {
-      terminal.write('连接失败 $e');
-    }
   }
 
   @override
@@ -78,12 +53,126 @@ class _SshState extends State<Ssh> {
         brightness: Brightness.dark,
         backgroundColor: Colors.black,
       ),
-      body: TerminalView(
-        terminal: terminal,
-        onResize: (width, height) {
-          client?.setTerminalWindowSize(width, height);
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: RawKeyboardListener(
+              focusNode: FocusNode(),
+              child: TerminalView(
+                terminal: terminal,
+              ),
+              onKey: (RawKeyEvent event) {
+                if (event is RawKeyDownEvent) {
+                  RawKeyDownEvent rawKeyDownEvent = event;
+                  if (rawKeyDownEvent.data is RawKeyEventDataAndroid) {
+                    RawKeyEventDataAndroid rawKeyEventDataAndroid =
+                        rawKeyDownEvent.data;
+                    if (rawKeyEventDataAndroid.keyCode == 67) {
+                      backend.write("\b \b");
+                    }
+                  }
+                }
+              },
+            ),
+          ),
+          Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  backend.write("\t \t");
+                },
+                child: Text("Tab"),
+              ),
+              TextButton(
+                onPressed: () {
+                  backend.write(Uint8List.fromList([0x1b, 0x5b, 0x44]));
+                },
+                child: Text("←"),
+              ),
+              TextButton(
+                onPressed: () {
+                  backend.write(Uint8List.fromList([0x1b, 0x5b, 0x43]));
+                },
+                child: Text("→"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
+  }
+}
+
+class SSHTerminalBackend extends TerminalBackend {
+  SSHClient client;
+
+  String _host;
+  String _username;
+  String _password;
+
+  Completer<int> _exitCodeCompleter;
+  StreamController<String> _outStream;
+
+  SSHTerminalBackend(this._host, this._username, this._password);
+
+  void onWrite(String data) {
+    _outStream.sink.add(data);
+  }
+
+  @override
+  Future<int> get exitCode => _exitCodeCompleter.future;
+
+  @override
+  void init() {
+    _exitCodeCompleter = Completer<int>();
+    _outStream = StreamController<String>();
+
+    onWrite('connecting $_host...\r\n');
+    client = SSHClient(
+      hostport: Uri.parse(_host),
+      login: _username,
+      print: print,
+      termWidth: 80,
+      termHeight: 25,
+      termvar: 'xterm-256color',
+      getPassword: () => utf8.encode(_password),
+      response: (transport, data) {
+        onWrite(data);
+      },
+      success: () {
+        onWrite('connected.\r\n');
+      },
+      disconnected: () {
+        onWrite('disconnected.');
+        _outStream.close();
+      },
+    );
+  }
+
+  @override
+  Stream<String> get out => _outStream.stream;
+
+  @override
+  void resize(int width, int height, int pixelWidth, int pixelHeight) {
+    client.setTerminalWindowSize(width, height);
+  }
+
+  @override
+  void write(dynamic input) {
+    if (input is String) {
+      client?.sendChannelData(utf8.encode(input));
+    } else {
+      client?.sendChannelData(input);
+    }
+  }
+
+  @override
+  void terminate() {
+    client?.disconnect('terminate');
+  }
+
+  @override
+  void ackProcessed() {
+    // NOOP
   }
 }
