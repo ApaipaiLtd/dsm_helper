@@ -5,6 +5,7 @@ import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/pages/provider/shortcut.dart';
 import 'package:dsm_helper/pages/provider/wallpaper.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,7 @@ void main() async {
     androidKey: '5ffe477d6a2a470e8f76809c',
     iosKey: '5ffe47cb6a2a470e8f7680a2',
   );
+
   Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
   Util.getStorage("download_wifi_only").then((value) {
     if (value != null) {
@@ -230,47 +232,49 @@ class _MyAppState extends State<MyApp> {
     return Consumer<DarkModeProvider>(
       builder: (context, darkModeProvider, _) {
         return OKToast(
-          child: darkModeProvider.darkMode == 2
-              ? MaterialApp(
-                  title: '${Util.appName}',
-                  debugShowCheckedModeBanner: false,
-                  theme: lightTheme,
-                  darkTheme: darkTheme,
-                  localizationsDelegates: [
-                    GlobalCupertinoLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                  ],
-                  supportedLocales: [
-                    const Locale('zh', 'CN'),
-                  ],
-                  home: widget.authPage ? AuthPage() : Login(),
-                  navigatorObservers: [AppAnalysis()],
-                  routes: {
-                    "/login": (BuildContext context) => Login(),
-                    "/home": (BuildContext context) => Home(),
-                  },
-                )
-              : MaterialApp(
-                  title: '${Util.appName}',
-                  debugShowCheckedModeBanner: false,
-                  theme: darkModeProvider.darkMode == 0 ? lightTheme : darkTheme,
-                  localizationsDelegates: [
-                    GlobalCupertinoLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                  ],
-                  supportedLocales: [
-                    const Locale('zh', 'CN'),
-                  ],
-                  home: widget.authPage ? AuthPage() : Login(),
-                  // onGenerateRoute: ,
-                  navigatorObservers: [AppAnalysis()],
-                  routes: {
-                    "/login": (BuildContext context) => Login(),
-                    "/home": (BuildContext context) => Home(),
-                  },
-                ),
+          child: KeyboardDismisser(
+            child: darkModeProvider.darkMode == 2
+                ? MaterialApp(
+                    title: '${Util.appName}',
+                    debugShowCheckedModeBanner: false,
+                    theme: lightTheme,
+                    darkTheme: darkTheme,
+                    localizationsDelegates: [
+                      GlobalCupertinoLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                    ],
+                    supportedLocales: [
+                      const Locale('zh', 'CN'),
+                    ],
+                    home: widget.authPage ? AuthPage() : Login(),
+                    navigatorObservers: [AppAnalysis()],
+                    routes: {
+                      "/login": (BuildContext context) => Login(),
+                      "/home": (BuildContext context) => Home(),
+                    },
+                  )
+                : MaterialApp(
+                    title: '${Util.appName}',
+                    debugShowCheckedModeBanner: false,
+                    theme: darkModeProvider.darkMode == 0 ? lightTheme : darkTheme,
+                    localizationsDelegates: [
+                      GlobalCupertinoLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                    ],
+                    supportedLocales: [
+                      const Locale('zh', 'CN'),
+                    ],
+                    home: widget.authPage ? AuthPage() : Login(),
+                    // onGenerateRoute: ,
+                    navigatorObservers: [AppAnalysis()],
+                    routes: {
+                      "/login": (BuildContext context) => Login(),
+                      "/home": (BuildContext context) => Home(),
+                    },
+                  ),
+          ),
         );
       },
     );

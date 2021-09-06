@@ -183,7 +183,7 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                             bevel: 20,
                             curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: NeuTextField(
+                            child: TextField(
                               controller: _portController,
                               keyboardType: TextInputType.number,
                               onChanged: (v) => sshPort = v,

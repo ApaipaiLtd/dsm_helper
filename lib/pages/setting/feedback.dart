@@ -30,7 +30,7 @@ class _FeedbackState extends State<Feedback> {
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             bevel: 20,
             curveType: CurveType.flat,
-            child: NeuTextField(
+            child: TextField(
               onChanged: (v) => content = v,
               maxLines: 5,
               decoration: InputDecoration(

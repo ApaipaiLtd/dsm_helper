@@ -102,7 +102,7 @@ class _UserSettingState extends State<UserSetting> {
                   bevel: 20,
                   curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: NeuTextField(
+                  child: TextField(
                     controller: _fullnameController,
                     onChanged: (v) => changedData['fullname'] = v,
                     decoration: InputDecoration(
@@ -123,7 +123,7 @@ class _UserSettingState extends State<UserSetting> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       onChanged: (v) => changedData['old_password'] = v,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -142,7 +142,7 @@ class _UserSettingState extends State<UserSetting> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       onChanged: (v) => changedData['password'] = v,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -161,7 +161,7 @@ class _UserSettingState extends State<UserSetting> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       onChanged: (v) => changedData['confirm_password'] = v,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -181,7 +181,7 @@ class _UserSettingState extends State<UserSetting> {
                   bevel: 20,
                   curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: NeuTextField(
+                  child: TextField(
                     controller: _emailController,
                     onChanged: (v) => changedData['email'] = v,
                     decoration: InputDecoration(

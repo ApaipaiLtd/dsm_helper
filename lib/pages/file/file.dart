@@ -14,7 +14,7 @@ import 'package:dsm_helper/pages/file/share.dart';
 import 'package:dsm_helper/pages/file/share_manager.dart';
 import 'package:dsm_helper/pages/file/upload.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
-import 'package:dsm_helper/pages/common/preview.dart';
+import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/file/detail.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
@@ -981,7 +981,7 @@ class FilesState extends State<Files> {
                                       bevel: 20,
                                       curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      child: NeuTextField(
+                                      child: TextField(
                                         onChanged: (v) => password = v,
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
@@ -1231,7 +1231,7 @@ class FilesState extends State<Files> {
             }
             Navigator.of(context).push(TransparentPageRoute(
               pageBuilder: (context, _, __) {
-                return PreviewPage(
+                return ImagePreview(
                   images,
                   index,
                   thumbs: thumbs,
@@ -1243,12 +1243,24 @@ class FilesState extends State<Files> {
           case FileType.movie:
             List<int> utf8Str = utf8.encode(file['path']);
             String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
-            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return VideoPlayer(
-                url: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open",
-                name: file['name'],
+            String videoPlayer = await Util.getStorage("video_player");
+            String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open";
+            if (videoPlayer != null && videoPlayer == '1') {
+              AndroidIntent intent = AndroidIntent(
+                action: 'action_view',
+                data: url,
+                arguments: {},
+                type: "video/*",
               );
-            }));
+              await intent.launch();
+            } else {
+              Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                return VideoPlayer(
+                  url: url,
+                  name: file['name'],
+                );
+              }));
+            }
 
             break;
           case FileType.music:
@@ -1614,7 +1626,7 @@ class FilesState extends State<Files> {
                                                   bevel: 20,
                                                   curveType: CurveType.flat,
                                                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                                  child: NeuTextField(
+                                                  child: TextField(
                                                     onChanged: (v) => name = v,
                                                     controller: nameController,
                                                     decoration: InputDecoration(
@@ -2575,7 +2587,7 @@ class FilesState extends State<Files> {
                                                                     bevel: 20,
                                                                     curveType: CurveType.flat,
                                                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                                                    child: NeuTextField(
+                                                                    child: TextField(
                                                                       onChanged: (v) => name = v,
                                                                       decoration: InputDecoration(
                                                                         border: InputBorder.none,

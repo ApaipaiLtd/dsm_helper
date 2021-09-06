@@ -7,8 +7,8 @@ import 'package:neumorphic/neumorphic.dart';
 class VideoPlayer extends StatefulWidget {
   final String name;
   final String url;
-
-  VideoPlayer({@required this.url, this.name});
+  final String cover;
+  VideoPlayer({@required this.url, this.name, this.cover});
 
   @override
   _VideoPlayerState createState() => _VideoPlayerState();
@@ -25,9 +25,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
     player.setDataSource(widget.url, autoPlay: true);
     player.addListener(() {
       FijkValue value = player.value;
-      setState(() {
-        fullScreen = value.fullScreen;
-      });
+      if (mounted) {
+        setState(() {
+          fullScreen = value.fullScreen;
+        });
+      }
     });
   }
 
@@ -48,6 +50,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
               padding: EdgeInsets.all(10),
               bevel: 5,
               onPressed: () async {
+                player.pause();
                 AndroidIntent intent = AndroidIntent(
                   action: 'action_view',
                   data: widget.url,
@@ -70,16 +73,19 @@ class _VideoPlayerState extends State<VideoPlayer> {
             height: MediaQuery.of(context).size.width,
             alignment: Alignment.center,
             child: FijkView(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width * 9 / 16,
               player: player,
-              color: fullScreen
-                  ? Colors.black
-                  : Theme.of(context).scaffoldBackgroundColor,
+              color: fullScreen ? Colors.black : Theme.of(context).scaffoldBackgroundColor,
             ),
           ),
           SizedBox(
             height: 20,
           ),
-          Text("注意：视频播放器目前并不稳定，如遇到黑屏、无声、卡顿等任何问题，请点击右上角按钮使用第三方播放器播放！")
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text("注意：视频播放器目前并不稳定，如遇到黑屏、无声、卡顿等任何问题，请点击右上角按钮使用第三方播放器播放！"),
+          )
         ],
       ),
     );

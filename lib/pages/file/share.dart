@@ -208,7 +208,7 @@ class _ShareState extends State<Share> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: endTimeController,
                 decoration: InputDecoration(
                   enabled: false,
@@ -244,7 +244,7 @@ class _ShareState extends State<Share> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: startTimeController,
                 decoration: InputDecoration(
                   enabled: false,
@@ -265,7 +265,7 @@ class _ShareState extends State<Share> {
             bevel: 12,
             curveType: CurveType.flat,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: NeuTextField(
+            child: TextField(
               controller: timesController,
               onChanged: (v) => times = v,
               decoration: InputDecoration(
@@ -286,7 +286,7 @@ class _ShareState extends State<Share> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: requestNameController,
                 onChanged: (v) => requestName = v,
                 decoration: InputDecoration(
@@ -306,7 +306,7 @@ class _ShareState extends State<Share> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: requestInfoController,
                 onChanged: (v) => requestInfo = v,
                 decoration: InputDecoration(

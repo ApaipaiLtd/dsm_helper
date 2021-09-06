@@ -225,6 +225,7 @@ class _SshState extends State<Ssh> {
                           },
                           child: Text("TAB"),
                         ),
+                        // 左
                         TerminalButton(
                           onPressed: () {
                             backend.write(Uint8List.fromList([0x1b, 0x5b, 0x44]));
@@ -234,6 +235,7 @@ class _SshState extends State<Ssh> {
                             color: Colors.white.withOpacity(0.5),
                           ),
                         ),
+                        //下
                         TerminalButton(
                           onPressed: () {
                             backend.write(Uint8List.fromList([0x1b, 0x5b, 0x42]));
@@ -243,12 +245,22 @@ class _SshState extends State<Ssh> {
                             color: Colors.white.withOpacity(0.5),
                           ),
                         ),
+                        // 右
                         TerminalButton(
                           onPressed: () {
                             backend.write(Uint8List.fromList([0x1b, 0x5b, 0x43]));
                           },
                           child: Icon(
                             Icons.keyboard_arrow_right,
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
+                        TerminalButton(
+                          onPressed: () {
+                            backend.write(Uint8List.fromList([0x02]));
+                          },
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
                             color: Colors.white.withOpacity(0.5),
                           ),
                         ),

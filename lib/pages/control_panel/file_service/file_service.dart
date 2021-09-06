@@ -267,7 +267,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       bevel: 20,
                                       curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      child: NeuTextField(
+                                      child: TextField(
                                         controller: _workgroupController,
                                         onChanged: (v) => smb['workgroup'] = v,
                                         decoration: InputDecoration(
@@ -590,7 +590,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       bevel: 20,
                                       curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      child: NeuTextField(
+                                      child: TextField(
                                         controller: _nfsv4Controller,
                                         onChanged: (v) => nfs['nfs_v4_domain'] = v,
                                         decoration: InputDecoration(
@@ -707,7 +707,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       bevel: 20,
                                       curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      child: NeuTextField(
+                                      child: TextField(
                                         controller: _timeoutController,
                                         onChanged: (v) {
                                           try {
@@ -737,7 +737,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       bevel: 20,
                                       curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      child: NeuTextField(
+                                      child: TextField(
                                         controller: _ftpPortController,
                                         onChanged: (v) {
                                           try {
@@ -961,7 +961,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     bevel: 20,
                                     curveType: CurveType.flat,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: NeuTextField(
+                                    child: TextField(
                                       controller: _sftpPortController,
                                       onChanged: (v) {
                                         try {

@@ -21,12 +21,15 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   TextEditingController _emailController = TextEditingController();
   Map user;
   List groups = [];
+  List originGroups = [];
   List bandwidthControl = [];
   List volumes = [];
   List quotas = [];
   List permissions = [];
   String password;
   String confirmPassword;
+
+  bool saving = false;
   @override
   void initState() {
     _tabController = TabController(length: 6, vsync: this);
@@ -259,6 +262,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
     if (res['success']) {
       setState(() {
         groups = res['data']['groups'];
+        originGroups = groups.where((group) => group['is_member']).map((e) => e['name']).toList();
       });
     }
   }
@@ -274,6 +278,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
             case "SYNO.Core.User":
               setState(() {
                 user = item['data']['users'][0];
+                user['new_name'] = item['data']['users'][0]['name'];
               });
               break;
             case "SYNO.Core.User.PasswordExpiry":
@@ -384,9 +389,9 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       bevel: 20,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         controller: _nameController,
-                        onChanged: (v) => user['name'] = v,
+                        onChanged: (v) => user['new_name'] = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '名称',
@@ -404,7 +409,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       bevel: 12,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         controller: _descriptionController,
                         onChanged: (v) => user['description'] = v,
                         decoration: InputDecoration(
@@ -424,7 +429,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       bevel: 12,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         controller: _emailController,
                         onChanged: (v) => user['email'] = v,
                         decoration: InputDecoration(
@@ -444,8 +449,9 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       bevel: 12,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         onChanged: (v) => password = v,
+                        obscureText: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '修改密码',
@@ -463,7 +469,8 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       bevel: 12,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
+                        obscureText: true,
                         onChanged: (v) => confirmPassword = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -719,6 +726,57 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                 ListView(),
                 ListView(),
               ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: NeuButton(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: NeumorphicDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              onPressed: () async {
+                if (password != confirmPassword) {
+                  Util.toast("密码输入不一致");
+                  return;
+                }
+                if (password != '' && password.length < 6) {
+                  Util.toast("密码最低6位");
+                  return;
+                }
+                if (password != '') {
+                  user['password'] = password;
+                }
+                //对比当前groups与原始groups
+                List newGroups = groups.where((group) => group['is_member']).map((e) => e['name']).toList();
+                List addGroup = newGroups.where((group) => !originGroups.contains(group)).toList();
+                List removeGroup = originGroups.where((group) => !newGroups.contains(group)).toList();
+
+                setState(() {
+                  saving = true;
+                });
+
+                var res = await Api.userSave(user, addGroup, removeGroup);
+                setState(() {
+                  saving = false;
+                });
+                if (res['success']) {
+                  widget.user['name'] = user['new_name'];
+                  widget.user['email'] = user['email'];
+                  Util.toast("保存成功");
+                } else {
+                  Util.toast("保存失败,代码${res['error']['code']}");
+                }
+              },
+              child: saving
+                  ? CupertinoActivityIndicator(
+                      radius: 13,
+                    )
+                  : Text(
+                      ' 保存 ',
+                      style: TextStyle(fontSize: 18),
+                    ),
             ),
           ),
         ],

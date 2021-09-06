@@ -87,11 +87,15 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
   Widget _buildUserItem(user) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (context) {
-              return UserDetail(user);
-            },
-            settings: RouteSettings(name: "user_detail")));
+        Navigator.of(context)
+            .push(CupertinoPageRoute(
+                builder: (context) {
+                  return UserDetail(user);
+                },
+                settings: RouteSettings(name: "user_detail")))
+            .then((value) {
+          setState(() {});
+        });
       },
       child: NeuCard(
         curveType: CurveType.flat,

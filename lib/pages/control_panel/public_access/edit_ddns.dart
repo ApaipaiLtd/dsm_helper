@@ -276,7 +276,7 @@ class _EditDdnsState extends State<EditDdns> {
                   bevel: 20,
                   curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: NeuTextField(
+                  child: TextField(
                     controller: _hostnameController,
                     onChanged: (v) => ddns['hostname'] = v,
                     decoration: InputDecoration(
@@ -296,7 +296,7 @@ class _EditDdnsState extends State<EditDdns> {
                   bevel: 20,
                   curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: NeuTextField(
+                  child: TextField(
                     controller: _usernameController,
                     onChanged: (v) => ddns['username'] = v,
                     decoration: InputDecoration(
@@ -316,7 +316,7 @@ class _EditDdnsState extends State<EditDdns> {
                   bevel: 20,
                   curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: NeuTextField(
+                  child: TextField(
                     onChanged: (v) => ddns['passwd'] = v,
                     decoration: InputDecoration(
                       border: InputBorder.none,

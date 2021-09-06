@@ -26,7 +26,7 @@ class _AddTrackerState extends State<AddTracker> {
             bevel: 20,
             curveType: CurveType.flat,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: NeuTextField(
+            child: TextField(
               onChanged: (v) => tracker = v,
               maxLines: 5,
               decoration: InputDecoration(

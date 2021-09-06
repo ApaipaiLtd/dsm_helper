@@ -58,7 +58,7 @@ class _OtpBindState extends State<OtpBind> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: _emailController,
                 onChanged: (v) => email = v,
                 decoration: InputDecoration(
@@ -225,7 +225,7 @@ class _OtpBindState extends State<OtpBind> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 onChanged: (v) => code = v,
                 decoration: InputDecoration(
                   border: InputBorder.none,

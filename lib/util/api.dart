@@ -2013,7 +2013,6 @@ class Api {
   }
 
   static Future<Map> userDetail(String name) async {
-    print(name);
     List apis = [
       {
         "api": "SYNO.Core.User",
@@ -2039,6 +2038,45 @@ class Api {
       {"api": "SYNO.Core.Quota", "method": "get", "version": 1, "name": name, "support_share_quota": true}
     ];
     var result = await Util.post("entry.cgi", data: {
+      "api": 'SYNO.Entry.Request',
+      "method": 'request',
+      "mode": '"sequential"',
+      "compound": jsonEncode(apis),
+      "version": 1,
+      "_sid": Util.sid,
+    });
+    return result;
+  }
+
+  static Future<Map> userSave(
+    Map userInfo,
+    List addGroup,
+    List removeGroup,
+  ) async {
+    Map userInfoApi = {
+      "api": "SYNO.Core.User",
+      "method": "set",
+      "version": 1,
+      "name": userInfo['name'],
+      "description": userInfo['description'],
+      "email": userInfo['email'],
+      "cannot_chg_passwd": userInfo['cannot_chg_passwd'],
+      "expired": userInfo['expired'],
+      "new_name": userInfo['new_name'],
+    };
+    if (userInfo['password'] != null && userInfo['password'].length > 0) {
+      userInfoApi['password'] = userInfo['password'];
+    }
+    List apis = [userInfoApi];
+
+    for (int i = 0; i < addGroup.length; i++) {
+      apis.add({"api": "SYNO.Core.Group.Member", "method": "add", "version": 1, "group": addGroup[i], "name": userInfo['name']});
+    }
+    for (int i = 0; i < removeGroup.length; i++) {
+      apis.add({"api": "SYNO.Core.Group.Member", "method": "remove", "version": 1, "group": removeGroup[i], "name": userInfo['name']});
+    }
+    var result = await Util.post("entry.cgi", data: {
+      "stop_when_error": false,
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',

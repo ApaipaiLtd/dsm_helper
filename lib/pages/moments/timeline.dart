@@ -1,5 +1,5 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
-import 'package:dsm_helper/pages/common/preview.dart';
+import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
@@ -104,7 +104,7 @@ class _TimelineState extends State<Timeline> {
       onTap: () {
         Navigator.of(context).push(TransparentPageRoute(
           pageBuilder: (context, _, __) {
-            return PreviewPage(
+            return ImagePreview(
               [originalUrl],
               0,
               tag: "photo-timeline-${photo['additional']['thumbnail']['unit_id']}",

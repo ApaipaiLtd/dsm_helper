@@ -518,12 +518,16 @@ class _LoginState extends State<Login> {
                   ),
                   Expanded(
                     flex: 3,
-                    child: NeuTextField(
+                    child: TextField(
                       controller: _hostController,
                       onChanged: (v) {
                         setState(() {
                           host = v;
                         });
+                      },
+                      textInputAction: TextInputAction.next,
+                      onEditingComplete: () {
+                        FocusScope.of(context).nextFocus();
                       },
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -534,9 +538,13 @@ class _LoginState extends State<Login> {
                   if (host.contains("."))
                     Expanded(
                       flex: 1,
-                      child: NeuTextField(
+                      child: TextField(
                         onChanged: (v) => port = v,
                         controller: _portController,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () {
+                          FocusScope.of(context).nextFocus();
+                        },
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '端口',
@@ -560,10 +568,14 @@ class _LoginState extends State<Login> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       keyboardAppearance: Brightness.light,
                       controller: _accountController,
                       onChanged: (v) => account = v,
+                      textInputAction: TextInputAction.next,
+                      onEditingComplete: () {
+                        FocusScope.of(context).nextFocus();
+                      },
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: '账号',
@@ -583,10 +595,14 @@ class _LoginState extends State<Login> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       keyboardAppearance: Brightness.light,
                       controller: _noteController,
                       onChanged: (v) => note = v,
+                      textInputAction: TextInputAction.next,
+                      onEditingComplete: () {
+                        FocusScope.of(context).nextFocus();
+                      },
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: '备注',
@@ -607,10 +623,14 @@ class _LoginState extends State<Login> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: _passwordController,
                 onChanged: (v) => password = v,
                 obscureText: true,
+                textInputAction: TextInputAction.done,
+                onEditingComplete: () {
+                  FocusScope.of(context).unfocus();
+                },
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   labelText: '密码',
@@ -632,10 +652,14 @@ class _LoginState extends State<Login> {
                       bevel: 12,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         controller: _otpController,
                         onChanged: (v) => otpCode = v,
                         keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        onEditingComplete: () {
+                          FocusScope.of(context).unfocus();
+                        },
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '二步验证代码',

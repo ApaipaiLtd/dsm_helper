@@ -97,7 +97,7 @@ class _AddServerState extends State<AddServer> {
                 children: [
                   Expanded(
                     flex: 4,
-                    child: NeuTextField(
+                    child: TextField(
                       controller: _hostController,
                       onChanged: (v) => host = v,
                       decoration: InputDecoration(
@@ -108,7 +108,7 @@ class _AddServerState extends State<AddServer> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: NeuTextField(
+                    child: TextField(
                       onChanged: (v) => port = v,
                       controller: _portController,
                       decoration: InputDecoration(
@@ -131,7 +131,7 @@ class _AddServerState extends State<AddServer> {
               bevel: 20,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: _accountController,
                 onChanged: (v) => account = v,
                 decoration: InputDecoration(
@@ -151,7 +151,7 @@ class _AddServerState extends State<AddServer> {
               bevel: 12,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: _passwordController,
                 onChanged: (v) => password = v,
                 obscureText: true,

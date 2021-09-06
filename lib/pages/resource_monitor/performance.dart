@@ -273,9 +273,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -399,9 +401,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -506,16 +510,21 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           LineChartData(
                                             lineTouchData: LineTouchData(
                                               touchTooltipData: LineTouchTooltipData(
-                                                  tooltipBgColor: Colors.white.withOpacity(0.6),
-                                                  tooltipRoundedRadius: 20,
-                                                  fitInsideHorizontally: true,
-                                                  fitInsideVertically: true,
-                                                  getTooltipItems: (items) {
-                                                    return [
-                                                      LineTooltipItem("上传：${Util.formatSize(items[0].y.floor())}", TextStyle(color: Colors.blue)),
-                                                      LineTooltipItem("下载：${Util.formatSize(items[1].y.floor())}", TextStyle(color: Colors.green)),
-                                                    ];
-                                                  }),
+                                                tooltipBgColor: Colors.white.withOpacity(0.6),
+                                                tooltipRoundedRadius: 20,
+                                                fitInsideHorizontally: true,
+                                                fitInsideVertically: true,
+                                                getTooltipItems: (List<LineBarSpot> items) {
+                                                  return items.map((LineBarSpot touchedSpot) {
+                                                    final textStyle = TextStyle(
+                                                      color: touchedSpot.bar.colors[0],
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14,
+                                                    );
+                                                    return LineTooltipItem('${touchedSpot.bar.colors[0] == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                                  }).toList();
+                                                },
+                                              ),
                                             ),
                                             gridData: FlGridData(
                                               show: false,
@@ -526,9 +535,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -679,9 +690,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -802,9 +815,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -910,9 +925,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           showTitles: false,
                                           reservedSize: 22,
                                         ),
+                                        topTitles: SideTitles(showTitles: false),
+                                        rightTitles: SideTitles(showTitles: false),
                                         leftTitles: SideTitles(
                                           showTitles: true,
-                                          getTextStyles: (value) => const TextStyle(
+                                          getTextStyles: (value, _) => const TextStyle(
                                             color: Color(0xff67727d),
                                             fontSize: 12,
                                           ),
@@ -1262,9 +1279,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           showTitles: false,
                                           reservedSize: 22,
                                         ),
+                                        topTitles: SideTitles(showTitles: false),
+                                        rightTitles: SideTitles(showTitles: false),
                                         leftTitles: SideTitles(
                                           showTitles: true,
-                                          getTextStyles: (value) => const TextStyle(
+                                          getTextStyles: (value, _) => const TextStyle(
                                             color: Color(0xff67727d),
                                             fontSize: 12,
                                           ),
@@ -1559,16 +1578,21 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             LineChartData(
                                               lineTouchData: LineTouchData(
                                                 touchTooltipData: LineTouchTooltipData(
-                                                    tooltipBgColor: Colors.white.withOpacity(0.6),
-                                                    tooltipRoundedRadius: 20,
-                                                    fitInsideHorizontally: true,
-                                                    fitInsideVertically: true,
-                                                    getTooltipItems: (items) {
-                                                      return [
-                                                        LineTooltipItem("上传：${Util.formatSize(items[0].y.floor())}", TextStyle(color: Colors.blue)),
-                                                        LineTooltipItem("下载：${Util.formatSize(items[1].y.floor())}", TextStyle(color: Colors.green)),
-                                                      ];
-                                                    }),
+                                                  tooltipBgColor: Colors.white.withOpacity(0.6),
+                                                  tooltipRoundedRadius: 20,
+                                                  fitInsideHorizontally: true,
+                                                  fitInsideVertically: true,
+                                                  getTooltipItems: (List<LineBarSpot> items) {
+                                                    return items.map((LineBarSpot touchedSpot) {
+                                                      final textStyle = TextStyle(
+                                                        color: touchedSpot.bar.colors[0],
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 14,
+                                                      );
+                                                      return LineTooltipItem('${touchedSpot.bar.colors[0] == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                                    }).toList();
+                                                  },
+                                                ),
                                               ),
                                               gridData: FlGridData(
                                                 show: false,
@@ -1579,9 +1603,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   showTitles: false,
                                                   reservedSize: 22,
                                                 ),
+                                                topTitles: SideTitles(showTitles: false),
+                                                rightTitles: SideTitles(showTitles: false),
                                                 leftTitles: SideTitles(
                                                   showTitles: true,
-                                                  getTextStyles: (value) => const TextStyle(
+                                                  getTextStyles: (value, _) => const TextStyle(
                                                     color: Color(0xff67727d),
                                                     fontSize: 12,
                                                   ),
@@ -1760,9 +1786,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -1885,9 +1913,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2007,9 +2037,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2129,9 +2161,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2251,9 +2285,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2395,9 +2431,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2520,9 +2558,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2642,9 +2682,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2764,9 +2806,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),
@@ -2886,9 +2930,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: false,
                                                 reservedSize: 22,
                                               ),
+                                              topTitles: SideTitles(showTitles: false),
+                                              rightTitles: SideTitles(showTitles: false),
                                               leftTitles: SideTitles(
                                                 showTitles: true,
-                                                getTextStyles: (value) => const TextStyle(
+                                                getTextStyles: (value, _) => const TextStyle(
                                                   color: Color(0xff67727d),
                                                   fontSize: 12,
                                                 ),

@@ -135,7 +135,7 @@ class _FavoriteState extends State<Favorite> {
                                                               bevel: 20,
                                                               curveType: CurveType.flat,
                                                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                                              child: NeuTextField(
+                                                              child: TextField(
                                                                 onChanged: (v) => name = v,
                                                                 controller: nameController,
                                                                 decoration: InputDecoration(

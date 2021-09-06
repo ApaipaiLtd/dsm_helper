@@ -178,7 +178,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                     bevel: 20,
                                     curveType: CurveType.flat,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: NeuTextField(
+                                    child: TextField(
                                       controller: _serverNameController,
                                       onChanged: (v) => network['server_name'] = v,
                                       decoration: InputDecoration(
@@ -238,7 +238,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                     bevel: 20,
                                     curveType: network['dns_manual'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: NeuTextField(
+                                    child: TextField(
                                       controller: _dnsPrimaryController,
                                       enabled: network['dns_manual'],
                                       onChanged: (v) => network['dns_primary'] = v,
@@ -259,7 +259,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                     bevel: 20,
                                     curveType: network['dns_manual'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: NeuTextField(
+                                    child: TextField(
                                       controller: _dnsSecondaryController,
                                       enabled: network['dns_manual'],
                                       onChanged: (v) => network['dns_secondary'] = v,
@@ -336,7 +336,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                     bevel: 20,
                                     curveType: proxy['enable'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: NeuTextField(
+                                    child: TextField(
                                       controller: _proxyHttpHostController,
                                       enabled: proxy['enable'],
                                       onChanged: (v) => proxy['http_host'] = v,
@@ -357,7 +357,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                     bevel: 20,
                                     curveType: proxy['enable'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: NeuTextField(
+                                    child: TextField(
                                       controller: _proxyHttpPortController,
                                       enabled: proxy['enable'],
                                       onChanged: (v) => proxy['http_port'] = v,

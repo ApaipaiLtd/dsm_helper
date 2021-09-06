@@ -1,4 +1,4 @@
-import 'package:dsm_helper/pages/common/preview.dart';
+import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
@@ -38,7 +38,7 @@ class _PhotosState extends State<Photos> {
       onTap: () {
         Navigator.of(context).push(TransparentPageRoute(
           pageBuilder: (context, _, __) {
-            return PreviewPage(
+            return ImagePreview(
               photos
                   .map((photo) =>
                       '${Util.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}')

@@ -26,7 +26,7 @@ class _HelperSettingState extends State<HelperSetting> {
   bool password = false;
   bool biometrics = false;
   bool canCheckBiometrics = false;
-
+  bool videoPlayer = false;
   BiometricType biometricsType = BiometricType.fingerprint;
   @override
   void initState() {
@@ -41,6 +41,10 @@ class _HelperSettingState extends State<HelperSetting> {
     String launchAuthStr = await Util.getStorage("launch_auth");
     String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
     String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
+    String videoPlayerStr = await Util.getStorage("video_player");
+    if (videoPlayerStr != null) {
+      videoPlayer = videoPlayerStr == '1';
+    }
     if (launchAuthStr != null) {
       launchAuth = launchAuthStr == "1";
     } else {
@@ -158,22 +162,18 @@ class _HelperSettingState extends State<HelperSetting> {
                                   ),
                                   curveType: Util.vibrateNormal ? CurveType.emboss : CurveType.flat,
                                   bevel: 20,
-                                  child: Column(
+                                  child: Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "基础操作震动",
-                                            style: TextStyle(fontSize: 16, height: 1.6),
-                                          ),
-                                          Spacer(),
-                                          if (Util.vibrateNormal)
-                                            Icon(
-                                              CupertinoIcons.checkmark_alt,
-                                              color: Color(0xffff9813),
-                                            ),
-                                        ],
+                                      Text(
+                                        "基础操作震动",
+                                        style: TextStyle(fontSize: 16, height: 1.6),
                                       ),
+                                      Spacer(),
+                                      if (Util.vibrateNormal)
+                                        Icon(
+                                          CupertinoIcons.checkmark_alt,
+                                          color: Color(0xffff9813),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -200,22 +200,18 @@ class _HelperSettingState extends State<HelperSetting> {
                                   ),
                                   curveType: Util.vibrateWarning ? CurveType.emboss : CurveType.flat,
                                   bevel: 20,
-                                  child: Column(
+                                  child: Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "敏感操作震动",
-                                            style: TextStyle(fontSize: 16, height: 1.6),
-                                          ),
-                                          Spacer(),
-                                          if (Util.vibrateWarning)
-                                            Icon(
-                                              CupertinoIcons.checkmark_alt,
-                                              color: Color(0xffff9813),
-                                            ),
-                                        ],
+                                      Text(
+                                        "敏感操作震动",
+                                        style: TextStyle(fontSize: 16, height: 1.6),
                                       ),
+                                      Spacer(),
+                                      if (Util.vibrateWarning)
+                                        Icon(
+                                          CupertinoIcons.checkmark_alt,
+                                          color: Color(0xffff9813),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -232,7 +228,48 @@ class _HelperSettingState extends State<HelperSetting> {
           SizedBox(
             height: 20,
           ),
-
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                videoPlayer = !videoPlayer;
+                Util.setStorage("video_player", videoPlayer ? "1" : "0");
+              });
+            },
+            child: NeuCard(
+              // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.all(20),
+              decoration: NeumorphicDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              curveType: videoPlayer ? CurveType.emboss : CurveType.flat,
+              bevel: 20,
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/icons/player.png",
+                    width: 25,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    "始终使用第三方播放器",
+                    style: TextStyle(fontSize: 16, height: 1.6),
+                  ),
+                  Spacer(),
+                  if (videoPlayer)
+                    Icon(
+                      CupertinoIcons.checkmark_alt,
+                      color: Color(0xffff9813),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
           GestureDetector(
             onTap: () {
               setState(() {

@@ -4,7 +4,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:dsm_helper/pages/download/download_setting.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
-import 'package:dsm_helper/pages/common/preview.dart';
+import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
@@ -255,7 +255,7 @@ class DownloadState extends State<Download> {
               }
               Navigator.of(context).push(TransparentPageRoute(
                   pageBuilder: (context, _, __) {
-                    return PreviewPage(
+                    return ImagePreview(
                       images,
                       index,
                       network: false,

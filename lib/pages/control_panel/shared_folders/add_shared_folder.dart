@@ -41,9 +41,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   String shareQuota = "";
   @override
   void initState() {
-    volumeController.value = TextEditingValue(
-        text:
-            "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
+    volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
     unitController.value = TextEditingValue(text: units[selectedUnitIndex]);
     super.initState();
   }
@@ -135,7 +133,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       controller: nameController,
                       onChanged: (v) => name = v,
                       decoration: InputDecoration(
@@ -155,7 +153,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                     bevel: 20,
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: NeuTextField(
+                    child: TextField(
                       controller: descController,
                       onChanged: (v) => desc = v,
                       decoration: InputDecoration(
@@ -200,9 +198,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                             setState(() {
                                               selectedVolumeIndex = widget.volumes.indexOf(volume);
                                             });
-                                            volumeController.value = TextEditingValue(
-                                                text:
-                                                    "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
+                                            volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
                                             Navigator.of(context).pop();
                                           },
                                           decoration: NeumorphicDecoration(
@@ -265,7 +261,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                       bevel: 20,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         controller: volumeController,
                         decoration: InputDecoration(
                           enabled: false,
@@ -476,7 +472,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                             bevel: 20,
                             curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: NeuTextField(
+                            child: TextField(
                               onChanged: (v) => password = v,
                               obscureText: true,
                               controller: passwordController,
@@ -499,7 +495,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                             bevel: 20,
                             curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: NeuTextField(
+                            child: TextField(
                               onChanged: (v) => confirmPassword = v,
                               obscureText: true,
                               controller: confirmPasswordController,
@@ -643,7 +639,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                             bevel: 20,
                             curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: NeuTextField(
+                            child: TextField(
                               onChanged: (v) => shareQuota = v,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
@@ -747,7 +743,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                               bevel: 20,
                               curveType: CurveType.flat,
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                              child: NeuTextField(
+                              child: TextField(
                                 controller: unitController,
                                 decoration: InputDecoration(
                                   enabled: false,

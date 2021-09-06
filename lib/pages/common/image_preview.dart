@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:dsm_helper/widgets/hero_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 
-class PreviewPage extends StatefulWidget {
+class ImagePreview extends StatefulWidget {
   final List<String> images;
   final List<String> thumbs;
   final List<String> names;
@@ -18,13 +19,13 @@ class PreviewPage extends StatefulWidget {
   final Object tag;
   final PageController pageController;
 
-  PreviewPage(this.images, this.index, {this.network = true, this.tag, this.thumbs: const [], this.names: const []}) : this.pageController = PageController(initialPage: index);
+  ImagePreview(this.images, this.index, {this.network = true, this.tag, this.thumbs: const [], this.names: const []}) : this.pageController = PageController(initialPage: index);
 
   @override
-  _PreviewPageState createState() => _PreviewPageState();
+  _ImagePreviewState createState() => _ImagePreviewState();
 }
 
-class _PreviewPageState extends State<PreviewPage> with SingleTickerProviderStateMixin {
+class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _animation;
   var rebuildIndex = StreamController<int>.broadcast();
@@ -34,7 +35,7 @@ class _PreviewPageState extends State<PreviewPage> with SingleTickerProviderStat
   List<double> doubleTapScales = <double>[1.0, 2.0];
   int currentIndex = 0;
   bool blackBackground = false;
-  GlobalKey<ExtendedImageSlidePageState> slidePagekey = GlobalKey<ExtendedImageSlidePageState>();
+  GlobalKey<ExtendedImageSlidePageState> slidePageKey = GlobalKey<ExtendedImageSlidePageState>();
   double initScale({Size imageSize, Size size, double initialScale}) {
     var n1 = imageSize.height / imageSize.width;
     var n2 = size.height / size.width;
@@ -233,16 +234,17 @@ class _PreviewPageState extends State<PreviewPage> with SingleTickerProviderStat
               }
 
               image = GestureDetector(
-                child: Hero(
+                child: HeroWidget(
                   tag: widget.tag ?? item,
                   child: image,
-                  flightShuttleBuilder: (BuildContext flightContext, Animation<double> animation, HeroFlightDirection flightDirection, BuildContext fromHeroContext, BuildContext toHeroContext) {
-                    final Hero hero = (flightDirection == HeroFlightDirection.pop ? fromHeroContext.widget : toHeroContext.widget) as Hero;
-                    return hero.child;
-                  },
+                  slidePagekey: slidePageKey,
+                  // flightShuttleBuilder: (BuildContext flightContext, Animation<double> animation, HeroFlightDirection flightDirection, BuildContext fromHeroContext, BuildContext toHeroContext) {
+                  //   final Hero hero = (flightDirection == HeroFlightDirection.pop ? fromHeroContext.widget : toHeroContext.widget) as Hero;
+                  //   return hero.child;
+                  // },
                 ),
                 onTap: () {
-                  slidePagekey.currentState.popPage();
+                  slidePageKey.currentState.popPage();
                   Navigator.pop(context);
                 },
               );
@@ -319,7 +321,7 @@ class _PreviewPageState extends State<PreviewPage> with SingleTickerProviderStat
     );
 
     result = ExtendedImageSlidePage(
-      key: slidePagekey,
+      key: slidePageKey,
       child: result,
       slideAxis: SlideAxis.both,
       slideType: SlideType.onlyImage,

@@ -79,7 +79,7 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                       bevel: 20,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         onChanged: (v) => serverIp = v,
                         decoration: InputDecoration(border: InputBorder.none, labelText: '远程文件夹', hintText: r"示例:\\192.168.1.1\share"),
                       ),
@@ -95,7 +95,7 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                       bevel: 20,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         onChanged: (v) => account = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -114,7 +114,7 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                       bevel: 20,
                       curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: NeuTextField(
+                      child: TextField(
                         onChanged: (v) => passwd = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,

@@ -48,7 +48,7 @@ class _SearchState extends State<Search> {
               bevel: 20,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 onChanged: (v) => pattern = v,
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -98,7 +98,7 @@ class _SearchState extends State<Search> {
               bevel: 20,
               curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: NeuTextField(
+              child: TextField(
                 controller: folderController,
                 enabled: false,
                 decoration: InputDecoration(
