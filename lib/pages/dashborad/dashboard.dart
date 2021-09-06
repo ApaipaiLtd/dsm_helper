@@ -69,7 +69,17 @@ class DashboardState extends State<Dashboard> {
   bool loading = true;
   bool success = true;
   String hostname = "获取中";
-  int maxNetworkSpeed = 0;
+  int get maxNetworkSpeed {
+    int maxSpeed = 0;
+    for (int i = 0; i < networks.length; i++) {
+      int maxVal = max(networks[0][0]['rx'], networks[0][0]['tx']);
+      if (maxSpeed < maxVal) {
+        maxSpeed = maxVal;
+      }
+    }
+    return maxSpeed;
+  }
+
   Map volWarnings;
   String msg = "";
   bool showMainMenu = false;
@@ -272,6 +282,8 @@ class DashboardState extends State<Dashboard> {
   double get chartInterval {
     if (maxNetworkSpeed < 1024) {
       return 102.4;
+    } else if (maxNetworkSpeed < 1024 * 10) {
+      return 1024.0 * 2;
     } else if (maxNetworkSpeed < pow(1024, 2)) {
       return 1024.0 * 200;
     } else if (maxNetworkSpeed < pow(1024, 2) * 5) {
@@ -294,9 +306,6 @@ class DashboardState extends State<Dashboard> {
   String chartTitle(double v) {
     if (maxNetworkSpeed < 10) {
       return v.toString();
-    } else if (maxNetworkSpeed < 1024) {
-      v = v / 1024;
-      return (v.floor() * 100).toString();
     } else if (maxNetworkSpeed < pow(1024, 2)) {
       String s = (v / 1024).floor().toString() + "K";
       if (s == "1000K") {
@@ -355,14 +364,9 @@ class DashboardState extends State<Dashboard> {
                 if (networks.length > 20) {
                   networks.removeAt(0);
                 }
-                print(item['data']['network']);
                 networks.add(item['data']['network']);
                 int tx = int.parse("${item['data']['network'][0]['tx']}");
                 int rx = int.parse("${item['data']['network'][0]['rx']}");
-                num maxSpeed = max(tx, rx);
-                if (maxSpeed > maxNetworkSpeed) {
-                  maxNetworkSpeed = maxSpeed;
-                }
               });
               break;
             case "SYNO.Core.System":
@@ -945,10 +949,6 @@ class DashboardState extends State<Dashboard> {
                                     fontSize: 12,
                                   ),
                                   getTitles: chartTitle,
-                                  // getTitles: (value) {
-                                  //   value = value / 1000 / 1000;
-                                  //   return (value.floor() * 1000).toString();
-                                  // },
                                   reservedSize: 28,
                                   interval: chartInterval,
                                 ),
