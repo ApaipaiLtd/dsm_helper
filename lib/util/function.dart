@@ -317,7 +317,11 @@ class Util {
       }
 
       if (response.data is String && decode) {
-        return json.decode(response.data);
+        try {
+          return json.decode(response.data);
+        } catch (e) {
+          return response.data;
+        }
       } else if (response.data is Map) {
         return response.data;
       } else {

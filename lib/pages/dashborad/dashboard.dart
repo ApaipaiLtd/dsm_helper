@@ -365,8 +365,6 @@ class DashboardState extends State<Dashboard> {
                   networks.removeAt(0);
                 }
                 networks.add(item['data']['network']);
-                int tx = int.parse("${item['data']['network'][0]['tx']}");
-                int rx = int.parse("${item['data']['network'][0]['rx']}");
               });
               break;
             case "SYNO.Core.System":
@@ -1459,6 +1457,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   Widget _buildVolumeItem(volume) {
+    double used = int.parse(volume['size']['used']) / int.parse(volume['size']['total']);
     return NeuCard(
       decoration: NeumorphicDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -1485,7 +1484,7 @@ class DashboardState extends State<Dashboard> {
               // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
+                colors: used <= 0.9
                     ? [
                         Colors.blue,
                         Colors.blueAccent,
@@ -1499,10 +1498,10 @@ class DashboardState extends State<Dashboard> {
               circularStrokeCap: CircularStrokeCap.round,
               lineWidth: 12,
               backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
+              percent: used,
               center: Text(
-                "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+                "${(used * 100).toStringAsFixed(0)}%",
+                style: TextStyle(color: used <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
               ),
             ),
           ),

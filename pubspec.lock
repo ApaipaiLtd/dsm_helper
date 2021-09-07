@@ -966,7 +966,14 @@ packages:
       name: xml
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.1.0"
+    version: "5.1.2"
+  xml2json:
+    dependency: "direct main"
+    description:
+      name: xml2json
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.3.1"
   xterm:
     dependency: "direct main"
     description:

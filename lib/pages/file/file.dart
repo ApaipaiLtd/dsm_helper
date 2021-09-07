@@ -1254,10 +1254,39 @@ class FilesState extends State<Files> {
               );
               await intent.launch();
             } else {
+              // 获取封面
+              String name = file['name'];
+              name = name.substring(0, name.lastIndexOf('.'));
+              String cover;
+              String nfo;
+              try {
+                cover = files.firstWhere((element) => element['name'].startsWith("$name-fanart") || element['name'].startsWith("fanart"))['path'];
+              } catch (e) {
+                try {
+                  cover = files.firstWhere((element) => element['name'].startsWith("$name-thumb") || element['name'].startsWith("thumb"))['path'];
+                } catch (e) {
+                  try {
+                    cover = files.firstWhere((element) => element['name'].startsWith("$name-poster") || element['name'].startsWith("poster"))['path'];
+                  } catch (e) {
+                    try {
+                      cover = files.firstWhere((element) => element['name'].startsWith("$name-cover") || element['name'].startsWith("cover"))['path'];
+                    } catch (e) {
+                      print("无封面图");
+                    }
+                  }
+                }
+              }
+              try {
+                nfo = files.firstWhere((element) => element['name'] == "$name.nfo")['path'];
+              } catch (e) {
+                print("无NFO文件");
+              }
               Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                 return VideoPlayer(
                   url: url,
                   name: file['name'],
+                  cover: cover,
+                  nfo: nfo,
                 );
               }));
             }

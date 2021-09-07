@@ -23,7 +23,6 @@ environment:
 dependency_overrides:
   http: ^0.13.3  # dartssh 1.0.3+3 需要重写此版本
   convert: ^3.0.1 # dartssh 1.0.3+3 需要重写此版本
-
 dependencies:
   flutter:
     sdk: flutter
@@ -74,6 +73,7 @@ dependencies:
   fluwx: ^3.6.1+1
   fijkplayer: ^0.10.0
   device_info: ^2.0.2
+  xml2json: ^5.3.1
   dio:
     git:
       url: https://gitee.com/challengerV/dio.git
