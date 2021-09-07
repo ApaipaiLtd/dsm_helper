@@ -10,12 +10,8 @@ class License extends StatefulWidget {
 }
 
 class _LicenseState extends State<License> {
-  String account = "";
   @override
   void initState() {
-    Util.getStorage("account").then((value) {
-      setState(() => account = value);
-    });
     super.initState();
   }
 
@@ -150,7 +146,7 @@ DSM 专用于 Synology 产品的操作系统，由 Synology Inc.拥有。DSM 提
 
 群晖DSM：https://kb.synology.com/zh-tw/DSM/help/DSM/Home/legal_info?version=6
 
-${account == "challengerv" ? ""
+${Util.account == "challengerv" ? ""
                   "账号注销：\n"
                   "如您需要注销账号，请前往设置-右上角齿轮-账号注销进行申请，所有与此账号有关的文件、操作记录等信息将被删除并永久无法恢复，请在申请注销账号前备份好重要文件，因账号注销造成的损失与群晖助手无关。\n"
                   "提交账号注销申请后，将由管理员在3个工作日内审核完成。" : ""}

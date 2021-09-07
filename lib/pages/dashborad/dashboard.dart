@@ -87,10 +87,8 @@ class DashboardState extends State<Dashboard> {
   Uint8List backgroundImage;
   @override
   void initState() {
-    Util.getStorage("account").then((value) {
-      setState(() {
-        showMainMenu = value != "challengerv";
-      });
+    setState(() {
+      showMainMenu = Util.account != "challengerv";
     });
     if (Platform.isAndroid) {
       showFirstLaunchDialog();
@@ -117,100 +115,101 @@ class DashboardState extends State<Dashboard> {
     bool firstLaunch = await Util.getStorage("first_launch") == null;
     if (firstLaunch) {
       showCupertinoDialog(
-          context: context,
-          builder: (context) {
-            return Material(
-              color: Colors.transparent,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  NeuCard(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50),
-                    curveType: CurveType.emboss,
-                    bevel: 5,
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          Text(
-                            "${Util.appName}公众号",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+        context: context,
+        builder: (context) {
+          return Material(
+            color: Colors.transparent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                NeuCard(
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(horizontal: 50),
+                  curveType: CurveType.emboss,
+                  bevel: 5,
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Text(
+                          "${Util.appName}公众号",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        NeuCard(
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
+                          bevel: 20,
+                          curveType: CurveType.flat,
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          child: Text("关注公众号，获取最新${Util.appName}更新内容、操作说明，浏览广告内容，还可以获取现金红包奖励！"),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: NeuButton(
+                                onPressed: () async {
+                                  ClipboardData data = new ClipboardData(text: "${Util.appName}");
+                                  Clipboard.setData(data);
+                                  Util.toast("已复制到剪贴板");
+                                  Navigator.of(context).pop();
+                                  Util.setStorage("first_launch", "0");
+                                },
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                bevel: 20,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  "复制",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
                             ),
-                            bevel: 20,
-                            curveType: CurveType.flat,
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: Text("关注公众号，获取最新${Util.appName}更新内容、操作说明，浏览广告内容，还可以获取现金红包奖励！"),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: NeuButton(
-                                  onPressed: () async {
-                                    ClipboardData data = new ClipboardData(text: "${Util.appName}");
-                                    Clipboard.setData(data);
-                                    Util.toast("已复制到剪贴板");
-                                    Navigator.of(context).pop();
-                                    Util.setStorage("first_launch", "0");
-                                  },
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 20,
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Text(
-                                    "复制",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                              child: NeuButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  Util.setStorage("first_launch", "0");
+                                },
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                bevel: 20,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  "不再提示",
+                                  style: TextStyle(fontSize: 18),
                                 ),
                               ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: NeuButton(
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
-                                    Util.setStorage("first_launch", "0");
-                                  },
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 20,
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Text(
-                                    "不再提示",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
+                            ),
+                          ],
+                        )
+                      ],
                     ),
                   ),
-                ],
-              ),
-            );
-          });
+                ),
+              ],
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -2827,7 +2826,7 @@ class DashboardState extends State<Dashboard> {
                   ? ListView(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       children: [
-                        if (shortcutItems.where((element) => supportedShortcuts.contains(element['className'])).length > 0)
+                        if (shortcutItems.where((element) => supportedShortcuts.contains(element['className'])).length > 0 && showMainMenu)
                           Consumer<ShortcutProvider>(
                             builder: (context, shortcutProvider, _) {
                               return shortcutProvider.showShortcut

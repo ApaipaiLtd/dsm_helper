@@ -192,6 +192,7 @@ class _LoginState extends State<Login> {
   }
 
   checkLogin() async {
+    Util.account = account;
     if (https != null && sid.isNotBlank && host.isNotBlank) {
       if (baseUrl.isNotBlank) {
         Util.baseUrl = baseUrl;
@@ -317,7 +318,7 @@ class _LoginState extends State<Login> {
     });
     if (res['success'] == true) {
       //记住登录信息
-
+      Util.account = account;
       Util.setStorage("https", https ? "1" : "0");
       Util.setStorage("host", host.trim());
       Util.setStorage("port", port);

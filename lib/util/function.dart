@@ -53,6 +53,7 @@ enum UploadStatus {
 
 class Util {
   static String sid = "";
+  static String account = "";
   static String baseUrl = "";
   static String hostname = "";
   static int version = 6;
