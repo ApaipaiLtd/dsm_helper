@@ -11,6 +11,8 @@
         android:label="群晖助手"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:replace="android:label"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

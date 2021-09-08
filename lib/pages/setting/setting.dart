@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Feedback;
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
 
 class Setting extends StatefulWidget {
@@ -844,6 +845,42 @@ class _SettingState extends State<Setting> {
                       ),
                       Text(
                         "相册备份",
+                        style: TextStyle(fontSize: 16),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: (MediaQuery.of(context).size.width - 80) / 3,
+                child: NeuButton(
+                  onPressed: () async {
+                    /// [kRewardedVideoId] 激励视频广告ID, 对应Android的CodeId，对应iOS的slotID
+                    PangleResult result = await pangle.loadRewardedVideoAd(
+                      iOS: IOSRewardedVideoConfig(slotId: "946681116"),
+                      android: AndroidRewardedVideoConfig(slotId: "946681017"),
+                    );
+                    print("激励视频结果：");
+                    print(result);
+                  },
+                  // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  bevel: 20,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        "assets/icons/player.png",
+                        width: 40,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        "激励视频",
                         style: TextStyle(fontSize: 16),
                       )
                     ],

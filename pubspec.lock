@@ -489,6 +489,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.2"
+  pangle_flutter:
+    dependency: "direct main"
+    description:
+      name: pangle_flutter
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.4.1"
   path:
     dependency: transitive
     description:
