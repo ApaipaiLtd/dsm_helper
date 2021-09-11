@@ -72,7 +72,7 @@ class DashboardState extends State<Dashboard> {
   int get maxNetworkSpeed {
     int maxSpeed = 0;
     for (int i = 0; i < networks.length; i++) {
-      int maxVal = max(networks[0][0]['rx'], networks[0][0]['tx']);
+      int maxVal = max(networks[i][0]['rx'], networks[i][0]['tx']);
       if (maxSpeed < maxVal) {
         maxSpeed = maxVal;
       }
