@@ -4,10 +4,10 @@ import 'package:dsm_helper/pages/download_station/add_task.dart';
 import 'package:dsm_helper/pages/download_station/detail.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
+import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:neumorphic/neumorphic.dart';
 
 class DownloadStation extends StatefulWidget {

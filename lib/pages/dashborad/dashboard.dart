@@ -27,6 +27,7 @@ import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
 import 'package:dsm_helper/util/badge.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -35,7 +36,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
@@ -468,7 +468,7 @@ class DashboardState extends State<Dashboard> {
                               : null,
                         ),
                       ),
-                      if (Theme.of(context).scaffoldBackgroundColor == Colors.black)
+                      if (Theme.of(context).brightness == Brightness.dark)
                         Container(
                           height: 170,
                           decoration: BoxDecoration(
@@ -483,9 +483,9 @@ class DashboardState extends State<Dashboard> {
                           child: DefaultTextStyle(
                             style: TextStyle(
                               color: Theme.of(context).textTheme.bodyText2.color,
-                              shadows: [
-                                wallpaperProvider.showWallpaper && backgroundImage != null ? BoxShadow(color: Colors.white, blurRadius: 10, spreadRadius: 5) : null,
-                              ],
+                              // shadows: [
+                              //   wallpaperProvider.showWallpaper && backgroundImage != null ? BoxShadow(color: Colors.white, blurRadius: 10, spreadRadius: 5) : null,
+                              // ],
                             ),
                             child: Column(
                               children: [
@@ -791,6 +791,7 @@ class DashboardState extends State<Dashboard> {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.blue,
+                              displayTextStyle: Theme.of(context).textTheme.bodyText1,
                               currentValue: utilization['cpu']['user_load'] + utilization['cpu']['system_load'],
                               displayText: '%',
                             ),
@@ -831,6 +832,7 @@ class DashboardState extends State<Dashboard> {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.blue,
+                              displayTextStyle: Theme.of(context).textTheme.bodyText1,
                               currentValue: utilization['memory']['real_usage'],
                               displayText: '%',
                             ),
@@ -1480,7 +1482,6 @@ class DashboardState extends State<Dashboard> {
             bevel: 8,
             child: CircularPercentIndicator(
               radius: 80,
-              // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
                 colors: used <= 0.9
@@ -1589,7 +1590,6 @@ class DashboardState extends State<Dashboard> {
             bevel: 8,
             child: CircularPercentIndicator(
               radius: 80,
-              // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
                 colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9

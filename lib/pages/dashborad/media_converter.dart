@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:neumorphic/neumorphic.dart';
 
 class MediaConverter extends StatefulWidget {
@@ -98,7 +98,8 @@ class _MediaConverterState extends State<MediaConverter> {
                           changeColorValue: 90,
                           changeProgressColor: Colors.red,
                           progressColor: Colors.blue,
-                          currentValue: max(converter['photo_remain'] > 0 ? ((converter['photo_total'] - converter['photo_remain']) * 100 / converter['photo_total']).ceil() : 0, converter['thumb_remain'] > 0 ? ((converter['thumb_total'] - converter['thumb_remain']) * 100 / converter['thumb_total']).ceil() : 0),
+                          currentValue: max(
+                              converter['photo_remain'] > 0 ? ((converter['photo_total'] - converter['photo_remain']) * 100 / converter['photo_total']).ceil() : 0, converter['thumb_remain'] > 0 ? ((converter['thumb_total'] - converter['thumb_remain']) * 100 / converter['thumb_total']).ceil() : 0),
                           displayText: '%',
                         ),
                       ),

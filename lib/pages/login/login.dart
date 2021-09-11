@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:package_info/package_info.dart';
 import 'package:vibrate/vibrate.dart';
+import 'package:wake_on_lan/wake_on_lan.dart';
 
 class Login extends StatefulWidget {
   final Map server;
@@ -407,6 +408,35 @@ class _LoginState extends State<Login> {
     }
   }
 
+  wakeup() async {
+    print("wakeup");
+    // final client = HttpDnsClient("http://180.76.76.76");
+    // final result = await client.lookup("baidu.com");
+    // print(result);
+    String ipv4 = '192.168.0.100';
+    IPv4Address ipv4Address;
+    MACAddress macAddress;
+    if (IPv4Address.validate(ipv4)) {
+      ipv4Address = IPv4Address.from(ipv4);
+      //Continue execution
+    } else {
+      Util.toast("IP地址有误");
+      return;
+      // Handle invalid address case
+    }
+    String mac = '02-11-32-27-31-2F';
+    if (MACAddress.validate(mac)) {
+      macAddress = MACAddress.from(mac);
+      //Continue execution
+    } else {
+      Util.toast("MAC地址有误");
+      return;
+      // Handle invalid address case
+    }
+    WakeOnLAN wol = WakeOnLAN.from(ipv4Address, macAddress, port: 1234);
+    await wol.wake().then((v) => print('sent'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -438,31 +468,47 @@ class _LoginState extends State<Login> {
         title: Text(
           widget.type == "login" ? "账号登录" : "添加账号",
         ),
-        actions: servers.length > 0
-            ? [
-                Padding(
-                  padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-                  child: NeuButton(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(10),
-                    bevel: 5,
-                    onPressed: () {
-                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                        return Accounts();
-                      }));
-                    },
-                    child: Image.asset(
-                      "assets/icons/history.png",
-                      width: 20,
-                      height: 20,
-                    ),
-                  ),
-                )
-              ]
-            : null,
+        actions: [
+          // Padding(
+          //   padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+          //   child: NeuButton(
+          //     decoration: NeumorphicDecoration(
+          //       color: Theme.of(context).scaffoldBackgroundColor,
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     padding: EdgeInsets.all(10),
+          //     bevel: 5,
+          //     onPressed: wakeup,
+          //     child: Image.asset(
+          //       "assets/icons/history.png",
+          //       width: 20,
+          //       height: 20,
+          //     ),
+          //   ),
+          // ),
+          if (servers.length > 0)
+            Padding(
+              padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+              child: NeuButton(
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.all(10),
+                bevel: 5,
+                onPressed: () {
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                    return Accounts();
+                  }));
+                },
+                child: Image.asset(
+                  "assets/icons/history.png",
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+            )
+        ],
       ),
       body: GestureDetector(
         onTap: () {

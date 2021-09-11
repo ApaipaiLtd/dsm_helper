@@ -208,28 +208,67 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     ThemeData darkTheme = ThemeData.dark().copyWith(
-      scaffoldBackgroundColor: Colors.black,
+      backgroundColor: Color(0xff121212),
+      scaffoldBackgroundColor: Color(0xff121212),
       textTheme: TextTheme(
+        bodyText1: TextStyle(
+          fontSize: 12.0,
+          color: Color(0xffa6a6a6),
+        ),
         bodyText2: TextStyle(
           fontSize: 15.0,
-          color: Colors.white.withOpacity(0.5),
+          color: Color(0xffa6a6a6),
+        ),
+        subtitle1: TextStyle(
+          fontSize: 18.0,
+          color: Color(0xffa6a6a6),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(
+          fontSize: 16.0,
+          color: Color(0xff808080),
+        ),
+        helperStyle: TextStyle(
+          fontSize: 16.0,
+          color: Color(0xff808080),
+        ),
+        labelStyle: TextStyle(
+          fontSize: 16.0,
+          color: Color(0xff808080),
         ),
       ),
       accentColor: Color(0xff888888),
-      iconTheme: IconThemeData(color: Colors.white.withOpacity(0.5)),
+      iconTheme: IconThemeData(color: Color(0xffa6a6a6)),
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        color: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white.withOpacity(0.5)),
-        actionsIconTheme: IconThemeData(color: Colors.white.withOpacity(0.5)),
+        color: Color(0xff121212),
+        iconTheme: IconThemeData(color: Color(0xffa6a6a6)),
+        actionsIconTheme: IconThemeData(color: Color(0xffa6a6a6)),
         textTheme: TextTheme(
-          headline6: TextStyle(fontSize: 20.0, color: Colors.white.withOpacity(0.5)),
+          headline6: TextStyle(fontSize: 20.0, color: Color(0xffa6a6a6)),
         ),
         brightness: Brightness.dark,
       ),
     );
     ThemeData lightTheme = ThemeData.light().copyWith(
+      textTheme: TextTheme(
+        bodyText1: TextStyle(
+          fontSize: 12.0,
+          color: Colors.white,
+        ),
+        bodyText2: TextStyle(
+          fontSize: 15.0,
+          color: Colors.black,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(
+          fontSize: 15.0,
+          color: Colors.black,
+        ),
+      ),
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
@@ -241,6 +280,7 @@ class _MyAppState extends State<MyApp> {
         ),
         brightness: Brightness.light,
       ),
+      backgroundColor: Color(0xFFF4F4F4),
       scaffoldBackgroundColor: Color(0xFFF4F4F4),
     );
     return Consumer<DarkModeProvider>(

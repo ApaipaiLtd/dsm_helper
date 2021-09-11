@@ -83,8 +83,8 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     Widget result = Material(
-      color: Theme.of(context).scaffoldBackgroundColor == Colors.black ? Colors.black : Colors.transparent,
-      shadowColor: Theme.of(context).scaffoldBackgroundColor == Colors.black ? Colors.black : Colors.transparent,
+      color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.transparent,
+      shadowColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.transparent,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
