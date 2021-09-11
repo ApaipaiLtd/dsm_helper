@@ -9,7 +9,7 @@ import 'package:http_parser/http_parser.dart';
 class Api {
   static Future<Map> update(String buildNumber) async {
     if (Platform.isAndroid) {
-      var res = await Util.get("https://dsm.flutter.fit/version", host: "https://dsm.flutter.fit");
+      var res = await Util.get("https://dsm.apaipai.top/version", host: "https://dsm.apaipai.top");
       if (res != null) {
         if (int.parse(buildNumber) < res['data']['build']) {
           return {
@@ -38,7 +38,7 @@ class Api {
   }
 
   static Future<Map> payment() async {
-    var res = await Util.get("https://dsm.flutter.fit/payment", host: "https://dsm.flutter.fit");
+    var res = await Util.get("https://dsm.apaipai.top/payment", host: "https://dsm.apaipai.top");
     return res;
   }
 
@@ -1327,7 +1327,7 @@ class Api {
   }
 
   static Future<Map> reward() async {
-    return await Util.get("https://dsm.flutter.fit/reward", host: "https://dsm.flutter.fit");
+    return await Util.get("https://dsm.apaipai.top/reward", host: "https://dsm.apaipai.top");
   }
 
   static Future<Map> downloadStationInfo() async {

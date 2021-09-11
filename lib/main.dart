@@ -33,7 +33,7 @@ void main() async {
   //   };
   // };
   WidgetsFlutterBinding.ensureInitialized();
-  registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.flutter.fit/app/");
+  registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
   await FlutterDownloader.initialize(debug: false);
   await UmengAnalyticsPlugin.init(
     androidKey: '5ffe477d6a2a470e8f76809c',
@@ -50,6 +50,10 @@ void main() async {
         directDownloadNetworkType: [
           AndroidDirectDownloadNetworkType.kWiFi,
         ]),
+  );
+  pangle.loadSplashAd(
+    iOS: IOSSplashConfig(slotId: '887561543', isExpress: false),
+    android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
   );
   Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
   Util.getStorage("download_wifi_only").then((value) {
@@ -129,7 +133,6 @@ void main() async {
   } else {
     Util.checkSsl = true;
   }
-
   runApp(
     MultiProvider(
       providers: [
