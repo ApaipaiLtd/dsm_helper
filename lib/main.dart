@@ -18,7 +18,6 @@ import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'pages/provider/dark_mode.dart';
 import 'package:fluwx/fluwx.dart';
-import 'package:pangle_flutter/pangle_flutter.dart';
 
 void main() async {
   HttpClient client = ExtendedNetworkImageProvider.httpClient as HttpClient;
@@ -39,22 +38,22 @@ void main() async {
     androidKey: '5ffe477d6a2a470e8f76809c',
     iosKey: '5ffe47cb6a2a470e8f7680a2',
   );
-  await pangle.init(
-    iOS: IOSConfig(
-      appId: '5215470',
-      logLevel: PangleLogLevel.error,
-    ),
-    android: AndroidConfig(appId: '5215463', debug: false, allowShowNotify: true, allowShowPageWhenScreenLock: false,
-
-        /// 海外不存在该配置
-        directDownloadNetworkType: [
-          AndroidDirectDownloadNetworkType.kWiFi,
-        ]),
-  );
-  pangle.loadSplashAd(
-    iOS: IOSSplashConfig(slotId: '887561543', isExpress: false),
-    android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
-  );
+  // await pangle.init(
+  //   iOS: IOSConfig(
+  //     appId: '5215470',
+  //     logLevel: PangleLogLevel.error,
+  //   ),
+  //   android: AndroidConfig(appId: '5215463', debug: false, allowShowNotify: true, allowShowPageWhenScreenLock: false,
+  //
+  //       /// 海外不存在该配置
+  //       directDownloadNetworkType: [
+  //         AndroidDirectDownloadNetworkType.kWiFi,
+  //       ]),
+  // );
+  // pangle.loadSplashAd(
+  //   iOS: IOSSplashConfig(slotId: '887561543', isExpress: false),
+  //   android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
+  // );
   Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
   Util.getStorage("download_wifi_only").then((value) {
     if (value != null) {

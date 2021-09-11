@@ -88,8 +88,8 @@ class _ShareState extends State<Share> {
         if (link['date_available'] != "") {
           startTime = DateTime.parse(link['date_available']);
         }
-        String endTimeStr = endTime == null ? "" : endTime.format("Y-m-d H:i");
-        String startTimeStr = startTime == null ? "" : startTime.format("Y-m-d H:i");
+        String endTimeStr = endTime?.format("Y-m-d H:i") ?? "";
+        String startTimeStr = startTime?.format("Y-m-d H:i") ?? "";
         timesController = TextEditingController.fromValue(TextEditingValue(text: times));
         endTimeController = TextEditingController.fromValue(TextEditingValue(text: endTimeStr));
         startTimeController = TextEditingController.fromValue(TextEditingValue(text: startTimeStr));
@@ -195,6 +195,7 @@ class _ShareState extends State<Share> {
                   setState(() {
                     endTime = date;
                   });
+                  endTimeController.text = endTime.format("Y-m-d H:i");
                 },
                 currentTime: endTime ?? DateTime.now(),
                 locale: LocaleType.zh,
@@ -231,6 +232,7 @@ class _ShareState extends State<Share> {
                   setState(() {
                     startTime = date;
                   });
+                  startTimeController.text = startTime.format("Y-m-d H:i");
                 },
                 currentTime: startTime ?? DateTime.now(),
                 locale: LocaleType.zh,
@@ -267,6 +269,7 @@ class _ShareState extends State<Share> {
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: TextField(
               controller: timesController,
+              keyboardType: TextInputType.number,
               onChanged: (v) => times = v,
               decoration: InputDecoration(
                 border: InputBorder.none,

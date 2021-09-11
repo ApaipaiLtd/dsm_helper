@@ -21,7 +21,7 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.8.1"
+    version: "2.6.1"
   back_button_interceptor:
     dependency: transitive
     description:
@@ -49,7 +49,7 @@ packages:
       name: charcode
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.3.1"
+    version: "1.2.0"
   chewie:
     dependency: transitive
     description:
@@ -448,7 +448,7 @@ packages:
       name: meta
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.7.0"
+    version: "1.3.0"
   nested:
     dependency: transitive
     description:
@@ -493,13 +493,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.2"
-  pangle_flutter:
-    dependency: "direct main"
-    description:
-      name: pangle_flutter
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.4.1"
   path:
     dependency: transitive
     description:
@@ -793,7 +786,7 @@ packages:
       name: test_api
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.4.2"
+    version: "0.3.0"
   tuple:
     dependency: transitive
     description:
@@ -925,7 +918,7 @@ packages:
     source: hosted
     version: "0.1.0"
   wakelock_platform_interface:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: wakelock_platform_interface
       url: "https://pub.flutter-io.cn"
