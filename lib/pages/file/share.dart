@@ -187,7 +187,7 @@ class _ShareState extends State<Share> {
           ),
           GestureDetector(
             onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).unfocus();
               DatePicker.showDateTimePicker(
                 context,
                 showTitleActions: true,
@@ -224,7 +224,7 @@ class _ShareState extends State<Share> {
           ),
           GestureDetector(
             onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).unfocus();
               DatePicker.showDateTimePicker(
                 context,
                 showTitleActions: true,
@@ -335,7 +335,7 @@ class _ShareState extends State<Share> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusScope.of(context).unfocus();
         },
         child: loading
             ? Center(

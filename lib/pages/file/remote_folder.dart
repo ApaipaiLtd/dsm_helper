@@ -127,7 +127,7 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     ),
                     NeuButton(
                       onPressed: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
+                        FocusScope.of(context).unfocus();
                         showCupertinoModalPopup(
                           context: context,
                           builder: (context) {

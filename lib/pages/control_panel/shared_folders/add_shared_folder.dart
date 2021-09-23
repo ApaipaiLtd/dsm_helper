@@ -47,7 +47,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   }
 
   _create() async {
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusScope.of(context).unfocus();
     if (name.trim() == "") {
       Util.toast("请输入共享文件夹名称");
       return;
@@ -114,7 +114,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusScope.of(context).unfocus();
         },
         child: Column(
           children: [
@@ -167,7 +167,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       showCupertinoModalPopup(
                         context: context,
                         builder: (context) {
@@ -276,7 +276,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       setState(() {
                         hidden = !hidden;
                       });
@@ -308,7 +308,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       setState(() {
                         hideUnreadable = !hideUnreadable;
                       });
@@ -344,7 +344,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         flex: 3,
                         child: GestureDetector(
                           onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
+                            FocusScope.of(context).unfocus();
                             setState(() {
                               recycleBin = !recycleBin;
                             });
@@ -384,7 +384,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         flex: 4,
                         child: GestureDetector(
                           onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
+                            FocusScope.of(context).unfocus();
                             if (recycleBin) {
                               setState(() {
                                 recycleBinAdminOnly = !recycleBinAdminOnly;
@@ -430,7 +430,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       setState(() {
                         encryption = !encryption;
                       });
@@ -514,7 +514,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       if (widget.volumes[selectedVolumeIndex]['fs_type'] == "btrfs") {
                         setState(() {
                           enableShareCow = !enableShareCow;
@@ -552,7 +552,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       if (widget.volumes[selectedVolumeIndex]['fs_type'] == "btrfs") {
                         setState(() {
                           enableShareCompress = !enableShareCompress;
@@ -590,7 +590,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                       if (widget.volumes[selectedVolumeIndex]['fs_type'] == "btrfs") {
                         setState(() {
                           enableShareQuota = !enableShareQuota;
@@ -659,7 +659,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                           flex: 1,
                           child: GestureDetector(
                             onTap: () {
-                              FocusScope.of(context).requestFocus(FocusNode());
+                              FocusScope.of(context).unfocus();
                               showCupertinoModalPopup(
                                 context: context,
                                 builder: (context) {

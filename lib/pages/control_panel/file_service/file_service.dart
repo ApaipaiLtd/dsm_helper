@@ -860,7 +860,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        FocusScope.of(context).requestFocus(FocusNode());
+                                        FocusScope.of(context).unfocus();
                                         showCupertinoModalPopup(
                                           context: context,
                                           builder: (context) {

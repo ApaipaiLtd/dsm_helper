@@ -54,7 +54,7 @@ class _SshState extends State<Ssh> {
           "终端",
           style: TextStyle(color: Colors.white.withOpacity(0.5)),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: Colors.black,
       ),
       body: Column(

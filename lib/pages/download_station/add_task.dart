@@ -54,7 +54,7 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
         children: [
           NeuButton(
             onPressed: () {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).unfocus();
               showCupertinoModalPopup(
                 context: context,
                 builder: (context) {
@@ -121,7 +121,7 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
           ),
           NeuButton(
             onPressed: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).unfocus();
               FilePickerResult _pickedFile = await FilePicker.platform.pickFiles();
               if (_pickedFile != null && _pickedFile.count > 0) {
                 String path = _pickedFile.paths[0];

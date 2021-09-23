@@ -77,7 +77,7 @@ class _AddServerState extends State<AddServer> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusScope.of(context).unfocus();
         },
         child: ListView(
           padding: EdgeInsets.all(20),

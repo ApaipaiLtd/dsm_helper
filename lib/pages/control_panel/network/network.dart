@@ -200,7 +200,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      FocusScope.of(context).unfocus();
                                       setState(() {
                                         network['dns_manual'] = !network['dns_manual'];
                                       });
@@ -298,7 +298,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      FocusScope.of(context).unfocus();
                                       setState(() {
                                         proxy['enable'] = !proxy['enable'];
                                       });

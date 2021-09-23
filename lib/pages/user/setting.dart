@@ -195,7 +195,7 @@ class _UserSettingState extends State<UserSetting> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
+                    FocusScope.of(context).unfocus();
                     if (normalUser['OTP_enable']) {
                       setState(() {
                         normalUser['OTP_enable'] = false;

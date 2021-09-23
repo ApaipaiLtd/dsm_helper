@@ -10,7 +10,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -32,12 +31,16 @@ void main() async {
   //   };
   // };
   WidgetsFlutterBinding.ensureInitialized();
-  registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
+  String agreement = await Util.getStorage("agreement");
+  if (agreement != null && agreement == "1") {
+    registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
+    await UmengAnalyticsPlugin.init(
+      androidKey: '5ffe477d6a2a470e8f76809c',
+      iosKey: '5ffe47cb6a2a470e8f7680a2',
+    );
+  }
   await FlutterDownloader.initialize(debug: false);
-  await UmengAnalyticsPlugin.init(
-    androidKey: '5ffe477d6a2a470e8f76809c',
-    iosKey: '5ffe47cb6a2a470e8f7680a2',
-  );
+
   // await pangle.init(
   //   iOS: IOSConfig(
   //     appId: '5215470',
@@ -238,7 +241,6 @@ class _MyAppState extends State<MyApp> {
           color: Color(0xff808080),
         ),
       ),
-      accentColor: Color(0xff888888),
       iconTheme: IconThemeData(color: Color(0xffa6a6a6)),
       appBarTheme: AppBarTheme(
         centerTitle: true,
@@ -246,10 +248,11 @@ class _MyAppState extends State<MyApp> {
         color: Color(0xff121212),
         iconTheme: IconThemeData(color: Color(0xffa6a6a6)),
         actionsIconTheme: IconThemeData(color: Color(0xffa6a6a6)),
-        textTheme: TextTheme(
-          headline6: TextStyle(fontSize: 20.0, color: Color(0xffa6a6a6)),
-        ),
-        brightness: Brightness.dark,
+        titleTextStyle: TextStyle(fontSize: 20.0, color: Color(0xffa6a6a6)),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      colorScheme: ColorScheme.dark(
+        secondary: Color(0xff888888),
       ),
     );
     ThemeData lightTheme = ThemeData.light().copyWith(
@@ -262,11 +265,19 @@ class _MyAppState extends State<MyApp> {
           fontSize: 15.0,
           color: Colors.black,
         ),
+        subtitle1: TextStyle(
+          fontSize: 18.0,
+          color: Colors.black,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: TextStyle(
-          fontSize: 15.0,
+          fontSize: 16.0,
           color: Colors.black,
+        ),
+        labelStyle: TextStyle(
+          fontSize: 16.0,
+          color: Colors.grey,
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -275,10 +286,8 @@ class _MyAppState extends State<MyApp> {
         color: Color(0xFFF4F4F4),
         iconTheme: IconThemeData(color: Colors.black),
         actionsIconTheme: IconThemeData(color: Colors.black),
-        textTheme: TextTheme(
-          headline6: TextStyle(fontSize: 20.0, color: Colors.black),
-        ),
-        brightness: Brightness.light,
+        titleTextStyle: TextStyle(fontSize: 20.0, color: Colors.black),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       backgroundColor: Color(0xFFF4F4F4),
       scaffoldBackgroundColor: Color(0xFFF4F4F4),

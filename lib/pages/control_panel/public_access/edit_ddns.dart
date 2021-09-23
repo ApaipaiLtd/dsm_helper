@@ -228,7 +228,7 @@ class _EditDdnsState extends State<EditDdns> {
                 ],
                 GestureDetector(
                   onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
+                    FocusScope.of(context).unfocus();
                     if (widget.ddns != null) {
                       return;
                     }

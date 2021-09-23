@@ -4,14 +4,17 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
+import 'package:dsm_helper/pages/setting/privacy.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/api.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:package_info/package_info.dart';
+import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:wake_on_lan/wake_on_lan.dart';
 
@@ -24,6 +27,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  TapGestureRecognizer _licenseRecognizer;
   TapGestureRecognizer _privacyRecognizer;
   Map updateInfo;
   String host = "";
@@ -54,6 +58,7 @@ class _LoginState extends State<Login> {
   CancelToken cancelToken = CancelToken();
   @override
   initState() {
+    _licenseRecognizer = TapGestureRecognizer();
     _privacyRecognizer = TapGestureRecognizer();
 
     Util.getStorage("read").then((value) {
@@ -63,6 +68,7 @@ class _LoginState extends State<Login> {
         });
       }
     });
+    checkAgreement();
     if (Platform.isAndroid) {
       checkUpdate();
     } else {
@@ -116,8 +122,162 @@ class _LoginState extends State<Login> {
     super.initState();
   }
 
+  checkAgreement() async {
+    String agreement = await Util.getStorage("agreement");
+    if (agreement == null || agreement != '1') {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return Material(
+            color: Colors.transparent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                NeuCard(
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(horizontal: 50),
+                  curveType: CurveType.emboss,
+                  bevel: 5,
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        NeuCard(
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          bevel: 20,
+                          curveType: CurveType.flat,
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(text: "感谢您使用${Util.appName}，为保护您的个人信息安全，我们将依据${Util.appName}的"),
+                                TextSpan(
+                                  text: "用户协议",
+                                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                                  recognizer: _licenseRecognizer
+                                    ..onTap = () {
+                                      FocusScope.of(context).unfocus();
+                                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                        return License();
+                                      }));
+                                    },
+                                ),
+                                TextSpan(text: "和 "),
+                                TextSpan(
+                                  text: "隐私政策",
+                                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                                  recognizer: _privacyRecognizer
+                                    ..onTap = () {
+                                      FocusScope.of(context).unfocus();
+                                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                        return Privacy();
+                                      }));
+                                    },
+                                ),
+                                TextSpan(text: "来帮助您了解：我们如何收集个人信息、如何使用及存储个人信息以及您享有的相关权利\n"),
+                                TextSpan(text: "在您使用${Util.appName}前，请务必仔细阅读"),
+                                TextSpan(
+                                  text: "用户协议",
+                                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                                  recognizer: _licenseRecognizer
+                                    ..onTap = () {
+                                      FocusScope.of(context).unfocus();
+                                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                        return License();
+                                      }));
+                                    },
+                                ),
+                                TextSpan(text: "和 "),
+                                TextSpan(
+                                  text: "隐私政策",
+                                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                                  recognizer: _privacyRecognizer
+                                    ..onTap = () {
+                                      FocusScope.of(context).unfocus();
+                                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                        return Privacy();
+                                      }));
+                                    },
+                                ),
+                                TextSpan(text: "以了解详细内容，如您同意，请点击'同意并继续'开始使用我们的服务"),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: NeuButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  read = true;
+                                  Util.setStorage("read", "1");
+                                  Util.setStorage("agreement", read ? "1" : "0");
+                                  registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
+                                  await UmengAnalyticsPlugin.init(
+                                    androidKey: '5ffe477d6a2a470e8f76809c',
+                                    iosKey: '5ffe47cb6a2a470e8f7680a2',
+                                  );
+                                },
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                bevel: 20,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  "同意并继续",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                              child: NeuButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                },
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                bevel: 20,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  "不同意",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
   @override
   void dispose() {
+    _licenseRecognizer.dispose();
     _privacyRecognizer.dispose();
     super.dispose();
   }
@@ -231,7 +391,7 @@ class _LoginState extends State<Login> {
 
   _login() async {
     Util.checkSsl = checkSsl;
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusScope.of(context).unfocus();
 
     if (host.trim() == "") {
       Util.toast("请输入网址/IP/QuickConnect ID");
@@ -512,7 +672,7 @@ class _LoginState extends State<Login> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusScope.of(context).unfocus();
         },
         child: ListView(
           padding: EdgeInsets.all(20),
@@ -720,7 +880,7 @@ class _LoginState extends State<Login> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
+                        FocusScope.of(context).unfocus();
                         setState(() {
                           rememberDevice = !rememberDevice;
                         });
@@ -945,14 +1105,27 @@ class _LoginState extends State<Login> {
                     Text.rich(
                       TextSpan(
                         children: [
-                          TextSpan(text: "我已阅读并同意 "),
+                          TextSpan(text: "我已阅读并同意 ${Util.appName}"),
                           TextSpan(
-                            text: "${Util.appName}用户协议和隐私政策",
+                            text: "用户协议",
+                            style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue, fontSize: 12),
+                            recognizer: _licenseRecognizer
+                              ..onTap = () {
+                                FocusScope.of(context).unfocus();
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                  return License();
+                                }));
+                              },
+                          ),
+                          TextSpan(text: "和 "),
+                          TextSpan(
+                            text: "隐私政策",
                             style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue, fontSize: 12),
                             recognizer: _privacyRecognizer
                               ..onTap = () {
+                                FocusScope.of(context).unfocus();
                                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                  return License();
+                                  return Privacy();
                                 }));
                               },
                           ),
