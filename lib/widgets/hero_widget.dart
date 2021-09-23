@@ -49,8 +49,8 @@ class _HeroWidgetState extends State<HeroWidget> {
                     opacity: 1 - animation.value,
                     child: UnconstrainedBox(
                       child: SizedBox(
-                        width: _rectTween.begin?.width,
-                        height: _rectTween.begin?.height,
+                        width: _rectTween?.begin?.width,
+                        height: _rectTween?.begin?.height,
                         child: toHeroWidget,
                       ),
                     ),

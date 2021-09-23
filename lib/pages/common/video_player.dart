@@ -29,12 +29,14 @@ class _VideoPlayerState extends State<VideoPlayer> {
   String date = "";
   String year = '';
   List actors = [];
+  Map nfoDetail;
   @override
   void initState() {
     super.initState();
     player.setDataSource(widget.url, autoPlay: true);
     player.addListener(() {
       FijkValue value = player.value;
+      print(value.size);
       if (mounted) {
         setState(() {
           fullScreen = value.fullScreen;
@@ -54,12 +56,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
       try {
         myTransformer.parse(res);
         var json = jsonDecode(myTransformer.toParker());
-        print(json);
         setState(() {
-          description = json['episodedetails']['plot'];
-          date = json['episodedetails']['dateadded'];
-          actors = json['episodedetails']['actor'];
-          year = json['episodedetails']['year'];
+          nfoDetail = json['episodedetails'] ?? json['movie'];
+          description = nfoDetail['plot'];
+          date = nfoDetail['dateadded'];
+          actors = nfoDetail['actor'];
+          year = nfoDetail['year'];
         });
       } catch (e) {}
     }
@@ -109,7 +111,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
             child: FijkView(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width * 9 / 16,
-              fit: FijkFit.ar16_9,
+              fit: FijkFit.contain,
               player: player,
               color: Colors.black,
               cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
@@ -122,7 +124,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                   padding: EdgeInsets.all(20),
                   child: Text("注意：视频播放器目前并不稳定，如遇到黑屏、无声、卡顿等任何问题，请点击右上角按钮使用第三方播放器播放！（iOS暂不支持）"),
                 ),
-                if (widget.nfo != null)
+                if (widget.nfo != null && nfoDetail != null)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text("以下信息来源于同文件夹下NFO文件，仅做参考："),
@@ -163,11 +165,17 @@ class _VideoPlayerState extends State<VideoPlayer> {
                   (e) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text("${e['role']}"),
-                        Text("${e['name']}"),
-                        Text("${e['type']}"),
+                        Expanded(
+                          child: Text("${e['role']}"),
+                        ),
+                        Expanded(
+                          child: Text("${e['name']}"),
+                        ),
+                        Expanded(
+                          child: Text("${e['type']}"),
+                        ),
                       ],
                     ),
                   ),
