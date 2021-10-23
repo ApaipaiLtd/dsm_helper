@@ -178,6 +178,7 @@ class FilesState extends State<Files> {
                         child: NeuButton(
                           onPressed: () async {
                             Navigator.of(context).pop(true);
+                            download(files);
                           },
                           decoration: NeumorphicDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
@@ -226,7 +227,12 @@ class FilesState extends State<Files> {
           return;
         }
       });
+    } else {
+      download(files);
     }
+  }
+
+  download(files) async {
     for (var file in files) {
       String url = Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${Util.sid}";
       String filename = "";

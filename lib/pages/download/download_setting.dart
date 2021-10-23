@@ -41,10 +41,10 @@ class _DownloadSettingState extends State<DownloadSetting> {
               onPressed: () async {
                 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
                 AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-                if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
-                  Util.toast("安卓11不支持修改下载地址");
-                  return;
-                }
+                // if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
+                //   Util.toast("安卓11不支持修改下载地址");
+                //   return;
+                // }
                 bool permission = false;
                 permission = await Permission.storage.request().isGranted;
                 if (!permission) {

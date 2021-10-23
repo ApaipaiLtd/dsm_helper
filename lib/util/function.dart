@@ -457,6 +457,7 @@ class Util {
     if (Platform.isAndroid) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return downloadSavePath;
       if (androidInfo.version.sdkInt < 30) {
         return downloadSavePath;
       } else {
@@ -529,7 +530,7 @@ class Util {
       Directory dir = await saveDir.create(recursive: true);
       print(dir);
     } else {
-      print("文件夹已存在0");
+      print("文件夹已存在");
     }
 
     saveName = getUniqueName(savePath, saveName);
