@@ -392,7 +392,6 @@ class _LoginState extends State<Login> {
   _login() async {
     Util.checkSsl = checkSsl;
     FocusScope.of(context).unfocus();
-
     if (host.trim() == "") {
       Util.toast("请输入网址/IP/QuickConnect ID");
       return;
@@ -404,8 +403,9 @@ class _LoginState extends State<Login> {
     setState(() {
       login = true;
     });
-    if (host.contains(".")) {
+    if (host.contains(".") || host.contains(':')) {
       String baseUri = "${https ? "https" : "http"}://${host.trim()}:${port.trim()}";
+      print(baseUri);
       doLogin(baseUri);
     } else {
       qcLogin();
@@ -742,7 +742,7 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   ),
-                  if (host.contains("."))
+                  if (host.contains(".") || host.contains(":"))
                     Expanded(
                       flex: 1,
                       child: TextField(
