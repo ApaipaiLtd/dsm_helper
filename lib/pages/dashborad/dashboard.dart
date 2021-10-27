@@ -2731,6 +2731,7 @@ class DashboardState extends State<Dashboard> {
           ],
         ),
         actions: [
+          if(Util.account != 'challengerv')
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: NeuButton(
