@@ -1,4 +1,5 @@
 import 'package:android_intent/android_intent.dart';
+import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -189,13 +190,14 @@ class _OpenSourceState extends State<OpenSource> {
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       onPressed: () {
-                        AndroidIntent intent = AndroidIntent(
-                          action: 'action_view',
-                          data: "https://pub.dev/packages/" + list[i]['name'],
-                          arguments: {},
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(builder: (context) {
+                            return Browser(
+                              title: "${list[i]['name']}",
+                              url: "https://pub.dev/packages/" + list[i]['name'],
+                            );
+                          }),
                         );
-
-                        intent.launch();
                       },
                       child: Text("详情"),
                     ),

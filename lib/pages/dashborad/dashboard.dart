@@ -1913,11 +1913,13 @@ class DashboardState extends State<Dashboard> {
         GestureDetector(
           onTap: () {
             Navigator.of(context).pop();
-            Navigator.of(context).push(CupertinoPageRoute(
-                builder: (context) {
-                  return SecurityScan();
-                },
-                settings: RouteSettings(name: "security_scan")));
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                  builder: (context) {
+                    return SecurityScan();
+                  },
+                  settings: RouteSettings(name: "security_scan")),
+            );
           },
           child: NeuCard(
             width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
@@ -1955,6 +1957,46 @@ class DashboardState extends State<Dashboard> {
                       size: 20,
                     ),
                   ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    if (applications.contains("SYNO.SDS.XLPan.Application")) {
+      apps.add(
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(builder: (context) {
+                return Browser(
+                  title: "迅雷-远程设备",
+                  url: "https://pan.xunlei.com/yc",
+                );
+              }),
+            );
+          },
+          child: NeuCard(
+            width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
+            curveType: CurveType.flat,
+            decoration: NeumorphicDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            bevel: 20,
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              children: [
+                Image.asset(
+                  "assets/applications/xunlei.png",
+                  height: 45,
+                  width: 45,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text("迅雷"),
               ],
             ),
           ),

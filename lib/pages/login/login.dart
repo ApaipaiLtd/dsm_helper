@@ -220,7 +220,6 @@ class _LoginState extends State<Login> {
                               child: NeuButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
-                                  read = true;
                                   Util.setStorage("read", "1");
                                   Util.setStorage("agreement", read ? "1" : "0");
                                   registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");

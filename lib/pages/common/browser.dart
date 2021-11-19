@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dsm_helper/widgets/neu_back_button.dart';
@@ -15,6 +16,7 @@ class Browser extends StatefulWidget {
 }
 
 class _BrowserState extends State<Browser> {
+  final Completer<WebViewController> _controller = Completer<WebViewController>();
   @override
   void initState() {
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
@@ -49,12 +51,135 @@ class _BrowserState extends State<Browser> {
           ),
         ],
       ),
-      body: WebView(
-        initialUrl: widget.url,
-        onPageFinished: (v) {
-          print(v);
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: WebView(
+              initialUrl: widget.url,
+              javascriptMode: JavascriptMode.unrestricted,
+              gestureNavigationEnabled: true,
+              javascriptChannels: <JavascriptChannel>{
+                _toasterJavascriptChannel(context),
+              },
+              onWebViewCreated: (WebViewController webViewController) {
+                _controller.complete(webViewController);
+              },
+            ),
+          ),
+          NavigationControls(_controller.future),
+        ],
       ),
+    );
+  }
+
+  JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: 'Toaster',
+        onMessageReceived: (JavascriptMessage message) {
+          // ignore: deprecated_member_use
+          print(message);
+        });
+  }
+}
+
+class NavigationControls extends StatelessWidget {
+  const NavigationControls(this._webViewControllerFuture) : assert(_webViewControllerFuture != null);
+
+  final Future<WebViewController> _webViewControllerFuture;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<WebViewController>(
+      future: _webViewControllerFuture,
+      builder: (BuildContext context, AsyncSnapshot<WebViewController> snapshot) {
+        final bool webViewReady = snapshot.connectionState == ConnectionState.done;
+        final WebViewController controller = snapshot.data;
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: Row(
+              children: <Widget>[
+                NeuButton(
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.all(10),
+                  onPressed: !webViewReady
+                      ? null
+                      : () async {
+                          if (await controller.canGoBack()) {
+                            await controller.goBack();
+                          } else {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                  child: Icon(
+                    Icons.arrow_back_ios_outlined,
+                    size: 22,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                NeuButton(
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.all(10),
+                  onPressed: !webViewReady
+                      ? null
+                      : () async {
+                          await controller.evaluateJavascript('Toaster.postMessage("User Agent: ");');
+                          if (await controller.canGoForward()) {
+                            await controller.goForward();
+                          }
+                        },
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 22,
+                  ),
+                ),
+                Spacer(),
+                NeuButton(
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.all(10),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(
+                    Icons.close,
+                    size: 22,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                NeuButton(
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.all(10),
+                  onPressed: !webViewReady
+                      ? null
+                      : () {
+                          controller.reload();
+                        },
+                  child: Icon(
+                    Icons.replay,
+                    size: 22,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

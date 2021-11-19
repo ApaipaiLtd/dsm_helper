@@ -147,11 +147,9 @@ class _AboutState extends State<About> {
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             onPressed: () {
-                              launch(
-                                  'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
+                              launch('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
                             },
                             child: Text("加群"),
                           ),
@@ -192,11 +190,9 @@ class _AboutState extends State<About> {
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             onPressed: () {
-                              ClipboardData data =
-                                  new ClipboardData(text: "群晖助手");
+                              ClipboardData data = new ClipboardData(text: "群晖助手");
                               Clipboard.setData(data);
                               Util.toast("已复制到剪贴板");
                             },
@@ -308,26 +304,13 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
-                            Navigator.of(context)
-                                .push(CupertinoPageRoute(builder: (context) {
+                            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                               return Browser(
-                                url: "https://gitee.com/challengerV/dsm_helper",
+                                url: "https://gitee.com/apaipai/dsm_helper",
                               );
                             }));
-                            // if (Platform.isAndroid) {
-                            //   AndroidIntent intent = AndroidIntent(
-                            //     action: 'action_view',
-                            //     data: 'https://gitee.com/challengerV/dsm_helper',
-                            //     arguments: {},
-                            //   );
-                            //
-                            //   intent.launch();
-                            // } else {
-                            //   launch('https://gitee.com/challengerV/dsm_helper');
-                            // }
                           },
                           child: Text("查看"),
                         ),
@@ -365,15 +348,16 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
-                            Navigator.of(context)
-                                .push(CupertinoPageRoute(builder: (context) {
-                              return Browser(
-                                url: "https://flutter.dev",
-                              );
-                            }));
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(builder: (context) {
+                                return Browser(
+                                  title: "Flutter官网",
+                                  url: "https://flutter.dev",
+                                );
+                              }),
+                            );
                           },
                           child: Text("官网"),
                         ),
@@ -412,14 +396,15 @@ class _AboutState extends State<About> {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (context) {
-                                  return OpenSource();
-                                },
-                                settings: RouteSettings(name: "open_source")));
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                  builder: (context) {
+                                    return OpenSource();
+                                  },
+                                  settings: RouteSettings(name: "open_source")),
+                            );
                           },
                           child: Text("详情"),
                         ),
