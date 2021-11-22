@@ -437,9 +437,10 @@ class DashboardState extends State<Dashboard> {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-            return SystemInfo(0, system, volumes, disks);
-          }));
+          if (Util.account != 'challengerv')
+            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+              return SystemInfo(0, system, volumes, disks);
+            }));
         },
         child: NeuCard(
           margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -2773,35 +2774,35 @@ class DashboardState extends State<Dashboard> {
           ],
         ),
         actions: [
-          if(Util.account != 'challengerv')
-          Padding(
-            padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.all(10),
-              bevel: 5,
-              onPressed: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                  return WidgetSetting(widgets, restoreSizePos);
-                })).then((res) {
-                  if (res != null) {
-                    setState(() {
-                      widgets = res;
-                      getData();
-                    });
-                  }
-                });
-              },
-              child: Image.asset(
-                "assets/icons/edit.png",
-                width: 20,
-                height: 20,
+          if (Util.account != 'challengerv')
+            Padding(
+              padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+              child: NeuButton(
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.all(10),
+                bevel: 5,
+                onPressed: () {
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                    return WidgetSetting(widgets, restoreSizePos);
+                  })).then((res) {
+                    if (res != null) {
+                      setState(() {
+                        widgets = res;
+                        getData();
+                      });
+                    }
+                  });
+                },
+                child: Image.asset(
+                  "assets/icons/edit.png",
+                  width: 20,
+                  height: 20,
+                ),
               ),
             ),
-          ),
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: NeuButton(

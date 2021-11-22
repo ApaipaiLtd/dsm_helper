@@ -681,8 +681,10 @@ class _SettingState extends State<Setting> {
             spacing: 20,
             runSpacing: 20,
             children: [
-              SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
-              SettingButton(name: "重启", icon: "reboot", loading: rebooting, onPressed: onReboot),
+              if (Util.account != "challengerv") ...[
+                SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
+                SettingButton(name: "重启", icon: "reboot", loading: rebooting, onPressed: onReboot),
+              ],
               SizedBox(
                 width: (MediaQuery.of(context).size.width - 80) / 3,
                 child: GestureDetector(
