@@ -131,7 +131,7 @@ class NavigationControls extends StatelessWidget {
                   onPressed: !webViewReady
                       ? null
                       : () async {
-                          await controller.evaluateJavascript('Toaster.postMessage("User Agent: ");');
+                          await controller.runJavascript('Toaster.postMessage("User Agent: ");');
                           if (await controller.canGoForward()) {
                             await controller.goForward();
                           }
