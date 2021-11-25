@@ -1,15 +1,18 @@
 import 'dart:io';
 
 import 'package:dsm_helper/pages/common/gesture_password.dart';
+import 'package:dsm_helper/pages/provider/setting.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
 import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
@@ -267,6 +270,55 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
+          Consumer<SettingProvider>(builder: (context, settingProvider, _) {
+            return GestureDetector(
+              onTap: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) {
+                    return NeuPicker(
+                      List.generate(20, (index) => "${index + 1}"),
+                      value: List.generate(20, (index) => index + 1).indexOf(settingProvider.refreshDuration),
+                      onConfirm: (v) {
+                        settingProvider.setRefreshDuration(v + 1);
+                      },
+                    );
+                  },
+                );
+              },
+              child: NeuCard(
+                // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: EdgeInsets.all(20),
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                curveType: videoPlayer ? CurveType.emboss : CurveType.flat,
+                bevel: 20,
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/icons/player.png",
+                      width: 25,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      "控制台/资源监控更新频率",
+                      style: TextStyle(fontSize: 16, height: 1.6),
+                    ),
+                    Spacer(),
+                    Text("${settingProvider.refreshDuration}秒")
+                  ],
+                ),
+              ),
+            );
+          }),
+
           SizedBox(
             height: 20,
           ),

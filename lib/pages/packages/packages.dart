@@ -76,7 +76,9 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
         }
         if (res['data']['beta_packages'] != null) {
           betas = res['data']['beta_packages'];
-          _tabController = TabController(initialIndex: 1, length: 4, vsync: this);
+          if (betas.length > 0) {
+            _tabController = TabController(initialIndex: 1, length: 4, vsync: this);
+          }
         }
         //
         categories = res['data']['categories'];

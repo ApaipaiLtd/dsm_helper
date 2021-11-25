@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:dsm_helper/pages/provider/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:provider/provider.dart';
 
 class Performance extends StatefulWidget {
   Performance({this.tabIndex = 0});
@@ -37,9 +39,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
   int networkCount = 0;
   @override
   void initState() {
+    final settingProvider = Provider.of<SettingProvider>(context, listen: false);
     _tabController = TabController(initialIndex: widget.tabIndex, length: 6, vsync: this);
     getData();
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(Duration(seconds: settingProvider.refreshDuration), (timer) {
       getData();
     });
     super.initState();

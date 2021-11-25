@@ -17,6 +17,7 @@ import 'package:dsm_helper/pages/docker/docker.dart';
 import 'package:dsm_helper/pages/download_station/download_station.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/pages/packages/packages.dart';
+import 'package:dsm_helper/pages/provider/setting.dart';
 import 'package:dsm_helper/pages/provider/shortcut.dart';
 import 'package:dsm_helper/pages/provider/wallpaper.dart';
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
@@ -45,7 +46,6 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Timer timer;
   Map utilization;
   List volumes = [];
   List disks = [];
@@ -67,6 +67,7 @@ class DashboardState extends State<Dashboard> {
   Map converter;
   bool loading = true;
   bool success = true;
+  int refreshDuration = 10;
   String hostname = "获取中";
   int get maxNetworkSpeed {
     int maxSpeed = 0;
@@ -317,15 +318,6 @@ class DashboardState extends State<Dashboard> {
   }
 
   getData() async {
-    if (!mounted) {
-      timer?.cancel();
-      return;
-    }
-    if (timer == null) {
-      timer = Timer.periodic(Duration(seconds: 10), (timer) {
-        getData();
-      });
-    }
     getExternalDevice();
     getMediaConverter();
     var res = await Api.systemInfo(widgets);
@@ -424,16 +416,18 @@ class DashboardState extends State<Dashboard> {
 
         msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
       });
-      if (timer != null) {
-        timer.cancel();
-        timer = null;
-      }
+    }
+    if (mounted && success) {
+      Future.delayed(Duration(seconds: refreshDuration)).then((value) {
+        getData();
+      });
+      return;
     }
   }
 
   bool showWallpaper = true;
   Widget _buildWidgetItem(widget) {
-    if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
+    if (widget == "SYNO.SDS.SystexmInfoApp.SystemHealthWidget") {
       return GestureDetector(
         onTap: () {
           if (Util.account != 'challengerv')
@@ -483,9 +477,6 @@ class DashboardState extends State<Dashboard> {
                           child: DefaultTextStyle(
                             style: TextStyle(
                               color: Theme.of(context).textTheme.bodyText2.color,
-                              // shadows: [
-                              //   wallpaperProvider.showWallpaper && backgroundImage != null ? BoxShadow(color: Colors.white, blurRadius: 10, spreadRadius: 5) : null,
-                              // ],
                             ),
                             child: Column(
                               children: [
@@ -1924,6 +1915,8 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    SettingProvider settingProvider = Provider.of<SettingProvider>(context);
+    refreshDuration = settingProvider.refreshDuration;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(

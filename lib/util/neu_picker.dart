@@ -6,7 +6,7 @@ typedef CallBack = Function(int);
 
 class NeuPicker extends StatefulWidget {
   final int value;
-  final List data;
+  final List<String> data;
   final CallBack onConfirm;
   NeuPicker(this.data, {this.value: 0, this.onConfirm});
   @override
@@ -41,6 +41,7 @@ class _NeuPickerState extends State<NeuPicker> {
               child: Row(
                 children: [
                   NeuButton(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: NeumorphicDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
@@ -53,6 +54,7 @@ class _NeuPickerState extends State<NeuPicker> {
                   ),
                   Spacer(),
                   NeuButton(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: NeumorphicDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
@@ -70,7 +72,11 @@ class _NeuPickerState extends State<NeuPicker> {
             Expanded(
               child: CupertinoPicker.builder(
                 itemBuilder: (context, i) {
-                  return Text(widget.data[i]);
+                  return Center(
+                    child: Text(
+                      widget.data[i],
+                    ),
+                  );
                 },
                 childCount: widget.data.length,
                 scrollController: _controller,

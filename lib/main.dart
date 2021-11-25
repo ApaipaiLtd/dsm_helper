@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
+import 'package:dsm_helper/pages/provider/setting.dart';
 import 'package:dsm_helper/pages/provider/shortcut.dart';
 import 'package:dsm_helper/pages/provider/wallpaper.dart';
 import 'package:dsm_helper/util/function.dart';
@@ -71,6 +72,7 @@ void main() async {
   bool biometrics = false;
   bool showShortcuts = true;
   bool showWallpaper = true;
+  int refreshDuration = 10;
   String launchAuthStr = await Util.getStorage("launch_auth");
   String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
   String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
@@ -114,6 +116,10 @@ void main() async {
   if (showWallpaperStr.isNotBlank) {
     showWallpaper = showWallpaperStr == "1";
   }
+  String refreshDurationStr = await Util.getStorage("refresh_duration");
+  if (refreshDurationStr.isNotBlank) {
+    refreshDuration = int.parse(refreshDurationStr);
+  }
   if (vibrateOn.isNotBlank) {
     Util.vibrateOn = vibrateOn == "1";
   } else {
@@ -141,6 +147,7 @@ void main() async {
         ChangeNotifierProvider.value(value: DarkModeProvider(darkMode)),
         ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
         ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
+        ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
       ],
       child: MyApp(authPage),
     ),
