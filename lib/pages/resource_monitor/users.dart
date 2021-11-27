@@ -20,6 +20,7 @@ class _UsersState extends State<Users> {
 
   getData() async {
     var res = await Api.currentConnect();
+    print(res);
     if (res['success']) {
       setState(() {
         loading = false;

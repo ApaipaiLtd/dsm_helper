@@ -1,10 +1,11 @@
+import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class UpdateReset extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class UpdateReset extends StatefulWidget {
 }
 
 class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStateMixin {
+  TapGestureRecognizer _updateNoteRecognizer = TapGestureRecognizer();
   TabController _tabController;
   String firmwareDate = "";
   String firmwareVer = "";
@@ -24,6 +26,12 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
     getData();
     checkUpdate();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _updateNoteRecognizer.dispose();
+    super.dispose();
   }
 
   getData() async {
@@ -144,33 +152,41 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
                       bevel: 20,
                       padding: EdgeInsets.all(20),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("状态: "),
-                          checking
-                              ? CupertinoActivityIndicator()
-                              : update != null
-                                  ? Row(
-                                      children: [
-                                        Text(
-                                          "${update['version']}版本可下载",
-                                          style: TextStyle(color: Colors.green),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            String url = "http://update.synology.com/autoupdate/whatsnew.php?model=${Uri.encodeComponent(model)}&update_version=${update['version_details']['buildnumber']}-0";
-                                            print(url);
-                                            launch(url);
-                                          },
-                                          child: Text(
-                                            " (说明)",
-                                            style: TextStyle(color: Colors.blue),
+                          Expanded(
+                            child: checking
+                                ? CupertinoActivityIndicator()
+                                : update != null
+                                    ? Text.rich(TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "${update['version']}版本可下载",
+                                            style: TextStyle(color: Colors.green),
                                           ),
-                                        ),
-                                      ],
-                                    )
-                                  : Text(
-                                      "无更新",
-                                    ),
+                                          TextSpan(
+                                              text: " (说明)",
+                                              style: TextStyle(color: Colors.blue),
+                                              recognizer: _updateNoteRecognizer
+                                                ..onTap = () {
+                                                  String url = "http://update.synology.com/autoupdate/whatsnew.php?model=${Uri.encodeComponent(model)}&update_version=${update['version_details']['buildnumber']}-0";
+                                                  Navigator.of(context).push(CupertinoPageRoute(
+                                                    builder: (context) {
+                                                      return Browser(
+                                                        url: url,
+                                                        title: "${update['version']}版本更新说明",
+                                                      );
+                                                    },
+                                                    settings: RouteSettings(name: "browser"),
+                                                  ));
+                                                }),
+                                        ],
+                                      ))
+                                    : Text(
+                                        "无更新",
+                                      ),
+                          ),
                         ],
                       ),
                     ),

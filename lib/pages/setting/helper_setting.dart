@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dsm_helper/pages/common/gesture_password.dart';
-import 'package:dsm_helper/pages/provider/setting.dart';
+import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
 import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/util/function.dart';

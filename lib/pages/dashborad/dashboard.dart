@@ -1,31 +1,24 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:dsm_helper/pages/common/browser.dart';
-import 'package:dsm_helper/pages/control_panel/control_panel.dart';
+import 'package:dsm_helper/models/shortcut_item_model.dart';
+import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashborad/applications.dart';
 import 'package:dsm_helper/pages/dashborad/media_converter.dart';
-import 'package:dsm_helper/pages/docker/detail.dart';
+import 'package:dsm_helper/pages/dashborad/shortcut_list.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/pages/dashborad/widget_setting.dart';
-import 'package:dsm_helper/pages/docker/docker.dart';
-import 'package:dsm_helper/pages/download_station/download_station.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
-import 'package:dsm_helper/pages/packages/packages.dart';
-import 'package:dsm_helper/pages/provider/setting.dart';
-import 'package:dsm_helper/pages/provider/shortcut.dart';
-import 'package:dsm_helper/pages/provider/wallpaper.dart';
+import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
-import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
-import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
-import 'package:dsm_helper/util/badge.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -59,7 +52,8 @@ class DashboardState extends State<Dashboard> {
   List widgets = [];
   List applications = [];
   List fileLogs = [];
-  List shortcutItems = [];
+  List<ShortcutItemModel> shortcutItems = [];
+  WallpaperModel wallpaperModel;
   List esatas = [];
   Map appNotify;
   Map system;
@@ -82,21 +76,16 @@ class DashboardState extends State<Dashboard> {
 
   Map volWarnings;
   String msg = "";
-  bool showMainMenu = false;
-  ExtendedNetworkImageProvider backgroundImageProvider = ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}");
-  Uint8List backgroundImage;
+  bool get showMainMenu => Util.account != "challengerv";
   @override
   void initState() {
-    setState(() {
-      showMainMenu = Util.account != "challengerv";
-    });
-    if (Platform.isAndroid) {
+    if (showMainMenu) {
       showFirstLaunchDialog();
     }
 
     getNotifyStrings();
     getInfo().then((_) {
-      getData();
+      getData(init: true);
     });
     super.initState();
   }
@@ -261,11 +250,9 @@ class DashboardState extends State<Dashboard> {
             restoreSizePos = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['restoreSizePos'];
           }
           applications = init['data']['UserSettings']['Desktop']['valid_appview_order'] ?? init['data']['UserSettings']['Desktop']['appview_order'] ?? [];
-          if (init['data']['UserSettings']['Desktop']['ShortcutItems'] != null) {
-            setState(() {
-              shortcutItems = init['data']['UserSettings']['Desktop']['ShortcutItems'];
-            });
-          }
+
+          shortcutItems = ShortcutItemModel.fromList(init['data']['UserSettings']['Desktop']['ShortcutItems']);
+          wallpaperModel = WallpaperModel.fromJson(init['data']['UserSettings']['Desktop']['wallpaper']);
         }
         if (init['data']['Session'] != null) {
           hostname = init['data']['Session']['hostname'];
@@ -317,7 +304,8 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
-  getData() async {
+  getData({bool init: false}) async {
+    print("getData");
     getExternalDevice();
     getMediaConverter();
     var res = await Api.systemInfo(widgets);
@@ -331,18 +319,6 @@ class DashboardState extends State<Dashboard> {
         loading = false;
         success = true;
       });
-      if (backgroundImage == null) {
-        try {
-          backgroundImageProvider.getNetworkImageData().then((value) {
-            if (value != null && value.length > 100)
-              setState(() {
-                backgroundImage = value;
-              });
-          });
-        } catch (e) {
-          print("加载背景图失败");
-        }
-      }
 
       List result = res['data']['result'];
       result.forEach((item) {
@@ -417,9 +393,9 @@ class DashboardState extends State<Dashboard> {
         msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
       });
     }
-    if (mounted && success) {
+    if (init && mounted) {
       Future.delayed(Duration(seconds: refreshDuration)).then((value) {
-        getData();
+        getData(init: init);
       });
       return;
     }
@@ -427,7 +403,7 @@ class DashboardState extends State<Dashboard> {
 
   bool showWallpaper = true;
   Widget _buildWidgetItem(widget) {
-    if (widget == "SYNO.SDS.SystexmInfoApp.SystemHealthWidget") {
+    if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return GestureDetector(
         onTap: () {
           if (Util.account != 'challengerv')
@@ -449,19 +425,15 @@ class DashboardState extends State<Dashboard> {
                 builder: (context, wallpaperProvider, _) {
                   return Stack(
                     children: [
-                      AnimatedContainer(
-                        height: 170,
-                        duration: Duration(milliseconds: 200),
-                        decoration: BoxDecoration(
+                      if (wallpaperProvider.showWallpaper && wallpaperModel != null && wallpaperModel.customizeWallpaper)
+                        ExtendedImage.network(
+                          Util.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}",
+                          height: 170,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(20),
-                          image: wallpaperProvider.showWallpaper && backgroundImage != null
-                              ? DecorationImage(
-                                  image: MemoryImage(backgroundImage),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
                         ),
-                      ),
                       if (Theme.of(context).brightness == Brightness.dark)
                         Container(
                           height: 170,
@@ -1717,202 +1689,6 @@ class DashboardState extends State<Dashboard> {
     );
   }
 
-  List supportedShortcuts = [
-    "SYNO.SDS.PkgManApp.Instance",
-    "SYNO.SDS.AdminCenter.Application",
-    "SYNO.SDS.StorageManager.Instance",
-    "SYNO.SDS.Docker.Application",
-    "SYNO.SDS.Docker.ContainerDetail.Instance",
-    "SYNO.SDS.LogCenter.Instance",
-    "SYNO.SDS.ResourceMonitor.Instance",
-    "SYNO.SDS.Virtualization.Application",
-    "SYNO.SDS.DownloadStation.Application",
-    "SYNO.SDS.XLPan.Application",
-  ];
-  Widget _buildShortcutItem(shortcut) {
-    String icon = "";
-    String name = "";
-    CupertinoPageRoute route;
-    int unread = 0;
-    switch (shortcut['className']) {
-      case "SYNO.SDS.PkgManApp.Instance":
-        icon = "assets/applications/${Util.version}/package_center.png";
-        name = "套件中心";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return Packages(system['firmware_ver']);
-            },
-            settings: RouteSettings(name: "packages"));
-        if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
-          unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
-        }
-        break;
-      case "SYNO.SDS.AdminCenter.Application":
-        icon = "assets/applications/${Util.version}/control_panel.png";
-        name = "控制面板";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
-            },
-            settings: RouteSettings(name: "control_panel"));
-        if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
-          unread = appNotify['SYNO.SDS.AdminCenter.Application']['unread'];
-        }
-        break;
-      case "SYNO.SDS.StorageManager.Instance":
-        icon = "assets/applications/${Util.version}/storage_manager.png";
-        name = "存储空间管理员";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return StorageManager();
-            },
-            settings: RouteSettings(name: "storage_manager"));
-        break;
-      case "SYNO.SDS.Docker.Application":
-        icon = "assets/applications/docker.png";
-        name = "Docker";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return Docker();
-          },
-          settings: RouteSettings(name: "docker"),
-        );
-        break;
-      case "SYNO.SDS.Docker.ContainerDetail.Instance":
-        icon = "assets/applications/docker.png";
-        name = "${shortcut['param']['data']['name']}";
-        if (shortcut['type'] == 'url') {
-          route = CupertinoPageRoute(
-            builder: (context) {
-              return Browser(
-                url: shortcut['url'],
-                title: name,
-              );
-            },
-            settings: RouteSettings(name: "browser"),
-          );
-        } else {
-          route = CupertinoPageRoute(
-            builder: (context) {
-              return ContainerDetail(name);
-            },
-            settings: RouteSettings(name: "docker_container_detail"),
-          );
-        }
-
-        break;
-      case "SYNO.SDS.LogCenter.Instance":
-        icon = "assets/applications/${Util.version}/log_center.png";
-        name = "日志中心";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return LogCenter();
-            },
-            settings: RouteSettings(name: "log_center"));
-        break;
-      case "SYNO.SDS.ResourceMonitor.Instance":
-        icon = "assets/applications/${Util.version}/resource_monitor.png";
-        name = "资源监控";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return ResourceMonitor();
-            },
-            settings: RouteSettings(name: "resource_monitor"));
-
-        break;
-      // case "SYNO.SDS.SecurityScan.Instance":
-      //   icon = "assets/applications/security_scan.png";
-      //   break;
-      case "SYNO.SDS.Virtualization.Application":
-        icon = "assets/applications/${Util.version}/virtual_machine.png";
-        name = "Virtual Machine Manager";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return VirtualMachine();
-          },
-          settings: RouteSettings(name: "virtual_machine_manager"),
-        );
-        break;
-      case "SYNO.SDS.DownloadStation.Application":
-        icon = "assets/applications/download_station.png";
-        name = "Download Station";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return DownloadStation();
-          },
-          settings: RouteSettings(name: "download_station"),
-        );
-        break;
-      case "SYNO.SDS.XLPan.Application":
-        icon = "assets/applications/xunlei.png";
-        name = "迅雷";
-        route = CupertinoPageRoute(builder: (context) {
-          return Browser(
-            title: "迅雷-远程设备",
-            url: "https://pan.xunlei.com/yc/?fromApp=paipai",
-          );
-        });
-        break;
-    }
-    if (icon != "") {
-      return Padding(
-        padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(route);
-          },
-          child: NeuCard(
-            bevel: 20,
-            width: 100,
-            curveType: CurveType.flat,
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          icon,
-                          width: 50,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "$name",
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 10,
-                  top: 10,
-                  child: Badge(
-                    unread,
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    } else {
-      return SizedBox();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     SettingProvider settingProvider = Provider.of<SettingProvider>(context);
@@ -2160,82 +1936,63 @@ class DashboardState extends State<Dashboard> {
               ),
             )
           : success
-              ? widgets != null && widgets.length > 0
-                  ? ListView(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      children: [
-                        if (shortcutItems.where((element) => supportedShortcuts.contains(element['className'])).length > 0 && showMainMenu)
-                          Consumer<ShortcutProvider>(
-                            builder: (context, shortcutProvider, _) {
-                              return shortcutProvider.showShortcut
-                                  ? NeuCard(
-                                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                      bevel: 20,
-                                      curveType: CurveType.flat,
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Container(
-                                        height: 140,
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, i) {
-                                            return _buildShortcutItem(shortcutItems[i]);
-                                          },
-                                          itemCount: shortcutItems.length,
-                                        ),
-                                      ),
-                                    )
-                                  : Container();
-                            },
-                          ),
-                        ...widgets.map((widget) {
-                          return _buildWidgetItem(widget);
-                          // return Text(widget);
-                        }).toList(),
-                      ],
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "未添加小组件",
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                            width: 200,
-                            child: NeuButton(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              bevel: 5,
-                              onPressed: () {
-                                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                  return WidgetSetting(widgets, restoreSizePos);
-                                })).then((res) {
-                                  if (res != null) {
-                                    setState(() {
-                                      widgets = res;
-                                      getData();
-                                    });
-                                  }
-                                });
-                              },
-                              child: Text(
-                                ' 添加 ',
-                                style: TextStyle(fontSize: 18),
+              ? ListView(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  children: [
+                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && showMainMenu)
+                      Consumer<ShortcutProvider>(
+                        builder: (context, shortcutProvider, _) {
+                          return shortcutProvider.showShortcut ? ShortcutList(shortcutItems, system, volumes, disks, appNotify) : Container();
+                        },
+                      ),
+                    if (widgets != null && widgets.length > 0)
+                      ...widgets.map((widget) {
+                        return _buildWidgetItem(widget);
+                        // return Text(widget);
+                      }).toList()
+                    else
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "未添加小组件",
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: NeuButton(
+                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                bevel: 5,
+                                onPressed: () {
+                                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                    return WidgetSetting(widgets, restoreSizePos);
+                                  })).then((res) {
+                                    if (res != null) {
+                                      setState(() {
+                                        widgets = res;
+                                        getData();
+                                      });
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  ' 添加 ',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                          ],
+                        ),
+                      )
+                  ],
+                )
               : Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

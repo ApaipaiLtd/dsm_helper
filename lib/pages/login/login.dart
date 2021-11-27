@@ -27,8 +27,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TapGestureRecognizer _licenseRecognizer;
-  TapGestureRecognizer _privacyRecognizer;
+  TapGestureRecognizer _licenseRecognizer = TapGestureRecognizer();
+  TapGestureRecognizer _privacyRecognizer = TapGestureRecognizer();
   Map updateInfo;
   String host = "";
   String baseUrl = '';
@@ -58,9 +58,6 @@ class _LoginState extends State<Login> {
   CancelToken cancelToken = CancelToken();
   @override
   initState() {
-    _licenseRecognizer = TapGestureRecognizer();
-    _privacyRecognizer = TapGestureRecognizer();
-
     Util.getStorage("read").then((value) {
       if (value.isNotBlank && value == "1") {
         setState(() {
@@ -285,7 +282,6 @@ class _LoginState extends State<Login> {
     if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       var res = await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
-      print(res);
       if (res['code'] == 1) {
         setState(() {
           updateInfo = res['data'];

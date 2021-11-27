@@ -4,7 +4,7 @@ import 'package:dsm_helper/pages/backup/backup.dart';
 import 'package:dsm_helper/pages/control_panel/ssh/ssh.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/confirm_logout.dart';
-import 'package:dsm_helper/pages/provider/dark_mode.dart';
+import 'package:dsm_helper/providers/dark_mode.dart';
 import 'package:dsm_helper/pages/setting/feedback.dart';
 import 'package:dsm_helper/pages/setting/helper_setting.dart';
 import 'package:dsm_helper/pages/terminal/select_server.dart';

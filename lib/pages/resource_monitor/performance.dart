@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dsm_helper/pages/provider/setting.dart';
+import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:fl_chart/fl_chart.dart';

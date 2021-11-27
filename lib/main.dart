@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
-import 'package:dsm_helper/pages/provider/setting.dart';
-import 'package:dsm_helper/pages/provider/shortcut.dart';
-import 'package:dsm_helper/pages/provider/wallpaper.dart';
+import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
@@ -16,7 +16,7 @@ import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'pages/provider/dark_mode.dart';
+import '/providers/dark_mode.dart';
 import 'package:fluwx/fluwx.dart';
 
 void main() async {
