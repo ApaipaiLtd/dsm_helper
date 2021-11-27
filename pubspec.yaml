@@ -89,6 +89,8 @@ dependencies:
   receive_sharing_intent:
     git: https://gitee.com/apaipai/receive_sharing_intent.git
   webview_flutter: ^2.3.1
+#  flutter_filereader: ^3.0.0
+#  x5_webview: ^0.2.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

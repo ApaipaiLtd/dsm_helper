@@ -387,8 +387,7 @@ class MySwiperPlugin extends StatelessWidget {
                   bevel: 0,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   onPressed: () {
-                    print(index);
-                    Util.saveImage(pics[index], context: context).then((res) {
+                    Util.saveImage(pics[data.data], context: context).then((res) {
                       if (res['code'] == 1) {
                         Util.toast("已保存到相册");
                       } else {

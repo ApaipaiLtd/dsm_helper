@@ -58,9 +58,6 @@ class _BrowserState extends State<Browser> {
               initialUrl: widget.url,
               javascriptMode: JavascriptMode.unrestricted,
               gestureNavigationEnabled: true,
-              javascriptChannels: <JavascriptChannel>{
-                _toasterJavascriptChannel(context),
-              },
               onWebViewCreated: (WebViewController webViewController) {
                 _controller.complete(webViewController);
               },
@@ -70,15 +67,6 @@ class _BrowserState extends State<Browser> {
         ],
       ),
     );
-  }
-
-  JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-        name: 'Toaster',
-        onMessageReceived: (JavascriptMessage message) {
-          // ignore: deprecated_member_use
-          print(message);
-        });
   }
 }
 
@@ -131,7 +119,6 @@ class NavigationControls extends StatelessWidget {
                   onPressed: !webViewReady
                       ? null
                       : () async {
-                          await controller.runJavascript('Toaster.postMessage("User Agent: ");');
                           if (await controller.canGoForward()) {
                             await controller.goForward();
                           }

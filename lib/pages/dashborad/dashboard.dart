@@ -305,7 +305,6 @@ class DashboardState extends State<Dashboard> {
   }
 
   getData({bool init: false}) async {
-    print("getData");
     getExternalDevice();
     getMediaConverter();
     var res = await Api.systemInfo(widgets);

@@ -595,8 +595,13 @@ class Util {
       if (showLoading) {
         hide = showWeuiLoadingToast(context: context, message: Text("保存中"));
       }
-      File image = await getCachedImageFile(url);
-      File save = await image.copy(image.path + DateTime.now().millisecondsSinceEpoch.toString() + ".png");
+      File save;
+      if (url.startsWith("http")) {
+        File image = await getCachedImageFile(url);
+        save = await image.copy(image.path + DateTime.now().millisecondsSinceEpoch.toString() + ".png");
+      } else {
+        save = File(url);
+      }
       bool result = await GallerySaver.saveImage(save.path, albumName: Util.appName);
       if (showLoading) {
         hide();

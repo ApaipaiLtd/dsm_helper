@@ -101,7 +101,6 @@ class FilesState extends State<Files> {
         paths = ["/"];
       });
     } else {
-      print(path);
       if (path.startsWith("/")) {
         List<String> items = path.split("/");
         items[0] = "/";
@@ -117,7 +116,6 @@ class FilesState extends State<Files> {
         setState(() {
           paths = items;
         });
-        print(paths);
       }
     }
   }
@@ -249,7 +247,6 @@ class FilesState extends State<Files> {
 
   Future<bool> result(String taskId) async {
     var res = await Api.searchResult(taskId);
-    print(res);
     if (res['success']) {
       if (res['data']['finished']) {
         timer?.cancel();
@@ -356,7 +353,6 @@ class FilesState extends State<Files> {
     setState(() {
       success = true;
     });
-    // print("goPath:path:$path");
     setPaths(path);
     if (path == "/" || path == "") {
       await getShareList();
@@ -376,7 +372,6 @@ class FilesState extends State<Files> {
     setState(() {
       loading = false;
     });
-    // print(res);
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
       return TextEditor(
         fileName: file['name'],
@@ -1298,42 +1293,42 @@ class FilesState extends State<Files> {
             }
 
             break;
-          case FileType.music:
-            AndroidIntent intent = AndroidIntent(
-              action: 'action_view',
-              data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
-              arguments: {},
-              type: "audio/*",
-            );
-            await intent.launch();
-            break;
-          case FileType.word:
-            AndroidIntent intent = AndroidIntent(
-              action: 'action_view',
-              data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
-              arguments: {},
-              type: "application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            );
-            await intent.launch();
-            break;
-          case FileType.excel:
-            AndroidIntent intent = AndroidIntent(
-              action: 'action_view',
-              data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
-              arguments: {},
-              type: "application/vnd.ms-excel|application/x-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            );
-            await intent.launch();
-            break;
-          case FileType.ppt:
-            AndroidIntent intent = AndroidIntent(
-              action: 'action_view',
-              data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
-              arguments: {},
-              type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            );
-            await intent.launch();
-            break;
+          // case FileType.music:
+          //   AndroidIntent intent = AndroidIntent(
+          //     action: 'action_view',
+          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     arguments: {},
+          //     type: "audio/*",
+          //   );
+          //   await intent.launch();
+          //   break;
+          // case FileType.word:
+          //   AndroidIntent intent = AndroidIntent(
+          //     action: 'action_view',
+          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     arguments: {},
+          //     type: "application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          //   );
+          //   await intent.launch();
+          //   break;
+          // case FileType.excel:
+          //   AndroidIntent intent = AndroidIntent(
+          //     action: 'action_view',
+          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     arguments: {},
+          //     type: "application/vnd.ms-excel|application/x-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          //   );
+          //   await intent.launch();
+          //   break;
+          // case FileType.ppt:
+          //   AndroidIntent intent = AndroidIntent(
+          //     action: 'action_view',
+          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     arguments: {},
+          //     type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          //   );
+          //   await intent.launch();
+          //   break;
           case FileType.code:
             openPlainFile(file);
             break;
@@ -1343,14 +1338,21 @@ class FilesState extends State<Files> {
           case FileType.pdf:
             List<int> utf8Str = utf8.encode(file['path']);
             String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
-
-            print(Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open");
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return PdfViewer(Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open", file['name']);
             }));
             break;
           default:
-            Util.toast("暂不支持打开此类型文件");
+            List<int> utf8Str = utf8.encode(file['path']);
+            String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
+            AndroidIntent intent = AndroidIntent(
+              action: 'action_view',
+              data: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open",
+              arguments: {},
+              // type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            );
+            await intent.launch();
+          // Util.toast("暂不支持打开此类型文件");
         }
       }
     }
@@ -1358,7 +1360,6 @@ class FilesState extends State<Files> {
 
   fileAction(file, {bool remote: false}) async {
     Util.vibrate(FeedbackType.light);
-    print(remote);
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -2113,7 +2114,6 @@ class FilesState extends State<Files> {
         onPressed: () {
           String path = "";
           List<String> items = [];
-          print(paths[index]);
           if (index == 0) {
             path = "/";
           } else if (paths.length > 2 && paths[1].contains("//")) {
@@ -2177,7 +2177,6 @@ class FilesState extends State<Files> {
   Widget _buildProcessList() {
     List<Widget> children = [];
     processing.forEach((key, value) {
-      print(value);
       children.add(
         NeuCard(
           curveType: CurveType.flat,

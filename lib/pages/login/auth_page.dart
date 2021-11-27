@@ -33,6 +33,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void dispose() {
     Util.isAuthPage = false;
+    auth.stopAuthentication();
     super.dispose();
   }
 
