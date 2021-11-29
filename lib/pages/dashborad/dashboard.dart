@@ -399,7 +399,6 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
-  bool showWallpaper = true;
   Widget _buildWidgetItem(widget) {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return GestureDetector(

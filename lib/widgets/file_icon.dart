@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class FileIcon extends StatelessWidget {
@@ -46,11 +47,11 @@ class FileIcon extends StatelessWidget {
                   height: height,
                   fit: fit,
                 )
-              : Image.file(
+              : ExtendedImage.file(
                   File(thumb),
-                  fit: BoxFit.contain,
                   width: width,
                   height: height,
+                  fit: fit,
                 );
     } else if (fileType == FileType.word) {
       return Image.asset(
