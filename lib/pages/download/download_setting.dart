@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:device_info/device_info.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
@@ -39,8 +37,6 @@ class _DownloadSettingState extends State<DownloadSetting> {
           if (Platform.isAndroid) ...[
             NeuButton(
               onPressed: () async {
-                DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-                AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
                 // if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
                 //   Util.toast("安卓11不支持修改下载地址");
                 //   return;

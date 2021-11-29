@@ -1,4 +1,3 @@
-import 'package:android_intent/android_intent.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';

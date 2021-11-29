@@ -14,7 +14,7 @@ class WallpaperModel {
   WallpaperModel({
     this.classicalDesktop,
     this.customizeColor,
-    this.customizeWallpaper,
+    this.customizeWallpaper: false,
     this.index,
     this.menuStyle,
     this.newImage,
@@ -28,7 +28,7 @@ class WallpaperModel {
   WallpaperModel.fromJson(dynamic json) {
     classicalDesktop = json['classical_desktop'];
     customizeColor = json['customize_color'];
-    customizeWallpaper = json['customize_wallpaper'];
+    customizeWallpaper = json['customize_wallpaper'] ?? false;
     index = json['index'];
     menuStyle = json['menu_style'];
     newImage = json['newImage'];
