@@ -26,21 +26,23 @@ class WallpaperModel {
   });
 
   WallpaperModel.fromJson(dynamic json) {
-    classicalDesktop = json['classical_desktop'];
-    customizeColor = json['customize_color'];
-    customizeWallpaper = json['customize_wallpaper'] ?? false;
-    index = json['index'];
-    menuStyle = json['menu_style'];
-    newImage = json['newImage'];
-    wallpaper = json['wallpaper'];
-    wallpaperExt = json['wallpaper_ext'];
-    wallpaperPath = json['wallpaper_path'];
-    wallpaperPosition = json['wallpaper_position'];
-    wallpaperType = json['wallpaper_type'];
+    if (json != null) {
+      classicalDesktop = json['classical_desktop'];
+      customizeColor = json['customize_color'];
+      customizeWallpaper = json['customize_wallpaper'] ?? false;
+      index = json['index'];
+      menuStyle = json['menu_style'];
+      newImage = json['newImage'];
+      wallpaper = json['wallpaper'];
+      wallpaperExt = json['wallpaper_ext'];
+      wallpaperPath = json['wallpaper_path'];
+      wallpaperPosition = json['wallpaper_position'];
+      wallpaperType = json['wallpaper_type'];
+    }
   }
   String classicalDesktop;
   bool customizeColor;
-  bool customizeWallpaper;
+  bool customizeWallpaper = false;
   int index;
   String menuStyle;
   bool newImage;
