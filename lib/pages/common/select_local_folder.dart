@@ -18,7 +18,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
   ScrollController _scrollController = ScrollController();
   List paths = ["/"];
   List<FileSystemEntity> files = [];
-  List selectedFiles = [];
+  List<FileSystemEntity> selectedFiles = [];
   String msg = "";
   @override
   void initState() {
@@ -31,13 +31,18 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
     if (paths.length == 1) {
       directory = Directory("/storage/emulated/0/");
     } else {
-      directory = Directory("/storage/emulated/0" + paths.join("/").substring(1));
+      directory = Directory("/storage/emulated/0/" + paths.join("/").substring(1));
     }
-    print("getData:${directory.path}");
     files = [];
     await directory.list().forEach((element) {
-      if (!FileSystemEntity.isFileSync(element.path) && !element.path.split("/").last.startsWith(".")) {
-        files.add(element);
+      if (!element.path.split("/").last.startsWith(".")) {
+        if (widget.folder) {
+          if (!FileSystemEntity.isFileSync(element.path)) {
+            files.add(element);
+          }
+        } else {
+          files.add(element);
+        }
       }
     });
     files.sort((a, b) {
@@ -61,7 +66,6 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
       });
     } else {
       List<String> items = path.split("/");
-      items[0] = "/";
       setState(() {
         paths = items;
       });
@@ -79,7 +83,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
           if (index == 0) {
             path = "/";
           } else {
-            items = paths.getRange(1, index + 1).toList();
+            items = paths.getRange(0, index + 1).toList();
             path = items.join("/");
           }
           goPath(path);
@@ -103,14 +107,20 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
     );
   }
 
-  Widget _buildFileItem(file) {
+  Widget _buildFileItem(FileSystemEntity file) {
+    FileType fileType = Util.fileType(file.path);
+    bool isFile = FileSystemEntity.isFileSync(file.path);
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
       child: Opacity(
         opacity: 1,
         child: NeuButton(
           onPressed: () async {
-            goPath(file.path);
+            if (isFile) {
+              selectedFiles.add(file);
+            } else {
+              goPath(file.path);
+            }
           },
           // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: EdgeInsets.symmetric(vertical: 20),
@@ -125,7 +135,9 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                 width: 20,
               ),
               FileIcon(
-                FileType.folder,
+                !isFile ? FileType.folder : fileType,
+                thumb: file.path,
+                network: false,
               ),
               SizedBox(
                 width: 10,
@@ -149,13 +161,13 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                 onPressed: () {
                   setState(() {
                     if (widget.multi) {
-                      if (selectedFiles.contains(file.path)) {
-                        selectedFiles.remove(file.path);
+                      if (selectedFiles.contains(file)) {
+                        selectedFiles.remove(file);
                       } else {
-                        selectedFiles.add(file.path);
+                        selectedFiles.add(file);
                       }
                     } else {
-                      selectedFiles = [file.path];
+                      selectedFiles = [file];
                     }
                   });
                 },
@@ -164,7 +176,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                 child: SizedBox(
                   width: 20,
                   height: 20,
-                  child: selectedFiles.contains(file.path)
+                  child: selectedFiles.contains(file)
                       ? Icon(
                           CupertinoIcons.checkmark_alt,
                           color: Color(0xffff9813),
@@ -193,9 +205,8 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
       if (paths.length == 1) {
         path = "/";
       } else {
-        path = paths.join("/").substring(1);
+        path = paths.join("/");
       }
-      print(path);
       goPath(path);
       return Future.value(false);
     } else {
@@ -239,15 +250,16 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: NeuButton(
-                        onPressed: paths.length > 1
-                            ? () {
-                                if (selectedFiles.length > 0) {
-                                  Navigator.of(context).pop(selectedFiles);
-                                } else {
-                                  Navigator.of(context).pop(["/storage/emulated/0" + paths.join("/").substring(1)]);
-                                }
-                              }
-                            : null,
+                        onPressed: () {
+                          if (selectedFiles.length > 0) {
+                            Navigator.of(context).pop(selectedFiles);
+                          } else {
+                            if (paths.length > 1) {
+                              Navigator.of(context).pop([Directory("/storage/emulated/0" + paths.join("/"))]);
+                            }
+                            // Navigator.of(context).pop(["/storage/emulated/0" + paths.join("/").substring(1)]);
+                          }
+                        },
                         decoration: NeumorphicDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),

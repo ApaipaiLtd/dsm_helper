@@ -432,14 +432,14 @@ class _SelectFolderState extends State<SelectFolder> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: NeuButton(
                         onPressed: () {
-                          if (paths.length > 1) {
-                            if (selectedFiles.length > 0) {
-                              Navigator.of(context).pop(selectedFiles);
-                            } else {
-                              Navigator.of(context).pop([paths.join("/").substring(1)]);
-                            }
+                          if (selectedFiles.length > 0) {
+                            Navigator.of(context).pop(selectedFiles);
                           } else {
-                            Util.toast("无法选择根目录文件夹");
+                            if (paths.length > 1) {
+                              Navigator.of(context).pop([paths.join("/").substring(1)]);
+                            } else {
+                              Util.toast("无法选择根目录");
+                            }
                           }
                         },
                         decoration: NeumorphicDecoration(

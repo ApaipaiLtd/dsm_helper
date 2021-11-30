@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
@@ -10,6 +12,7 @@ import 'package:file_picker/file_picker.dart' hide FileType;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -23,12 +26,13 @@ class Upload extends StatefulWidget {
 
 class UploadItem {
   String path;
+  String subPath;
   String name;
   int fileSize;
   int uploadSize;
   UploadStatus status;
   CancelToken cancelToken;
-  UploadItem(this.path, this.name, {this.fileSize = 0, this.uploadSize = 0, this.status = UploadStatus.wait}) {
+  UploadItem(this.path, this.name, {this.subPath: "", this.fileSize = 0, this.uploadSize = 0, this.status = UploadStatus.wait}) {
     cancelToken = CancelToken();
   }
 }
@@ -136,7 +140,7 @@ class _UploadState extends State<Upload> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    upload.name,
+                    "${upload.subPath.isNotBlank ? "${upload.subPath.isNotBlank}/" : ""}${upload.name}",
                     style: TextStyle(
                       fontSize: 16,
                     ),
@@ -396,17 +400,73 @@ class _UploadState extends State<Upload> {
                                   NeuButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
-                                      FilePickerResult result = await FilePicker.platform.pickFiles(allowMultiple: true);
-
-                                      if (result != null) {
-                                        setState(() {
-                                          uploads.addAll(result.files.map((file) {
-                                            return UploadItem(file.path, file.name, fileSize: file.size);
-                                          }).toList());
-                                        });
+                                      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                                      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                                      if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
+                                        bool permission = false;
+                                        permission = await Permission.manageExternalStorage.request().isGranted;
+                                        if (!permission) {
+                                          Util.toast("安卓11需授权文件管理权限");
+                                          return;
+                                        }
                                       } else {
-                                        // User canceled the picker
+                                        bool permission = false;
+                                        permission = await Permission.storage.request().isGranted;
+                                        if (!permission) {
+                                          Util.toast("请先授权APP访问存储权限");
+                                          return;
+                                        }
                                       }
+
+                                      showCupertinoModalPopup<List<FileSystemEntity>>(
+                                        context: context,
+                                        builder: (context) {
+                                          return SelectLocalFolder(
+                                            multi: true,
+                                            folder: false,
+                                          );
+                                        },
+                                      ).then((res) {
+                                        if (res != null && res.length > 0) {
+                                          res.forEach((entry) {
+                                            if (FileSystemEntity.isFileSync(entry.path)) {
+                                              setState(() {
+                                                uploads.add(UploadItem(entry.path, entry.path.split("/").last));
+                                              });
+                                            } else {
+                                              Directory directory = Directory(entry.path);
+                                              directory.list(recursive: true).forEach((element) {
+                                                if (!element.path.split("/").last.startsWith(".")) {
+                                                  if (FileSystemEntity.isFileSync(element.path)) {
+                                                    List<String> slice = element.path.replaceFirst("${entry.path}/", "").split("/");
+                                                    setState(() {
+                                                      uploads.add(UploadItem(element.path, slice.last, subPath: slice.getRange(0, slice.length - 1).join("/")));
+                                                    });
+                                                  }
+                                                }
+                                              });
+                                            }
+                                          });
+                                        }
+                                        // if (res != null && res.length == 1) {
+                                        //   setState(() {
+                                        //     downloadPath = res[0];
+                                        //     Util.downloadSavePath = res[0];
+                                        //     Util.setStorage("download_save_path", res[0]);
+                                        //   });
+                                        // }
+                                      });
+                                      // FilePickerResult result = await FilePicker.platform.pickFiles(allowMultiple: true);
+                                      //
+                                      // if (result != null) {
+                                      //   setState(() {
+                                      //     uploads.addAll(result.files.map((file) {
+                                      //       return UploadItem(file.path, file.name, fileSize: file.size);
+                                      //     }).toList());
+                                      //   });
+                                      // } else {
+                                      //   // User canceled the picker
+                                      // }
                                     },
                                     decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -477,8 +537,8 @@ class _UploadState extends State<Upload> {
                         setState(() {
                           upload.status = UploadStatus.running;
                         });
-
-                        var res = await Api.upload(savePath, upload.path, upload.cancelToken, (progress, total) {
+                        // TODO 上传文件夹内文件时需先创建文件夹，否则无法上传成功
+                        var res = await Api.upload("$savePath", upload.path, upload.cancelToken, (progress, total) {
                           setState(() {
                             upload.uploadSize = progress;
                             upload.fileSize = total;

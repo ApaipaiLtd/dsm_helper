@@ -11,6 +11,7 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:package_info/package_info.dart';
@@ -243,7 +244,7 @@ class _LoginState extends State<Login> {
                             Expanded(
                               child: NeuButton(
                                 onPressed: () async {
-                                  Navigator.of(context).pop();
+                                  SystemNavigator.pop();
                                 },
                                 decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,

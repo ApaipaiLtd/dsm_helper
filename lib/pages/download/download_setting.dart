@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:device_info/device_info.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
@@ -37,29 +38,38 @@ class _DownloadSettingState extends State<DownloadSetting> {
           if (Platform.isAndroid) ...[
             NeuButton(
               onPressed: () async {
-                // if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
-                //   Util.toast("安卓11不支持修改下载地址");
-                //   return;
-                // }
-                bool permission = false;
-                permission = await Permission.storage.request().isGranted;
-                if (!permission) {
-                  Util.toast("请先授权APP访问存储权限");
-                  return;
+                DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
+                  bool permission = false;
+                  permission = await Permission.manageExternalStorage.request().isGranted;
+                  if (!permission) {
+                    Util.toast("安卓11需授权文件管理权限");
+                    return;
+                  }
+                } else {
+                  bool permission = false;
+                  permission = await Permission.storage.request().isGranted;
+                  if (!permission) {
+                    Util.toast("请先授权APP访问存储权限");
+                    return;
+                  }
                 }
 
-                showCupertinoModalPopup(
+                showCupertinoModalPopup<List<FileSystemEntity>>(
                   context: context,
                   builder: (context) {
                     return SelectLocalFolder(
                       multi: false,
+                      folder: true,
                     );
                   },
                 ).then((res) {
                   if (res != null && res.length == 1) {
                     setState(() {
-                      Util.downloadSavePath = res[0];
-                      Util.setStorage("download_save_path", res[0]);
+                      downloadPath = res[0].path;
+                      Util.downloadSavePath = res[0].path;
+                      Util.setStorage("download_save_path", res[0].path);
                     });
                   }
                 });

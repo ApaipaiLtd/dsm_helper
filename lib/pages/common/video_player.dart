@@ -8,6 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:wakelock/wakelock.dart';
 import 'package:xml2json/xml2json.dart';
 
 class VideoPlayer extends StatefulWidget {
@@ -33,6 +34,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void initState() {
     super.initState();
+    Wakelock.enable();
     player.setDataSource(widget.url, autoPlay: true);
     player.addListener(() {
       FijkValue value = player.value;
@@ -191,6 +193,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void dispose() {
     super.dispose();
+    Wakelock.disable();
     player.release();
   }
 }

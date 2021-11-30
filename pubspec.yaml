@@ -74,6 +74,7 @@ dependencies:
   device_info: ^2.0.2
   xml2json: ^5.3.1
   wake_on_lan: ^2.0.1+1
+  wakelock: ^0.5.6 #屏幕常亮
 #  pangle_flutter: ^1.4.1  # 穿山甲广告
   xterm: ^2.5.0-pre
   dartssh:
