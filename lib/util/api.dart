@@ -845,7 +845,7 @@ class Api {
       "method": "upload",
       "version": 3,
       "path": uploadPath,
-      "create_parents": false,
+      "create_parents": true,
       "size": file.lengthSync(),
       "mtime": file.lastModifiedSync().millisecondsSinceEpoch,
       "overwrite": "overwrite",

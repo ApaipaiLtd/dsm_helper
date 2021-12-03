@@ -39,6 +39,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     getData();
+    Util.setStorage("agreement", "1");
     // For sharing images coming from outside the app while the app is in the memory
     ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
       handleFiles(value);

@@ -140,10 +140,14 @@ class _UploadState extends State<Upload> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${upload.subPath.isNotBlank ? "${upload.subPath.isNotBlank}/" : ""}${upload.name}",
+                    "${upload.name}",
                     style: TextStyle(
                       fontSize: 16,
                     ),
+                  ),
+                  Text(
+                    "${upload.subPath.isNotBlank ? upload.subPath : ""}",
+                    style: TextStyle(fontSize: 12),
                   ),
                   SizedBox(
                     height: 5,
@@ -525,10 +529,8 @@ class _UploadState extends State<Upload> {
                         Util.toast("请选择上传位置");
                         return;
                       }
-                      final RegExp _asciiOnly = RegExp(r'^[\x00-\x7F]+$');
-                      print(_asciiOnly.hasMatch(savePath));
                       // return;
-                      for (int i = 0; i < uploads.length; i++) {
+                      for (int i = 0; i < 5; i++) {
                         UploadItem upload = uploads[i];
                         if (upload.status != UploadStatus.wait) {
                           continue;
@@ -537,8 +539,7 @@ class _UploadState extends State<Upload> {
                         setState(() {
                           upload.status = UploadStatus.running;
                         });
-                        // TODO 上传文件夹内文件时需先创建文件夹，否则无法上传成功
-                        var res = await Api.upload("$savePath", upload.path, upload.cancelToken, (progress, total) {
+                        var res = await Api.upload("$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}", upload.path, upload.cancelToken, (progress, total) {
                           setState(() {
                             upload.uploadSize = progress;
                             upload.fileSize = total;
