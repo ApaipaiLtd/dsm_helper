@@ -101,9 +101,9 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                   loadStateChanged: (ExtendedImageState state) {
                     switch (state.extendedImageLoadState) {
                       case LoadState.loading:
+                        final ImageChunkEvent loadingProgress = state.loadingProgress;
+                        final double progress = loadingProgress?.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes : null;
                         if (widget.thumbs.length > index + 1) {
-                          final ImageChunkEvent loadingProgress = state.loadingProgress;
-                          final double progress = loadingProgress?.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes : null;
                           return Stack(
                             alignment: Alignment.center,
                             children: [
@@ -118,7 +118,9 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                             ],
                           );
                         } else {
-                          return CupertinoActivityIndicator();
+                          return CircularProgressIndicator(
+                            value: progress,
+                          );
                         }
                         break;
                       case LoadState.completed:
