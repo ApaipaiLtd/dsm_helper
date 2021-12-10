@@ -32,8 +32,8 @@
 群晖助手交流反馈②群：97137990
 
 # 软件下载
-安卓：https://gitee.com/challengerV/dsm_helper/releases  
-iOS：暂未上架苹果商店，可通过Test Flight下载安装。具体流程进群查看群公告
+安卓：https://gitee.com/apaipai/dsm_helper/releases  
+iOS：Appstore搜索：派派助手
 
 # 软件截图
 ![控制台](https://images.gitee.com/uploads/images/2021/0118/220116_c3311502_925081.jpeg "1.jpg")
