@@ -28,7 +28,7 @@ def keystorePropertiesFile = rootProject.file("key.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -42,7 +42,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "fit.flutter.dsm_helper"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -63,9 +63,13 @@ android {
     }
     buildTypes {
         release {
+            // 禁用混淆，解决安卓无法统计数据
+            zipAlignEnabled true
+            minifyEnabled false
+            shrinkResources false
             signingConfig signingConfigs.release
             ndk {
-                abiFilters "arm64-v8a" //'armeabi-v7a,arm64-v8a'//
+                abiFilters "armeabi-v7a" //'armeabi-v7a,arm64-v8a'//
             }
         }
         debug{

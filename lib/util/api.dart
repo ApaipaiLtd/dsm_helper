@@ -778,8 +778,8 @@ class Api {
       "method": '"create"',
       "version": 2,
       "force_parent": "false",
-      "folder_path": path,
-      "name": name,
+      "folder_path": '"$path"',
+      "name": '"$name"',
       "_sid": Util.sid,
     };
     var result = await Util.get("entry.cgi", data: data);
@@ -791,8 +791,8 @@ class Api {
       "api": '"SYNO.FileStation.Rename"',
       "method": '"rename"',
       "version": 2,
-      "path": path,
-      "name": name,
+      "path": '"$path"',
+      "name": '"$name"',
       "_sid": Util.sid,
     };
     var result = await Util.get("entry.cgi", data: data);

@@ -10,6 +10,7 @@ import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info/package_info.dart';
@@ -25,12 +26,6 @@ void main() async {
     return true;
   };
 
-  // print(HttpClientHelper.httpClient.)
-  // (HttpClientHelper as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
-  //   client.badCertificateCallback = (X509Certificate cert, String host, int port) {
-  //     return true;
-  //   };
-  // };
   WidgetsFlutterBinding.ensureInitialized();
   String agreement = await Util.getStorage("agreement");
   if (agreement != null && agreement == "1") {
@@ -141,17 +136,21 @@ void main() async {
   } else {
     Util.checkSsl = true;
   }
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: DarkModeProvider(darkMode)),
-        ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
-        ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
-        ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
-      ],
-      child: MyApp(authPage),
-    ),
-  );
+  //使用flutter异常上报
+  FlutterBugly.postCatchedException(() {
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: DarkModeProvider(darkMode)),
+          ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
+          ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
+          ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
+        ],
+        child: MyApp(authPage),
+      ),
+    );
+  });
+
   if (Platform.isAndroid) {
     // 以下两行 设置android状态栏为透明的沉浸。写在组件渲染之后，是为了在渲染后进行set赋值，覆盖状态栏，写在渲染之前MaterialApp组件会覆盖掉这个值。
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -212,6 +211,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    FlutterBugly.init(
+      androidAppId: "d16533a5-49c8-41ae-a1b9-65847299eb13",
+      iOSAppId: "99b9d337-25eb-4660-b7b0-1285e493b9c4",
+      customUpgrade: true, // 调用 Android 原生升级方式
+    );
     super.initState();
   }
 

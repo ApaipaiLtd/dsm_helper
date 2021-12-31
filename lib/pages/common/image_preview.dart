@@ -118,8 +118,10 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                             ],
                           );
                         } else {
-                          return CircularProgressIndicator(
-                            value: progress,
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: progress,
+                            ),
                           );
                         }
                         break;
@@ -258,7 +260,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
               currentIndex = index;
               rebuildIndex.add(index);
             },
-            controller: PageController(
+            controller: ExtendedPageController(
               initialPage: currentIndex,
             ),
             scrollDirection: Axis.horizontal,

@@ -530,7 +530,7 @@ class _UploadState extends State<Upload> {
                         return;
                       }
                       // return;
-                      for (int i = 0; i < 5; i++) {
+                      for (int i = 0; i < uploads.length; i++) {
                         UploadItem upload = uploads[i];
                         if (upload.status != UploadStatus.wait) {
                           continue;
@@ -539,6 +539,7 @@ class _UploadState extends State<Upload> {
                         setState(() {
                           upload.status = UploadStatus.running;
                         });
+                        print("上传路径：$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}");
                         var res = await Api.upload("$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}", upload.path, upload.cancelToken, (progress, total) {
                           setState(() {
                             upload.uploadSize = progress;

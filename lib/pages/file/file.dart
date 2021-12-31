@@ -36,7 +36,7 @@ class Files extends StatefulWidget {
 
 class FilesState extends State<Files> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List paths = ["/"];
+  List paths = [];
   List files = [];
   List smbFolders = [];
   List ftpFolders = [];
@@ -66,8 +66,8 @@ class FilesState extends State<Files> {
     getSftpFolder();
     _fileScrollController.addListener(() {
       String path = "";
-      if (paths.length > 1) {
-        path = paths.join("/").substring(1);
+      if (paths.length > 0) {
+        path = paths.join("/");
       } else {
         path = "/";
       }
@@ -77,7 +77,15 @@ class FilesState extends State<Files> {
   }
 
   refresh() {
-    String path = paths.join("/").substring(1);
+    String path = "";
+    print(paths);
+    if (paths.length > 0 && paths[0].contains("//")) {
+      print("远程");
+      path = paths.join("/");
+    } else {
+      print("本地");
+      path = (paths.length > 0 ? "/" : '') + paths.join("/");
+    }
     goPath(path);
   }
 
@@ -96,14 +104,13 @@ class FilesState extends State<Files> {
       searchResult = false;
       searching = false;
     });
-    if (path == "/") {
+    if (path == "") {
       setState(() {
-        paths = ["/"];
+        paths = [];
       });
     } else {
       if (path.startsWith("/")) {
-        List<String> items = path.split("/");
-        items[0] = "/";
+        List<String> items = path.split("/").sublist(1);
         setState(() {
           paths = items;
         });
@@ -112,7 +119,6 @@ class FilesState extends State<Files> {
         String first = "${uri.scheme}://${uri.userInfo}@${uri.host}";
         List<String> items = path.replaceAll(first, "").split("/");
         items[0] = first;
-        items.insert(0, "/");
         setState(() {
           paths = items;
         });
@@ -135,6 +141,8 @@ class FilesState extends State<Files> {
           result(res['data']['taskid']);
         });
       }
+    } else {
+      print("搜索出错");
     }
   }
 
@@ -349,6 +357,7 @@ class FilesState extends State<Files> {
   }
 
   goPath(String path) async {
+    print("path:$path");
     Util.vibrate(FeedbackType.light);
     setState(() {
       success = true;
@@ -935,7 +944,7 @@ class FilesState extends State<Files> {
   }
 
   extractFile(file, {String password}) async {
-    var res = await Api.extractTask(file['path'], paths.join("/").substring(1), password: password);
+    var res = await Api.extractTask(file['path'], "/" + paths.join("/"), password: password);
     if (res['success']) {
       //获取解压进度
       timer = Timer.periodic(Duration(seconds: 1), (_) async {
@@ -1079,7 +1088,7 @@ class FilesState extends State<Files> {
     } else {
       zipName = paths.last + ".zip";
     }
-    destPath = paths.join("/").substring(1) + "/" + zipName;
+    destPath = "/" + paths.join("/") + "/" + zipName;
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -2035,9 +2044,9 @@ class FilesState extends State<Files> {
                                   "${Util.formatSize(file['additional']['size'])}",
                                   style: TextStyle(fontSize: 12),
                                 ),
-                              if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['crtime'] != null)
+                              if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
                                 Text(
-                                  (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['crtime'] * 1000).format("Y/m/d H:i:s"),
+                                  (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
                                   style: TextStyle(fontSize: 12),
                                 ),
                             ],
@@ -2108,20 +2117,19 @@ class FilesState extends State<Files> {
 
   Widget _buildPathItem(BuildContext context, int index) {
     return Container(
-      margin: index == 0 ? EdgeInsets.only(left: 20) : null,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: NeuButton(
         onPressed: () {
           String path = "";
           List<String> items = [];
-          if (index == 0) {
-            path = "/";
-          } else if (paths.length > 2 && paths[1].contains("//")) {
-            items = paths.getRange(1, index + 1).toList();
+          if (paths.length > 1 && paths[0].contains("//")) {
+            print("远程");
+            items = paths.getRange(0, index + 1).toList();
             path = items.join("/");
             goPath(path);
           } else {
-            items = paths.getRange(1, index + 1).toList();
+            print("本地");
+            items = paths.getRange(0, index + 1).toList();
             path = "/" + items.join("/");
           }
           goPath(path);
@@ -2132,15 +2140,10 @@ class FilesState extends State<Files> {
         ),
         bevel: 5,
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        child: index == 0
-            ? Icon(
-                CupertinoIcons.home,
-                size: 16,
-              )
-            : Text(
-                paths[index],
-                style: TextStyle(fontSize: 12),
-              ),
+        child: Text(
+          paths[index],
+          style: TextStyle(fontSize: 12),
+        ),
       ),
     );
   }
@@ -2156,14 +2159,16 @@ class FilesState extends State<Files> {
         refresh();
       });
     } else {
-      if (paths.length > 1) {
+      if (paths.length > 0) {
         paths.removeLast();
         String path = "";
-
-        if (paths.length == 1) {
-          path = "/";
+        print(paths);
+        if (paths.length > 0 && paths[0].contains("//")) {
+          print("远程");
+          path = paths.join("/");
         } else {
-          path = paths.join("/").substring(1);
+          print("本地");
+          path = (paths.length > 0 ? "/" : '') + paths.join("/");
         }
         goPath(path);
       } else {
@@ -2431,7 +2436,7 @@ class FilesState extends State<Files> {
                 ),
               ),
             ),
-            if (paths.length != 1 && !multiSelect)
+            if (paths.length > 0 && !multiSelect)
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
                 child: NeuButton(
@@ -2445,7 +2450,7 @@ class FilesState extends State<Files> {
                     Navigator.of(context)
                         .push(CupertinoPageRoute(
                             builder: (context) {
-                              return Upload(paths.join("/").substring(1));
+                              return Upload("/" + paths.join("/"));
                             },
                             settings: RouteSettings(name: "upload")))
                         .then((value) {
@@ -2577,7 +2582,7 @@ class FilesState extends State<Files> {
                                     runSpacing: 20,
                                     spacing: 20,
                                     children: [
-                                      if (paths.length > 1) ...[
+                                      if (paths.length > 0) ...[
                                         Container(
                                           constraints: BoxConstraints(maxWidth: 112),
                                           width: (MediaQuery.of(context).size.width - 100) / 4,
@@ -2643,7 +2648,7 @@ class FilesState extends State<Files> {
                                                                               return;
                                                                             }
                                                                             Navigator.of(context).pop();
-                                                                            String path = paths.join("/").substring(1);
+                                                                            String path = "/" + paths.join("/");
                                                                             var res = await Api.createFolder(path, name);
                                                                             if (res['success']) {
                                                                               Util.toast("文件夹创建成功");
@@ -2727,7 +2732,7 @@ class FilesState extends State<Files> {
                                               Navigator.of(context).push(CupertinoPageRoute(
                                                   builder: (context) {
                                                     return Share(
-                                                      paths: [paths.join("/").substring(1)],
+                                                      paths: ["/" + paths.join("/")],
                                                       fileRequest: true,
                                                     );
                                                   },
@@ -2823,7 +2828,7 @@ class FilesState extends State<Files> {
                                           ),
                                         ),
                                       ),
-                                      if (paths.length > 1)
+                                      if (paths.length > 0)
                                         Container(
                                           constraints: BoxConstraints(maxWidth: 112),
                                           width: (MediaQuery.of(context).size.width - 100) / 4,
@@ -2833,7 +2838,7 @@ class FilesState extends State<Files> {
                                               Navigator.of(context)
                                                   .push(CupertinoPageRoute(
                                                       builder: (content) {
-                                                        return Search(paths.join("/").substring(1));
+                                                        return Search("/" + paths.join("/"));
                                                       },
                                                       settings: RouteSettings(name: "search")))
                                                   .then((res) {
@@ -2980,20 +2985,52 @@ class FilesState extends State<Files> {
               height: 45,
               color: Theme.of(context).scaffoldBackgroundColor,
               alignment: Alignment.centerLeft,
-              child: ListView.separated(
-                controller: _pathScrollController,
-                itemBuilder: _buildPathItem,
-                itemCount: paths.length,
-                scrollDirection: Axis.horizontal,
-                separatorBuilder: (context, i) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    child: Icon(
-                      CupertinoIcons.right_chevron,
-                      size: 14,
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
+                    child: NeuButton(
+                      onPressed: () {
+                        goPath("");
+                      },
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      bevel: 5,
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      child: Icon(
+                        CupertinoIcons.home,
+                        size: 16,
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  if (paths.length > 0)
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      child: Icon(
+                        CupertinoIcons.right_chevron,
+                        size: 14,
+                      ),
+                    ),
+                  Expanded(
+                    child: ListView.separated(
+                      controller: _pathScrollController,
+                      itemBuilder: _buildPathItem,
+                      itemCount: paths.length,
+                      scrollDirection: Axis.horizontal,
+                      separatorBuilder: (context, i) {
+                        return Container(
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          child: Icon(
+                            CupertinoIcons.right_chevron,
+                            size: 14,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           if (processing.isNotEmpty) _buildProcessList(),
