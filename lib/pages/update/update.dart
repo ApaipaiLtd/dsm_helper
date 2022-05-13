@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:open_file/open_file.dart';
-import 'package:dsm_helper/util/function.dart';
 
 class Update extends StatefulWidget {
   final Map data;

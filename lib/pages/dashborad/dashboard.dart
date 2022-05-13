@@ -1,23 +1,22 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:dsm_helper/models/shortcut_item_model.dart';
 import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
+import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashborad/applications.dart';
 import 'package:dsm_helper/pages/dashborad/media_converter.dart';
 import 'package:dsm_helper/pages/dashborad/shortcut_list.dart';
-import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/pages/dashborad/widget_setting.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
+import 'package:dsm_helper/pages/notify/notify.dart';
+import 'package:dsm_helper/pages/resource_monitor/performance.dart';
+import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
-import 'package:dsm_helper/pages/resource_monitor/performance.dart';
-import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
-import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -881,11 +880,12 @@ class DashboardState extends State<Dashboard> {
                                   getTooltipItems: (List<LineBarSpot> items) {
                                     return items.map((LineBarSpot touchedSpot) {
                                       final textStyle = TextStyle(
-                                        color: touchedSpot.bar.colors[0],
+                                        color: touchedSpot.bar.color,
+                                        // color: touchedSpot.bar.colors[0],
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                       );
-                                      return LineTooltipItem('${touchedSpot.bar.colors[0] == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                      return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
                                     }).toList();
                                   },
                                 ),
@@ -895,21 +895,36 @@ class DashboardState extends State<Dashboard> {
                               ),
                               titlesData: FlTitlesData(
                                 show: true,
-                                bottomTitles: SideTitles(
-                                  showTitles: false,
-                                  reservedSize: 22,
-                                ),
-                                topTitles: SideTitles(showTitles: false),
-                                rightTitles: SideTitles(showTitles: false),
-                                leftTitles: SideTitles(
-                                  showTitles: true,
-                                  getTextStyles: (value, _) => const TextStyle(
-                                    color: Color(0xff67727d),
-                                    fontSize: 12,
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: false,
+                                    reservedSize: 22,
                                   ),
-                                  getTitles: chartTitle,
-                                  reservedSize: 28,
-                                  interval: chartInterval,
+                                ),
+                                topTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    // getTextStyles: (value, _) => const TextStyle(
+                                    //   color: Color(0xff67727d),
+                                    //   fontSize: 12,
+                                    // ),
+                                    // getTitles: chartTitle,
+                                    getTitlesWidget: (value, _) {
+                                      return Text(chartTitle(value),
+                                          style: TextStyle(
+                                            color: Color(0xff67727d),
+                                            fontSize: 12,
+                                          ));
+                                    },
+                                    reservedSize: 28,
+                                    interval: chartInterval,
+                                  ),
                                 ),
                               ),
                               // maxY: 20,
@@ -921,9 +936,7 @@ class DashboardState extends State<Dashboard> {
                                     return FlSpot(networks.indexOf(network).toDouble(), network[0]['tx'].toDouble());
                                   }).toList(),
                                   isCurved: true,
-                                  colors: [
-                                    Colors.blue,
-                                  ],
+                                  color: Colors.blue,
                                   barWidth: 2,
                                   isStrokeCapRound: true,
                                   dotData: FlDotData(
@@ -931,7 +944,7 @@ class DashboardState extends State<Dashboard> {
                                   ),
                                   belowBarData: BarAreaData(
                                     show: true,
-                                    colors: [Colors.blue.withOpacity(0.2)],
+                                    color: Colors.blue.withOpacity(0.2),
                                   ),
                                 ),
                                 LineChartBarData(
@@ -939,9 +952,7 @@ class DashboardState extends State<Dashboard> {
                                     return FlSpot(networks.indexOf(network).toDouble(), network[0]['rx'].toDouble());
                                   }).toList(),
                                   isCurved: true,
-                                  colors: [
-                                    Colors.green,
-                                  ],
+                                  color: Colors.green,
                                   barWidth: 2,
                                   isStrokeCapRound: true,
                                   dotData: FlDotData(
@@ -949,9 +960,7 @@ class DashboardState extends State<Dashboard> {
                                   ),
                                   belowBarData: BarAreaData(
                                     show: true,
-                                    colors: [
-                                      Colors.green.withOpacity(0.2),
-                                    ],
+                                    color: Colors.green.withOpacity(0.2),
                                   ),
                                 ),
                               ],

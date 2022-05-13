@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
@@ -12,13 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fluwx/fluwx.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
 import '/providers/dark_mode.dart';
-import 'package:fluwx/fluwx.dart';
 
 void main() async {
   HttpClient client = ExtendedNetworkImageProvider.httpClient as HttpClient;

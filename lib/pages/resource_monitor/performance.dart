@@ -3,13 +3,13 @@ import 'dart:math';
 
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/label.dart';
 import 'package:provider/provider.dart';
 
 class Performance extends StatefulWidget {
@@ -272,18 +272,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
                                                 // getTitles: chartTitle,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
@@ -291,7 +300,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 // },
                                                 reservedSize: 28,
                                                 interval: 10,
-                                              ),
+                                              )),
                                             ),
                                             minY: 0,
                                             maxY: 100,
@@ -303,9 +312,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(cpus.indexOf(cpu).toDouble(), (cpu['user_load'] + cpu['system_load']).toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.cyan,
-                                                ],
+                                                color: Colors.cyan,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -313,7 +320,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 ),
                                                 belowBarData: BarAreaData(
                                                   show: true,
-                                                  colors: [Colors.cyan.withOpacity(0.2)],
+                                                  color: Colors.cyan.withOpacity(0.2),
                                                 ),
                                               ),
                                             ],
@@ -400,18 +407,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
                                                 // getTitles: chartTitle,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
@@ -419,7 +435,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 // },
                                                 reservedSize: 28,
                                                 interval: 10,
-                                              ),
+                                              )),
                                             ),
                                             minY: 0,
                                             maxY: 100,
@@ -431,9 +447,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(memories.indexOf(memory).toDouble(), memory['real_usage'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.orangeAccent,
-                                                ],
+                                                color: Colors.orangeAccent,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -441,7 +455,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 ),
                                                 belowBarData: BarAreaData(
                                                   show: true,
-                                                  colors: [Colors.orangeAccent.withOpacity(0.2)],
+                                                  color: Colors.orangeAccent.withOpacity(0.2),
                                                 ),
                                               ),
                                             ],
@@ -520,11 +534,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 getTooltipItems: (List<LineBarSpot> items) {
                                                   return items.map((LineBarSpot touchedSpot) {
                                                     final textStyle = TextStyle(
-                                                      color: touchedSpot.bar.colors[0],
+                                                      color: touchedSpot.bar.color,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 14,
                                                     );
-                                                    return LineTooltipItem('${touchedSpot.bar.colors[0] == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                                    return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
                                                   }).toList();
                                                 },
                                               ),
@@ -534,25 +548,57 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                getTitles: (v) {
-                                                  return chartTitle(v, maxNetworkSpeed);
-                                                },
-                                                reservedSize: 28,
-                                                interval: chartInterval(maxNetworkSpeed),
                                               ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    chartTitle(value, maxNetworkSpeed),
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
+                                                reservedSize: 28,
+                                                interval: 10,
+                                              )),
                                             ),
+                                            // titlesData: FlTitlesData(
+                                            //   show: true,
+                                            //   bottomTitles: SideTitles(
+                                            //     showTitles: false,
+                                            //     reservedSize: 22,
+                                            //   ),
+                                            //   topTitles: SideTitles(showTitles: false),
+                                            //   rightTitles: SideTitles(showTitles: false),
+                                            //   leftTitles: SideTitles(
+                                            //     showTitles: true,
+                                            //     getTextStyles: (value, _) => const TextStyle(
+                                            //       color: Color(0xff67727d),
+                                            //       fontSize: 12,
+                                            //     ),
+                                            //     getTitles: (v) {
+                                            //       return chartTitle(v, maxNetworkSpeed);
+                                            //     },
+                                            //     reservedSize: 28,
+                                            //     interval: chartInterval(maxNetworkSpeed),
+                                            //   ),
+                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -562,9 +608,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(networks.indexOf(network).toDouble(), network[0]['tx'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -572,7 +616,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 ),
                                                 belowBarData: BarAreaData(
                                                   show: true,
-                                                  colors: [Colors.blue.withOpacity(0.2)],
+                                                  color: Colors.blue.withOpacity(0.2),
                                                 ),
                                               ),
                                               LineChartBarData(
@@ -580,9 +624,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(networks.indexOf(network).toDouble(), network[0]['rx'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.green,
-                                                ],
+                                                color: Colors.green,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -590,9 +632,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 ),
                                                 belowBarData: BarAreaData(
                                                   show: true,
-                                                  colors: [
-                                                    Colors.green.withOpacity(0.2),
-                                                  ],
+                                                  color: Colors.green.withOpacity(0.2),
                                                 ),
                                               ),
                                             ],
@@ -689,18 +729,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
                                                 // getTitles: chartTitle,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
@@ -708,7 +757,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 // },
                                                 reservedSize: 28,
                                                 interval: 10,
-                                              ),
+                                              )),
                                             ),
                                             minY: 0,
                                             maxY: 100,
@@ -720,9 +769,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(disks.indexOf(disk).toDouble(), disk['total']['utilization'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.pink,
-                                                ],
+                                                color: Colors.pink,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -730,7 +777,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 ),
                                                 belowBarData: BarAreaData(
                                                   show: true,
-                                                  colors: [Colors.pink.withOpacity(0.2)],
+                                                  color: Colors.pink.withOpacity(0.2),
                                                 ),
                                               ),
                                             ],
@@ -814,18 +861,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
                                                 // getTitles: chartTitle,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
@@ -833,7 +889,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 // },
                                                 reservedSize: 28,
                                                 interval: 10,
-                                              ),
+                                              )),
                                             ),
                                             minY: 0,
                                             maxY: 100,
@@ -845,18 +901,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(spaces.indexOf(space).toDouble(), space['total']['utilization'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.purpleAccent,
-                                                ],
+                                                color: Colors.purpleAccent,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
                                                   show: false,
                                                 ),
-                                                belowBarData: BarAreaData(
-                                                  show: true,
-                                                  colors: [Colors.purpleAccent.withOpacity(0.2)],
-                                                ),
+                                                belowBarData: BarAreaData(show: true, color: Colors.purpleAccent.withOpacity(0.2)),
                                               ),
                                             ],
                                           ),
@@ -924,18 +975,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                       ),
                                       titlesData: FlTitlesData(
                                         show: true,
-                                        bottomTitles: SideTitles(
-                                          showTitles: false,
-                                          reservedSize: 22,
-                                        ),
-                                        topTitles: SideTitles(showTitles: false),
-                                        rightTitles: SideTitles(showTitles: false),
-                                        leftTitles: SideTitles(
-                                          showTitles: true,
-                                          getTextStyles: (value, _) => const TextStyle(
-                                            color: Color(0xff67727d),
-                                            fontSize: 12,
+                                        bottomTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                            showTitles: false,
+                                            reservedSize: 22,
                                           ),
+                                        ),
+                                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                        leftTitles: AxisTitles(
+                                            sideTitles: SideTitles(
+                                          showTitles: true,
+                                          getTitlesWidget: (value, _) {
+                                            return Text(
+                                              "$value",
+                                              style: TextStyle(
+                                                color: Color(0xff67727d),
+                                                fontSize: 12,
+                                              ),
+                                            );
+                                          },
+                                          // getTextStyles: (value, _) => const ,
                                           // getTitles: chartTitle,
                                           // getTitles: (value) {
                                           //   value = value / 1000 / 1000;
@@ -943,7 +1003,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           // },
                                           reservedSize: 28,
                                           interval: 10,
-                                        ),
+                                        )),
                                       ),
                                       minY: 0,
                                       maxY: 100,
@@ -955,7 +1015,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             return FlSpot(cpus.indexOf(cpu).toDouble(), (cpu['user_load'] + cpu['system_load'] + cpu['other_load']).toDouble());
                                           }).toList(),
                                           isCurved: true,
-                                          colors: [Color(0xff5584C8)],
+                                          color: Color(0xff5584C8),
                                           barWidth: 2,
                                           isStrokeCapRound: true,
                                           dotData: FlDotData(
@@ -963,7 +1023,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           ),
                                           belowBarData: BarAreaData(
                                             show: true,
-                                            colors: [Color(0xff5584C8)],
+                                            color: Color(0xff5584C8),
                                           ),
                                         ),
                                         LineChartBarData(
@@ -971,7 +1031,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             return FlSpot(cpus.indexOf(cpu).toDouble(), (cpu['user_load'] + cpu['system_load']).toDouble());
                                           }).toList(),
                                           isCurved: true,
-                                          colors: [Color(0xff73B0EE)],
+                                          color: Color(0xff73B0EE),
                                           barWidth: 2,
                                           isStrokeCapRound: true,
                                           dotData: FlDotData(
@@ -979,7 +1039,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           ),
                                           belowBarData: BarAreaData(
                                             show: true,
-                                            colors: [Color(0xff73B0EE)],
+                                            color: Color(0xff73B0EE),
                                           ),
                                         ),
                                         LineChartBarData(
@@ -987,7 +1047,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             return FlSpot(cpus.indexOf(cpu).toDouble(), cpu['user_load'].toDouble());
                                           }).toList(),
                                           isCurved: true,
-                                          colors: [Color(0xffBAE050)],
+                                          color: Color(0xffBAE050),
                                           barWidth: 2,
                                           isStrokeCapRound: true,
                                           dotData: FlDotData(
@@ -995,7 +1055,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           ),
                                           belowBarData: BarAreaData(
                                             show: true,
-                                            colors: [Color(0xffBAE050)],
+                                            color: Color(0xffBAE050),
                                           ),
                                         ),
                                       ],
@@ -1278,18 +1338,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                       ),
                                       titlesData: FlTitlesData(
                                         show: true,
-                                        bottomTitles: SideTitles(
-                                          showTitles: false,
-                                          reservedSize: 22,
-                                        ),
-                                        topTitles: SideTitles(showTitles: false),
-                                        rightTitles: SideTitles(showTitles: false),
-                                        leftTitles: SideTitles(
-                                          showTitles: true,
-                                          getTextStyles: (value, _) => const TextStyle(
-                                            color: Color(0xff67727d),
-                                            fontSize: 12,
+                                        bottomTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                            showTitles: false,
+                                            reservedSize: 22,
                                           ),
+                                        ),
+                                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                        leftTitles: AxisTitles(
+                                            sideTitles: SideTitles(
+                                          showTitles: true,
+                                          getTitlesWidget: (value, _) {
+                                            return Text(
+                                              "$value",
+                                              style: TextStyle(
+                                                color: Color(0xff67727d),
+                                                fontSize: 12,
+                                              ),
+                                            );
+                                          },
+                                          // getTextStyles: (value, _) => const ,
                                           // getTitles: chartTitle,
                                           // getTitles: (value) {
                                           //   value = value / 1000 / 1000;
@@ -1297,7 +1366,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           // },
                                           reservedSize: 28,
                                           interval: 10,
-                                        ),
+                                        )),
                                       ),
                                       minY: 0,
                                       maxY: 100,
@@ -1309,7 +1378,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             return FlSpot(memories.indexOf(memory).toDouble(), memory['real_usage'].toDouble());
                                           }).toList(),
                                           isCurved: true,
-                                          colors: [Colors.blue],
+                                          color: Colors.blue,
                                           barWidth: 2,
                                           isStrokeCapRound: true,
                                           dotData: FlDotData(
@@ -1317,7 +1386,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           ),
                                           belowBarData: BarAreaData(
                                             show: true,
-                                            colors: [Colors.blue.withOpacity(0.2)],
+                                            color: Colors.blue.withOpacity(0.2),
                                           ),
                                         ),
                                       ],
@@ -1588,11 +1657,11 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   getTooltipItems: (List<LineBarSpot> items) {
                                                     return items.map((LineBarSpot touchedSpot) {
                                                       final textStyle = TextStyle(
-                                                        color: touchedSpot.bar.colors[0],
+                                                        color: touchedSpot.bar.color,
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 14,
                                                       );
-                                                      return LineTooltipItem('${touchedSpot.bar.colors[0] == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                                      return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
                                                     }).toList();
                                                   },
                                                 ),
@@ -1602,25 +1671,57 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               ),
                                               titlesData: FlTitlesData(
                                                 show: true,
-                                                bottomTitles: SideTitles(
-                                                  showTitles: false,
-                                                  reservedSize: 22,
-                                                ),
-                                                topTitles: SideTitles(showTitles: false),
-                                                rightTitles: SideTitles(showTitles: false),
-                                                leftTitles: SideTitles(
-                                                  showTitles: true,
-                                                  getTextStyles: (value, _) => const TextStyle(
-                                                    color: Color(0xff67727d),
-                                                    fontSize: 12,
+                                                bottomTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                    showTitles: false,
+                                                    reservedSize: 22,
                                                   ),
-                                                  getTitles: (v) {
-                                                    return chartTitle(v, maxNetworkSpeed);
+                                                ),
+                                                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                                leftTitles: AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                  showTitles: true,
+                                                  getTitlesWidget: (value, _) {
+                                                    return Text(
+                                                      chartTitle(value, maxNetworkSpeed),
+                                                      style: TextStyle(
+                                                        color: Color(0xff67727d),
+                                                        fontSize: 12,
+                                                      ),
+                                                    );
                                                   },
+                                                  // getTextStyles: (value, _) => const ,
+                                                  // getTitles: chartTitle,
+                                                  // getTitles: (value) {
+                                                  //   value = value / 1000 / 1000;
+                                                  //   return (value.floor() * 1000).toString();
+                                                  // },
                                                   reservedSize: 28,
                                                   interval: chartInterval(maxNetworkSpeed),
-                                                ),
+                                                )),
                                               ),
+                                              // titlesData: FlTitlesData(
+                                              //   show: true,
+                                              //   bottomTitles: SideTitles(
+                                              //     showTitles: false,
+                                              //     reservedSize: 22,
+                                              //   ),
+                                              //   topTitles: SideTitles(showTitles: false),
+                                              //   rightTitles: SideTitles(showTitles: false),
+                                              //   leftTitles: SideTitles(
+                                              //     showTitles: true,
+                                              //     getTextStyles: (value, _) => const TextStyle(
+                                              //       color: Color(0xff67727d),
+                                              //       fontSize: 12,
+                                              //     ),
+                                              //     getTitles: (v) {
+                                              //       return chartTitle(v, maxNetworkSpeed);
+                                              //     },
+                                              //     reservedSize: 28,
+                                              //     interval: chartInterval(maxNetworkSpeed),
+                                              //   ),
+                                              // ),
                                               minY: 0,
                                               // maxY: 20,
                                               borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -1630,9 +1731,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(networks.indexOf(network).toDouble(), network[i]['tx'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    Colors.blue,
-                                                  ],
+                                                  color: Colors.blue,
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -1640,7 +1739,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   ),
                                                   belowBarData: BarAreaData(
                                                     show: true,
-                                                    colors: [Colors.blue.withOpacity(0.2)],
+                                                    color: Colors.blue.withOpacity(0.2),
                                                   ),
                                                 ),
                                                 LineChartBarData(
@@ -1648,9 +1747,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(networks.indexOf(network).toDouble(), network[i]['rx'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    Colors.green,
-                                                  ],
+                                                  color: Colors.green,
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -1658,9 +1755,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   ),
                                                   belowBarData: BarAreaData(
                                                     show: true,
-                                                    colors: [
-                                                      Colors.green.withOpacity(0.2),
-                                                    ],
+                                                    color: Colors.green.withOpacity(0.2),
                                                   ),
                                                 ),
                                               ],
@@ -1785,18 +1880,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
                                                 // getTitles: chartTitle,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
@@ -1804,7 +1908,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 // },
                                                 reservedSize: 28,
                                                 interval: 10,
-                                              ),
+                                              )),
                                             ),
                                             minY: 0,
                                             maxY: 100,
@@ -1816,9 +1920,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(disks.indexOf(disk).toDouble(), disk['total']['utilization'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -1831,9 +1933,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(disks.indexOf(disk).toDouble(), disk['disk'][i]['utilization'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -1912,25 +2012,57 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                getTitles: (v) {
-                                                  return chartTitle(v, maxDiskReadSpeed);
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    chartTitle(value, maxDiskReadSpeed),
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
                                                 },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
                                                 reservedSize: 28,
                                                 interval: chartInterval(maxDiskReadSpeed),
-                                              ),
+                                              )),
                                             ),
+                                            // titlesData: FlTitlesData(
+                                            //   show: true,
+                                            //   bottomTitles: SideTitles(
+                                            //     showTitles: false,
+                                            //     reservedSize: 22,
+                                            //   ),
+                                            //   topTitles: SideTitles(showTitles: false),
+                                            //   rightTitles: SideTitles(showTitles: false),
+                                            //   leftTitles: SideTitles(
+                                            //     showTitles: true,
+                                            //     getTextStyles: (value, _) => const TextStyle(
+                                            //       color: Color(0xff67727d),
+                                            //       fontSize: 12,
+                                            //     ),
+                                            //     getTitles: (v) {
+                                            //       return ;
+                                            //     },
+                                            //     reservedSize: 28,
+                                            //     interval:,
+                                            //   ),
+                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -1940,9 +2072,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(disks.indexOf(disk).toDouble(), disk['total']['read_byte'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -1955,9 +2085,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(disks.indexOf(disk).toDouble(), disk['disk'][i]['read_byte'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2036,25 +2164,57 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                getTitles: (v) {
-                                                  return chartTitle(v, maxDiskWriteSpeed);
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    chartTitle(value, maxDiskWriteSpeed),
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
                                                 },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
                                                 reservedSize: 28,
                                                 interval: chartInterval(maxDiskWriteSpeed),
-                                              ),
+                                              )),
                                             ),
+                                            // titlesData: FlTitlesData(
+                                            //   show: true,
+                                            //   bottomTitles: SideTitles(
+                                            //     showTitles: false,
+                                            //     reservedSize: 22,
+                                            //   ),
+                                            //   topTitles: SideTitles(showTitles: false),
+                                            //   rightTitles: SideTitles(showTitles: false),
+                                            //   leftTitles: SideTitles(
+                                            //     showTitles: true,
+                                            //     getTextStyles: (value, _) => const TextStyle(
+                                            //       color: Color(0xff67727d),
+                                            //       fontSize: 12,
+                                            //     ),
+                                            //     getTitles: (v) {
+                                            //       return ;
+                                            //     },
+                                            //     reservedSize: 28,
+                                            //     interval: ,
+                                            //   ),
+                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -2064,9 +2224,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(disks.indexOf(disk).toDouble(), disk['total']['write_byte'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2079,9 +2237,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(disks.indexOf(disk).toDouble(), disk['disk'][i]['write_byte'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2160,24 +2316,35 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                // getTitles: (v) {
-                                                //   return chartTitle(v, maxDiskReadAccess);
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: 20,
-                                              ),
+                                                interval: 10,
+                                              )),
                                             ),
                                             minY: 0,
                                             // maxY: 20,
@@ -2188,9 +2355,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(disks.indexOf(disk).toDouble(), disk['total']['read_access'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2203,9 +2368,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(disks.indexOf(disk).toDouble(), disk['disk'][i]['read_access'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2284,21 +2447,35 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                reservedSize: 28,
-                                                interval: 20,
                                               ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
+                                                reservedSize: 28,
+                                                interval: 10,
+                                              )),
                                             ),
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -2308,9 +2485,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(disks.indexOf(disk).toDouble(), disk['total']['write_access'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2323,9 +2498,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(disks.indexOf(disk).toDouble(), disk['disk'][i]['write_access'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2430,18 +2603,27 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
                                                 // getTitles: chartTitle,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
@@ -2449,7 +2631,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 // },
                                                 reservedSize: 28,
                                                 interval: 10,
-                                              ),
+                                              )),
                                             ),
                                             minY: 0,
                                             maxY: 100,
@@ -2461,9 +2643,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(spaces.indexOf(volume).toDouble(), volume['total']['utilization'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2476,9 +2656,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(spaces.indexOf(volume).toDouble(), volume['volume'][i]['utilization'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2557,25 +2735,57 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                getTitles: (v) {
-                                                  return chartTitle(v, maxVolumeReadSpeed);
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    chartTitle(value, maxVolumeReadSpeed),
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
                                                 },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
                                                 reservedSize: 28,
                                                 interval: chartInterval(maxVolumeReadSpeed),
-                                              ),
+                                              )),
                                             ),
+                                            // titlesData: FlTitlesData(
+                                            //   show: true,
+                                            //   bottomTitles: SideTitles(
+                                            //     showTitles: false,
+                                            //     reservedSize: 22,
+                                            //   ),
+                                            //   topTitles: SideTitles(showTitles: false),
+                                            //   rightTitles: SideTitles(showTitles: false),
+                                            //   leftTitles: SideTitles(
+                                            //     showTitles: true,
+                                            //     getTextStyles: (value, _) => const TextStyle(
+                                            //       color: Color(0xff67727d),
+                                            //       fontSize: 12,
+                                            //     ),
+                                            //     getTitles: (v) {
+                                            //       return ;
+                                            //     },
+                                            //     reservedSize: 28,
+                                            //     interval: ,
+                                            //   ),
+                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -2585,9 +2795,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(spaces.indexOf(volume).toDouble(), volume['total']['read_byte'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2600,9 +2808,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(spaces.indexOf(volume).toDouble(), volume['volume'][i]['read_byte'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2681,25 +2887,57 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                getTitles: (v) {
-                                                  return chartTitle(v, maxVolumeWriteSpeed);
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    chartTitle(value, maxVolumeWriteSpeed),
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
                                                 },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
                                                 reservedSize: 28,
                                                 interval: chartInterval(maxVolumeWriteSpeed),
-                                              ),
+                                              )),
                                             ),
+                                            // titlesData: FlTitlesData(
+                                            //   show: true,
+                                            //   bottomTitles: SideTitles(
+                                            //     showTitles: false,
+                                            //     reservedSize: 22,
+                                            //   ),
+                                            //   topTitles: SideTitles(showTitles: false),
+                                            //   rightTitles: SideTitles(showTitles: false),
+                                            //   leftTitles: SideTitles(
+                                            //     showTitles: true,
+                                            //     getTextStyles: (value, _) => const TextStyle(
+                                            //       color: Color(0xff67727d),
+                                            //       fontSize: 12,
+                                            //     ),
+                                            //     getTitles: (v) {
+                                            //       return chartTitle(v, maxVolumeWriteSpeed);
+                                            //     },
+                                            //     reservedSize: 28,
+                                            //     interval: chartInterval(maxVolumeWriteSpeed),
+                                            //   ),
+                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -2709,9 +2947,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(spaces.indexOf(volume).toDouble(), volume['total']['write_byte'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2724,9 +2960,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(spaces.indexOf(volume).toDouble(), volume['volume'][i]['write_byte'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2805,24 +3039,35 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                // getTitles: (v) {
-                                                //   return chartTitle(v, maxvolumeReadAccess);
+                                              ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: 20,
-                                              ),
+                                                interval: 10,
+                                              )),
                                             ),
                                             minY: 0,
                                             // maxY: 20,
@@ -2833,9 +3078,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(spaces.indexOf(volume).toDouble(), volume['total']['read_access'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2848,9 +3091,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(spaces.indexOf(volume).toDouble(), volume['volume'][i]['read_access'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(
@@ -2929,21 +3170,35 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             ),
                                             titlesData: FlTitlesData(
                                               show: true,
-                                              bottomTitles: SideTitles(
-                                                showTitles: false,
-                                                reservedSize: 22,
-                                              ),
-                                              topTitles: SideTitles(showTitles: false),
-                                              rightTitles: SideTitles(showTitles: false),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTextStyles: (value, _) => const TextStyle(
-                                                  color: Color(0xff67727d),
-                                                  fontSize: 12,
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 22,
                                                 ),
-                                                reservedSize: 28,
-                                                interval: 20,
                                               ),
+                                              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget: (value, _) {
+                                                  return Text(
+                                                    "$value",
+                                                    style: TextStyle(
+                                                      color: Color(0xff67727d),
+                                                      fontSize: 12,
+                                                    ),
+                                                  );
+                                                },
+                                                // getTextStyles: (value, _) => const ,
+                                                // getTitles: chartTitle,
+                                                // getTitles: (value) {
+                                                //   value = value / 1000 / 1000;
+                                                //   return (value.floor() * 1000).toString();
+                                                // },
+                                                reservedSize: 28,
+                                                interval: 10,
+                                              )),
                                             ),
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -2953,9 +3208,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   return FlSpot(spaces.indexOf(volume).toDouble(), volume['total']['write_access'].toDouble());
                                                 }).toList(),
                                                 isCurved: true,
-                                                colors: [
-                                                  Colors.blue,
-                                                ],
+                                                color: Colors.blue,
                                                 barWidth: 2,
                                                 isStrokeCapRound: true,
                                                 dotData: FlDotData(
@@ -2968,9 +3221,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return FlSpot(spaces.indexOf(volume).toDouble(), volume['volume'][i]['write_access'].toDouble());
                                                   }).toList(),
                                                   isCurved: true,
-                                                  colors: [
-                                                    colors[i],
-                                                  ],
+                                                  color: colors[i],
                                                   barWidth: 2,
                                                   isStrokeCapRound: true,
                                                   dotData: FlDotData(

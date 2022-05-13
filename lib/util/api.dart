@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'function.dart';
 import 'package:http_parser/http_parser.dart';
+
+import 'function.dart';
 
 class Api {
   static Future<Map> update(String buildNumber) async {

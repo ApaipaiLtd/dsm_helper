@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Browser extends StatefulWidget {
@@ -40,7 +40,7 @@ class _BrowserState extends State<Browser> {
               padding: EdgeInsets.all(10),
               bevel: 5,
               onPressed: () {
-                launch(widget.url);
+                launchUrlString(widget.url);
               },
               child: Image.asset(
                 "assets/icons/browser.png",

@@ -4,10 +4,11 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gesture_password/gesture_password.dart';
-import 'package:local_auth/auth_strings.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:vibrate/vibrate.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/types/auth_messages_android.dart';
+import 'package:local_auth_ios/types/auth_messages_ios.dart';
+import 'package:vibrate/vibrate.dart';
 
 class AuthPage extends StatefulWidget {
   final bool launch;
@@ -47,25 +48,29 @@ class _AuthPageState extends State<AuthPage> {
       }
       try {
         bool didAuthenticate = await auth.authenticate(
-          biometricOnly: true,
+          options: AuthenticationOptions(
+            biometricOnly: true,
+            sensitiveTransaction: false,
+          ),
+          authMessages: [
+            IOSAuthMessages(
+              lockOut: "认证失败次数过多，请稍后再试",
+              goToSettingsButton: "设置",
+              goToSettingsDescription: "系统未设置${biometricsType == BiometricType.fingerprint ? "指纹" : "Face ID"}，点击设置按钮前往系统设置页面",
+              cancelButton: "取消",
+            ),
+            AndroidAuthMessages(
+              biometricNotRecognized: "系统未设置指纹",
+              biometricRequiredTitle: "请触摸指纹传感器",
+              signInTitle: "验证指纹",
+              cancelButton: "取消",
+              biometricHint: "如果验证失败5次请等待30秒后重试",
+              goToSettingsButton: "设置",
+              goToSettingsDescription: "点击设置按钮前往系统指纹设置页面",
+              biometricSuccess: "指纹验证成功",
+            )
+          ],
           localizedReason: '请触摸指纹传感器',
-          androidAuthStrings: AndroidAuthMessages(
-            biometricNotRecognized: "系统未设置指纹",
-            biometricRequiredTitle: "请触摸指纹传感器",
-            signInTitle: "验证指纹",
-            cancelButton: "取消",
-            biometricHint: "如果验证失败5次请等待30秒后重试",
-            goToSettingsButton: "设置",
-            goToSettingsDescription: "点击设置按钮前往系统指纹设置页面",
-            biometricSuccess: "指纹验证成功",
-          ),
-          iOSAuthStrings: IOSAuthMessages(
-            lockOut: "认证失败次数过多，请稍后再试",
-            goToSettingsButton: "设置",
-            goToSettingsDescription: "系统未设置${biometricsType == BiometricType.fingerprint ? "指纹" : "Face ID"}，点击设置按钮前往系统设置页面",
-            cancelButton: "取消",
-          ),
-          sensitiveTransaction: false,
         );
         if (didAuthenticate) {
           //验证成功

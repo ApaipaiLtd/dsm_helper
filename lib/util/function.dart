@@ -3,27 +3,28 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cool_ui/cool_ui.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/api.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:dsm_helper/pages/download/download.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:vibrate/vibrate.dart';
-export 'package:dsm_helper/util/api.dart';
+
 export 'package:dsm_helper/extensions/datetime.dart';
-export 'package:dsm_helper/extensions/string.dart';
 export 'package:dsm_helper/extensions/int.dart';
+export 'package:dsm_helper/extensions/int.dart';
+export 'package:dsm_helper/extensions/string.dart';
+export 'package:dsm_helper/util/api.dart';
 
 enum FileType {
   folder,
@@ -43,6 +44,7 @@ enum FileType {
   apk,
   iso,
 }
+
 enum UploadStatus {
   running,
   complete,

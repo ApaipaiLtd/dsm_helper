@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
@@ -8,7 +8,6 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
-import 'package:file_picker/file_picker.dart' hide FileType;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -374,7 +373,7 @@ class _UploadState extends State<Upload> {
                                   NeuButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
-                                      final List<AssetEntity> assets = await AssetPicker.pickAssets(context, maxAssets: 1000);
+                                      final List<AssetEntity> assets = await AssetPicker.pickAssets(context, pickerConfig: AssetPickerConfig(maxAssets: 1000));
                                       if (assets != null && assets.length > 0) {
                                         assets.forEach((asset) {
                                           asset.file.then((file) {

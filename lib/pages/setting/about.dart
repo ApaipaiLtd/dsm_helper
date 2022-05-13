@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
 import 'package:dsm_helper/util/function.dart';
@@ -7,8 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:package_info/package_info.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class About extends StatefulWidget {
   @override
@@ -149,7 +150,7 @@ class _AboutState extends State<About> {
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             onPressed: () {
-                              launch('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
+                              launchUrlString('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
                             },
                             child: Text("加群"),
                           ),

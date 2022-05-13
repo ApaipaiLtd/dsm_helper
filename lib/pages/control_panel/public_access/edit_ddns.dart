@@ -1,5 +1,4 @@
 import 'package:cool_ui/cool_ui.dart';
-import 'package:dsm_helper/util/api.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/label.dart';

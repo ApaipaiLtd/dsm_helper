@@ -4,7 +4,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class Badge extends StatelessWidget {
   final dynamic badge;

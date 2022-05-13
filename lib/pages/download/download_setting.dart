@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:device_info/device_info.dart';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';

@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:android_intent/android_intent.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/common/pdf_viewer.dart';
 import 'package:dsm_helper/pages/common/text_editor.dart';
 import 'package:dsm_helper/pages/common/video_player.dart';
+import 'package:dsm_helper/pages/file/detail.dart';
 import 'package:dsm_helper/pages/file/favorite.dart';
 import 'package:dsm_helper/pages/file/remote_folder.dart';
 import 'package:dsm_helper/pages/file/search.dart';
@@ -13,18 +16,14 @@ import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/pages/file/share.dart';
 import 'package:dsm_helper/pages/file/share_manager.dart';
 import 'package:dsm_helper/pages/file/upload.dart';
-import 'package:dsm_helper/widgets/animation_progress_bar.dart';
-import 'package:dsm_helper/widgets/transparent_router.dart';
-import 'package:dsm_helper/pages/common/image_preview.dart';
-import 'package:dsm_helper/pages/file/detail.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
+import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:vibrate/vibrate.dart';
-import 'dart:convert';
 
 enum ListType { list, icon }
 

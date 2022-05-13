@@ -6,7 +6,6 @@ import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/setting/privacy.dart';
 import 'package:dsm_helper/pages/update/update.dart';
-import 'package:dsm_helper/util/api.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -14,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:wake_on_lan/wake_on_lan.dart';
@@ -573,7 +572,7 @@ class _LoginState extends State<Login> {
     IPv4Address ipv4Address;
     MACAddress macAddress;
     if (IPv4Address.validate(ipv4)) {
-      ipv4Address = IPv4Address.from(ipv4);
+      ipv4Address = IPv4Address(ipv4);
       //Continue execution
     } else {
       Util.toast("IP地址有误");
@@ -582,14 +581,14 @@ class _LoginState extends State<Login> {
     }
     String mac = '02-11-32-27-31-2F';
     if (MACAddress.validate(mac)) {
-      macAddress = MACAddress.from(mac);
+      macAddress = MACAddress(mac);
       //Continue execution
     } else {
       Util.toast("MAC地址有误");
       return;
       // Handle invalid address case
     }
-    WakeOnLAN wol = WakeOnLAN.from(ipv4Address, macAddress, port: 1234);
+    WakeOnLAN wol = WakeOnLAN(ipv4Address, macAddress, port: 1234);
     await wol.wake().then((v) => print('sent'));
   }
 

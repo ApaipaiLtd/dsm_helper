@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/hero_widget.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dsm_helper/util/function.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 

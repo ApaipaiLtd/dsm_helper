@@ -1,11 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:dsm_helper/pages/dashborad/dashboard.dart';
 import 'package:dsm_helper/pages/download/download.dart';
-import 'package:dsm_helper/pages/download_station/add_task.dart';
 import 'package:dsm_helper/pages/file/file.dart';
-import 'package:dsm_helper/pages/file/upload.dart';
-import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
@@ -13,10 +10,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:package_info/package_info.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'dart:async';
+import 'package:vibrate/vibrate.dart';
+
+import 'dashborad/dashboard.dart';
+import 'download_station/add_task.dart';
+import 'file/upload.dart';
+import 'login/auth_page.dart';
 
 class Home extends StatefulWidget {
   @override

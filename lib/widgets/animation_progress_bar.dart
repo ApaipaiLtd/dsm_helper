@@ -1,6 +1,6 @@
-import 'package:flutter/animation.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:math';
+
+import 'package:flutter/widgets.dart';
 
 class FAProgressBar extends StatefulWidget {
   FAProgressBar({
