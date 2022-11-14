@@ -50,6 +50,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
   }
 
   Widget _buildSSDCacheItem(volume) {
+    double percent = int.parse(volume['size']['used'] ?? volume['size']['reusable']) / int.parse(volume['size']['total']);
     return NeuCard(
       decoration: NeumorphicDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -69,14 +70,16 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
+            width: 100,
+            height: 100,
             padding: EdgeInsets.symmetric(horizontal: 5),
             bevel: 8,
             child: CircularPercentIndicator(
-              radius: 80,
+              radius: 40,
               // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
+                colors: percent <= 0.9
                     ? [
                         Colors.blue,
                         Colors.blueAccent,
@@ -90,10 +93,10 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
               circularStrokeCap: CircularStrokeCap.round,
               lineWidth: 12,
               backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
+              percent: percent,
               center: Text(
-                "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+                "${(percent * 100).toStringAsFixed(0)}%",
+                style: TextStyle(color: percent <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
               ),
             ),
           ),
@@ -123,11 +126,11 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
+                Text("已用：${Util.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
+                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
@@ -154,6 +157,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
         children: [
           NeuCard(
             curveType: CurveType.flat,
+            width: 100,
+            height: 100,
             margin: EdgeInsets.all(10),
             decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
@@ -163,7 +168,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
             padding: EdgeInsets.symmetric(horizontal: 5),
             bevel: 8,
             child: CircularPercentIndicator(
-              radius: 80,
+              radius: 40,
               // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(

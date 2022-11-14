@@ -1,9 +1,10 @@
 PODS:
   - BIJKPlayer (0.7.16)
-  - connectivity (0.0.1):
+  - Bugly (2.5.93)
+  - connectivity_plus (0.0.1):
     - Flutter
-    - Reachability
-  - device_info (0.0.1):
+    - ReachabilitySwift
+  - device_info_plus (0.0.1):
     - Flutter
   - DKImagePickerController/Core (4.2.2):
     - DKImagePickerController/ImageDataManager
@@ -36,34 +37,39 @@ PODS:
   - DKPhotoGallery/Resource (0.0.14):
     - SDWebImage
     - SDWebImageFLPlugin
-  - fijkplayer (0.10.0):
-    - BIJKPlayer (~> 0.7.15)
+  - fijkplayer (0.10.1):
+    - BIJKPlayer (~> 0.7.16)
     - Flutter
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
   - FLAnimatedImage (1.0.12)
   - Flutter (1.0.0)
+  - flutter_bugly (0.0.1):
+    - Bugly
+    - Flutter
   - flutter_downloader (0.0.1):
     - Flutter
   - fluwx (0.0.1):
     - Flutter
+    - OpenWeChatSDK (~> 1.9.6)
   - gallery_saver (0.0.1):
     - Flutter
-  - local_auth (0.0.1):
+  - local_auth_ios (0.0.1):
     - Flutter
   - open_file (0.0.1):
     - Flutter
-  - package_info (0.0.1):
+  - OpenWeChatSDK (1.9.6)
+  - package_info_plus (0.4.5):
     - Flutter
-  - path_provider (0.0.1):
+  - path_provider_ios (0.0.1):
     - Flutter
-  - "permission_handler (5.1.0+2)":
+  - permission_handler_apple (9.0.4):
     - Flutter
-  - photo_manager (1.0.0):
+  - photo_manager (2.0.0):
     - Flutter
     - FlutterMacOS
-  - Reachability (3.2)
+  - ReachabilitySwift (5.0.0)
   - receive_sharing_intent (0.0.1):
     - Flutter
   - SDWebImage (5.9.5):
@@ -72,7 +78,7 @@ PODS:
   - SDWebImageFLPlugin (0.4.0):
     - FLAnimatedImage (>= 1.0.11)
     - SDWebImage/Core (~> 5.6)
-  - shared_preferences (0.0.1):
+  - shared_preferences_ios (0.0.1):
     - Flutter
   - syncfusion_flutter_pdfviewer (0.0.1):
     - Flutter
@@ -80,11 +86,11 @@ PODS:
     - Flutter
     - UMengAnalytics-NO-IDFA
   - UMengAnalytics-NO-IDFA (4.2.5)
-  - url_launcher (0.0.1):
+  - url_launcher_ios (0.0.1):
     - Flutter
   - vibrate (0.0.1):
     - Flutter
-  - video_player (0.0.1):
+  - video_player_avfoundation (0.0.1):
     - Flutter
   - wakelock (0.0.1):
     - Flutter
@@ -92,84 +98,89 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - connectivity (from `.symlinks/plugins/connectivity/ios`)
-  - device_info (from `.symlinks/plugins/device_info/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - fijkplayer (from `.symlinks/plugins/fijkplayer/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
+  - flutter_bugly (from `.symlinks/plugins/flutter_bugly/ios`)
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - fluwx (from `.symlinks/plugins/fluwx/ios`)
   - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
-  - local_auth (from `.symlinks/plugins/local_auth/ios`)
+  - local_auth_ios (from `.symlinks/plugins/local_auth_ios/ios`)
   - open_file (from `.symlinks/plugins/open_file/ios`)
-  - package_info (from `.symlinks/plugins/package_info/ios`)
-  - path_provider (from `.symlinks/plugins/path_provider/ios`)
-  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
   - receive_sharing_intent (from `.symlinks/plugins/receive_sharing_intent/ios`)
-  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - syncfusion_flutter_pdfviewer (from `.symlinks/plugins/syncfusion_flutter_pdfviewer/ios`)
   - umeng_analytics_plugin (from `.symlinks/plugins/umeng_analytics_plugin/ios`)
-  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vibrate (from `.symlinks/plugins/vibrate/ios`)
-  - video_player (from `.symlinks/plugins/video_player/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
   trunk:
     - BIJKPlayer
+    - Bugly
     - DKImagePickerController
     - DKPhotoGallery
     - FLAnimatedImage
-    - Reachability
+    - OpenWeChatSDK
+    - ReachabilitySwift
     - SDWebImage
     - SDWebImageFLPlugin
     - UMengAnalytics-NO-IDFA
 
 EXTERNAL SOURCES:
-  connectivity:
-    :path: ".symlinks/plugins/connectivity/ios"
-  device_info:
-    :path: ".symlinks/plugins/device_info/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   fijkplayer:
     :path: ".symlinks/plugins/fijkplayer/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: Flutter
+  flutter_bugly:
+    :path: ".symlinks/plugins/flutter_bugly/ios"
   flutter_downloader:
     :path: ".symlinks/plugins/flutter_downloader/ios"
   fluwx:
     :path: ".symlinks/plugins/fluwx/ios"
   gallery_saver:
     :path: ".symlinks/plugins/gallery_saver/ios"
-  local_auth:
-    :path: ".symlinks/plugins/local_auth/ios"
+  local_auth_ios:
+    :path: ".symlinks/plugins/local_auth_ios/ios"
   open_file:
     :path: ".symlinks/plugins/open_file/ios"
-  package_info:
-    :path: ".symlinks/plugins/package_info/ios"
-  path_provider:
-    :path: ".symlinks/plugins/path_provider/ios"
-  permission_handler:
-    :path: ".symlinks/plugins/permission_handler/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   photo_manager:
     :path: ".symlinks/plugins/photo_manager/ios"
   receive_sharing_intent:
     :path: ".symlinks/plugins/receive_sharing_intent/ios"
-  shared_preferences:
-    :path: ".symlinks/plugins/shared_preferences/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
   syncfusion_flutter_pdfviewer:
     :path: ".symlinks/plugins/syncfusion_flutter_pdfviewer/ios"
   umeng_analytics_plugin:
     :path: ".symlinks/plugins/umeng_analytics_plugin/ios"
-  url_launcher:
-    :path: ".symlinks/plugins/url_launcher/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
   vibrate:
     :path: ".symlinks/plugins/vibrate/ios"
-  video_player:
-    :path: ".symlinks/plugins/video_player/ios"
+  video_player_avfoundation:
+    :path: ".symlinks/plugins/video_player_avfoundation/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
   webview_flutter_wkwebview:
@@ -177,37 +188,40 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BIJKPlayer: 4c5d66e5cb99ae5bade6f22a4fcc031722a81c64
-  connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
-  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
+  Bugly: b8715e6ec4004b7f7fbffab0643ba80545aee3da
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
+  device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   DKImagePickerController: 4a3e7948a848c4348e600b3fe5ce41478835fa10
   DKPhotoGallery: 0290d32343574f06eaa4c26f8f2f8a1035e916be
-  fijkplayer: 7e0358fd4f0db778616b52583e086b295c9118ce
-  file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
+  fijkplayer: 5ecf78e80cb97eed64cc170b094a4f691d9b9691
+  file_picker: 817ab1d8cd2da9d2da412a417162deee3500fc95
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
-  fluwx: c64c2b84b965279aaa251a80b5b6a1cd0ef7bd45
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_bugly: c9800f4d5bc5bdc27ffdde3417a26ba44266e0c3
+  flutter_downloader: b7301ae057deadd4b1650dc7c05375f10ff12c39
+  fluwx: 1649fdbdb0a7e24f3a371ca0f302e25dc1c022ab
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
-  local_auth: 25938960984c3a7f6e3253e3f8d962fdd16852bd
+  local_auth_ios: 0d333dde7780f669e66f19d2ff6005f3ea84008d
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
-  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  photo_manager: 84fa94fbeb82e607333ea9a13c43b58e0903a463
-  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  OpenWeChatSDK: 8fb6c3c7ce9a57f37d001060282de1f138d09940
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
+  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  photo_manager: 4f6810b7dfc4feb03b461ac1a70dacf91fba7604
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   receive_sharing_intent: c0d87310754e74c0f9542947e7cbdf3a0335a3b1
   SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
   SDWebImageFLPlugin: 6c2295fb1242d44467c6c87dc5db6b0a13228fd8
-  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   syncfusion_flutter_pdfviewer: bb9998884b864cfedf72628df3503bdf57e397c0
   umeng_analytics_plugin: 7035dfb8c5636e50429ab935125e5a3f0d23e72e
   UMengAnalytics-NO-IDFA: 16666e32edce5be44ae5b14aaaa7f3582e09d6ab
-  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+  url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
   vibrate: 967ba16b8bd87d2fa3646472bb10429f1927c32f
-  video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
-  wakelock: b0843b2479edbf6504d8d262c2959446f35373aa
+  video_player_avfoundation: e489aac24ef5cf7af82702979ed16f2a5ef84cff
+  wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter_wkwebview: 005fbd90c888a42c5690919a1527ecc6649e1162
 
-PODFILE CHECKSUM: 78db454aa4d7a2031b49810cc09fa3a31a2aeab9
+PODFILE CHECKSUM: 10f5c04ec96cd06e20461d4cd5df2e8b240146fe
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

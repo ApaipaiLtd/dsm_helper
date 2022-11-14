@@ -1442,6 +1442,8 @@ class DashboardState extends State<Dashboard> {
           NeuCard(
             curveType: CurveType.flat,
             margin: EdgeInsets.all(10),
+            width: 100,
+            height: 100,
             decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
@@ -1450,7 +1452,7 @@ class DashboardState extends State<Dashboard> {
             padding: EdgeInsets.symmetric(horizontal: 5),
             bevel: 8,
             child: CircularPercentIndicator(
-              radius: 80,
+              radius: 40,
               animation: true,
               linearGradient: LinearGradient(
                 colors: used <= 0.9
@@ -1536,6 +1538,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   Widget _buildSSDCacheItem(volume) {
+    double percent = int.parse(volume['size']['used'] ?? volume['size']['reusable']) / int.parse(volume['size']['total']);
     return NeuCard(
       decoration: NeumorphicDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -1557,11 +1560,13 @@ class DashboardState extends State<Dashboard> {
             ),
             padding: EdgeInsets.symmetric(horizontal: 5),
             bevel: 8,
+            width: 100,
+            height: 100,
             child: CircularPercentIndicator(
-              radius: 80,
+              radius: 40,
               animation: true,
               linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
+                colors: percent <= 0.9
                     ? [
                         Colors.blue,
                         Colors.blueAccent,
@@ -1575,10 +1580,10 @@ class DashboardState extends State<Dashboard> {
               circularStrokeCap: CircularStrokeCap.round,
               lineWidth: 12,
               backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
+              percent: percent,
               center: Text(
-                "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+                "${(percent * 100).toStringAsFixed(0)}%",
+                style: TextStyle(color: percent <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
               ),
             ),
           ),
@@ -1608,11 +1613,11 @@ class DashboardState extends State<Dashboard> {
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
+                Text("已用：${Util.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
+                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
