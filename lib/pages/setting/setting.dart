@@ -26,8 +26,9 @@ class SettingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = (MediaQuery.of(context).size.width - 81) / 3;
     return SizedBox(
-      width: (MediaQuery.of(context).size.width - 80) / 3,
+      width: width,
       child: NeuButton(
         onPressed: onPressed,
         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -535,6 +536,7 @@ class _SettingState extends State<Setting> {
 
   @override
   Widget build(BuildContext context) {
+    double width = (MediaQuery.of(context).size.width - 81) / 3;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -677,17 +679,16 @@ class _SettingState extends State<Setting> {
           SizedBox(
             height: 30,
           ),
-          GridView.count(
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            crossAxisCount: 3,
+          Wrap(
+            spacing: 20,
+            runSpacing: 20,
             children: [
               if (Util.account != "challengerv") ...[
                 SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
                 SettingButton(name: "重启", icon: "reboot", loading: rebooting, onPressed: onReboot),
               ],
               SizedBox(
-                width: (MediaQuery.of(context).size.width - 80) / 3,
+                width: width,
                 child: GestureDetector(
                   onTap: () async {
                     if (ssh == null) {
@@ -857,7 +858,6 @@ class _SettingState extends State<Setting> {
                 },
               ),
             ],
-            shrinkWrap: true,
           ),
         ],
       ),
