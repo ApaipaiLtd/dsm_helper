@@ -249,7 +249,7 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
                                 children: [
                                   sysStatus == "running"
                                       ? CircularPercentIndicator(
-                                          radius: 80,
+                                          radius: 40,
                                           // progressColor: Colors.lightBlueAccent,
                                           animation: true,
                                           linearGradient: LinearGradient(

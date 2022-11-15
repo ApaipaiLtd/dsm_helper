@@ -677,9 +677,10 @@ class _SettingState extends State<Setting> {
           SizedBox(
             height: 30,
           ),
-          Wrap(
-            spacing: 20,
-            runSpacing: 20,
+          GridView.count(
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            crossAxisCount: 3,
             children: [
               if (Util.account != "challengerv") ...[
                 SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
@@ -856,6 +857,7 @@ class _SettingState extends State<Setting> {
                 },
               ),
             ],
+            shrinkWrap: true,
           ),
         ],
       ),

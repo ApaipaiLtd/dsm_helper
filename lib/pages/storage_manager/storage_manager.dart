@@ -70,9 +70,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
-            width: 100,
-            height: 100,
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.all(5),
             bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
@@ -157,15 +155,13 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
         children: [
           NeuCard(
             curveType: CurveType.flat,
-            width: 100,
-            height: 100,
             margin: EdgeInsets.all(10),
             decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.all(5),
             bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,

@@ -202,9 +202,11 @@ class DashboardState extends State<Dashboard> {
 
   getNotifyStrings() async {
     var res = await Api.notifyStrings();
+    print("notifyStrings");
+    print(res);
     if (res['success']) {
       setState(() {
-        Util.notifyStrings = res['data'];
+        Util.notifyStrings = res['data'] ?? {};
       });
     }
   }
@@ -421,7 +423,7 @@ class DashboardState extends State<Dashboard> {
                 builder: (context, wallpaperProvider, _) {
                   return Stack(
                     children: [
-                      if (wallpaperProvider.showWallpaper && wallpaperModel != null && wallpaperModel.customizeWallpaper)
+                      if (wallpaperProvider.showWallpaper && wallpaperModel != null && (wallpaperModel.customizeWallpaper || wallpaperModel.customizeBackground))
                         ExtendedImage.network(
                           Util.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}",
                           height: 170,
@@ -1442,14 +1444,12 @@ class DashboardState extends State<Dashboard> {
           NeuCard(
             curveType: CurveType.flat,
             margin: EdgeInsets.all(10),
-            width: 100,
-            height: 100,
             decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.all(5),
             bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
@@ -1558,10 +1558,8 @@ class DashboardState extends State<Dashboard> {
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.all(5),
             bevel: 8,
-            width: 100,
-            height: 100,
             child: CircularPercentIndicator(
               radius: 40,
               animation: true,
@@ -1603,11 +1601,29 @@ class DashboardState extends State<Dashboard> {
                     SizedBox(
                       width: 5,
                     ),
-                    Label(
-                      volume['status'] == "normal" ? "正常" : volume['status'],
-                      volume['status'] == "normal" ? Colors.green : Colors.red,
-                      fill: true,
-                    ),
+                    volume['status'] == "normal"
+                        ? Label(
+                            "正常",
+                            Colors.green,
+                            fill: true,
+                          )
+                        : volume['status'] == "background"
+                            ? Label(
+                                "正在检查硬盘",
+                                Colors.lightBlueAccent,
+                                fill: true,
+                              )
+                            : volume['status'] == "attention"
+                                ? Label(
+                                    "注意",
+                                    Colors.orangeAccent,
+                                    fill: true,
+                                  )
+                                : Label(
+                                    volume['status'],
+                                    Colors.red,
+                                    fill: true,
+                                  ),
                   ],
                 ),
                 SizedBox(

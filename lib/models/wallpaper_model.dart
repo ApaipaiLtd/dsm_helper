@@ -37,12 +37,16 @@ class WallpaperModel {
       wallpaperExt = json['wallpaper_ext'];
       wallpaperPath = json['wallpaper_path'];
       wallpaperPosition = json['wallpaper_position'];
+      customizeBackground = json['customize_background'];
+      customizeBackgroundType = json['customize_background_type'];
       wallpaperType = json['wallpaper_type'];
     }
   }
   String classicalDesktop;
   bool customizeColor;
   bool customizeWallpaper = false;
+  bool customizeBackground = false;
+  String customizeBackgroundType = "image";
   int index;
   String menuStyle;
   bool newImage;
@@ -57,6 +61,8 @@ class WallpaperModel {
     map['classical_desktop'] = classicalDesktop;
     map['customize_color'] = customizeColor;
     map['customize_wallpaper'] = customizeWallpaper;
+    map['customize_background'] = customizeBackground;
+    map['customize_background_type'] = customizeBackgroundType;
     map['index'] = index;
     map['menu_style'] = menuStyle;
     map['newImage'] = newImage;

@@ -209,6 +209,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   }
 
   Widget _buildVolumeItem(volume) {
+    double percent = int.parse(volume['size']['used']) / int.parse(volume['size']['total']);
     return NeuCard(
       decoration: NeumorphicDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -228,14 +229,14 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.all(5),
             bevel: 8,
             child: CircularPercentIndicator(
-              radius: 80,
+              radius: 40,
               // progressColor: Colors.lightBlueAccent,
               animation: true,
               linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
+                colors: percent <= 0.9
                     ? [
                         Colors.blue,
                         Colors.blueAccent,
@@ -249,10 +250,10 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
               circularStrokeCap: CircularStrokeCap.round,
               lineWidth: 12,
               backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
+              percent: percent,
               center: Text(
-                "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+                "${(percent * 100).toStringAsFixed(0)}%",
+                style: TextStyle(color: percent <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
               ),
             ),
           ),
@@ -272,11 +273,29 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                     SizedBox(
                       width: 5,
                     ),
-                    Label(
-                      volume['status'] == "normal" ? "正常" : volume['status'],
-                      volume['status'] == "normal" ? Colors.green : Colors.red,
-                      fill: true,
-                    ),
+                    volume['status'] == "normal"
+                        ? Label(
+                            "正常",
+                            Colors.green,
+                            fill: true,
+                          )
+                        : volume['status'] == "background"
+                            ? Label(
+                                "正在检查硬盘",
+                                Colors.lightBlueAccent,
+                                fill: true,
+                              )
+                            : volume['status'] == "attention"
+                                ? Label(
+                                    "注意",
+                                    Colors.orangeAccent,
+                                    fill: true,
+                                  )
+                                : Label(
+                                    volume['status'],
+                                    Colors.red,
+                                    fill: true,
+                                  ),
                   ],
                 ),
                 SizedBox(

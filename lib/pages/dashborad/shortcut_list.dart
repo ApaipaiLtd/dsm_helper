@@ -225,14 +225,23 @@ class ShortcutList extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
-                  right: 10,
-                  top: 10,
-                  child: Badge(
-                    unread,
-                    size: 20,
+                if (unread > 0)
+                  Positioned(
+                    right: 20,
+                    top: 10,
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 15,
+                      width: 15,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black.withOpacity(0.5), offset: Offset(1, 1)),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
           ),

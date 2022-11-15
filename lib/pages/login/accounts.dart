@@ -285,10 +285,10 @@ class _AccountsState extends State<Accounts> {
                                 borderRadius: BorderRadius.circular(60),
                                 // color: Colors.red,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              padding: EdgeInsets.all(5),
                               bevel: 8,
                               child: CircularPercentIndicator(
-                                radius: 60,
+                                radius: 30,
                                 // progressColor: Colors.lightBlueAccent,
                                 animation: true,
                                 linearGradient: LinearGradient(
@@ -331,10 +331,11 @@ class _AccountsState extends State<Accounts> {
                                 borderRadius: BorderRadius.circular(60),
                                 // color: Colors.red,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              // width: ,
+                              padding: EdgeInsets.all(5),
                               bevel: 8,
                               child: CircularPercentIndicator(
-                                radius: 60,
+                                radius: 30,
                                 // progressColor: Colors.lightBlueAccent,
                                 animation: true,
                                 linearGradient: LinearGradient(

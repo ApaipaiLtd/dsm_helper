@@ -64,7 +64,7 @@ class ResultCard extends StatelessWidget {
                   )
                 else
                   CircularPercentIndicator(
-                    radius: 30,
+                    radius: 15,
                     // progressColor: Colors.lightBlueAccent,
                     animation: true,
                     linearGradient: LinearGradient(

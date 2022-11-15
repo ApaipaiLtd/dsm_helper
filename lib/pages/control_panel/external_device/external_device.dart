@@ -96,10 +96,10 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                   borderRadius: BorderRadius.circular(80),
                   // color: Colors.red,
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 5),
+                padding: EdgeInsets.all(5),
                 bevel: 8,
                 child: CircularPercentIndicator(
-                  radius: 80,
+                  radius: 40,
                   // progressColor: Colors.lightBlueAccent,
                   animation: true,
                   linearGradient: LinearGradient(
