@@ -37,7 +37,7 @@ class WallpaperModel {
       wallpaperExt = json['wallpaper_ext'];
       wallpaperPath = json['wallpaper_path'];
       wallpaperPosition = json['wallpaper_position'];
-      customizeBackground = json['customize_background'];
+      customizeBackground = json['customize_background'] ?? false;
       customizeBackgroundType = json['customize_background_type'];
       wallpaperType = json['wallpaper_type'];
     }
