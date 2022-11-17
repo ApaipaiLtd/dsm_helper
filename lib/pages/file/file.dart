@@ -3,11 +3,13 @@ import 'dart:convert';
 
 import 'package:android_intent/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cool_ui/cool_ui.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/common/pdf_viewer.dart';
 import 'package:dsm_helper/pages/common/text_editor.dart';
 import 'package:dsm_helper/pages/common/video_player.dart';
+import 'package:dsm_helper/pages/control_panel/shared_folders/add_shared_folder.dart';
 import 'package:dsm_helper/pages/file/detail.dart';
 import 'package:dsm_helper/pages/file/favorite.dart';
 import 'package:dsm_helper/pages/file/remote_folder.dart';
@@ -73,6 +75,13 @@ class FilesState extends State<Files> {
       scrollPosition[path] = _fileScrollController.offset;
     });
     super.initState();
+  }
+
+  Future<List> getVolumes() async {
+    var res = await Api.volumes();
+    if (res['success']) {
+      return res['data']['volumes'];
+    }
   }
 
   refresh() {
@@ -2581,6 +2590,51 @@ class FilesState extends State<Files> {
                                     runSpacing: 20,
                                     spacing: 20,
                                     children: [
+                                      if (paths.length == 0) ...[
+                                        Container(
+                                          constraints: BoxConstraints(maxWidth: 112),
+                                          width: (MediaQuery.of(context).size.width - 100) / 4,
+                                          child: NeuButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                              List volumes = await getVolumes();
+                                              if (volumes != null && volumes.length > 0) {
+                                                Navigator.of(context)
+                                                    .push(CupertinoPageRoute(
+                                                        builder: (context) {
+                                                          return AddSharedFolders(volumes);
+                                                        },
+                                                        settings: RouteSettings(name: "add_shared_folders")))
+                                                    .then((res) {
+                                                  if (res != null && res) {
+                                                    refresh();
+                                                  }
+                                                });
+                                              } else {
+                                                Util.toast("未获取到存储空间");
+                                              }
+                                            },
+                                            decoration: NeumorphicDecoration(
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            bevel: 20,
+                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                            child: Column(
+                                              children: [
+                                                Image.asset(
+                                                  "assets/icons/new_folder.png",
+                                                  width: 30,
+                                                ),
+                                                Text(
+                                                  "共享文件夹",
+                                                  style: TextStyle(fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                       if (paths.length > 0) ...[
                                         Container(
                                           constraints: BoxConstraints(maxWidth: 112),
