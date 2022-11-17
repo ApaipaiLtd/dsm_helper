@@ -186,7 +186,7 @@ class ShortcutList extends StatelessWidget {
     }
     if (icon != "") {
       return Padding(
-        padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
+        padding: EdgeInsets.only(left: 10, top: 20, bottom: 20,right: 10),
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).push(route);

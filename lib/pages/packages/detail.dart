@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:android_intent/android_intent.dart';
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/pages/packages/uninstall.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
