@@ -409,7 +409,7 @@ class Util {
     );
     // (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
     //   client.findProxy = (uri) {
-    //     return "PROXY 192.168.1.6:8888";
+    //     return "PROXY 192.168.0.107:8888";
     //   };
     // };
     //忽略Https校验

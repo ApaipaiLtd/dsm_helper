@@ -838,7 +838,11 @@ class Api {
   static Future<Map> upload(String uploadPath, String filePath, CancelToken cancelToken, Function(int, int) onSendProgress) async {
     File file = File(filePath);
     // var permission = await checkPermission(uploadPath, filePath);
-    MultipartFile multipartFile = MultipartFile.fromFileSync(filePath, filename: filePath.split("/").last);
+    MultipartFile multipartFile = MultipartFile.fromFileSync(
+      filePath,
+      filename: filePath.split("/").last,
+      contentType: MediaType.parse("text/plain"),
+    );
     // var url = "entry.cgi?api=SYNO.FileStation.Upload&method=upload&version=2&_sid=${Util.sid}";
     var url = "entry.cgi";
     var data = {
