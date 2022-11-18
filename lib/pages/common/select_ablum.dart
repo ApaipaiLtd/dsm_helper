@@ -136,11 +136,9 @@ class _SelectAlbumState extends State<SelectAlbum> {
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: NeuButton(
-                      onPressed: albums.length > 1 && selectedAlbums.length > 0
-                          ? () {
-                              Navigator.of(context).pop(selectedAlbums);
-                            }
-                          : null,
+                      onPressed: () {
+                        Navigator.of(context).pop(selectedAlbums);
+                      },
                       decoration: NeumorphicDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
