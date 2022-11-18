@@ -64,7 +64,7 @@ class DashboardState extends State<Dashboard> {
   int get maxNetworkSpeed {
     int maxSpeed = 0;
     for (int i = 0; i < networks.length; i++) {
-      int maxVal = max(networks[i][0]['rx'], networks[i][0]['tx']);
+      int maxVal = max(networks[i]['rx'], networks[i]['tx']);
       if (maxSpeed < maxVal) {
         maxSpeed = maxVal;
       }
@@ -74,13 +74,13 @@ class DashboardState extends State<Dashboard> {
 
   Map volWarnings;
   String msg = "";
-  bool get showMainMenu => Util.account != "challengerv";
+  bool get showMainMenu => Util.account != "jinx";
   @override
   void initState() {
     if (showMainMenu) {
       showFirstLaunchDialog();
     }
-
+    networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
     getNotifyStrings();
     getInfo().then((_) {
       getData(init: true);
@@ -265,45 +265,6 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
-  double get chartInterval {
-    if (maxNetworkSpeed < 1024) {
-      return 102.4;
-    } else if (maxNetworkSpeed < 1024 * 10) {
-      return 1024.0 * 2;
-    } else if (maxNetworkSpeed < pow(1024, 2)) {
-      return 1024.0 * 200;
-    } else if (maxNetworkSpeed < pow(1024, 2) * 5) {
-      return 1.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 10) {
-      return 2.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 20) {
-      return 4.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 40) {
-      return 8.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 50) {
-      return 10.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 100) {
-      return 20.0 * pow(1024, 2);
-    } else {
-      return 50.0 * pow(1024, 2);
-    }
-  }
-
-  String chartTitle(double v) {
-    if (maxNetworkSpeed < 10) {
-      return v.toString();
-    } else if (maxNetworkSpeed < pow(1024, 2)) {
-      String s = (v / 1024).floor().toString() + "K";
-      if (s == "1000K") {
-        return "1M";
-      }
-      return s;
-    } else {
-      v = v / pow(1024, 2);
-      return (v.floor()).toString() + "M";
-    }
-  }
-
   getData({bool init: false}) async {
     getExternalDevice();
     getMediaConverter();
@@ -329,7 +290,7 @@ class DashboardState extends State<Dashboard> {
                 if (networks.length > 20) {
                   networks.removeAt(0);
                 }
-                networks.add(item['data']['network']);
+                networks.add(item['data']['network'][0]);
               });
               break;
             case "SYNO.Core.System":
@@ -404,7 +365,7 @@ class DashboardState extends State<Dashboard> {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return GestureDetector(
         onTap: () {
-          if (Util.account != 'challengerv')
+          if (Util.account != 'jinx')
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return SystemInfo(0, system, volumes, disks);
             }));
@@ -918,14 +879,14 @@ class DashboardState extends State<Dashboard> {
                                     // ),
                                     // getTitles: chartTitle,
                                     getTitlesWidget: (value, _) {
-                                      return Text(chartTitle(value),
+                                      return Text(Util.formatSize(value, fixed: 0),
                                           style: TextStyle(
                                             color: Color(0xff67727d),
                                             fontSize: 12,
                                           ));
                                     },
                                     reservedSize: 28,
-                                    interval: chartInterval,
+                                    interval: Util.chartInterval(maxNetworkSpeed),
                                   ),
                                 ),
                               ),
@@ -935,7 +896,7 @@ class DashboardState extends State<Dashboard> {
                               lineBarsData: [
                                 LineChartBarData(
                                   spots: networks.map((network) {
-                                    return FlSpot(networks.indexOf(network).toDouble(), network[0]['tx'].toDouble());
+                                    return FlSpot(networks.indexOf(network).toDouble(), network['tx'].toDouble());
                                   }).toList(),
                                   isCurved: true,
                                   color: Colors.blue,
@@ -951,7 +912,7 @@ class DashboardState extends State<Dashboard> {
                                 ),
                                 LineChartBarData(
                                   spots: networks.map((network) {
-                                    return FlSpot(networks.indexOf(network).toDouble(), network[0]['rx'].toDouble());
+                                    return FlSpot(networks.indexOf(network).toDouble(), network['rx'].toDouble());
                                   }).toList(),
                                   isCurved: true,
                                   color: Colors.green,
@@ -1871,7 +1832,7 @@ class DashboardState extends State<Dashboard> {
           ],
         ),
         actions: [
-          if (Util.account != 'challengerv')
+          if (Util.account != 'jinx')
             Padding(
               padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
               child: NeuButton(

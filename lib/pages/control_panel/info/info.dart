@@ -19,7 +19,7 @@ class SystemInfo extends StatefulWidget {
 
 class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List usbDev;
+  List usbDev = [];
   List nifs;
   List volumes = [];
   List disks = [];
@@ -28,9 +28,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   @override
   void initState() {
     _tabController = TabController(initialIndex: widget.index, length: 6, vsync: this);
-    setState(() {
-      usbDev = widget.system['usb_dev'];
-    });
+    if (widget.system != null) {
+      setState(() {
+        usbDev = widget.system['usb_dev'];
+      });
+    }
+
     getData();
     if (widget.volumes.length > 0 || widget.disks.length > 0) {
       setState(() {

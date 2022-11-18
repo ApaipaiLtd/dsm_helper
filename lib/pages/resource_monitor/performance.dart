@@ -28,7 +28,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
   List disks = [];
   List spaces = [];
   List luns = [];
-  List colors = [Colors.red, Colors.redAccent, Colors.purpleAccent, Colors.green, Colors.amber, Colors.orange, Colors.teal, Colors.indigoAccent, Colors.cyanAccent, Colors.yellow, Colors.black, Colors.lightGreenAccent, Colors.pinkAccent];
+  List colors = [Colors.red, Colors.purpleAccent, Colors.redAccent, Colors.green, Colors.amber, Colors.orange, Colors.teal, Colors.indigoAccent, Colors.cyanAccent, Colors.yellow, Colors.black, Colors.lightGreenAccent, Colors.pinkAccent];
   Timer timer;
   int maxNetworkSpeed = 0;
   int maxDiskReadSpeed = 0;
@@ -97,44 +97,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
         });
     } else {
       print("加载失败$res");
-    }
-  }
-
-  double chartInterval(maxVal) {
-    if (maxVal < 1024) {
-      return 102.4;
-    } else if (maxVal < pow(1024, 2)) {
-      return 1024.0 * 200;
-    } else if (maxVal < pow(1024, 2) * 5) {
-      return 1.0 * pow(1024, 2);
-    } else if (maxVal < pow(1024, 2) * 10) {
-      return 2.0 * pow(1024, 2);
-    } else if (maxVal < pow(1024, 2) * 20) {
-      return 4.0 * pow(1024, 2);
-    } else if (maxVal < pow(1024, 2) * 40) {
-      return 8.0 * pow(1024, 2);
-    } else if (maxVal < pow(1024, 2) * 50) {
-      return 10.0 * pow(1024, 2);
-    } else if (maxVal < pow(1024, 2) * 100) {
-      return 20.0 * pow(1024, 2);
-    } else {
-      return 50.0 * pow(1024, 2);
-    }
-  }
-
-  String chartTitle(double v, int maxVal) {
-    if (maxVal < 1024) {
-      v = v / 1024;
-      return (v.floor() * 100).toString();
-    } else if (maxVal < pow(1024, 2)) {
-      String s = (v / 1024).floor().toString() + "K";
-      if (s == "1000K") {
-        return "1M";
-      }
-      return s;
-    } else {
-      v = v / pow(1024, 2);
-      return (v.floor()).toString() + "M";
     }
   }
 
@@ -293,7 +255,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -428,7 +390,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -561,7 +523,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    chartTitle(value, maxNetworkSpeed),
+                                                    Util.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -569,13 +531,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: 10,
+                                                interval: Util.chartInterval(maxNetworkSpeed),
                                               )),
                                             ),
                                             // titlesData: FlTitlesData(
@@ -593,10 +555,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             //       fontSize: 12,
                                             //     ),
                                             //     getTitles: (v) {
-                                            //       return chartTitle(v, maxNetworkSpeed);
+                                            //       return Util.formatSize(v, maxNetworkSpeed);
                                             //     },
                                             //     reservedSize: 28,
-                                            //     interval: chartInterval(maxNetworkSpeed),
+                                            //     interval: Util.chartInterval(maxNetworkSpeed),
                                             //   ),
                                             // ),
                                             minY: 0,
@@ -651,7 +613,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         color: Colors.blue,
                                       ),
                                       Text(
-                                        Util.formatSize(networks.last[0]['tx']) + "/S",
+                                        Util.formatSize(networks.last[0]['tx'], fixed: 0) + "/S",
                                         style: TextStyle(color: Colors.blue),
                                       ),
                                       Spacer(),
@@ -660,7 +622,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         color: Colors.green,
                                       ),
                                       Text(
-                                        Util.formatSize(networks.last[0]['rx']) + "/S",
+                                        Util.formatSize(networks.last[0]['rx'], fixed: 0) + "/S",
                                         style: TextStyle(color: Colors.green),
                                       ),
                                     ],
@@ -750,7 +712,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -882,7 +844,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -996,7 +958,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             );
                                           },
                                           // getTextStyles: (value, _) => const ,
-                                          // getTitles: chartTitle,
+                                          // getTitles: Util.formatSize,
                                           // getTitles: (value) {
                                           //   value = value / 1000 / 1000;
                                           //   return (value.floor() * 1000).toString();
@@ -1359,7 +1321,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             );
                                           },
                                           // getTextStyles: (value, _) => const ,
-                                          // getTitles: chartTitle,
+                                          // getTitles: Util.formatSize,
                                           // getTitles: (value) {
                                           //   value = value / 1000 / 1000;
                                           //   return (value.floor() * 1000).toString();
@@ -1684,7 +1646,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   showTitles: true,
                                                   getTitlesWidget: (value, _) {
                                                     return Text(
-                                                      chartTitle(value, maxNetworkSpeed),
+                                                      Util.formatSize(value, fixed: 0),
                                                       style: TextStyle(
                                                         color: Color(0xff67727d),
                                                         fontSize: 12,
@@ -1692,13 +1654,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     );
                                                   },
                                                   // getTextStyles: (value, _) => const ,
-                                                  // getTitles: chartTitle,
+                                                  // getTitles: Util.formatSize,
                                                   // getTitles: (value) {
                                                   //   value = value / 1000 / 1000;
                                                   //   return (value.floor() * 1000).toString();
                                                   // },
                                                   reservedSize: 28,
-                                                  interval: chartInterval(maxNetworkSpeed),
+                                                  interval: Util.chartInterval(maxNetworkSpeed),
                                                 )),
                                               ),
                                               // titlesData: FlTitlesData(
@@ -1716,10 +1678,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               //       fontSize: 12,
                                               //     ),
                                               //     getTitles: (v) {
-                                              //       return chartTitle(v, maxNetworkSpeed);
+                                              //       return Util.formatSize(v, maxNetworkSpeed);
                                               //     },
                                               //     reservedSize: 28,
-                                              //     interval: chartInterval(maxNetworkSpeed),
+                                              //     interval: Util.chartInterval(maxNetworkSpeed),
                                               //   ),
                                               // ),
                                               minY: 0,
@@ -1901,7 +1863,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -2025,7 +1987,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    chartTitle(value, maxDiskReadSpeed),
+                                                    Util.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2033,13 +1995,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: chartInterval(maxDiskReadSpeed),
+                                                interval: Util.chartInterval(maxDiskReadSpeed),
                                               )),
                                             ),
                                             // titlesData: FlTitlesData(
@@ -2177,7 +2139,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    chartTitle(value, maxDiskWriteSpeed),
+                                                    Util.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2185,13 +2147,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: chartInterval(maxDiskWriteSpeed),
+                                                interval: Util.chartInterval(maxDiskWriteSpeed),
                                               )),
                                             ),
                                             // titlesData: FlTitlesData(
@@ -2337,7 +2299,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -2467,12 +2429,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     ),
                                                   );
                                                 },
-                                                // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
-                                                // getTitles: (value) {
-                                                //   value = value / 1000 / 1000;
-                                                //   return (value.floor() * 1000).toString();
-                                                // },
                                                 reservedSize: 28,
                                                 interval: 10,
                                               )),
@@ -2623,12 +2579,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     ),
                                                   );
                                                 },
-                                                // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
-                                                // getTitles: (value) {
-                                                //   value = value / 1000 / 1000;
-                                                //   return (value.floor() * 1000).toString();
-                                                // },
                                                 reservedSize: 28,
                                                 interval: 10,
                                               )),
@@ -2748,44 +2698,17 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    chartTitle(value, maxVolumeReadSpeed),
+                                                    Util.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
                                                     ),
                                                   );
                                                 },
-                                                // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
-                                                // getTitles: (value) {
-                                                //   value = value / 1000 / 1000;
-                                                //   return (value.floor() * 1000).toString();
-                                                // },
                                                 reservedSize: 28,
-                                                interval: chartInterval(maxVolumeReadSpeed),
+                                                interval: Util.chartInterval(maxVolumeReadSpeed),
                                               )),
                                             ),
-                                            // titlesData: FlTitlesData(
-                                            //   show: true,
-                                            //   bottomTitles: SideTitles(
-                                            //     showTitles: false,
-                                            //     reservedSize: 22,
-                                            //   ),
-                                            //   topTitles: SideTitles(showTitles: false),
-                                            //   rightTitles: SideTitles(showTitles: false),
-                                            //   leftTitles: SideTitles(
-                                            //     showTitles: true,
-                                            //     getTextStyles: (value, _) => const TextStyle(
-                                            //       color: Color(0xff67727d),
-                                            //       fontSize: 12,
-                                            //     ),
-                                            //     getTitles: (v) {
-                                            //       return ;
-                                            //     },
-                                            //     reservedSize: 28,
-                                            //     interval: ,
-                                            //   ),
-                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -2900,7 +2823,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    chartTitle(value, maxVolumeWriteSpeed),
+                                                    Util.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2908,36 +2831,15 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: chartInterval(maxVolumeWriteSpeed),
+                                                interval: Util.chartInterval(maxVolumeWriteSpeed),
                                               )),
                                             ),
-                                            // titlesData: FlTitlesData(
-                                            //   show: true,
-                                            //   bottomTitles: SideTitles(
-                                            //     showTitles: false,
-                                            //     reservedSize: 22,
-                                            //   ),
-                                            //   topTitles: SideTitles(showTitles: false),
-                                            //   rightTitles: SideTitles(showTitles: false),
-                                            //   leftTitles: SideTitles(
-                                            //     showTitles: true,
-                                            //     getTextStyles: (value, _) => const TextStyle(
-                                            //       color: Color(0xff67727d),
-                                            //       fontSize: 12,
-                                            //     ),
-                                            //     getTitles: (v) {
-                                            //       return chartTitle(v, maxVolumeWriteSpeed);
-                                            //     },
-                                            //     reservedSize: 28,
-                                            //     interval: chartInterval(maxVolumeWriteSpeed),
-                                            //   ),
-                                            // ),
                                             minY: 0,
                                             // maxY: 20,
                                             borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
@@ -3060,7 +2962,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -3191,7 +3093,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: chartTitle,
+                                                // getTitles: Util.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();

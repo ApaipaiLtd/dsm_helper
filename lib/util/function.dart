@@ -544,15 +544,43 @@ class Util {
 
   static String formatSize(num size, {int format = 1024, int fixed = 2}) {
     if (size < format) {
-      return "${size}B";
+      return "$size";
     } else if (size < pow(format, 2)) {
-      return "${(size / format).toStringAsFixed(fixed)} KB";
+      return "${(size / format).toStringAsFixed(fixed)}K";
     } else if (size < pow(format, 3)) {
-      return "${(size / pow(format, 2)).toStringAsFixed(fixed)} MB";
+      return "${(size / pow(format, 2)).toStringAsFixed(fixed)}M";
     } else if (size < pow(format, 4)) {
-      return "${(size / pow(format, 3)).toStringAsFixed(fixed)} GB";
+      return "${(size / pow(format, 3)).toStringAsFixed(fixed)}G";
     } else {
-      return "${(size / pow(format, 4)).toStringAsFixed(fixed)} TB";
+      return "${(size / pow(format, 4)).toStringAsFixed(fixed)}T";
+    }
+  }
+
+  static double chartInterval(num maxNetworkSpeed) {
+    if (maxNetworkSpeed < 1024) {
+      return 102.4;
+    } else if (maxNetworkSpeed < 1024 * 2) {
+      return 102.4 * 2;
+    } else if (maxNetworkSpeed < 1024 * 5) {
+      return 1024.0;
+    } else if (maxNetworkSpeed < 1024 * 10) {
+      return 1024.0 * 2;
+    } else if (maxNetworkSpeed < pow(1024, 2)) {
+      return 1024.0 * 200;
+    } else if (maxNetworkSpeed < pow(1024, 2) * 5) {
+      return 1.0 * pow(1024, 2);
+    } else if (maxNetworkSpeed < pow(1024, 2) * 10) {
+      return 2.0 * pow(1024, 2);
+    } else if (maxNetworkSpeed < pow(1024, 2) * 20) {
+      return 4.0 * pow(1024, 2);
+    } else if (maxNetworkSpeed < pow(1024, 2) * 40) {
+      return 8.0 * pow(1024, 2);
+    } else if (maxNetworkSpeed < pow(1024, 2) * 50) {
+      return 10.0 * pow(1024, 2);
+    } else if (maxNetworkSpeed < pow(1024, 2) * 100) {
+      return 20.0 * pow(1024, 2);
+    } else {
+      return 50.0 * pow(1024, 2);
     }
   }
 
