@@ -6,7 +6,7 @@ class FAProgressBar extends StatefulWidget {
   FAProgressBar({
     Key key,
     this.currentValue = 0,
-    this.maxValue = 100,
+    this.maxValue = 95,
     this.size = 30,
     this.animatedDuration = const Duration(milliseconds: 300),
     this.direction = Axis.horizontal,
@@ -67,7 +67,7 @@ class _FAProgressBarState extends State<FAProgressBar> with SingleTickerProvider
       if (widget.currentValue == 0 || widget.maxValue == 0) {
         _currentEnd = 0;
       } else {
-        _currentEnd = widget.currentValue / widget.maxValue;
+        _currentEnd = 0.05 + widget.currentValue / widget.maxValue;
       }
 
       _animation = Tween<double>(begin: _currentBegin, end: _currentEnd).animate(_controller);
@@ -136,7 +136,7 @@ class AnimatedProgressBar extends AnimatedWidget {
       textProgress = Container(
         alignment: widget.direction == Axis.horizontal ? Alignment(position, 0) : (widget.verticalDirection == VerticalDirection.up ? FractionalOffset(0.5, 0.05) : FractionalOffset(0.5, 0.95)),
         child: Text(
-          (animation.value * widget.maxValue).toInt().toString() + widget.displayText,
+          (widget.currentValue).toInt().toString() + widget.displayText,
           softWrap: false,
           style: widget.displayTextStyle,
         ),
