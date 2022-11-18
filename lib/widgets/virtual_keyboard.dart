@@ -1,31 +1,178 @@
 import 'package:flutter/material.dart';
 import 'package:xterm/xterm.dart';
 
-class VirtualKeyboardView extends StatelessWidget {
-  const VirtualKeyboardView(this.keyboard, {key}) : super(key: key);
+import 'terminal_button.dart';
+
+class VirtualKeyboardView extends StatefulWidget {
+  const VirtualKeyboardView(this.keyboard, this.terminal, {key}) : super(key: key);
 
   final VirtualKeyboard keyboard;
+  final Terminal terminal;
 
   @override
+  State<VirtualKeyboardView> createState() => _VirtualKeyboardViewState();
+}
+
+class _VirtualKeyboardViewState extends State<VirtualKeyboardView> {
+  @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: keyboard,
-      builder: (context, child) => ToggleButtons(
-        children: [Text('Ctrl'), Text('Alt'), Text('Shift')],
-        isSelected: [keyboard.ctrl, keyboard.alt, keyboard.shift],
-        onPressed: (index) {
-          switch (index) {
-            case 0:
-              keyboard.ctrl = !keyboard.ctrl;
-              break;
-            case 1:
-              keyboard.alt = !keyboard.alt;
-              break;
-            case 2:
-              keyboard.shift = !keyboard.shift;
-              break;
-          }
-        },
+    return Container(
+      color: Colors.black,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: SafeArea(
+        child: DefaultTextStyle(
+          style: TextStyle(color: Colors.white.withOpacity(0.5)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.escape);
+                    },
+                    child: Text("ESC"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.onOutput('/');
+                    },
+                    child: Text("/"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.arrowUp);
+                    },
+                    child: Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 40,
+                  ),
+                  Spacer(),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.home);
+                    },
+                    child: Text(
+                      "INS",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.insert);
+                    },
+                    child: Text(
+                      "HOME",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.pageUp);
+                    },
+                    child: Text(
+                      "PGUP",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.tab);
+                    },
+                    child: Text("TAB"),
+                  ),
+                  // 左
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.arrowLeft);
+                    },
+                    child: Icon(
+                      Icons.keyboard_arrow_left,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                  // //下
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.arrowDown);
+                    },
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                  // // 右
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.arrowRight);
+                    },
+                    child: Icon(
+                      Icons.keyboard_arrow_right,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                  Spacer(),
+                  TerminalButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.keyboard.ctrl = !widget.keyboard.ctrl;
+                      });
+                    },
+                    active: widget.keyboard.ctrl,
+                    child: Text("Ctrl"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.keyboard.alt = !widget.keyboard.alt;
+                      });
+                    },
+                    active: widget.keyboard.alt,
+                    child: Text("Alt"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.keyboard.shift = !widget.keyboard.shift;
+                      });
+                    },
+                    active: widget.keyboard.shift,
+                    child: Text("Shift"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.delete);
+                    },
+                    child: Text("DEL"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.end);
+                    },
+                    child: Text("END"),
+                  ),
+                  TerminalButton(
+                    onPressed: () {
+                      widget.terminal.keyInput(TerminalKey.pageDown);
+                    },
+                    child: Text(
+                      "PGDN",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

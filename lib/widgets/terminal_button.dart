@@ -8,7 +8,8 @@ class TerminalButton extends StatelessWidget {
   final OnPressed onPressed;
   final Widget child;
   final EdgeInsets padding;
-  const TerminalButton({this.onPressed, this.child, this.padding, Key key}) : super(key: key);
+  final bool active;
+  const TerminalButton({this.onPressed, this.child, this.padding, this.active: false, Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,7 @@ class TerminalButton extends StatelessWidget {
         onPressed();
       },
       child: Container(
+        color: active ? Colors.blue.withOpacity(0.4) : null,
         width: 40,
         height: 30,
         alignment: Alignment.center,

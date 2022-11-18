@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
 
 class AddServer extends StatefulWidget {
+  final int index;
+  AddServer({this.index});
   @override
   _AddServerState createState() => _AddServerState();
 }
@@ -34,6 +36,16 @@ class _AddServerState extends State<AddServer> {
     setState(() {
       if (str.isNotBlank) {
         servers = json.decode(str);
+        if (widget.index != null) {
+          host = servers[widget.index]['host'];
+          _hostController.text = host;
+          account = servers[widget.index]['account'];
+          _accountController.text = account;
+          password = servers[widget.index]['password'];
+          _passwordController.text = password;
+          port = servers[widget.index]['port'];
+          _portController.text = port;
+        }
       } else {
         servers = [];
       }
@@ -42,26 +54,19 @@ class _AddServerState extends State<AddServer> {
   }
 
   _save() async {
-    // print(servers);
+    Map server = {
+      "host": host,
+      "port": port,
+      "account": account,
+      "password": password,
+    };
     //添加服务器记录
-    bool exist = false;
-    for (int i = 0; i < servers.length; i++) {
-      if (servers[i]['host'] == host && servers[i]['port'] == port && servers[i]['account'] == account) {
-        print("账号已存在，更新信息");
-        servers[i]['password'] = password;
-        exist = true;
-      }
-    }
-    if (!exist) {
-      print("账号不存在");
-      Map server = {
-        "host": host,
-        "port": port,
-        "account": account,
-        "password": password,
-      };
+    if (widget.index == null) {
       servers.add(server);
+    } else {
+      servers[widget.index] = server;
     }
+
     // print(servers);
     Util.setStorage("terminal_servers", jsonEncode(servers));
     Navigator.of(context).pop();
@@ -99,6 +104,7 @@ class _AddServerState extends State<AddServer> {
                     child: TextField(
                       controller: _hostController,
                       onChanged: (v) => host = v,
+                      autocorrect: false,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: '网址/IP',

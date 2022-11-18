@@ -35,7 +35,8 @@ class _SelectServerState extends State<SelectServer> {
     print(servers);
   }
 
-  Widget _buildServerItem(server) {
+  Widget _buildServerItem(int index) {
+    var server = servers[index];
     return Padding(
       padding: EdgeInsets.only(bottom: 20),
       child: NeuButton(
@@ -73,6 +74,32 @@ class _SelectServerState extends State<SelectServer> {
                     ),
                   ],
                 ),
+              ),
+              NeuButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(
+                          builder: (context) {
+                            return AddServer(index: index);
+                          },
+                          settings: RouteSettings(name: "add_ssh_server")))
+                      .then((value) {
+                    getData();
+                  });
+                },
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                bevel: 20,
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: Image.asset(
+                  "assets/icons/edit.png",
+                  width: 20,
+                ),
+              ),
+              SizedBox(
+                width: 10,
               ),
               NeuButton(
                 onPressed: () {
@@ -152,7 +179,7 @@ class _SelectServerState extends State<SelectServer> {
               ? ListView.builder(
                   padding: EdgeInsets.all(20),
                   itemBuilder: (context, i) {
-                    return _buildServerItem(servers[i]);
+                    return _buildServerItem(i);
                   },
                   itemCount: servers.length,
                 )
