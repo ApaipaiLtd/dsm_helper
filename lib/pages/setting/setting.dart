@@ -60,6 +60,47 @@ class SettingButton extends StatelessWidget {
   }
 }
 
+class ThemeButton extends StatelessWidget {
+  const ThemeButton(this.image, this.type, this.text, {Key key}) : super(key: key);
+  final String image;
+  final int type;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return NeuButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+        Provider.of<DarkModeProvider>(context, listen: false).changeMode(type);
+      },
+      decoration: NeumorphicDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      bevel: 5,
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(image),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            text,
+            style: TextStyle(fontSize: 18),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class Setting extends StatefulWidget {
   @override
   _SettingState createState() => _SettingState();
@@ -443,64 +484,19 @@ class _SettingState extends State<Setting> {
                   Row(
                     children: [
                       Expanded(
-                        child: NeuButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            Provider.of<DarkModeProvider>(context, listen: false).changeMode(0);
-                          },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "亮色",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
+                        child: ThemeButton("assets/light.png", 0, "亮色"),
                       ),
                       SizedBox(
                         width: 16,
                       ),
                       Expanded(
-                        child: NeuButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            Provider.of<DarkModeProvider>(context, listen: false).changeMode(1);
-                          },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "暗色",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
+                        child: ThemeButton("assets/dark.png", 1, "暗色"),
                       ),
                       SizedBox(
                         width: 16,
                       ),
                       Expanded(
-                        child: NeuButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            Provider.of<DarkModeProvider>(context, listen: false).changeMode(2);
-                          },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "跟随系统",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
+                        child: ThemeButton("assets/auto.png", 2, "跟随系统"),
                       ),
                     ],
                   ),
