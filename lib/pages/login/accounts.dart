@@ -141,7 +141,9 @@ class _AccountsState extends State<Accounts> {
     server['write'] = server['write'] ?? 0.0;
     return GestureDetector(
       onTap: () {
+        print(server);
         if (server['is_login']) {
+          Util.account = "${server['account']}";
           Util.baseUrl = "${server['base_url']}";
           Util.checkSsl = server['check_ssl'];
           Util.setStorage("base_url", Util.baseUrl);
@@ -161,7 +163,7 @@ class _AccountsState extends State<Accounts> {
           Util.setStorage("check_ssl", server['check_ssl'] ? "1" : "0");
           Util.setStorage("sid", server['sid']);
           Util.sid = server['sid'];
-          Util.cookie = server['smid'];
+          Util.cookie = server['cookie'];
           Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
         } else {
           server['action'] = "login";

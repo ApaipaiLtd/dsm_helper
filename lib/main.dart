@@ -17,6 +17,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
@@ -36,25 +37,26 @@ void main() async {
       androidKey: '5ffe477d6a2a470e8f76809c',
       iosKey: '5ffe47cb6a2a470e8f7680a2',
     );
+    print("初始化穿山甲");
+    await pangle.init(
+      iOS: IOSConfig(
+        appId: '5215470',
+        logLevel: PangleLogLevel.error,
+      ),
+      android: AndroidConfig(
+        appId: '5215463',
+        debug: true,
+        allowShowNotify: true,
+        allowShowPageWhenScreenLock: false,
+      ),
+    );
+    pangle.loadSplashAd(
+      iOS: IOSSplashConfig(slotId: '887561543'),
+      android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
+    );
   }
   await FlutterDownloader.initialize(debug: false);
 
-  // await pangle.init(
-  //   iOS: IOSConfig(
-  //     appId: '5215470',
-  //     logLevel: PangleLogLevel.error,
-  //   ),
-  //   android: AndroidConfig(appId: '5215463', debug: false, allowShowNotify: true, allowShowPageWhenScreenLock: false,
-  //
-  //       /// 海外不存在该配置
-  //       directDownloadNetworkType: [
-  //         AndroidDirectDownloadNetworkType.kWiFi,
-  //       ]),
-  // );
-  // pangle.loadSplashAd(
-  //   iOS: IOSSplashConfig(slotId: '887561543', isExpress: false),
-  //   android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
-  // );
   Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
   Util.getStorage("download_wifi_only").then((value) {
     if (value != null) {

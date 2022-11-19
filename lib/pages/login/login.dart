@@ -721,6 +721,7 @@ class _LoginState extends State<Login> {
                   Expanded(
                     flex: 3,
                     child: TextField(
+                      autocorrect: false,
                       controller: _hostController,
                       onChanged: (v) {
                         setState(() {
@@ -771,6 +772,7 @@ class _LoginState extends State<Login> {
                     curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
+                      autocorrect: false,
                       keyboardAppearance: Brightness.light,
                       controller: _accountController,
                       onChanged: (v) => account = v,

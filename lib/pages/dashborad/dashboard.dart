@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/models/shortcut_item_model.dart';
 import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
@@ -82,6 +83,9 @@ class DashboardState extends State<Dashboard> {
     }
     networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
     getNotifyStrings();
+    ApiModel.fetch().then((apis) {
+      Api.apis = apis;
+    });
     getInfo().then((_) {
       getData(init: true);
     });

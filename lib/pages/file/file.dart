@@ -359,7 +359,7 @@ class FilesState extends State<Files> {
       });
     } else {
       setState(() {
-        msg = res['msg'] ?? Util.account == 'challengerv' ? '暂无文件' : "加载失败，code:${res['error']['code']}";
+        msg = res['msg'] ?? Util.account == 'jinx' ? '暂无文件' : "加载失败，code:${res['error']['code']}";
       });
     }
   }

@@ -538,7 +538,7 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ),
-          if (account == "challengerv") ...[
+          if (account == "jinx") ...[
             SizedBox(
               height: 20,
             ),

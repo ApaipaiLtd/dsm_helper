@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/backup/backup.dart';
 import 'package:dsm_helper/pages/control_panel/ssh/ssh.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Feedback;
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SettingButton extends StatelessWidget {
@@ -679,7 +681,7 @@ class _SettingState extends State<Setting> {
             spacing: 20,
             runSpacing: 20,
             children: [
-              if (Util.account != "challengerv") ...[
+              if (Util.account != "jinx") ...[
                 SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
                 SettingButton(name: "重启", icon: "reboot", loading: rebooting, onPressed: onReboot),
               ],
@@ -771,7 +773,7 @@ class _SettingState extends State<Setting> {
                 name: "问题反馈",
                 icon: "edit",
                 onPressed: () {
-                  if (account == "challengerv") {
+                  if (account == "jinx") {
                     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                       return Feedback();
                     }));
@@ -853,6 +855,25 @@ class _SettingState extends State<Setting> {
                   }
                 },
               ),
+              SettingButton(
+                name: "激励视频",
+                icon: "player",
+                onPressed: () async {
+                  var hide = showWeuiLoadingToast(context: context, message: Text("广告加载中"));
+                  try {
+                    PangleResult result = await pangle.loadRewardedVideoAd(
+                      iOS: IOSRewardedVideoConfig(slotId: "946681116"),
+                      android: AndroidRewardedVideoConfig(slotId: "946681017"),
+                    );
+                    print("激励视频结果：");
+                    print(result.code);
+                  } catch (e) {
+                    Util.toast("广告播放失败");
+                  } finally {
+                    hide();
+                  }
+                },
+              )
             ],
           ),
         ],

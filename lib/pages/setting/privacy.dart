@@ -70,7 +70,7 @@ class _PrivacyState extends State<Privacy> {
 
 群晖DSM：https://kb.synology.com/zh-tw/DSM/help/DSM/Home/legal_info?version=6
 
-${Util.account == "challengerv" ? ""
+${Util.account == "jinx" ? ""
                   "账号注销：\n"
                   "如您需要注销账号，请前往设置-右上角齿轮-账号注销进行申请，所有与此账号有关的文件、操作记录等信息将被删除并永久无法恢复，请在申请注销账号前备份好重要文件，因账号注销造成的损失与群晖助手无关。\n"
                   "提交账号注销申请后，将由管理员在3个工作日内审核完成。" : ""}

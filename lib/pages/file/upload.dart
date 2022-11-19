@@ -144,10 +144,11 @@ class _UploadState extends State<Upload> {
                       fontSize: 16,
                     ),
                   ),
-                  Text(
-                    "${upload.subPath.isNotBlank ? upload.subPath : ""}",
-                    style: TextStyle(fontSize: 12),
-                  ),
+                  if (upload.subPath.isNotBlank)
+                    Text(
+                      upload.subPath,
+                      style: TextStyle(fontSize: 12),
+                    ),
                   SizedBox(
                     height: 5,
                   ),

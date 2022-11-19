@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/models/api_model.dart';
 import 'package:http_parser/http_parser.dart';
 
 import 'function.dart';
 
 class Api {
+  static Map<String, ApiModel> apis = {};
   static Future<Map> update(String buildNumber) async {
     if (Platform.isAndroid) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -50,6 +53,20 @@ class Api {
   static Future<Map> payment() async {
     var res = await Util.get("https://dsm.apaipai.top/payment", host: "https://dsm.apaipai.top");
     return res;
+  }
+
+  static Future<Map> api() async {
+    var res = await Util.post("query.cgi", data: {
+      "query": "all",
+      "api": "SYNO.API.Info",
+      "method": "query",
+      "version": 1,
+    });
+    if (res is String) {
+      return jsonDecode(res);
+    } else if (res is Map) {
+      return res;
+    }
   }
 
   static Future<Map> login({String host, String account, String password, String otpCode: "", CancelToken cancelToken, bool rememberDevice: false, String cookie}) async {
@@ -841,19 +858,23 @@ class Api {
     MultipartFile multipartFile = MultipartFile.fromFileSync(
       filePath,
       filename: filePath.split("/").last,
+      // contentType: file.
       contentType: MediaType.parse("text/plain"),
     );
     // var url = "entry.cgi?api=SYNO.FileStation.Upload&method=upload&version=2&_sid=${Util.sid}";
     var url = "entry.cgi";
-    var data = {
+    var params = {
       "api": "SYNO.FileStation.Upload",
       "method": "upload",
-      "version": 3,
+      "version": min(apis['SYNO.FileStation.Upload'].minVersion, 3),
+      // "SynoToken": "TwZGw9JzHWWDc",
+    };
+    var data = {
       "path": uploadPath,
       "create_parents": true,
       "size": file.lengthSync(),
       "mtime": file.lastModifiedSync().millisecondsSinceEpoch,
-      "overwrite": "overwrite",
+      "overwrite": false,
       "file": multipartFile,
       // "_sid": Util.sid,
     };
@@ -865,7 +886,7 @@ class Api {
     //   "size": file.lengthSync(),
     //   "file": multipartFile,
     // };
-    var result = await Util.upload(url, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
+    var result = await Util.upload(url, params: params, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
     // print(result);
     return result;
   }

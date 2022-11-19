@@ -389,7 +389,7 @@ class Util {
     }
   }
 
-  static Future<dynamic> upload(String url, {Map<String, dynamic> data, bool login: true, String host, CancelToken cancelToken, Function(int, int) onSendProgress, Map<String, dynamic> headers}) async {
+  static Future<dynamic> upload(String url, {Map<String, dynamic> params, Map<String, dynamic> data, bool login: true, String host, CancelToken cancelToken, Function(int, int) onSendProgress, Map<String, dynamic> headers}) async {
     headers = headers ?? {};
     headers['Cookie'] = Util.cookie;
     headers['Accept-Encoding'] = "gzip, deflate";
@@ -401,6 +401,7 @@ class Util {
     // headers['Connection'] = "keep-alive";
     // headers['User-Agent'] = "DS get 1.12.4 rv:168 (Dalvik/2.1.0 (Linux; U; Android 11; MI 9 Build/RKQ1.200826.002))";
     //Proxy-Connection: keep-alive
+    print(headers);
     Dio dio = new Dio(
       new BaseOptions(
         baseUrl: (host ?? baseUrl) + "/webapi/",
@@ -425,6 +426,7 @@ class Util {
     try {
       response = await dio.post(
         url,
+        queryParameters: params,
         data: formData,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,

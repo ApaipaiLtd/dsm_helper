@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
 import 'package:dsm_helper/util/function.dart';
@@ -19,7 +18,7 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   bool checking = false;
   PackageInfo packageInfo;
-  String account = "challengerv";
+  String account = "jinx";
   @override
   void initState() {
     getInfo();
@@ -116,7 +115,7 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ),
-                if (account != "challengerv") ...[
+                if (account != "jinx") ...[
                   SizedBox(
                     height: 20,
                   ),
@@ -159,7 +158,7 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ],
-                if (account != "challengerv") ...[
+                if (account != "jinx") ...[
                   SizedBox(
                     height: 20,
                   ),
