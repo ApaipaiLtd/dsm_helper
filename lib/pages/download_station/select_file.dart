@@ -41,7 +41,7 @@ class _SelectFileState extends State<SelectFile> {
   }
 
   Widget _buildFileItem(file) {
-    FileType fileType = Util.fileType(file['name']);
+    FileTypeEnum fileType = Util.fileType(file['name']);
     return GestureDetector(
       onTap: () {
         if (selectedFiles.contains(file['index'])) {

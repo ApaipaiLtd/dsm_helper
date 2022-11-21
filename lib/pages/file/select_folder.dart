@@ -138,7 +138,7 @@ class _SelectFolderState extends State<SelectFolder> {
   }
 
   Widget _buildFileItem(file) {
-    FileType fileType = Util.fileType(file['name']);
+    FileTypeEnum fileType = Util.fileType(file['name']);
     String path = file['path'];
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
@@ -168,7 +168,7 @@ class _SelectFolderState extends State<SelectFolder> {
               Hero(
                 tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
                 child: FileIcon(
-                  file['isdir'] ? FileType.folder : fileType,
+                  file['isdir'] ? FileTypeEnum.folder : fileType,
                   thumb: file['path'],
                 ),
               ),

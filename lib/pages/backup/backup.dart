@@ -174,7 +174,7 @@ class _BackupState extends State<Backup> {
                                 height: 40,
                                 width: 40,
                               )
-                            : FileIcon(FileType.movie),
+                            : FileIcon(FileTypeEnum.movie),
                         SizedBox(
                           width: 20,
                         ),

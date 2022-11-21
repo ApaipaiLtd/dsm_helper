@@ -192,7 +192,7 @@ class _SharedFoldersState extends State<SharedFolders> {
               ),
               folder['encryption'] == null || folder['encryption'] == 0
                   ? FileIcon(
-                      FileType.folder,
+                      FileTypeEnum.folder,
                     )
                   : Image.asset(
                       "assets/icons/folder_locked.png",
@@ -293,8 +293,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                                 padding: EdgeInsets.all(22),
                                 bevel: 5,
                                 curveType: CurveType.emboss,
-                                decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[

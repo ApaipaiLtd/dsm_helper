@@ -53,7 +53,7 @@ class _FavoriteState extends State<Favorite> {
           child: Row(
             children: [
               FileIcon(
-                FileType.folder,
+                FileTypeEnum.folder,
               ),
               SizedBox(
                 width: 10,

@@ -356,6 +356,7 @@ class FilesState extends State<Files> {
     if (res['success']) {
       setState(() {
         files = res['data']['files'];
+        print(files);
       });
     } else {
       setState(() {
@@ -1214,7 +1215,7 @@ class FilesState extends State<Files> {
     );
   }
 
-  openFile(file, {FileType fileType, bool remote: false}) async {
+  openFile(file, {FileTypeEnum fileType, bool remote: false}) async {
     if (multiSelect) {
       setState(() {
         if (selectedFiles.contains(file)) {
@@ -1231,14 +1232,14 @@ class FilesState extends State<Files> {
         }
       } else {
         switch (fileType) {
-          case FileType.image:
+          case FileTypeEnum.image:
             //获取当前目录全部图片文件
             List<String> images = [];
             List<String> thumbs = [];
             List<String> names = [];
             int index = 0;
             for (int i = 0; i < files.length; i++) {
-              if (Util.fileType(files[i]['name']) == FileType.image) {
+              if (Util.fileType(files[i]['name']) == FileTypeEnum.image) {
                 images.add(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
                 thumbs.add(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
                 names.add(files[i]['name']);
@@ -1258,7 +1259,7 @@ class FilesState extends State<Files> {
               },
             ));
             break;
-          case FileType.movie:
+          case FileTypeEnum.movie:
             List<int> utf8Str = utf8.encode(file['path']);
             String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
             String videoPlayer = await Util.getStorage("video_player");
@@ -1346,13 +1347,13 @@ class FilesState extends State<Files> {
           //   );
           //   await intent.launch();
           //   break;
-          case FileType.code:
+          case FileTypeEnum.code:
             openPlainFile(file);
             break;
-          case FileType.text:
+          case FileTypeEnum.text:
             openPlainFile(file);
             break;
-          case FileType.pdf:
+          case FileTypeEnum.pdf:
             List<int> utf8Str = utf8.encode(file['path']);
             String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -1507,7 +1508,7 @@ class FilesState extends State<Files> {
                             ),
                           ),
                         ),
-                        if (Util.fileType(file['name']) == FileType.zip && !remote && file['path'].startsWith("/"))
+                        if (Util.fileType(file['name']) == FileTypeEnum.zip && !remote && file['path'].startsWith("/"))
                           Container(
                             constraints: BoxConstraints(maxWidth: 112),
                             width: (MediaQuery.of(context).size.width - 100) / 4,
@@ -1947,7 +1948,7 @@ class FilesState extends State<Files> {
   }
 
   Widget _buildFileItem(file, {bool remote: false}) {
-    FileType fileType = Util.fileType(file['name']);
+    FileTypeEnum fileType = Util.fileType(file['name']);
     String path = file['path'];
     Widget actionButton = multiSelect
         ? NeuCard(
@@ -2027,7 +2028,7 @@ class FilesState extends State<Files> {
                     Hero(
                       tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
                       child: FileIcon(
-                        file['isdir'] ? FileType.folder : fileType,
+                        file['isdir'] ? FileTypeEnum.folder : fileType,
                         thumb: file['path'],
                       ),
                     ),
@@ -2088,7 +2089,7 @@ class FilesState extends State<Files> {
                           Hero(
                             tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
                             child: FileIcon(
-                              file['isdir'] ? FileType.folder : fileType,
+                              file['isdir'] ? FileTypeEnum.folder : fileType,
                               thumb: file['path'],
                               width: (MediaQuery.of(context).size.width - 140) / 3,
                               height: 60,

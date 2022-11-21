@@ -6,7 +6,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class FileIcon extends StatelessWidget {
-  final FileType fileType;
+  final FileTypeEnum fileType;
   final String thumb;
   final bool network;
   final double width;
@@ -15,25 +15,25 @@ class FileIcon extends StatelessWidget {
   FileIcon(this.fileType, {this.thumb, this.network: true, this.width: 40, this.height: 40, this.fit: BoxFit.contain});
   @override
   Widget build(BuildContext context) {
-    if (fileType == FileType.folder) {
+    if (fileType == FileTypeEnum.folder) {
       return Image.asset(
         "assets/icons/folder.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.music) {
+    } else if (fileType == FileTypeEnum.music) {
       return Image.asset(
         "assets/icons/music.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.movie) {
+    } else if (fileType == FileTypeEnum.movie) {
       return Image.asset(
         "assets/icons/movie.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.image) {
+    } else if (fileType == FileTypeEnum.image) {
       return thumb == null
           ? Image.asset(
               "assets/icons/image.png",
@@ -53,61 +53,61 @@ class FileIcon extends StatelessWidget {
                   height: height,
                   fit: fit,
                 );
-    } else if (fileType == FileType.word) {
+    } else if (fileType == FileTypeEnum.word) {
       return Image.asset(
         "assets/icons/word.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.ppt) {
+    } else if (fileType == FileTypeEnum.ppt) {
       return Image.asset(
         "assets/icons/ppt.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.excel) {
+    } else if (fileType == FileTypeEnum.excel) {
       return Image.asset(
         "assets/icons/excel.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.pdf) {
+    } else if (fileType == FileTypeEnum.pdf) {
       return Image.asset(
         "assets/icons/pdf.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.zip) {
+    } else if (fileType == FileTypeEnum.zip) {
       return Image.asset(
         "assets/icons/zip.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.ps) {
+    } else if (fileType == FileTypeEnum.ps) {
       return Image.asset(
         "assets/icons/psd.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.text) {
+    } else if (fileType == FileTypeEnum.text) {
       return Image.asset(
         "assets/icons/txt.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.code) {
+    } else if (fileType == FileTypeEnum.code) {
       return Image.asset(
         "assets/icons/code.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.apk) {
+    } else if (fileType == FileTypeEnum.apk) {
       return Image.asset(
         "assets/icons/apk.png",
         width: 40,
         height: 60,
       );
-    } else if (fileType == FileType.iso) {
+    } else if (fileType == FileTypeEnum.iso) {
       return Image.asset(
         "assets/icons/iso.png",
         width: 40,

@@ -26,7 +26,7 @@ export 'package:dsm_helper/extensions/int.dart';
 export 'package:dsm_helper/extensions/string.dart';
 export 'package:dsm_helper/util/api.dart';
 
-enum FileType {
+enum FileTypeEnum {
   folder,
   image,
   movie,
@@ -171,7 +171,7 @@ class Util {
     return Color.fromRGBO(colors['r'], colors['g'], colors['b'], 1);
   }
 
-  static FileType fileType(String name) {
+  static FileTypeEnum fileType(String name) {
     List<String> image = ["png", "jpg", "jpeg", "gif", "bmp", "ico"];
     List<String> movie = [
       "3gp",
@@ -228,35 +228,35 @@ class Util {
     List<String> iso = ["iso"];
     String ext = name.split(".").last.toLowerCase();
     if (image.contains(ext)) {
-      return FileType.image;
+      return FileTypeEnum.image;
     } else if (movie.contains(ext)) {
-      return FileType.movie;
+      return FileTypeEnum.movie;
     } else if (music.contains(ext)) {
-      return FileType.music;
+      return FileTypeEnum.music;
     } else if (ps.contains(ext)) {
-      return FileType.ps;
+      return FileTypeEnum.ps;
     } else if (html.contains(ext)) {
-      return FileType.code;
+      return FileTypeEnum.code;
     } else if (word.contains(ext)) {
-      return FileType.word;
+      return FileTypeEnum.word;
     } else if (ppt.contains(ext)) {
-      return FileType.ppt;
+      return FileTypeEnum.ppt;
     } else if (excel.contains(ext)) {
-      return FileType.excel;
+      return FileTypeEnum.excel;
     } else if (text.contains(ext)) {
-      return FileType.text;
+      return FileTypeEnum.text;
     } else if (zip.contains(ext)) {
-      return FileType.zip;
+      return FileTypeEnum.zip;
     } else if (code.contains(ext)) {
-      return FileType.code;
+      return FileTypeEnum.code;
     } else if (pdf.contains(ext)) {
-      return FileType.pdf;
+      return FileTypeEnum.pdf;
     } else if (apk.contains(ext)) {
-      return FileType.apk;
+      return FileTypeEnum.apk;
     } else if (iso.contains(ext)) {
-      return FileType.iso;
+      return FileTypeEnum.iso;
     } else {
-      return FileType.other;
+      return FileTypeEnum.other;
     }
   }
 

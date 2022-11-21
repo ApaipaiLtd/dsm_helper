@@ -217,7 +217,7 @@ class DownloadState extends State<Download> {
   }
 
   Widget _buildTaskItem(DownloadInfo task) {
-    FileType fileType = Util.fileType(task.filename);
+    FileTypeEnum fileType = Util.fileType(task.filename);
     // String path = file['path'];
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20, right: 20),
@@ -241,12 +241,12 @@ class DownloadState extends State<Download> {
               }
             });
           } else {
-            if (fileType == FileType.image) {
+            if (fileType == FileTypeEnum.image) {
               //获取当前目录全部图片文件
               List<String> images = [];
               int index = 0;
               for (int i = 0; i < tasks.length; i++) {
-                if (task.status == DownloadTaskStatus.complete && Util.fileType(task.filename) == FileType.image) {
+                if (task.status == DownloadTaskStatus.complete && Util.fileType(task.filename) == FileTypeEnum.image) {
                   images.add(tasks[i].savedDir + "/" + tasks[i].filename);
                   if (tasks[i] == task) {
                     index = images.length - 1;

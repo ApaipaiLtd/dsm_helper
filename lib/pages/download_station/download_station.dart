@@ -71,7 +71,7 @@ class _DownloadStationState extends State<DownloadStation> {
 
   Widget _buildDownloadItem(download) {
     pauseLoading[download['id']] = pauseLoading[download['id']] ?? false;
-    FileType fileType = Util.fileType(download['title']);
+    FileTypeEnum fileType = Util.fileType(download['title']);
     return GestureDetector(
       onTap: () {
         Navigator.of(context)

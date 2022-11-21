@@ -108,7 +108,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
   }
 
   Widget _buildFileItem(FileSystemEntity file) {
-    FileType fileType = Util.fileType(file.path);
+    FileTypeEnum fileType = Util.fileType(file.path);
     bool isFile = FileSystemEntity.isFileSync(file.path);
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
@@ -135,7 +135,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                 width: 20,
               ),
               FileIcon(
-                !isFile ? FileType.folder : fileType,
+                !isFile ? FileTypeEnum.folder : fileType,
                 thumb: file.path,
                 network: false,
               ),

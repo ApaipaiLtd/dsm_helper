@@ -8,8 +8,10 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vibrate/vibrate.dart';
@@ -105,7 +107,7 @@ class _UploadState extends State<Upload> {
   }
 
   Widget _buildUploadItem(UploadItem upload) {
-    FileType fileType = Util.fileType(upload.path);
+    FileTypeEnum fileType = Util.fileType(upload.path);
     // String path = file['path'];
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20, right: 20),
@@ -405,72 +407,74 @@ class _UploadState extends State<Upload> {
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-                                      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-                                      if (Platform.isAndroid && androidInfo.version.sdkInt >= 30) {
-                                        bool permission = false;
-                                        permission = await Permission.manageExternalStorage.request().isGranted;
-                                        if (!permission) {
-                                          Util.toast("安卓11需授权文件管理权限");
-                                          return;
+                                      if (Platform.isAndroid) {
+                                        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                                        if (androidInfo.version.sdkInt >= 30) {
+                                          bool permission = false;
+                                          permission = await Permission.manageExternalStorage.request().isGranted;
+                                          if (!permission) {
+                                            Util.toast("安卓11需授权文件管理权限");
+                                            return;
+                                          }
+                                        } else {
+                                          bool permission = false;
+                                          permission = await Permission.storage.request().isGranted;
+                                          if (!permission) {
+                                            Util.toast("请先授权APP访问存储权限");
+                                            return;
+                                          }
                                         }
+                                        showCupertinoModalBottomSheet<List<FileSystemEntity>>(
+                                          context: context,
+                                          builder: (context) {
+                                            return SelectLocalFolder(
+                                              multi: true,
+                                              folder: false,
+                                            );
+                                          },
+                                        ).then((res) {
+                                          if (res != null && res.length > 0) {
+                                            res.forEach((entry) {
+                                              if (FileSystemEntity.isFileSync(entry.path)) {
+                                                setState(() {
+                                                  uploads.add(UploadItem(entry.path, entry.path.split("/").last));
+                                                });
+                                              } else {
+                                                Directory directory = Directory(entry.path);
+                                                directory.list(recursive: true).forEach((element) {
+                                                  if (!element.path.split("/").last.startsWith(".")) {
+                                                    if (FileSystemEntity.isFileSync(element.path)) {
+                                                      List<String> slice = element.path.replaceFirst("${entry.path}/", "").split("/");
+                                                      setState(() {
+                                                        uploads.add(UploadItem(element.path, slice.last, subPath: slice.getRange(0, slice.length - 1).join("/")));
+                                                      });
+                                                    }
+                                                  }
+                                                });
+                                              }
+                                            });
+                                          }
+                                          // if (res != null && res.length == 1) {
+                                          //   setState(() {
+                                          //     downloadPath = res[0];
+                                          //     Util.downloadSavePath = res[0];
+                                          //     Util.setStorage("download_save_path", res[0]);
+                                          //   });
+                                          // }
+                                        });
                                       } else {
-                                        bool permission = false;
-                                        permission = await Permission.storage.request().isGranted;
-                                        if (!permission) {
-                                          Util.toast("请先授权APP访问存储权限");
-                                          return;
+                                        FilePickerResult result = await FilePicker.platform.pickFiles(allowMultiple: true);
+
+                                        if (result != null) {
+                                          setState(() {
+                                            uploads.addAll(result.files.map((file) {
+                                              return UploadItem(file.path, file.name, fileSize: file.size);
+                                            }).toList());
+                                          });
+                                        } else {
+                                          // User canceled the picker
                                         }
                                       }
-
-                                      showCupertinoModalPopup<List<FileSystemEntity>>(
-                                        context: context,
-                                        builder: (context) {
-                                          return SelectLocalFolder(
-                                            multi: true,
-                                            folder: false,
-                                          );
-                                        },
-                                      ).then((res) {
-                                        if (res != null && res.length > 0) {
-                                          res.forEach((entry) {
-                                            if (FileSystemEntity.isFileSync(entry.path)) {
-                                              setState(() {
-                                                uploads.add(UploadItem(entry.path, entry.path.split("/").last));
-                                              });
-                                            } else {
-                                              Directory directory = Directory(entry.path);
-                                              directory.list(recursive: true).forEach((element) {
-                                                if (!element.path.split("/").last.startsWith(".")) {
-                                                  if (FileSystemEntity.isFileSync(element.path)) {
-                                                    List<String> slice = element.path.replaceFirst("${entry.path}/", "").split("/");
-                                                    setState(() {
-                                                      uploads.add(UploadItem(element.path, slice.last, subPath: slice.getRange(0, slice.length - 1).join("/")));
-                                                    });
-                                                  }
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                        // if (res != null && res.length == 1) {
-                                        //   setState(() {
-                                        //     downloadPath = res[0];
-                                        //     Util.downloadSavePath = res[0];
-                                        //     Util.setStorage("download_save_path", res[0]);
-                                        //   });
-                                        // }
-                                      });
-                                      // FilePickerResult result = await FilePicker.platform.pickFiles(allowMultiple: true);
-                                      //
-                                      // if (result != null) {
-                                      //   setState(() {
-                                      //     uploads.addAll(result.files.map((file) {
-                                      //       return UploadItem(file.path, file.name, fileSize: file.size);
-                                      //     }).toList());
-                                      //   });
-                                      // } else {
-                                      //   // User canceled the picker
-                                      // }
                                     },
                                     decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
