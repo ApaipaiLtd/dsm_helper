@@ -1,14 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
+import 'package:better_player/better_player.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:wakelock/wakelock.dart';
 import 'package:xml2json/xml2json.dart';
 
 class VideoPlayer extends StatefulWidget {
@@ -23,7 +23,9 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayer> {
-  final FijkPlayer player = FijkPlayer();
+  BetterPlayerController _betterPlayerController;
+  StreamController<bool> _placeholderStreamController = StreamController.broadcast();
+  bool _showPlaceholder = true;
   bool fullScreen = false;
   _VideoPlayerState();
   String description = "";
@@ -31,29 +33,68 @@ class _VideoPlayerState extends State<VideoPlayer> {
   String year = '';
   List actors = [];
   Map nfoDetail;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   player.setDataSource(widget.url, autoPlay: true);
+  //   player.addListener(() {
+  //     FijkValue value = player.value;
+  //     print(value.size);
+  //     if (mounted) {
+  //       setState(() {
+  //         fullScreen = value.fullScreen;
+  //       });
+  //     }
+  //   });
+  //
+  // }
   @override
-  void initState() {
-    super.initState();
-    Wakelock.enable();
-    player.setDataSource(widget.url, autoPlay: true);
-    player.addListener(() {
-      FijkValue value = player.value;
-      print(value.size);
-      if (mounted) {
-        setState(() {
-          fullScreen = value.fullScreen;
-        });
+  initState() {
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(fit: BoxFit.contain, autoPlay: true, autoDispose: true, looping: false, placeholder: _buildVideoPlaceholder(), showPlaceholderUntilPlay: true, allowedScreenSleep: false, translations: [
+      BetterPlayerTranslations(
+        languageCode: 'zh',
+        overflowMenuPlaybackSpeed: "播放速度",
+        overflowMenuSubtitles: "字幕",
+        overflowMenuAudioTracks: "音频",
+        overflowMenuQuality: "质量",
+      )
+    ]);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      widget.url,
+    );
+    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+    _betterPlayerController.setupDataSource(dataSource);
+    _betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+        _setPlaceholderVisibleState(false);
       }
     });
     parseNfo();
+    super.initState();
+  }
+
+  void _setPlaceholderVisibleState(bool hidden) {
+    _placeholderStreamController.add(hidden);
+    _showPlaceholder = hidden;
+  }
+
+  ///_placeholderStreamController is used only to refresh video placeholder
+  ///widget.
+  Widget _buildVideoPlaceholder() {
+    return StreamBuilder<bool>(
+      stream: _placeholderStreamController.stream,
+      builder: (context, snapshot) {
+        return _showPlaceholder && widget.cover.isNotBlank ? ExtendedImage.network(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : const SizedBox();
+      },
+    );
   }
 
   parseNfo() async {
     if (widget.nfo != null) {
       final myTransformer = Xml2Json();
-      List<int> utf8Str = utf8.encode(widget.nfo);
-      String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
-      String nfoUrl = Util.baseUrl + "/fbdownload/info.nfo?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open";
+      String nfoUrl = Util.baseUrl + "/fbdownload/info.nfo?dlink=%22${Util.utf8Encode(widget.nfo)}%22&_sid=%22${Util.sid}%22&mode=open";
       var res = await Util.get(nfoUrl, decode: false);
       try {
         myTransformer.parse(res);
@@ -106,17 +147,23 @@ class _VideoPlayerState extends State<VideoPlayer> {
       ),
       body: Column(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width * 9 / 16,
-            alignment: Alignment.center,
-            child: FijkView(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width * 9 / 16,
-              fit: FijkFit.contain,
-              player: player,
-              color: Colors.black,
-              cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   height: MediaQuery.of(context).size.width * 9 / 16,
+          //   alignment: Alignment.center,
+          //   child: FijkView(
+          //     width: MediaQuery.of(context).size.width,
+          //     height: MediaQuery.of(context).size.width * 9 / 16,
+          //     fit: FijkFit.contain,
+          //     player: player,
+          //     color: Colors.black,
+          //     cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
+          //   ),
+          // ),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(
+              controller: _betterPlayerController,
             ),
           ),
           Expanded(
@@ -193,7 +240,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void dispose() {
     super.dispose();
-    Wakelock.disable();
-    player.release();
+    _placeholderStreamController.close();
   }
 }

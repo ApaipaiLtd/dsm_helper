@@ -156,6 +156,12 @@ class Util {
     };
   }
 
+  static String utf8Encode(String data) {
+    List<int> utf8Str = utf8.encode(data);
+    String encoded = utf8Str.map((e) => e.toRadixString(16)).join("");
+    return encoded;
+  }
+
   static Color getAdjustColor(Color baseColor, double amount) {
     Map<String, int> colors = {'r': baseColor.red, 'g': baseColor.green, 'b': baseColor.blue};
 

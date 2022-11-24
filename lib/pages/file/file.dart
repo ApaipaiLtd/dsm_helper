@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:cool_ui/cool_ui.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:dsm_helper/models/file/file_model.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/common/pdf_viewer.dart';
 import 'package:dsm_helper/pages/common/text_editor.dart';
@@ -1260,10 +1258,8 @@ class FilesState extends State<Files> {
             ));
             break;
           case FileTypeEnum.movie:
-            List<int> utf8Str = utf8.encode(file['path']);
-            String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
             String videoPlayer = await Util.getStorage("video_player");
-            String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open";
+            String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open";
             if (videoPlayer != null && videoPlayer == '1') {
               AndroidIntent intent = AndroidIntent(
                 action: 'action_view',
@@ -1354,18 +1350,14 @@ class FilesState extends State<Files> {
             openPlainFile(file);
             break;
           case FileTypeEnum.pdf:
-            List<int> utf8Str = utf8.encode(file['path']);
-            String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return PdfViewer(Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open", file['name']);
+              return PdfViewer(Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open", file['name']);
             }));
             break;
           default:
-            List<int> utf8Str = utf8.encode(file['path']);
-            String encodedPath = utf8Str.map((e) => e.toRadixString(16)).join("");
             AndroidIntent intent = AndroidIntent(
               action: 'action_view',
-              data: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22$encodedPath%22&_sid=%22${Util.sid}%22&mode=open",
+              data: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open",
               arguments: {},
               // type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
             );

@@ -55,7 +55,7 @@ void main() async {
       android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
     );
   }
-  await FlutterDownloader.initialize(debug: false);
+  await FlutterDownloader.initialize(debug: false, ignoreSsl: true);
 
   Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
   Util.getStorage("download_wifi_only").then((value) {

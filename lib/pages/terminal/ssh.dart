@@ -60,10 +60,10 @@ class _SshState extends State<Ssh> {
     terminal.buffer.clear();
     terminal.buffer.setCursor(0, 0);
 
-    // terminal.onTitleChange = (title) {
-    //   print(title);
-    //   setState(() => this.title = title);
-    // };
+    terminal.onTitleChange = (title) {
+      print(title);
+      setState(() => this.title = title);
+    };
 
     terminal.onResize = (width, height, pixelWidth, pixelHeight) {
       session.resizeTerminal(width, height, pixelWidth, pixelHeight);
