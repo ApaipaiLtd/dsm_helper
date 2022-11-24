@@ -19,10 +19,10 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
   TextEditingController _proxyHttpHostController = TextEditingController();
   TextEditingController _proxyHttpPortController = TextEditingController();
   TabController _tabController;
-  Map network;
-  Map proxy;
-  Map gateway;
-  Map dsm;
+  Map network = {};
+  Map proxy = {};
+  Map gateway = {};
+  Map dsm = {};
   bool loading = true;
   @override
   void initState() {
@@ -43,10 +43,12 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
           switch (item['api']) {
             case "SYNO.Core.Network":
               setState(() {
-                network = item['data'];
-                _serverNameController.value = TextEditingValue(text: network['server_name']);
-                _dnsPrimaryController.value = TextEditingValue(text: network['dns_primary']);
-                _dnsSecondaryController.value = TextEditingValue(text: network['dns_secondary']);
+                if (item['data'] != null) {
+                  network = item['data'];
+                  _serverNameController.value = TextEditingValue(text: network['server_name']);
+                  _dnsPrimaryController.value = TextEditingValue(text: network['dns_primary']);
+                  _dnsSecondaryController.value = TextEditingValue(text: network['dns_secondary']);
+                }
               });
               break;
             case "SYNO.Core.Network.Proxy":

@@ -84,7 +84,7 @@ class DashboardState extends State<Dashboard> {
     networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
     getNotifyStrings();
     ApiModel.fetch().then((apis) {
-      Api.apis = apis;
+      Api.apiList = apis;
     });
     getInfo().then((_) {
       getData(init: true);

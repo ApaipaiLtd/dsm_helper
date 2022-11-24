@@ -11,7 +11,7 @@ import 'package:http_parser/http_parser.dart';
 import 'function.dart';
 
 class Api {
-  static Map<String, ApiModel> apis = {};
+  static Map<String, ApiModel> apiList = {};
   static Future<Map> update(String buildNumber) async {
     if (Platform.isAndroid) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -866,7 +866,7 @@ class Api {
     var params = {
       "api": "SYNO.FileStation.Upload",
       "method": "upload",
-      "version": min(apis['SYNO.FileStation.Upload'].minVersion, 3),
+      "version": min(apiList['SYNO.FileStation.Upload'].minVersion ?? 1, 3),
       // "SynoToken": "TwZGw9JzHWWDc",
     };
     var data = {
@@ -2250,7 +2250,11 @@ class Api {
 
   static Future<Map> networkStatus() async {
     List apis = [
-      {"api": "SYNO.Core.Network", "method": "get", "version": 2},
+      {
+        "api": "SYNO.Core.Network",
+        "method": "get",
+        "version": min(apiList['SYNO.Core.Network'].minVersion ?? 1, 2),
+      },
       {"api": "SYNO.Core.Network.Proxy", "method": "get", "version": 1},
       {"api": "SYNO.Core.Network.Router.Gateway.List", "method": "get", "version": 1, "iptype": "ipv4", "type": "wan"},
       {"api": "SYNO.Core.Web.DSM", "method": "get", "version": 2}
