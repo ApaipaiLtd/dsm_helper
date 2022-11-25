@@ -9,7 +9,8 @@ import 'package:neumorphic/neumorphic.dart';
 
 class AddSharedFolders extends StatefulWidget {
   final List volumes;
-  AddSharedFolders(this.volumes);
+  final Map folder;
+  AddSharedFolders(this.volumes, {this.folder});
   @override
   _AddSharedFoldersState createState() => _AddSharedFoldersState();
 }
@@ -25,29 +26,95 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   int selectedUnitIndex = 1;
   TextEditingController unitController = TextEditingController();
   bool creating = false;
+  String oldName;
   String name = "";
   String desc = "";
   int selectedVolumeIndex = 0;
   bool hidden = false;
   bool hideUnreadable = false;
   bool recycleBin = false;
-  bool recycleBinAdminOnly = true;
+  bool recycleBinAdminOnly = false;
   bool enableShareCow = false;
   bool enableShareCompress = false;
   bool encryption = false;
   String password = "";
   String confirmPassword = "";
   bool enableShareQuota = false;
+  num shareQuotaUsed;
   String shareQuota = "";
+  bool loading = false;
   @override
   void initState() {
-    volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
-    unitController.value = TextEditingValue(text: units[selectedUnitIndex]);
+    if (widget.folder != null) {
+      getFolderDetail(widget.folder['name']);
+    }
+
+    volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
+    unitController.text = units[selectedUnitIndex];
     super.initState();
   }
 
-  _create() async {
+  getFolderDetail(String folderName) async {
+    setState(() {
+      loading = true;
+    });
+    var res = await Api.shareDetail(folderName);
+    if (res['success']) {
+      var folder = res['data'];
+      nameController.text = name = oldName = folder['name'];
+      descController.text = desc = folder['desc'];
+      hidden = folder['hidden'];
+      hideUnreadable = folder['hide_unreadable'];
+
+      recycleBin = folder['enable_recycle_bin'];
+      recycleBinAdminOnly = folder['recycle_bin_admin_only'];
+      encryption = folder['encryption'] == 1;
+      if (folder['quota_value'] > 0) {
+        enableShareQuota = true;
+        if (folder['quota_value'] < 1024) {
+          selectedUnitIndex = 2;
+          shareQuota = "${folder['quota_value']}";
+        } else if (folder['quota_value'] < 1024 * 1024) {
+          selectedUnitIndex = 1;
+          shareQuota = "${folder['quota_value'] ~/ 1024}";
+        } else {
+          selectedUnitIndex = 0;
+          shareQuota = "${folder['quota_value'] ~/ (1024 * 1024)}";
+        }
+        unitController.text = units[selectedUnitIndex];
+        shareQuotaController.text = shareQuota;
+      }
+
+      enableShareCow = folder['enable_share_cow'];
+      enableShareCompress = folder['enable_share_compress'];
+
+      shareQuotaUsed = folder['share_quota_used'];
+
+      for (var i = 0; i < widget.volumes.length; i++) {
+        if (widget.volumes[i]['volume_path'] == folder['vol_path']) {
+          selectedVolumeIndex = i;
+          volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
+          break;
+        }
+      }
+
+      setState(() {
+        loading = false;
+      });
+    } else {
+      if (res['error']['code'] == 402) {
+        Util.toast("此共享文件夹不存在");
+      } else {
+        Util.toast("加载失败，code: ${res['error']['code']}");
+      }
+
+      Navigator.of(context).pop();
+    }
+  }
+
+  _save() async {
     FocusScope.of(context).unfocus();
+    print(name);
     if (name.trim() == "") {
       Util.toast("请输入共享文件夹名称");
       return;
@@ -82,6 +149,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       name,
       widget.volumes[1]['volume_path'],
       desc,
+      oldName: oldName,
       encryption: encryption,
       password: password,
       recycleBin: recycleBin,
@@ -92,13 +160,15 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       enableShareQuota: enableShareQuota,
       enableShareCompress: enableShareCompress,
       shareQuota: shareQuota,
+      method: widget.folder != null ? 'set' : 'create',
     );
 
     setState(() {
       creating = false;
     });
+    print(res);
     if (res['success']) {
-      Util.toast("新增共享文件夹成功");
+      Util.toast("${widget.folder != null ? '修改' : '新增'}共享文件夹成功");
       Navigator.of(context).pop(true);
     }
   }
@@ -109,7 +179,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       appBar: AppBar(
         leading: AppBackButton(context),
         title: Text(
-          "新增共享文件夹",
+          "${widget.folder != null ? '修改' : '新增'}共享文件夹",
         ),
       ),
       body: GestureDetector(
@@ -613,6 +683,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                       child: Row(
                         children: [
                           Text("启用共享文件夹配额"),
+                          if (shareQuotaUsed != null)
+                            Text(
+                              "(已使用${Util.formatSize((shareQuotaUsed * 1024 * 1024).toInt())})",
+                              style: TextStyle(color: Colors.blue),
+                            ),
                           Spacer(),
                           if (enableShareQuota)
                             Icon(
@@ -768,7 +843,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                onPressed: _create,
+                onPressed: _save,
                 child: creating
                     ? Center(
                         child: CupertinoActivityIndicator(
@@ -776,7 +851,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         ),
                       )
                     : Text(
-                        ' 新增 ',
+                        ' 保存 ',
                         style: TextStyle(fontSize: 18),
                       ),
               ),

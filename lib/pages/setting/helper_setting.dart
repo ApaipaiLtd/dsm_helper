@@ -24,7 +24,6 @@ class HelperSetting extends StatefulWidget {
 }
 
 class _HelperSettingState extends State<HelperSetting> {
-  String account = "";
   final LocalAuthentication auth = LocalAuthentication();
   bool launchAuth = false;
   bool password = false;
@@ -34,9 +33,6 @@ class _HelperSettingState extends State<HelperSetting> {
   BiometricType biometricsType = BiometricType.fingerprint;
   @override
   void initState() {
-    Util.getStorage("account").then((value) {
-      setState(() => account = value);
-    });
     initAuth();
     super.initState();
   }
@@ -538,7 +534,7 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ),
-          if (account == "jinx") ...[
+          if (Util.notReviewAccount) ...[
             SizedBox(
               height: 20,
             ),

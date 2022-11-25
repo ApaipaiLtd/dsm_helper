@@ -72,6 +72,8 @@ class Util {
 
   static String downloadSavePath = "";
   static bool downloadWifiOnly = true;
+
+  static bool get notReviewAccount => account != "jinx";
   static toast(String text) {
     showToast(text ?? "", dismissOtherToast: true);
   }

@@ -11,7 +11,6 @@ import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluwx/fluwx.dart';
@@ -19,7 +18,6 @@ import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 import '/providers/dark_mode.dart';
 
@@ -33,10 +31,6 @@ void main() async {
   String agreement = await Util.getStorage("agreement");
   if (agreement != null && agreement == "1") {
     registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
-    await UmengAnalyticsPlugin.init(
-      androidKey: '5ffe477d6a2a470e8f76809c',
-      iosKey: '5ffe47cb6a2a470e8f7680a2',
-    );
     print("初始化穿山甲");
     await pangle.init(
       iOS: IOSConfig(
@@ -140,67 +134,23 @@ void main() async {
   } else {
     Util.checkSsl = true;
   }
-  //使用flutter异常上报
-  FlutterBugly.postCatchedException(() {
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: DarkModeProvider(darkMode)),
-          ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
-          ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
-          ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
-        ],
-        child: MyApp(authPage),
-      ),
-    );
-  });
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: DarkModeProvider(darkMode)),
+        ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
+        ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
+        ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
+      ],
+      child: MyApp(authPage),
+    ),
+  );
 
   if (Platform.isAndroid) {
     // 以下两行 设置android状态栏为透明的沉浸。写在组件渲染之后，是为了在渲染后进行set赋值，覆盖状态栏，写在渲染之前MaterialApp组件会覆盖掉这个值。
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
-  }
-}
-
-class AppAnalysis extends NavigatorObserver {
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
-    if (previousRoute != null && route != null) {
-      if (previousRoute.settings.name != null) {
-        UmengAnalyticsPlugin.pageEnd(previousRoute.settings.name);
-      }
-
-      if (route.settings.name != null) {
-        UmengAnalyticsPlugin.pageStart(route.settings.name);
-      }
-    }
-  }
-
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
-    if (route != null && previousRoute != null) {
-      if (route.settings.name != null) {
-        UmengAnalyticsPlugin.pageEnd(route.settings.name);
-      }
-
-      if (previousRoute.settings.name != null) {
-        UmengAnalyticsPlugin.pageStart(previousRoute.settings.name);
-      }
-    }
-  }
-
-  @override
-  void didReplace({Route<dynamic> newRoute, Route<dynamic> oldRoute}) {
-    if (oldRoute != null && newRoute != null) {
-      if (oldRoute.settings.name != null) {
-        UmengAnalyticsPlugin.pageEnd(oldRoute.settings.name);
-      }
-
-      if (newRoute.settings.name != null) {
-        UmengAnalyticsPlugin.pageStart(newRoute.settings.name);
-      }
-    }
   }
 }
 
@@ -215,11 +165,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    FlutterBugly.init(
-      androidAppId: "d16533a5-49c8-41ae-a1b9-65847299eb13",
-      iOSAppId: "99b9d337-25eb-4660-b7b0-1285e493b9c4",
-      customUpgrade: true, // 调用 Android 原生升级方式
-    );
     super.initState();
   }
 
@@ -326,7 +271,6 @@ class _MyAppState extends State<MyApp> {
                       const Locale('zh', 'CN'),
                     ],
                     home: widget.authPage ? AuthPage() : Login(),
-                    navigatorObservers: [AppAnalysis()],
                     routes: {
                       "/login": (BuildContext context) => Login(),
                       "/home": (BuildContext context) => Home(),
@@ -346,7 +290,6 @@ class _MyAppState extends State<MyApp> {
                     ],
                     home: widget.authPage ? AuthPage() : Login(),
                     // onGenerateRoute: ,
-                    navigatorObservers: [AppAnalysis()],
                     routes: {
                       "/login": (BuildContext context) => Login(),
                       "/home": (BuildContext context) => Home(),

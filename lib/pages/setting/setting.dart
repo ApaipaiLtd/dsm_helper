@@ -681,7 +681,7 @@ class _SettingState extends State<Setting> {
             spacing: 20,
             runSpacing: 20,
             children: [
-              if (Util.account != "jinx") ...[
+              if (Util.notReviewAccount) ...[
                 SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
                 SettingButton(name: "重启", icon: "reboot", loading: rebooting, onPressed: onReboot),
               ],
@@ -773,7 +773,7 @@ class _SettingState extends State<Setting> {
                 name: "问题反馈",
                 icon: "edit",
                 onPressed: () {
-                  if (account == "jinx") {
+                  if (Util.notReviewAccount) {
                     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                       return Feedback();
                     }));

@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
-import 'package:dsm_helper/pages/setting/privacy.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:wake_on_lan/wake_on_lan.dart';
 
@@ -174,7 +173,10 @@ class _LoginState extends State<Login> {
                                     ..onTap = () {
                                       FocusScope.of(context).unfocus();
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                        return Privacy();
+                                        return Browser(
+                                          url: 'https://dsm.apaipai.top/privacy',
+                                          title: "隐私政策",
+                                        );
                                       }));
                                     },
                                 ),
@@ -199,7 +201,10 @@ class _LoginState extends State<Login> {
                                     ..onTap = () {
                                       FocusScope.of(context).unfocus();
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                        return Privacy();
+                                        return Browser(
+                                          url: 'https://dsm.apaipai.top/privacy',
+                                          title: "隐私政策",
+                                        );
                                       }));
                                     },
                                 ),
@@ -220,10 +225,6 @@ class _LoginState extends State<Login> {
                                   Util.setStorage("read", "1");
                                   Util.setStorage("agreement", read ? "1" : "0");
                                   registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
-                                  await UmengAnalyticsPlugin.init(
-                                    androidKey: '5ffe477d6a2a470e8f76809c',
-                                    iosKey: '5ffe47cb6a2a470e8f7680a2',
-                                  );
                                 },
                                 decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
@@ -1122,7 +1123,10 @@ class _LoginState extends State<Login> {
                               ..onTap = () {
                                 FocusScope.of(context).unfocus();
                                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                  return Privacy();
+                                  return Browser(
+                                    url: 'https://dsm.apaipai.top/privacy',
+                                    title: "隐私政策",
+                                  );
                                 }));
                               },
                           ),

@@ -116,10 +116,45 @@ class Api {
     });
   }
 
+  static Future<Map> shareDetail(String name) async {
+    // [
+    //   {"api": "SYNO.Core.Storage.Volume", "method": "list", "version": 1, "limit": -1, "offset": 0, "location": "internal", "option": "include_cold_storage"},
+    //   {
+    //     "api": "SYNO.Core.Share",
+    //     "method": "get",
+    //     "version": 1,
+    //     "name": "test1",
+    //     "additional": ["hidden", "recyclebin", "advance_setting", "encryption", "is_cluster_share", "is_cold_storage_share", "enable_snapshot_browsing", "share_quota", "enable_share_cow", "enable_share_compress"]
+    //   }
+    // ];
+    var data = {
+      "api": '"SYNO.Core.Share"',
+      "method": '"get"',
+      "version": 1,
+      "_sid": Util.sid,
+      "name": '"$name"',
+      "additional": jsonEncode([
+        "hidden",
+        "recyclebin",
+        "advance_setting",
+        "encryption",
+        "is_cluster_share",
+        "is_cold_storage_share",
+        "enable_snapshot_browsing",
+        "share_quota",
+        "enable_share_cow",
+        "enable_share_compress",
+      ]),
+    };
+    print(data);
+    return await Util.post("entry.cgi", data: data);
+  }
+
   static Future<Map> addSharedFolder(
     String name,
     String volPath,
     String desc, {
+    String oldName,
     bool encryption = false,
     String password = "",
     bool recycleBin = false,
@@ -130,6 +165,7 @@ class Api {
     bool enableShareCompress: false,
     bool enableShareQuota: false,
     String shareQuota: "",
+    String method: "create",
   }) async {
     //"{"name":"test","vol_path":"/volume3","desc":"test","hidden":true,"enable_recycle_bin":true,"recycle_bin_admin_only":true,"hide_unreadable":true,"enable_share_cow":true,"enable_share_compress":true,"share_quota":1024,"name_org":""}"
     Map shareInfo = {
@@ -137,40 +173,30 @@ class Api {
       "vol_path": volPath,
       "desc": desc,
       "name_org": "",
+      "enable_recycle_bin": recycleBin,
+      "recycle_bin_admin_only": recycleBinAdminOnly,
+      "encryption": encryption,
+      "hidden": hidden,
+      "hide_unreadable": hideUnreadable,
+      "enable_share_cow": enableShareCow,
+      "enable_share_compress": enableShareCow && enableShareCompress,
     };
     if (encryption) {
-      shareInfo['encryption'] = true;
       shareInfo['enc_passwd'] = password;
-    }
-    if (recycleBin) {
-      shareInfo['enable_recycle_bin'] = true;
-    }
-    if (recycleBinAdminOnly) {
-      shareInfo['recycle_bin_admin_only'] = true;
-    }
-    if (hidden) {
-      shareInfo['hidden'] = true;
-    }
-    if (hideUnreadable) {
-      shareInfo['hide_unreadable'] = true;
-    }
-    if (enableShareCow) {
-      shareInfo['enable_share_cow'] = true;
-      if (enableShareCompress) {
-        shareInfo['enable_share_compress'] = true;
-      }
     }
     if (enableShareQuota) {
       shareInfo['share_quota'] = num.parse(shareQuota);
+    } else {
+      shareInfo['share_quota'] = 0;
     }
     print(shareInfo);
     //"{"name":"testc","vol_path":"/volume3","desc":"bjxjbddb","enable_share_cow":true,"enable_share_compress":true,"share_quota":1024,"encryption":true,"enc_passwd":""}"
     var data = {
       "api": '"SYNO.Core.Share"',
-      "method": '"create"',
+      "method": '"$method"',
       "version": 1,
       "_sid": Util.sid,
-      "name": name,
+      "name": oldName ?? name,
       "shareinfo": jsonEncode(shareInfo),
     };
     return await Util.post("entry.cgi", data: data);
@@ -187,6 +213,17 @@ class Api {
       "version": 1,
       "_sid": Util.sid,
       "name": json.encode(name),
+    };
+    return await Util.post("entry.cgi", data: data);
+  }
+
+  static Future<Map> cleanRecycleBin(String id) async {
+    var data = {
+      id: '"$id"',
+      "api": '"SYNO.Core.RecycleBin"',
+      "method": 'start',
+      "version": 1,
+      "_sid": Util.sid,
     };
     return await Util.post("entry.cgi", data: data);
   }

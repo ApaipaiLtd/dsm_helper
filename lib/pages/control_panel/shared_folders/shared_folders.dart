@@ -327,6 +327,17 @@ class _SharedFoldersState extends State<SharedFolders> {
                                     NeuButton(
                                       onPressed: () async {
                                         Navigator.of(context).pop();
+                                        Navigator.of(context)
+                                            .push(CupertinoPageRoute(
+                                                builder: (context) {
+                                                  return AddSharedFolders(volumes, folder: folder);
+                                                },
+                                                settings: RouteSettings(name: "add_shared_folders")))
+                                            .then((res) {
+                                          if (res != null && res) {
+                                            getData();
+                                          }
+                                        });
                                       },
                                       decoration: NeumorphicDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
@@ -346,6 +357,11 @@ class _SharedFoldersState extends State<SharedFolders> {
                                       NeuButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
+                                          Api.cleanRecycleBin(folder['name']).then((res) {
+                                            if (res['success']) {
+                                              Util.toast("请求已发送");
+                                            }
+                                          });
                                         },
                                         decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,

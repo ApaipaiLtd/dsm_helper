@@ -75,7 +75,7 @@ class DashboardState extends State<Dashboard> {
 
   Map volWarnings;
   String msg = "";
-  bool get showMainMenu => Util.account != "jinx";
+  bool get showMainMenu => Util.notReviewAccount;
   @override
   void initState() {
     if (showMainMenu) {
@@ -369,7 +369,7 @@ class DashboardState extends State<Dashboard> {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return GestureDetector(
         onTap: () {
-          if (Util.account != 'jinx')
+          if (Util.notReviewAccount)
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return SystemInfo(0, system, volumes, disks);
             }));
@@ -1836,7 +1836,7 @@ class DashboardState extends State<Dashboard> {
           ],
         ),
         actions: [
-          if (Util.account != 'jinx')
+          if (Util.notReviewAccount)
             Padding(
               padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
               child: NeuButton(

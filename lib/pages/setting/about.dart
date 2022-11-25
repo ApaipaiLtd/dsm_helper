@@ -18,7 +18,6 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   bool checking = false;
   PackageInfo packageInfo;
-  String account = "jinx";
   @override
   void initState() {
     getInfo();
@@ -26,7 +25,6 @@ class _AboutState extends State<About> {
   }
 
   getInfo() async {
-    Util.getStorage("account").then((value) => setState(() => account = value));
     packageInfo = await PackageInfo.fromPlatform();
     setState(() {});
   }
@@ -115,7 +113,7 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ),
-                if (account != "jinx") ...[
+                if (Util.notReviewAccount) ...[
                   SizedBox(
                     height: 20,
                   ),
@@ -158,7 +156,7 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ],
-                if (account != "jinx") ...[
+                if (Util.notReviewAccount) ...[
                   SizedBox(
                     height: 20,
                   ),
