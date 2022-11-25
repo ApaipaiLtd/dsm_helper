@@ -28,6 +28,7 @@ dependency_overrides:
   ffi: ^2.0.1
   xml: ^6.2.2
   collection: ^1.17.0
+  video_player_android: 2.3.8 #2.3.9打包失败
 dependencies:
   flutter:
     sdk: flutter
