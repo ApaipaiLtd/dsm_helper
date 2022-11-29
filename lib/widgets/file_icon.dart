@@ -28,11 +28,36 @@ class FileIcon extends StatelessWidget {
         height: 60,
       );
     } else if (fileType == FileTypeEnum.movie) {
-      return Image.asset(
-        "assets/icons/movie.png",
-        width: 40,
-        height: 60,
-      );
+      print(thumb);
+      return thumb == null
+          ? Image.asset(
+              "assets/icons/movie.png",
+              width: 40,
+              height: 60,
+            )
+          : network
+              ? CupertinoExtendedImage(
+                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                  width: width,
+                  height: height,
+                  fit: fit,
+                  placeholder: Container(
+                    width: 40,
+                    height: 60,
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      "assets/icons/movie.png",
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),
+                )
+              : ExtendedImage.file(
+                  File(thumb),
+                  width: width,
+                  height: height,
+                  fit: fit,
+                );
     } else if (fileType == FileTypeEnum.image) {
       return thumb == null
           ? Image.asset(

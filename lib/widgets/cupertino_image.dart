@@ -57,16 +57,17 @@ class CupertinoExtendedImage extends StatelessWidget {
             );
             break;
           case LoadState.failed:
-            return Container(
-              width: width,
-              height: height,
-              alignment: Alignment.center,
-              child: Image.asset(
-                "assets/icons/image.png",
-                width: 40,
-                height: 40,
-              ),
-            );
+            return placeholder ??
+                Container(
+                  width: width,
+                  height: height,
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    "assets/icons/image.png",
+                    width: 40,
+                    height: 40,
+                  ),
+                );
             break;
           default:
             return Container();

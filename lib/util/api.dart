@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:http_parser/http_parser.dart';
@@ -14,14 +14,14 @@ class Api {
   static Map<String, ApiModel> apiList = {};
   static Future<Map> update(String buildNumber) async {
     if (Platform.isAndroid) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      if (androidInfo.brand == "HUAWEI" || androidInfo.brand == "HONOR") {
-        return {
-          "code": 0,
-          "msg": "已是最新版本",
-        };
-      }
+      // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      // if (androidInfo.brand == "HUAWEI" || androidInfo.brand == "HONOR") {
+      //   return {
+      //     "code": 0,
+      //     "msg": "已是最新版本",
+      //   };
+      // }
       var res = await Util.get("https://dsm.apaipai.top/version", host: "https://dsm.apaipai.top");
       if (res != null) {
         if (int.parse(buildNumber) < res['data']['build']) {

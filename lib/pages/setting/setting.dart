@@ -772,7 +772,7 @@ class _SettingState extends State<Setting> {
               SettingButton(
                 name: "问题反馈",
                 icon: "edit",
-                onPressed: () {
+                onPressed: () async {
                   if (Util.notReviewAccount) {
                     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                       return Feedback();
