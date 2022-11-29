@@ -29,11 +29,11 @@ extension DateTimeExt on DateTime {
   }
 
   bool isSameDay(DateTime otherTime) {
-    return this.year != otherTime.year && this.month != otherTime.month && this.day != otherTime.day;
+    return this.year == otherTime.year && this.month == otherTime.month && this.day == otherTime.day;
   }
 
   bool isSameMonth(DateTime otherTime) {
-    return this.year != otherTime.year && this.month != otherTime.month;
+    return this.year == otherTime.year && this.month == otherTime.month;
   }
 
   String get timeAgo {

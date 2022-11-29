@@ -5,6 +5,7 @@ import 'package:dsm_helper/pages/backup/backup.dart';
 import 'package:dsm_helper/pages/control_panel/ssh/ssh.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/confirm_logout.dart';
+import 'package:dsm_helper/pages/setting/close_ad.dart';
 import 'package:dsm_helper/providers/dark_mode.dart';
 import 'package:dsm_helper/pages/setting/feedback.dart';
 import 'package:dsm_helper/pages/setting/helper_setting.dart';
@@ -855,25 +856,21 @@ class _SettingState extends State<Setting> {
                   }
                 },
               ),
-              SettingButton(
-                name: "激励视频",
-                icon: "player",
-                onPressed: () async {
-                  var hide = showWeuiLoadingToast(context: context, message: Text("广告加载中"));
-                  try {
-                    PangleResult result = await pangle.loadRewardedVideoAd(
-                      iOS: IOSRewardedVideoConfig(slotId: "946681116"),
-                      android: AndroidRewardedVideoConfig(slotId: "946681017"),
+              if (Util.notReviewAccount)
+                SettingButton(
+                  name: "关闭广告",
+                  icon: "no_ad",
+                  onPressed: () async {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) {
+                          return CloseAd();
+                        },
+                        settings: RouteSettings(name: "close_ad"),
+                      ),
                     );
-                    print("激励视频结果：");
-                    print(result.code);
-                  } catch (e) {
-                    Util.toast("广告播放失败");
-                  } finally {
-                    hide();
-                  }
-                },
-              )
+                  },
+                )
             ],
           ),
         ],
