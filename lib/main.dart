@@ -44,10 +44,20 @@ void main() async {
         allowShowPageWhenScreenLock: false,
       ),
     );
-    pangle.loadSplashAd(
-      iOS: IOSSplashConfig(slotId: '887561543'),
-      android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
-    );
+    // 是否关闭广告
+    Util.getStorage("no_ad_time").then((res) {
+      if (res.isNotBlank) {
+        DateTime noAdTime = DateTime.parse(res);
+        if (noAdTime.isAfter(DateTime.now())) {
+          // 处于关闭广告有效期内
+          return;
+        }
+      }
+      pangle.loadSplashAd(
+        iOS: IOSSplashConfig(slotId: '887561543'),
+        android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
+      );
+    });
   }
   await FlutterDownloader.initialize(debug: false, ignoreSsl: true);
 
