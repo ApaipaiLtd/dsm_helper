@@ -79,6 +79,41 @@ class MomentsApi {
     return res;
   }
 
+  static Future<Map> geocoding({
+    int offset: 0,
+    int limit: 5000,
+  }) async {
+    Map<String, dynamic> data = {
+      "additional": '["thumbnail"]',
+      "offset": offset,
+      "limit": limit,
+      "api": '"SYNO.Foto.Browse.Geocoding"',
+      "method": '"list"',
+      "version": 1,
+      "_sid": Util.sid,
+    };
+    var res = await Util.post("entry.cgi", data: data);
+    return res;
+  }
+
+  static Future<Map> general({
+    int offset: 0,
+    int limit: 5000,
+    bool isTeam,
+  }) async {
+    Map<String, dynamic> data = {
+      "additional": '["thumbnail"]',
+      "offset": offset,
+      "limit": limit,
+      "api": '"SYNO.Foto${isTeam ? 'Team' : ''}.Browse.GeneralTag"',
+      "method": '"list"',
+      "version": 1,
+      "_sid": Util.sid,
+    };
+    var res = await Util.post("entry.cgi", data: data);
+    return res;
+  }
+
   //start_time=1577145600&end_time=1577231999&api=%22SYNO.Photo.Browse.Timeline%22&method=%22get_geocoding%22&version=1
   static Future<Map> location(int year, int month, int day) async {
     int start = DateTime(year, month, day, 8).secondsSinceEpoch;

@@ -26,10 +26,13 @@ class _MomentsState extends State<Moments> {
   List recentlyAdd = [];
   List videos = [];
   List shares = [];
+  List geocoding = [];
+  List general = [];
   double photoWidth;
   double albumWidth;
   bool loadingTimeline = true;
   bool loadingAlbum = true;
+  bool loadingShares = true;
   @override
   void initState() {
     getData();
@@ -38,6 +41,12 @@ class _MomentsState extends State<Moments> {
     getRecently();
     getVideos();
     getShares();
+    if (Util.version == 7) {
+      print("DSM 版本为7");
+      getGeocoding();
+      getGeneral();
+    }
+
     super.initState();
   }
 
@@ -106,7 +115,26 @@ class _MomentsState extends State<Moments> {
     if (res['success'] && mounted) {
       setState(() {
         shares = res['data']["list"];
-        print(shares);
+        loadingShares = false;
+      });
+    }
+  }
+
+  getGeocoding() async {
+    var res = await MomentsApi.geocoding(limit: 4);
+    if (res['success'] && mounted) {
+      setState(() {
+        geocoding = res['data']["list"];
+        print(geocoding);
+      });
+    }
+  }
+
+  getGeneral({bool isTeam = false}) async {
+    var res = await MomentsApi.general(limit: 4, isTeam: isTeam);
+    if (res['success'] && mounted) {
+      setState(() {
+        general = res['data']["list"];
       });
     }
   }
@@ -360,6 +388,7 @@ class _MomentsState extends State<Moments> {
           children: {
             0: Text("图片"),
             1: Text("相册"),
+            2: Text("共享"),
           },
           groupValue: currentIndex,
           onValueChanged: (v) {
@@ -451,51 +480,145 @@ class _MomentsState extends State<Moments> {
                         runSpacing: 20,
                         spacing: 20,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (context) {
-                                  return Album(
-                                    "与他人共享",
-                                    shared: true,
-                                  );
-                                },
-                              ));
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: albumWidth,
-                                    height: albumWidth,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Wrap(
-                                      runSpacing: 2,
-                                      spacing: 2,
-                                      children: [
-                                        ...List.generate(4, (index) {
-                                          return _buildCategoryItem(shares, index);
-                                        })
-                                      ],
+                          if (geocoding.length > 0)
+                            GestureDetector(
+                              onTap: () {
+                                // Navigator.of(context).push(CupertinoPageRoute(
+                                //   builder: (context) {
+                                //     return Timeline(
+                                //       "视频",
+                                //       category: "Timeline",
+                                //       type: "video",
+                                //     );
+                                //   },
+                                // ));
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      width: albumWidth,
+                                      height: albumWidth,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Wrap(
+                                        runSpacing: 2,
+                                        spacing: 2,
+                                        children: [
+                                          ...List.generate(4, (index) {
+                                            return _buildCategoryItem(geocoding, index);
+                                          })
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "共享",
-                                  style: TextStyle(fontSize: 14),
-                                  maxLines: 1,
-                                ),
-                              ],
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "位置",
+                                    style: TextStyle(fontSize: 14),
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          if (general.length > 0)
+                            GestureDetector(
+                              // onTap: () {
+                              //   Navigator.of(context).push(CupertinoPageRoute(
+                              //     builder: (context) {
+                              //       return Timeline(
+                              //         "视频",
+                              //         category: "Timeline",
+                              //         type: "video",
+                              //       );
+                              //     },
+                              //   ));
+                              // },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      width: albumWidth,
+                                      height: albumWidth,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Wrap(
+                                        runSpacing: 2,
+                                        spacing: 2,
+                                        children: [
+                                          ...List.generate(4, (index) {
+                                            return _buildCategoryItem(general, index);
+                                          })
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "标签",
+                                    style: TextStyle(fontSize: 14),
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     Navigator.of(context).push(CupertinoPageRoute(
+                          //       builder: (context) {
+                          //         return Album(
+                          //           "与他人共享",
+                          //           shared: true,
+                          //         );
+                          //       },
+                          //     ));
+                          //   },
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       ClipRRect(
+                          //         borderRadius: BorderRadius.circular(10),
+                          //         child: Container(
+                          //           width: albumWidth,
+                          //           height: albumWidth,
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.white,
+                          //             borderRadius: BorderRadius.circular(5),
+                          //           ),
+                          //           child: Wrap(
+                          //             runSpacing: 2,
+                          //             spacing: 2,
+                          //             children: [
+                          //               ...List.generate(4, (index) {
+                          //                 return _buildCategoryItem(shares, index);
+                          //               })
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       SizedBox(
+                          //         height: 5,
+                          //       ),
+                          //       Text(
+                          //         "共享",
+                          //         style: TextStyle(fontSize: 14),
+                          //         maxLines: 1,
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(CupertinoPageRoute(
@@ -606,6 +729,38 @@ class _MomentsState extends State<Moments> {
                     ],
                   ),
                 ),
+          loadingShares
+              ? Center(
+                  child: NeuCard(
+                    padding: EdgeInsets.all(50),
+                    curveType: CurveType.flat,
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    bevel: 20,
+                    child: CupertinoActivityIndicator(
+                      radius: 14,
+                    ),
+                  ),
+                )
+              : shares.length > 0
+                  ? Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Wrap(
+                        runSpacing: 20,
+                        spacing: 20,
+                        children: [
+                          ...shares.map(_buildAlbumItem).toList(),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      height: 500,
+                      child: Center(
+                        child: Text("无手动创建的相册"),
+                      ),
+                    ),
         ],
       ),
     );
