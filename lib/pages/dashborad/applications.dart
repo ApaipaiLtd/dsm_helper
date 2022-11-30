@@ -5,6 +5,7 @@ import 'package:dsm_helper/pages/download_station/download_station.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/pages/moments/moments.dart';
 import 'package:dsm_helper/pages/packages/packages.dart';
+import 'package:dsm_helper/pages/photos/photos.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/pages/security_scan/security_scan.dart';
 import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
@@ -545,9 +546,9 @@ class ApplicationList extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) {
-                    return Moments();
+                    return Photos();
                   },
-                  settings: RouteSettings(name: "moments"),
+                  settings: RouteSettings(name: "photos"),
                 ));
               },
               child: NeuCard(

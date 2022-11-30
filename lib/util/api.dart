@@ -84,7 +84,6 @@ class Api {
   }
 
   static Future<Map> shareList({List<String> additional = const ["perm", "time", "size"], CancelToken cancelToken, String sid, bool checkSsl, String cookie, String host}) async {
-    print(host);
     return await Util.post(
       "entry.cgi",
       data: {

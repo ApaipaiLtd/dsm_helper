@@ -86,7 +86,15 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return StreamBuilder<bool>(
       stream: _placeholderStreamController.stream,
       builder: (context, snapshot) {
-        return _showPlaceholder && widget.cover.isNotBlank ? ExtendedImage.network(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : const SizedBox();
+        if (_showPlaceholder && widget.cover.isNotBlank) {
+          if (widget.cover.startsWith("http")) {
+            return ExtendedImage.network(widget.cover);
+          } else {
+            return ExtendedImage.network(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
+          }
+        } else {
+          return SizedBox();
+        }
       },
     );
   }

@@ -5,6 +5,7 @@ import 'package:dsm_helper/pages/docker/detail.dart';
 import 'package:dsm_helper/pages/docker/docker.dart';
 import 'package:dsm_helper/pages/download_station/download_station.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
+import 'package:dsm_helper/pages/moments/moments.dart';
 import 'package:dsm_helper/pages/packages/packages.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
@@ -14,6 +15,8 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
+
+import '../photos/photos.dart';
 
 List supportedShortcuts = [
   "SYNO.SDS.PkgManApp.Instance",
@@ -163,6 +166,26 @@ class ShortcutList extends StatelessWidget {
           settings: RouteSettings(name: "virtual_machine_manager"),
         );
         break;
+      case "SYNO.Photo.AppInstance":
+        icon = "assets/applications/6/moments.png";
+        name = "Moments";
+        route = CupertinoPageRoute(
+          builder: (context) {
+            return Moments();
+          },
+          settings: RouteSettings(name: "moments"),
+        );
+        break;
+      case "SYNO.Foto.AppInstance":
+        icon = "assets/applications/7/synology_photos.png";
+        name = "Synology Photos";
+        route = CupertinoPageRoute(
+          builder: (context) {
+            return Photos();
+          },
+          settings: RouteSettings(name: "photos"),
+        );
+        break;
       case "SYNO.SDS.DownloadStation.Application":
         icon = "assets/applications/download_station.png";
         name = "Download Station";
@@ -186,7 +209,7 @@ class ShortcutList extends StatelessWidget {
     }
     if (icon != "") {
       return Padding(
-        padding: EdgeInsets.only(left: 10, top: 20, bottom: 20,right: 10),
+        padding: EdgeInsets.only(left: 10, top: 20, bottom: 20, right: 10),
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).push(route);
