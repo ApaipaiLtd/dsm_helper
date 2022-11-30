@@ -4,6 +4,8 @@ import 'package:dsm_helper/models/photos/access_permission_model.dart';
 import 'package:dsm_helper/models/photos/thumbnail_model.dart';
 import 'package:dsm_helper/util/function.dart';
 
+import 'additional.dart';
+
 /// additional : {"thumbnail":[{"cache_key":"611690_1665630858","m":"ready","preview":"broken","sm":"ready","unit_id":611690,"xl":"ready"},{"cache_key":"611689_1665630860","m":"ready","preview":"broken","sm":"ready","unit_id":611689,"xl":"ready"},{"cache_key":"611688_1665630855","m":"ready","preview":"broken","sm":"ready","unit_id":611688,"xl":"ready"},{"cache_key":"611687_1665630852","m":"ready","preview":"broken","sm":"ready","unit_id":611687,"xl":"ready"}]}
 /// id : 14770
 /// name : "/飞机航拍"
@@ -82,6 +84,7 @@ class FolderModel {
   Additional additional;
   num id;
   String name;
+  String get lastName => name.split("/").last;
   num ownerUserId;
   num parent;
   String passphrase;
@@ -124,43 +127,6 @@ class FolderModel {
     map['shared'] = shared;
     map['sort_by'] = sortBy;
     map['sort_direction'] = sortDirection;
-    return map;
-  }
-}
-
-/// thumbnail : [{"cache_key":"611690_1665630858","m":"ready","preview":"broken","sm":"ready","unit_id":611690,"xl":"ready"},{"cache_key":"611689_1665630860","m":"ready","preview":"broken","sm":"ready","unit_id":611689,"xl":"ready"},{"cache_key":"611688_1665630855","m":"ready","preview":"broken","sm":"ready","unit_id":611688,"xl":"ready"},{"cache_key":"611687_1665630852","m":"ready","preview":"broken","sm":"ready","unit_id":611687,"xl":"ready"}]
-
-class Additional {
-  Additional({
-    this.thumbnail,
-    this.accessPermission,
-  });
-
-  Additional.fromJson(dynamic json) {
-    if (json['thumbnail'] != null) {
-      thumbnail = [];
-      json['thumbnail'].forEach((v) {
-        thumbnail.add(ThumbnailModel.fromJson(v));
-      });
-    }
-    if (json['access_permission'] != null) {
-      accessPermission = AccessPermissionModel.fromJson(json['access_permission']);
-    }
-  }
-  List<ThumbnailModel> thumbnail;
-  AccessPermissionModel accessPermission;
-  Additional copyWith({
-    List<ThumbnailModel> thumbnail,
-  }) =>
-      Additional(
-        thumbnail: thumbnail ?? this.thumbnail,
-        accessPermission: thumbnail ?? this.accessPermission,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (thumbnail != null) {
-      map['thumbnail'] = thumbnail.map((v) => v.toJson()).toList();
-    }
     return map;
   }
 }

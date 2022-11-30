@@ -75,10 +75,9 @@ class DashboardState extends State<Dashboard> {
 
   Map volWarnings;
   String msg = "";
-  bool get showMainMenu => Util.notReviewAccount;
   @override
   void initState() {
-    if (showMainMenu) {
+    if (Util.notReviewAccount) {
       showFirstLaunchDialog();
     }
     networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
@@ -127,7 +126,7 @@ class DashboardState extends State<Dashboard> {
                     child: Column(
                       children: [
                         Text(
-                          "${Util.appName}公众号",
+                          "温馨提示",
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                         ),
                         SizedBox(
@@ -141,7 +140,7 @@ class DashboardState extends State<Dashboard> {
                           bevel: 20,
                           curveType: CurveType.flat,
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          child: Text("关注公众号，获取最新${Util.appName}更新内容、操作说明，浏览广告内容，还可以获取现金红包奖励！"),
+                          child: Text("关注公众号'群晖助手'，获取最新${Util.appName}更新内容！\n前往'我的'-'关闭广告'页面，即可关闭开屏广告。"),
                         ),
                         SizedBox(
                           height: 20,
@@ -151,7 +150,7 @@ class DashboardState extends State<Dashboard> {
                             Expanded(
                               child: NeuButton(
                                 onPressed: () async {
-                                  ClipboardData data = new ClipboardData(text: "${Util.appName}");
+                                  ClipboardData data = new ClipboardData(text: "群晖助手");
                                   Clipboard.setData(data);
                                   Util.toast("已复制到剪贴板");
                                   Navigator.of(context).pop();
@@ -185,7 +184,7 @@ class DashboardState extends State<Dashboard> {
                                 bevel: 20,
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
-                                  "不再提示",
+                                  "我知道了",
                                   style: TextStyle(fontSize: 18),
                                 ),
                               ),
@@ -1695,7 +1694,7 @@ class DashboardState extends State<Dashboard> {
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (showMainMenu)
+            if (Util.notReviewAccount)
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
                 child: NeuButton(
@@ -1931,7 +1930,7 @@ class DashboardState extends State<Dashboard> {
               ? ListView(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && showMainMenu)
+                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount)
                       Consumer<ShortcutProvider>(
                         builder: (context, shortcutProvider, _) {
                           return shortcutProvider.showShortcut ? ShortcutList(shortcutItems, system, volumes, disks, appNotify) : Container();
