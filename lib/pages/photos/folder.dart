@@ -3,6 +3,7 @@ import 'package:dsm_helper/models/photos/folder_model.dart';
 import 'package:dsm_helper/models/photos/general_tag_model.dart';
 import 'package:dsm_helper/models/photos/geocoding_model.dart';
 import 'package:dsm_helper/models/photos/photo_model.dart';
+import 'package:dsm_helper/pages/photos/widgets/photo_item_widget.dart';
 import 'package:dsm_helper/pages/photos/widgets/thumbnail_card.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,8 +18,9 @@ class Folder extends StatefulWidget {
 }
 
 class FolderState extends State<Folder> {
+  ScrollController pathScrollController = ScrollController();
   bool loading = true;
-  FolderModel root;
+  List<FolderModel> folders = [];
   bool isTeam = false;
   double folderWidth;
   @override
@@ -31,21 +33,99 @@ class FolderState extends State<Folder> {
   Future getData({bool isTeam: false}) async {
     this.isTeam = isTeam;
     try {
-      root = await FolderModel.fetch(additional: ['access_permission'], isTeam: isTeam);
-      await root.fetchFolders(additional: ["thumbnail"], isTeam: isTeam);
-      setState(() {
-        loading = false;
-      });
-    } catch (e) {}
+      folders = [];
+      FolderModel root = await FolderModel.fetch(additional: ['access_permission'], isTeam: isTeam);
+      folders.add(root);
+      fetchFolderDetail(root);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future fetchFolderDetail(FolderModel folder) async {
+    setState(() {
+      loading = true;
+    });
+    await Future.wait([
+      folder.fetchFolders(additional: isTeam ? ["sharing_info", "access_permission", "thumbnail", "password_verified"] : ["thumbnail"], isTeam: isTeam),
+      folder.fetchPhotos(additional: ["thumbnail", "resolution", "orientation", "video_convert", "video_meta"], isTeam: isTeam),
+    ]);
+    Future.delayed(Duration(milliseconds: 200)).then((_) {
+      print(pathScrollController.position.maxScrollExtent);
+      pathScrollController.animateTo(pathScrollController.position.maxScrollExtent, duration: Duration(milliseconds: 200), curve: Curves.ease);
+    });
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     if (folderWidth == null) {
-      folderWidth = (MediaQuery.of(context).size.width - 80) / 3;
+      folderWidth = (MediaQuery.of(context).size.width - 82) / 3;
     }
-    return loading
-        ? Center(
+    return Stack(
+      children: [
+        if (folders.length > 0)
+          Column(
+            children: [
+              Container(
+                height: 30,
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                child: ListView.separated(
+                  controller: pathScrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, i) {
+                    return GestureDetector(
+                      onTap: () {
+                        fetchFolderDetail(folders[i]);
+                        setState(() {
+                          folders = folders.sublist(0, i + 1);
+                        });
+                      },
+                      child: Text(
+                        folders[i].lastName == "/" ? "全部" : folders[i].lastName,
+                        style: TextStyle(color: Color(0xff212121), fontWeight: i == folders.length - 1 ? FontWeight.bold : FontWeight.normal),
+                      ),
+                    );
+                  },
+                  itemCount: folders.length,
+                  separatorBuilder: (context, i) {
+                    return Text(
+                      ">",
+                      style: TextStyle(color: Color(0xff414b55)),
+                    );
+                  },
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  children: [
+                    Wrap(
+                      runSpacing: 20,
+                      spacing: 20,
+                      children: [
+                        ...folders.last.folders.map((folder) {
+                          return _buildFolderItem(folder);
+                        }).toList(),
+                        ...folders.last.photos.map((photo) {
+                          return PhotoItemWidget(
+                            photo,
+                            folders.last.photos,
+                            width: folderWidth,
+                            isTeam: isTeam,
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        if (loading)
+          Center(
             child: NeuCard(
               padding: EdgeInsets.all(50),
               curveType: CurveType.flat,
@@ -59,48 +139,40 @@ class FolderState extends State<Folder> {
               ),
             ),
           )
-        : Container(
-            child: ListView(
-              padding: EdgeInsets.all(20),
-              children: [
-                Wrap(
-                  runSpacing: 20,
-                  spacing: 20,
-                  children: root.folders.map((folder) {
-                    return _buildFolderItem(folder);
-                  }).toList(),
-                ),
-              ],
-            ),
-          );
+      ],
+    );
   }
 
   Widget _buildFolderItem(FolderModel folder) {
     return GestureDetector(
       onTap: () {
-        // Navigator.of(context).push(CupertinoPageRoute(
-        //   builder: (context) {
-        //     return Timeline(
-        //       "视频",
-        //       category: "Timeline",
-        //       type: "video",
-        //     );
-        //   },
-        // ));
+        setState(() {
+          folders.add(folder);
+        });
+        fetchFolderDetail(folder);
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ThumbnailCard(folder.id, folder.additional.thumbnail, width: folderWidth),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            "${folder.lastName}",
-            style: TextStyle(fontSize: 14),
-            maxLines: 1,
-          ),
-        ],
+      child: SizedBox(
+        width: folderWidth,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ThumbnailCard(
+              folder.additional.thumbnail,
+              width: folderWidth,
+              folderId: folder.id,
+              isTeam: isTeam,
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              "${folder.lastName}",
+              style: TextStyle(fontSize: 14),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }

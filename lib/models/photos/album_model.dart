@@ -1,4 +1,7 @@
-import 'package:dsm_helper/models/photos/additional.dart';
+import 'dart:convert';
+
+import 'package:dsm_helper/models/photos/photo_model.dart';
+import 'package:dsm_helper/util/function.dart';
 
 /// additional : {"sharing_info":{"enable_password":false,"expiration":0,"is_expired":false,"mtime":1666874109,"owner":{"id":1,"name":"yaoshuwei"},"passphrase":"5kpICmfPs","permission":[],"privacy_type":"public-view","sharing_link":"http://pan.apaipai.top:5000/mo/sharing/5kpICmfPs","type":"album"},"thumbnail":{"cache_key":"684382_1666619064","m":"ready","preview":"broken","sm":"ready","unit_id":684382,"xl":"ready"}}
 /// cant_migrate_condition : {}
@@ -41,8 +44,41 @@ class AlbumModel {
     this.version,
   });
 
+  static Future<List<AlbumModel>> fetch({
+    bool isTeam: false,
+    int offset: 0,
+    int limit: 5000,
+    String sortBy: "create_time",
+    String sortDirection: "desc",
+    bool shared: false,
+    List<String> additional = const [],
+  }) async {
+    Map<String, dynamic> data = {
+      "additional": jsonEncode(additional),
+      "offset": offset,
+      "limit": limit,
+      "shared": shared,
+      "sort_by": '"$sortBy"',
+      "sort_direction": '"$sortDirection"',
+      "api": '"SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Album"',
+      "method": '"list"',
+      "version": 1,
+      "_sid": Util.sid,
+    };
+    var res = await Util.post("entry.cgi", data: data);
+    if (res['success']) {
+      List<AlbumModel> albums = [];
+      res['data']['list'].forEach((e) {
+        albums.add(AlbumModel.fromJson(e));
+      });
+      return albums;
+    } else {
+      throw Exception();
+    }
+  }
+
   AlbumModel.fromJson(dynamic json) {
-    additional = json['additional'] != null ? Additional.fromJson(json['additional']) : null;
+    additional = json['additional'] != null ? PhotoAdditional.fromJson(json['additional']) : null;
     cantMigrateCondition = json['cant_migrate_condition'];
     condition = json['condition'];
     createTime = json['create_time'];
@@ -61,7 +97,7 @@ class AlbumModel {
     type = json['type'];
     version = json['version'];
   }
-  Additional additional;
+  PhotoAdditional additional;
   dynamic cantMigrateCondition;
   dynamic condition;
   num createTime;
@@ -79,8 +115,16 @@ class AlbumModel {
   bool temporaryShared;
   String type;
   num version;
+  String get shareText {
+    if (additional.sharingInfo.privacyType == 'public-view') {
+      return '公开共享';
+    } else {
+      return '私人共享';
+    }
+  }
+
   AlbumModel copyWith({
-    Additional additional,
+    PhotoAdditional additional,
     dynamic cantMigrateCondition,
     dynamic condition,
     num createTime,

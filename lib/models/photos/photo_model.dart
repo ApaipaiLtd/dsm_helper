@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:dsm_helper/models/photos/thumbnail_model.dart';
 import 'package:dsm_helper/util/function.dart';
+
+import 'folder_model.dart';
 
 /// id : 684388
 /// filename : "P8.jpg"
@@ -23,6 +27,61 @@ class PhotoModel {
     this.type,
     this.additional,
   });
+  static Future<List<PhotoModel>> fetch({List<String> additional = const [], bool isTeam = false, String folderId, String type, int limit}) async {
+    Map<String, dynamic> data = {
+      "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Item',
+      "method": 'list',
+      "version": 1,
+      "_sid": Util.sid,
+      "additional": jsonEncode(additional),
+      "sort_by": "takentime",
+      "sort_direction": "asc",
+      "offset": 0,
+      "limit": limit ?? 5000,
+    };
+    if (folderId != null) {
+      data['folderId'] = folderId;
+    }
+    if (type != null) {
+      data['type'] = type;
+    }
+    var res = await Util.post("entry.cgi", data: data);
+    if (res['success']) {
+      List list = res['data']['list'];
+      List<PhotoModel> photos = [];
+      list.forEach((element) {
+        photos.add(PhotoModel.fromJson(element));
+      });
+      return photos;
+    } else {
+      throw Exception();
+    }
+  }
+
+  static Future<List<PhotoModel>> recentlyAdd({List<String> additional = const [], bool isTeam = false, String folderId, String type, int limit}) async {
+    Map<String, dynamic> data = {
+      "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.RecentlyAdded',
+      "method": 'list',
+      "version": 1,
+      "_sid": Util.sid,
+      "additional": jsonEncode(additional),
+      "offset": 0,
+      "limit": limit ?? 5000,
+    };
+    print(data);
+    var res = await Util.post("entry.cgi", data: data);
+    print(res);
+    if (res['success']) {
+      List list = res['data']['list'];
+      List<PhotoModel> photos = [];
+      list.forEach((element) {
+        photos.add(PhotoModel.fromJson(element));
+      });
+      return photos;
+    } else {
+      throw Exception();
+    }
+  }
 
   PhotoModel.fromJson(dynamic json) {
     id = json['id'];
@@ -33,7 +92,7 @@ class PhotoModel {
     ownerUserId = json['owner_user_id'];
     folderId = json['folder_id'];
     type = json['type'];
-    additional = json['additional'] != null ? Additional.fromJson(json['additional']) : null;
+    additional = json['additional'] != null ? PhotoAdditional.fromJson(json['additional']) : null;
   }
   num id;
   String filename;
@@ -43,7 +102,7 @@ class PhotoModel {
   num ownerUserId;
   num folderId;
   String type;
-  Additional additional;
+  PhotoAdditional additional;
 
   String videoUrl({bool isTeam = false}) {
     return '${Util.baseUrl}/webapi/entry.cgi?item_id=%5B$id%5D&api=%22SYNO.Foto${isTeam ? 'Team' : ''}.Download%22&method=%22download%22&version=1&_sid=${Util.sid}';
@@ -62,7 +121,7 @@ class PhotoModel {
     num ownerUserId,
     num folderId,
     String type,
-    Additional additional,
+    PhotoAdditional additional,
   }) =>
       PhotoModel(
         id: id ?? this.id,
@@ -97,8 +156,9 @@ class PhotoModel {
 /// orientation_original : 1
 /// thumbnail : {"m":"ready","xl":"ready","preview":"broken","sm":"ready","cache_key":"684388_1666619080","unit_id":684388}
 
-class Additional {
-  Additional({
+class PhotoAdditional {
+  PhotoAdditional({
+    this.sharingInfo,
     this.resolution,
     this.orientation,
     this.orientationOriginal,
@@ -108,13 +168,14 @@ class Additional {
     this.videoConvert,
   });
 
-  Additional.fromJson(dynamic json) {
+  PhotoAdditional.fromJson(dynamic json) {
     resolution = json['resolution'] != null ? Resolution.fromJson(json['resolution']) : null;
     orientation = json['orientation'];
     orientationOriginal = json['orientation_original'];
     thumbnail = json['thumbnail'] != null ? ThumbnailModel.fromJson(json['thumbnail']) : null;
     address = json['address'] != null ? Address.fromJson(json['address']) : null;
     videoMeta = json['video_meta'] != null ? VideoMeta.fromJson(json['video_meta']) : null;
+    sharingInfo = json['sharing_info'] != null ? SharingInfo.fromJson(json['sharing_info']) : null;
     if (json['video_convert'] != null) {
       videoConvert = [];
       json['video_convert'].forEach((e) {
@@ -122,6 +183,7 @@ class Additional {
       });
     }
   }
+  SharingInfo sharingInfo;
   Resolution resolution;
   num orientation;
   num orientationOriginal;
@@ -129,7 +191,8 @@ class Additional {
   Address address;
   VideoMeta videoMeta;
   List<VideoConvert> videoConvert;
-  Additional copyWith({
+  PhotoAdditional copyWith({
+    SharingInfo sharingInfo,
     Resolution resolution,
     num orientation,
     num orientationOriginal,
@@ -138,7 +201,8 @@ class Additional {
     VideoMeta videoMeta,
     List<VideoConvert> videoConvert,
   }) =>
-      Additional(
+      PhotoAdditional(
+        sharingInfo: sharingInfo ?? this.sharingInfo,
         resolution: resolution ?? this.resolution,
         orientation: orientation ?? this.orientation,
         orientationOriginal: orientationOriginal ?? this.orientationOriginal,

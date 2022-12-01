@@ -78,8 +78,9 @@ class _PhotosState extends State<Photos> {
                                     if (isTimeline) {
                                       timelineKey.currentState.getData(isTeam: isTeam);
                                     } else {
-                                      folderKey.currentState.getData();
+                                      folderKey.currentState.getData(isTeam: isTeam);
                                     }
+                                    albumTabKey.currentState.getData(isTeam: isTeam);
                                     Navigator.of(context).pop();
                                   },
                                   decoration: NeumorphicDecoration(
@@ -89,7 +90,7 @@ class _PhotosState extends State<Photos> {
                                   bevel: 5,
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
-                                    "切换到${isTeam ? '个人空间' : '团队空间'}",
+                                    "切换到${isTeam ? '个人空间' : '共享空间'}",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                 ),
@@ -99,10 +100,15 @@ class _PhotosState extends State<Photos> {
                                 if (currentIndex == 0) ...[
                                   NeuButton(
                                     onPressed: () async {
+                                      Navigator.of(context).pop();
                                       setState(() {
                                         isTimeline = !isTimeline;
                                       });
-                                      Navigator.of(context).pop();
+                                      if (isTimeline) {
+                                        timelineKey.currentState.getData(isTeam: isTeam);
+                                      } else {
+                                        folderKey.currentState.getData(isTeam: isTeam);
+                                      }
                                     },
                                     decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,

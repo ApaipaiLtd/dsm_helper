@@ -1,4 +1,7 @@
-import 'additional.dart';
+import 'dart:convert';
+
+import 'package:dsm_helper/models/photos/photo_model.dart';
+import 'package:dsm_helper/util/function.dart';
 
 class GeneralTagModel {
   GeneralTagModel({
@@ -7,14 +10,36 @@ class GeneralTagModel {
     this.itemCount,
     this.name,
   });
+  static Future<List<GeneralTagModel>> fetch({List<String> additional, int limit = 5000, bool isTeam = false}) async {
+    var res = await Util.post("entry.cgi", data: {
+      // "folder_id": id,
+      "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.GeneralTag',
+      "method": 'list',
+      "version": 1,
+      "_sid": Util.sid,
+      "additional": jsonEncode(additional),
+      "offset": 0,
+      "limit": limit,
+    });
+    if (res['success']) {
+      List list = res['data']['list'];
+      List<GeneralTagModel> generalTags = [];
+      list.forEach((element) {
+        generalTags.add(GeneralTagModel.fromJson(element));
+      });
+      return generalTags;
+    } else {
+      throw Exception();
+    }
+  }
 
   GeneralTagModel.fromJson(dynamic json) {
-    additional = json['additional'] != null ? Additional.fromJson(json['additional']) : null;
+    additional = json['additional'] != null ? PhotoAdditional.fromJson(json['additional']) : null;
     id = json['id'];
     itemCount = json['item_count'];
     name = json['name'];
   }
-  Additional additional;
+  PhotoAdditional additional;
   int id;
   int itemCount;
   String name;

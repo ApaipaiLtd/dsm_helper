@@ -1,4 +1,7 @@
-import 'package:dsm_helper/models/photos/additional.dart';
+import 'dart:convert';
+
+import 'package:dsm_helper/models/photos/photo_model.dart';
+import 'package:dsm_helper/util/function.dart';
 
 /// additional : {"thumbnail":{"cache_key":"611178_1665630275","m":"ready","preview":"broken","sm":"ready","unit_id":611178,"xl":"ready"}}
 /// country : "中国大陆"
@@ -20,9 +23,31 @@ class GeocodingModel {
     this.name,
     this.secondLevel,
   });
+  static Future<List<GeocodingModel>> fetch({List<String> additional, int limit = 5000, bool isTeam = false}) async {
+    var res = await Util.post("entry.cgi", data: {
+      // "folder_id": id,
+      "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Geocoding',
+      "method": 'list',
+      "version": 1,
+      "_sid": Util.sid,
+      "additional": jsonEncode(additional),
+      "offset": 0,
+      "limit": limit,
+    });
+    if (res['success']) {
+      List list = res['data']['list'];
+      List<GeocodingModel> geocodings = [];
+      list.forEach((element) {
+        geocodings.add(GeocodingModel.fromJson(element));
+      });
+      return geocodings;
+    } else {
+      throw Exception();
+    }
+  }
 
   GeocodingModel.fromJson(dynamic json) {
-    additional = json['additional'] != null ? Additional.fromJson(json['additional']) : null;
+    additional = json['additional'] != null ? PhotoAdditional.fromJson(json['additional']) : null;
     country = json['country'];
     countryId = json['country_id'];
     firstLevel = json['first_level'];
@@ -31,7 +56,7 @@ class GeocodingModel {
     name = json['name'];
     secondLevel = json['second_level'];
   }
-  Additional additional;
+  PhotoAdditional additional;
   String country;
   num countryId;
   String firstLevel;
@@ -40,7 +65,7 @@ class GeocodingModel {
   String name;
   String secondLevel;
   GeocodingModel copyWith({
-    Additional additional,
+    PhotoAdditional additional,
     String country,
     num countryId,
     String firstLevel,

@@ -34,13 +34,11 @@ class ThumbnailModel {
   num unitId;
   String xl;
   num folderCoverSeq;
-  String thumbUrl({String size = 'sm', int folderId}) {
+  String thumbUrl({String size = 'sm', int folderId, bool isTeam: false}) {
     if (unitId != null) {
-      return '${Util.baseUrl}/webapi/entry.cgi?id=$unitId&cache_key="$cacheKey"&type="unit"&size="$size"&api="SYNO.Foto.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
+      return '${Util.baseUrl}/webapi/entry.cgi?id=$unitId&cache_key="$cacheKey"&type="unit"&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
     } else {
-      var url = '${Util.baseUrl}/webapi/entry.cgi?id=$folderId&cache_key="$cacheKey"&type="folder"&folder_cover_seq=$folderCoverSeq&size="$size"&api="SYNO.Foto.Thumbnail"&method="get"&version=2&_sid=${Util.sid}';
-      print(url);
-      return url;
+      return '${Util.baseUrl}/webapi/entry.cgi?id=$folderId&cache_key="$cacheKey"&type="folder"&folder_cover_seq=$folderCoverSeq&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=2&_sid=${Util.sid}';
     }
   }
 

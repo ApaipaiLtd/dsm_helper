@@ -775,10 +775,6 @@ class _SettingState extends State<Setting> {
                 icon: "edit",
                 onPressed: () async {
                   if (Util.notReviewAccount) {
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                      return Feedback();
-                    }));
-                  } else {
                     showCupertinoModalPopup(
                       context: context,
                       builder: (context) {
@@ -853,6 +849,10 @@ class _SettingState extends State<Setting> {
                         );
                       },
                     );
+                  } else {
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                      return Feedback();
+                    }));
                   }
                 },
               ),
