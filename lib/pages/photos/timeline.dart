@@ -10,8 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
 
 class Timeline extends StatefulWidget {
-  const Timeline(this.isTeam, {Key key}) : super(key: key);
+  const Timeline(this.isTeam, {this.type, this.geocodingId, this.generalTagId, this.recentlyAdd: false, Key key}) : super(key: key);
   final bool isTeam;
+  final String type;
+  final int geocodingId;
+  final int generalTagId;
+  final bool recentlyAdd;
   @override
   State<Timeline> createState() => TimelineState();
 }
@@ -37,7 +41,14 @@ class TimelineState extends State<Timeline> {
       loading = true;
     });
     days = [];
-    timelines = await TimelineModel.fetch(isTeam: isTeam, itemTypes: itemTypes);
+    timelines = await TimelineModel.fetch(
+      isTeam: isTeam,
+      type: widget.type,
+      itemTypes: itemTypes,
+      geocodingId: widget.geocodingId,
+      generalTagId: widget.generalTagId,
+      recentlyAdd: widget.recentlyAdd,
+    );
     for (var timeline in timelines) {
       days.addAll(timeline.days);
     }
@@ -117,7 +128,16 @@ class TimelineState extends State<Timeline> {
 
   Widget _buildTimelineItem(Day day) {
     if (day.photos == null) {
-      day.fetchPhotos(isTeam: isTeam, itemTypes: itemTypes).then((_) {
+      day
+          .fetchPhotos(
+        isTeam: isTeam,
+        type: widget.type,
+        itemTypes: itemTypes,
+        geocodingId: widget.geocodingId,
+        generalTagId: widget.generalTagId,
+        recentlyAdd: widget.recentlyAdd,
+      )
+          .then((_) {
         setState(() {});
       });
     }

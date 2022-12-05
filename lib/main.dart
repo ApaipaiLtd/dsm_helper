@@ -51,6 +51,8 @@ void main() async {
         if (noAdTime.isAfter(DateTime.now())) {
           // 处于关闭广告有效期内
           return;
+        } else {
+          Util.removeStorage("no_ad_time");
         }
       }
       pangle.loadSplashAd(

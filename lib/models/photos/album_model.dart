@@ -57,15 +57,20 @@ class AlbumModel {
       "additional": jsonEncode(additional),
       "offset": offset,
       "limit": limit,
-      "shared": shared,
+      // "shared": shared,
       "sort_by": '"$sortBy"',
       "sort_direction": '"$sortDirection"',
-      "api": '"SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Album"',
-      "method": '"list"',
-      "version": 1,
+      "api": "SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Album",
+      "method": "list",
+      "version": shared ? 2 : 1,
       "_sid": Util.sid,
     };
+    if (shared) {
+      data['category'] = '"shared"';
+    }
+    print(data);
     var res = await Util.post("entry.cgi", data: data);
+    print(res);
     if (res['success']) {
       List<AlbumModel> albums = [];
       res['data']['list'].forEach((e) {

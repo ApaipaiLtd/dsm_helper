@@ -7,11 +7,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PhotoItemWidget extends StatelessWidget {
-  const PhotoItemWidget(this.photo, this.photos, {this.isTeam, @required this.width, Key key}) : super(key: key);
+  const PhotoItemWidget(this.photo, this.photos, {this.isTeam, this.showName: true, @required this.width, Key key}) : super(key: key);
   final PhotoModel photo;
   final List<PhotoModel> photos;
   final bool isTeam;
   final double width;
+  final bool showName;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -79,11 +80,12 @@ class PhotoItemWidget extends StatelessWidget {
                   )
               ],
             ),
-            Text(
-              photo.filename,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            if (showName)
+              Text(
+                photo.filename,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
           ],
         ),
       ),

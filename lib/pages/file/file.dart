@@ -1628,149 +1628,150 @@ class FilesState extends State<Files> {
                             ),
                           ),
                         ],
-                        Container(
-                          constraints: BoxConstraints(maxWidth: 112),
-                          width: (MediaQuery.of(context).size.width - 100) / 4,
-                          child: NeuButton(
-                            onPressed: () async {
-                              TextEditingController nameController = TextEditingController.fromValue(TextEditingValue(text: file['name']));
-                              Navigator.of(context).pop();
-                              String name = "";
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Material(
-                                    color: Colors.transparent,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        NeuCard(
-                                          width: double.infinity,
-                                          margin: EdgeInsets.symmetric(horizontal: 50),
-                                          curveType: CurveType.emboss,
-                                          bevel: 5,
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(20),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  "重命名",
-                                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                                ),
-                                                SizedBox(
-                                                  height: 16,
-                                                ),
-                                                NeuCard(
-                                                  decoration: NeumorphicDecoration(
-                                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                                    borderRadius: BorderRadius.circular(20),
+                        if (paths.length > 0)
+                          Container(
+                            constraints: BoxConstraints(maxWidth: 112),
+                            width: (MediaQuery.of(context).size.width - 100) / 4,
+                            child: NeuButton(
+                              onPressed: () async {
+                                TextEditingController nameController = TextEditingController.fromValue(TextEditingValue(text: file['name']));
+                                Navigator.of(context).pop();
+                                String name = "";
+                                showCupertinoDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Material(
+                                      color: Colors.transparent,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          NeuCard(
+                                            width: double.infinity,
+                                            margin: EdgeInsets.symmetric(horizontal: 50),
+                                            curveType: CurveType.emboss,
+                                            bevel: 5,
+                                            decoration: NeumorphicDecoration(
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(20),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    "重命名",
+                                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                                                   ),
-                                                  bevel: 20,
-                                                  curveType: CurveType.flat,
-                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                                  child: TextField(
-                                                    onChanged: (v) => name = v,
-                                                    controller: nameController,
-                                                    decoration: InputDecoration(
-                                                      border: InputBorder.none,
-                                                      hintText: "请输入新的名称",
-                                                      labelText: "文件名",
+                                                  SizedBox(
+                                                    height: 16,
+                                                  ),
+                                                  NeuCard(
+                                                    decoration: NeumorphicDecoration(
+                                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                                      borderRadius: BorderRadius.circular(20),
+                                                    ),
+                                                    bevel: 20,
+                                                    curveType: CurveType.flat,
+                                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                                    child: TextField(
+                                                      onChanged: (v) => name = v,
+                                                      controller: nameController,
+                                                      decoration: InputDecoration(
+                                                        border: InputBorder.none,
+                                                        hintText: "请输入新的名称",
+                                                        labelText: "文件名",
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 16,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: NeuButton(
-                                                        onPressed: () async {
-                                                          if (name.trim() == "") {
-                                                            Util.toast("请输入新文件名");
-                                                            return;
-                                                          }
-                                                          Navigator.of(context).pop();
-                                                          var res = await Api.rename(file['path'], name);
-                                                          if (res['success']) {
-                                                            Util.toast("重命名成功");
-                                                            refresh();
-                                                          } else {
-                                                            if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
-                                                              Util.toast("重命名失败：指定的名称已存在");
-                                                            } else {
-                                                              Util.toast("重命名失败");
+                                                  SizedBox(
+                                                    height: 16,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: NeuButton(
+                                                          onPressed: () async {
+                                                            if (name.trim() == "") {
+                                                              Util.toast("请输入新文件名");
+                                                              return;
                                                             }
-                                                          }
-                                                        },
-                                                        decoration: NeumorphicDecoration(
-                                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                                          borderRadius: BorderRadius.circular(25),
-                                                        ),
-                                                        bevel: 20,
-                                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                                        child: Text(
-                                                          "确定",
-                                                          style: TextStyle(fontSize: 18),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 16,
-                                                    ),
-                                                    Expanded(
-                                                      child: NeuButton(
-                                                        onPressed: () async {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        decoration: NeumorphicDecoration(
-                                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                                          borderRadius: BorderRadius.circular(25),
-                                                        ),
-                                                        bevel: 20,
-                                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                                        child: Text(
-                                                          "取消",
-                                                          style: TextStyle(fontSize: 18),
+                                                            Navigator.of(context).pop();
+                                                            var res = await Api.rename(file['path'], name);
+                                                            if (res['success']) {
+                                                              Util.toast("重命名成功");
+                                                              refresh();
+                                                            } else {
+                                                              if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
+                                                                Util.toast("重命名失败：指定的名称已存在");
+                                                              } else {
+                                                                Util.toast("重命名失败");
+                                                              }
+                                                            }
+                                                          },
+                                                          decoration: NeumorphicDecoration(
+                                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                                            borderRadius: BorderRadius.circular(25),
+                                                          ),
+                                                          bevel: 20,
+                                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                                          child: Text(
+                                                            "确定",
+                                                            style: TextStyle(fontSize: 18),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
+                                                      SizedBox(
+                                                        width: 16,
+                                                      ),
+                                                      Expanded(
+                                                        child: NeuButton(
+                                                          onPressed: () async {
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                          decoration: NeumorphicDecoration(
+                                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                                            borderRadius: BorderRadius.circular(25),
+                                                          ),
+                                                          bevel: 20,
+                                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                                          child: Text(
+                                                            "取消",
+                                                            style: TextStyle(fontSize: 18),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 20,
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  "assets/icons/edit.png",
-                                  width: 30,
-                                ),
-                                Text(
-                                  "重命名",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              bevel: 20,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/edit.png",
+                                    width: 30,
+                                  ),
+                                  Text(
+                                    "重命名",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                         if (file['isdir'] && !remote && !remote && file['path'].startsWith("/"))
                           Container(
                             constraints: BoxConstraints(maxWidth: 112),

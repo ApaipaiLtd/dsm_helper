@@ -20,9 +20,12 @@ class _CloseAdState extends State<CloseAd> {
   void initState() {
     Util.getStorage("no_ad_time").then((res) {
       if (res.isNotBlank) {
-        setState(() {
-          noAdTime = DateTime.parse(res);
-        });
+        noAdTime = DateTime.parse(res);
+        if (noAdTime.isBefore(DateTime.now())) {
+          Util.removeStorage("no_ad_time");
+          noAdTime = null;
+        }
+        setState(() {});
       }
     });
     Util.getStorage("last_video_time").then((res) {

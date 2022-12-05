@@ -27,7 +27,7 @@ class PhotoModel {
     this.type,
     this.additional,
   });
-  static Future<List<PhotoModel>> fetch({List<String> additional = const [], bool isTeam = false, String folderId, String type, int limit}) async {
+  static Future<List<PhotoModel>> fetch({List<String> additional = const [], bool isTeam = false, int albumId, int geocodingId, String folderId, String type, int limit}) async {
     Map<String, dynamic> data = {
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Item',
       "method": 'list',
@@ -39,6 +39,12 @@ class PhotoModel {
       "offset": 0,
       "limit": limit ?? 5000,
     };
+    if (albumId != null) {
+      data['album_id'] = albumId;
+    }
+    if (geocodingId != null) {
+      data['geocoding_id'] = geocodingId;
+    }
     if (folderId != null) {
       data['folderId'] = folderId;
     }
