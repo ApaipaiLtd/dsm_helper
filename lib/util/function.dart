@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/api.dart';
+import 'package:dsm_helper/util/log.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -355,6 +356,10 @@ class Util {
     }
   }
 
+  static void logPrint(Object obj) {
+    Log.logger.info(obj);
+  }
+
   static Future<dynamic> post(String url, {Map<String, dynamic> data, bool login: true, String host, CancelToken cancelToken, Map<String, dynamic> headers, bool checkSsl, String cookie, int timeout = 20}) async {
     headers = headers ?? {};
     headers['Cookie'] = cookie ?? Util.cookie;
@@ -375,6 +380,14 @@ class Util {
     //   };
     // };
     //忽略Https校验
+    dio.interceptors.add(LogInterceptor(
+      requestHeader: false,
+      request: false,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+      logPrint: logPrint,
+    ));
     if (!(checkSsl ?? Util.checkSsl)) {
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
         client.badCertificateCallback = (cert, host, port) {

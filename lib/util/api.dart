@@ -724,6 +724,7 @@ class Api {
   static Future<Map> notifyStrings() async {
     var result = await Util.post("entry.cgi", data: {
       "pkgName": '""',
+      "lang": '"chs"',
       "api": "SYNO.Core.DSMNotify.Strings",
       "method": "get",
       "version": 1,

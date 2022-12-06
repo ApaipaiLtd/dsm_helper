@@ -311,6 +311,9 @@ class DashboardState extends State<Dashboard> {
               setState(() {
                 ssdCaches = item['data']['ssdCaches'];
                 volumes = item['data']['volumes'];
+                volumes.sort((a, b) {
+                  return a['num_id'].compareTo(b['num_id']);
+                });
                 disks = item['data']['disks'];
               });
               break;
@@ -987,7 +990,7 @@ class DashboardState extends State<Dashboard> {
                       ],
                     ),
                   ),
-                  ...volumes.reversed.map(_buildVolumeItem).toList(),
+                  ...volumes.map(_buildVolumeItem).toList(),
                   SizedBox(
                     height: 20,
                   ),

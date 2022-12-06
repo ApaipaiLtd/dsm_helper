@@ -66,6 +66,9 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
       setState(() {
         loadingDisks = false;
         volumes = res['data']['volumes'];
+        volumes.sort((a, b) {
+          return a['num_id'].compareTo(b['num_id']);
+        });
         disks = res['data']['disks'];
       });
     }
@@ -270,7 +273,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                 Row(
                   children: [
                     Text(
-                      "${volume['deploy_path'] != null ? volume['deploy_path'].toString().replaceFirst("volume_", "存储空间 ") : volume['id'].toString().replaceFirst("volume_", "存储空间 ")}",
+                      "存储空间 ${volume['num_id']}",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     SizedBox(
@@ -1006,7 +1009,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                 ),
-                                ...volumes.reversed.map(_buildVolumeItem).toList(),
+                                ...volumes.map(_buildVolumeItem).toList(),
                                 SizedBox(
                                   height: 20,
                                 ),

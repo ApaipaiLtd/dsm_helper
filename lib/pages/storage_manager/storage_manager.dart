@@ -37,8 +37,15 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
         loading = false;
         ssdCaches = res['data']['ssdCaches'];
         volumes = res['data']['volumes'];
+
+        volumes.sort((a, b) {
+          return a['num_id'].compareTo(b['num_id']);
+        });
         // print(volumes);
         disks = res['data']['disks'];
+        disks.sort((a, b) {
+          return a['num_id'].compareTo(b['num_id']);
+        });
         storagePools = res['data']['storagePools'];
         env = res['data']['env'];
         hotSpares = res['data']['hotSpares'];
@@ -197,7 +204,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${volume['deploy_path'] != null ? volume['deploy_path'].toString().replaceFirst("volume_", "存储空间 ") : volume['id'].toString().replaceFirst("volume_", "存储空间 ")}",
+                  "存储空间 ${volume['num_id']}",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
@@ -893,7 +900,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                 ),
-                                ...volumes.reversed.map(_buildVolumeItem).toList(),
+                                ...volumes.map(_buildVolumeItem).toList(),
                                 SizedBox(
                                   height: 20,
                                 ),

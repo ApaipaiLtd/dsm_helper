@@ -7,6 +7,7 @@ import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/util/log.dart';
 import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   String agreement = await Util.getStorage("agreement");
+  Log.init();
   if (agreement != null && agreement == "1") {
     registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
     print("初始化穿山甲");

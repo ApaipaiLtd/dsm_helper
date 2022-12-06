@@ -21,7 +21,6 @@ class Label extends StatelessWidget {
         color: fill ? color : Colors.transparent,
         borderRadius: BorderRadius.circular(5),
       ),
-      // alignment: Alignment.center,
       padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       child: Text(
         name,
