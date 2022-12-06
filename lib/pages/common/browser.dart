@@ -40,7 +40,7 @@ class _BrowserState extends State<Browser> {
               padding: EdgeInsets.all(10),
               bevel: 5,
               onPressed: () {
-                launchUrlString(widget.url);
+                launchUrlString(widget.url, mode: LaunchMode.externalApplication);
               },
               child: Image.asset(
                 "assets/icons/browser.png",
