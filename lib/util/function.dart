@@ -55,6 +55,21 @@ enum UploadStatus {
 }
 
 class Util {
+  static List qqGroups = [
+    {
+      "name": "交流群①（已满）",
+      "key": '4woOsiYfPZO4lZ08fX4el43n926mj1r5',
+    },
+    {
+      "name": "交流群②（已满）",
+      "key": 'qp8XE0Ts1b_qR4wt5PThPJqhdWkBT2u5',
+    },
+    {
+      "name": "交流群③",
+      "key": 'QjwflH_i8M7SbEXGVw5l9EL0UGs8uE',
+    }
+  ];
+  static List<String> wechat = ["群晖助手", "群晖助手APP"];
   static String sid = "";
   static String account = "";
   static String baseUrl = "";

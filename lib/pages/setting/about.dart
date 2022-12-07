@@ -125,35 +125,41 @@ class _AboutState extends State<About> {
                     ),
                     curveType: CurveType.flat,
                     child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/icons/qq.png",
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "QQ群：240557031",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Spacer(),
-                          NeuButton(
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            onPressed: () {
-                              launchUrlString('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D4woOsiYfPZO4lZ08fX4el43n926mj1r5');
-                            },
-                            child: Text("加群"),
-                          ),
-                        ],
-                      ),
-                    ),
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          children: Util.qqGroups.map((e) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/qq.png",
+                                    width: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    e['name'],
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Spacer(),
+                                  NeuButton(
+                                    decoration: NeumorphicDecoration(
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                    onPressed: () {
+                                      launchUrlString('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D${e['key']}');
+                                    },
+                                    child: Text("加群"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )),
                   ),
                 ],
                 if (Util.notReviewAccount) ...[
@@ -168,37 +174,43 @@ class _AboutState extends State<About> {
                     ),
                     curveType: CurveType.flat,
                     child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/icons/wechat.png",
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "公众号：${Util.appName}",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Spacer(),
-                          NeuButton(
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            onPressed: () {
-                              ClipboardData data = new ClipboardData(text: "群晖助手");
-                              Clipboard.setData(data);
-                              Util.toast("已复制到剪贴板");
-                            },
-                            child: Text("复制"),
-                          ),
-                        ],
-                      ),
-                    ),
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          children: Util.wechat.map((e) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/wechat.png",
+                                    width: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "${e}",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Spacer(),
+                                  NeuButton(
+                                    decoration: NeumorphicDecoration(
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                    onPressed: () {
+                                      ClipboardData data = new ClipboardData(text: "群晖助手");
+                                      Clipboard.setData(data);
+                                      Util.toast("已复制到剪贴板");
+                                    },
+                                    child: Text("复制"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )),
                   ),
                   // SizedBox(
                   //   height: 20,

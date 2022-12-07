@@ -102,7 +102,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   showFirstLaunchDialog() async {
-    bool firstLaunch = await Util.getStorage("first_launch") == null;
+    bool firstLaunch = await Util.getStorage("first_launch_new") == null;
     if (firstLaunch) {
       showCupertinoDialog(
         context: context,
@@ -145,32 +145,56 @@ class DashboardState extends State<Dashboard> {
                         SizedBox(
                           height: 20,
                         ),
+                        NeuCard(
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          curveType: CurveType.flat,
+                          child: Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Column(
+                                children: Util.wechat.map((e) {
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          "assets/icons/wechat.png",
+                                          width: 20,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "${e}",
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        Spacer(),
+                                        NeuButton(
+                                          decoration: NeumorphicDecoration(
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                          onPressed: () {
+                                            ClipboardData data = new ClipboardData(text: "群晖助手");
+                                            Clipboard.setData(data);
+                                            Util.toast("已复制到剪贴板");
+                                          },
+                                          child: Text("复制"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Row(
                           children: [
-                            Expanded(
-                              child: NeuButton(
-                                onPressed: () async {
-                                  ClipboardData data = new ClipboardData(text: "群晖助手");
-                                  Clipboard.setData(data);
-                                  Util.toast("已复制到剪贴板");
-                                  Navigator.of(context).pop();
-                                  Util.setStorage("first_launch", "0");
-                                },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 20,
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Text(
-                                  "复制",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
                             Expanded(
                               child: NeuButton(
                                 onPressed: () async {
