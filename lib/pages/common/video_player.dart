@@ -51,15 +51,24 @@ class _VideoPlayerState extends State<VideoPlayer> {
   // }
   @override
   initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(fit: BoxFit.contain, autoPlay: true, autoDispose: true, looping: false, placeholder: _buildVideoPlaceholder(), showPlaceholderUntilPlay: true, allowedScreenSleep: false, translations: [
-      BetterPlayerTranslations(
-        languageCode: 'zh',
-        overflowMenuPlaybackSpeed: "播放速度",
-        overflowMenuSubtitles: "字幕",
-        overflowMenuAudioTracks: "音频",
-        overflowMenuQuality: "质量",
-      )
-    ]);
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
+      fit: BoxFit.contain,
+      autoPlay: true,
+      autoDispose: true,
+      looping: false,
+      placeholder: _buildVideoPlaceholder(),
+      showPlaceholderUntilPlay: true,
+      allowedScreenSleep: false,
+      translations: [
+        BetterPlayerTranslations(
+          languageCode: 'zh',
+          overflowMenuPlaybackSpeed: "播放速度",
+          overflowMenuSubtitles: "字幕",
+          overflowMenuAudioTracks: "音频",
+          overflowMenuQuality: "质量",
+        )
+      ],
+    );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       widget.url,
@@ -177,6 +186,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
           Expanded(
             child: ListView(
               children: [
+                // Text("${widget.url}"),
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: Text("注意：视频播放器目前并不稳定，如遇到黑屏、无声、卡顿等任何问题，请点击右上角按钮使用第三方播放器播放！（iOS暂不支持）"),
