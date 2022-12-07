@@ -66,7 +66,7 @@ class Util {
     },
     {
       "name": "交流群③",
-      "key": 'QjwflH_i8M7SbEXGVw5l9EL0UGs8uE',
+      "key": 'rOqv_Fq8g4W_Xaa95B7f0AmN_xxlvHu-',
     }
   ];
   static List<String> wechat = ["群晖助手", "群晖助手APP"];
