@@ -174,43 +174,44 @@ class _AboutState extends State<About> {
                     ),
                     curveType: CurveType.flat,
                     child: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          children: Util.wechat.map((e) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/icons/wechat.png",
-                                    width: 20,
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        children: Util.wechat.map((e) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  "assets/icons/wechat.png",
+                                  width: 20,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  "${e}",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Spacer(),
+                                NeuButton(
+                                  decoration: NeumorphicDecoration(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    "${e}",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  Spacer(),
-                                  NeuButton(
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    onPressed: () {
-                                      ClipboardData data = new ClipboardData(text: "群晖助手");
-                                      Clipboard.setData(data);
-                                      Util.toast("已复制到剪贴板");
-                                    },
-                                    child: Text("复制"),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        )),
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                  onPressed: () {
+                                    ClipboardData data = new ClipboardData(text: "群晖助手");
+                                    Clipboard.setData(data);
+                                    Util.toast("已复制到剪贴板");
+                                  },
+                                  child: Text("复制"),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
                   // SizedBox(
                   //   height: 20,

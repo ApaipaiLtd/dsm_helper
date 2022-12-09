@@ -247,7 +247,7 @@ class _MyAppState extends State<MyApp> {
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: TextStyle(
           fontSize: 16.0,
-          color: Colors.black,
+          color: Colors.grey,
         ),
         labelStyle: TextStyle(
           fontSize: 16.0,

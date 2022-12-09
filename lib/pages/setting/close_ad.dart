@@ -65,6 +65,223 @@ class _CloseAdState extends State<CloseAd> {
     }
   }
 
+  close3() {
+    if (lastVideoTime != null && lastVideoTime.isSameDay(DateTime.now())) {
+      Util.toast("今天已经领取过，明天再来吧~");
+      return;
+    }
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return Material(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              NeuCard(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 50),
+                curveType: CurveType.emboss,
+                bevel: 5,
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Text(
+                        "关闭3天广告",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      NeuCard(
+                        decoration: NeumorphicDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        bevel: 20,
+                        curveType: CurveType.flat,
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Text("通过观看视频广告，可关闭3天开屏广告"),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: NeuButton(
+                              onPressed: playVideo,
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              bevel: 20,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "观看广告",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Expanded(
+                            child: NeuButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                              },
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              bevel: 20,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "取消",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  close7() {
+    bindApp();
+  }
+
+  bindApp() {
+    String code = "";
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return Material(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              NeuCard(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 50),
+                curveType: CurveType.emboss,
+                bevel: 5,
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Text(
+                        "绑定公众号",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        "关注群晖助手公众号，回复'绑定'获取绑定码",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      NeuCard(
+                        decoration: NeumorphicDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        bevel: 20,
+                        curveType: CurveType.flat,
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                        child: TextField(
+                          onChanged: (v) => code = v,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "请输入绑定码",
+                            labelText: "绑定码",
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: NeuButton(
+                              onPressed: () async {
+                                if (code.trim() == "") {
+                                  Util.toast("请输入绑定验证码");
+                                  return;
+                                }
+                                var res = await Util.post("http://dsm.apaipai.top/app/bind", data: {"code": code.trim()});
+                                if (res['code'] == 0) {
+                                  Util.toast(res['msg']);
+                                }
+                                // Navigator.of(context).pop();
+                              },
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              bevel: 20,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "绑定",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Expanded(
+                            child: NeuButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                              },
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              bevel: 20,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "取消",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,101 +342,7 @@ class _CloseAdState extends State<CloseAd> {
                   Text("关闭3天"),
                   Spacer(),
                   NeuButton(
-                    onPressed: () {
-                      if (lastVideoTime != null && lastVideoTime.isSameDay(DateTime.now())) {
-                        Util.toast("今天已经领取过，明天再来吧~");
-                        return;
-                      }
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return Material(
-                            color: Colors.transparent,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                NeuCard(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.symmetric(horizontal: 50),
-                                  curveType: CurveType.emboss,
-                                  bevel: 5,
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          "关闭3天广告",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                        NeuCard(
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
-                                          bevel: 20,
-                                          curveType: CurveType.flat,
-                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                          child: Text("通过观看视频广告，可关闭3天开屏广告"),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: NeuButton(
-                                                onPressed: playVideo,
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 20,
-                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                child: Text(
-                                                  "观看广告",
-                                                  style: TextStyle(fontSize: 18),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 16,
-                                            ),
-                                            Expanded(
-                                              child: NeuButton(
-                                                onPressed: () async {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 20,
-                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                child: Text(
-                                                  "取消",
-                                                  style: TextStyle(fontSize: 18),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
+                    onPressed: close3,
                     decoration: NeumorphicDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
@@ -252,7 +375,19 @@ class _CloseAdState extends State<CloseAd> {
                 children: [
                   Text("关闭7天"),
                   Spacer(),
-                  Text("敬请期待"),
+                  NeuButton(
+                    onPressed: close7,
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    bevel: 5,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                    child: Text(
+                      "200积分",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
                 ],
               ),
             ),
