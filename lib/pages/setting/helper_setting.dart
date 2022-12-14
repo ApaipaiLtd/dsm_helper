@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dsm_helper/pages/common/gesture_password.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
+import 'package:dsm_helper/pages/setting/vip.dart';
 import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/util/function.dart';
@@ -315,7 +316,6 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             );
           }),
-
           SizedBox(
             height: 20,
           ),
@@ -534,7 +534,7 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ),
-          if (Util.notReviewAccount) ...[
+          if (!Util.notReviewAccount) ...[
             SizedBox(
               height: 20,
             ),
@@ -607,37 +607,37 @@ class _HelperSettingState extends State<HelperSetting> {
           SizedBox(
             height: 20,
           ),
-          // NeuButton(
-          //   onPressed: () {
-          //     Navigator.of(context).push(CupertinoPageRoute(
-          //         builder: (context) {
-          //           return Full();
-          //         },
-          //         settings: RouteSettings(name: "full")));
-          //   },
-          //   // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //   padding: EdgeInsets.all(20),
-          //   decoration: NeumorphicDecoration(
-          //     color: Theme.of(context).scaffoldBackgroundColor,
-          //     borderRadius: BorderRadius.circular(20),
-          //   ),
-          //   bevel: 20,
-          //   child: Row(
-          //     children: [
-          //       Image.asset(
-          //         "assets/icons/unzip.png",
-          //         width: 25,
-          //       ),
-          //       SizedBox(
-          //         width: 8,
-          //       ),
-          //       Text(
-          //         "解锁完整版",
-          //         style: TextStyle(fontSize: 16),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+          NeuButton(
+            onPressed: () {
+              Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) {
+                    return Vip();
+                  },
+                  settings: RouteSettings(name: "vip")));
+            },
+            // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: EdgeInsets.all(20),
+            decoration: NeumorphicDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            bevel: 20,
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/icons/no_ad.png",
+                  width: 25,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  "关闭广告",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

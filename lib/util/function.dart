@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/api.dart';
+import 'package:dsm_helper/util/download_chunk.dart';
 import 'package:dsm_helper/util/log.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,6 +71,7 @@ class Util {
     }
   ];
   static List<String> wechat = ["群晖助手", "群晖助手APP"];
+  static DateTime vipExpireTime = DateTime.now();
   static String sid = "";
   static String account = "";
   static String baseUrl = "";
@@ -305,6 +307,7 @@ class Util {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
+        return client;
       };
     }
 
@@ -408,6 +411,7 @@ class Util {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
+        return client;
       };
     }
     Response response;
@@ -455,6 +459,7 @@ class Util {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
+        return client;
       };
     }
     FormData formData = FormData.fromMap(data);
@@ -495,15 +500,15 @@ class Util {
   static Future<String> getDownloadPath() async {
     // final directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     if (Platform.isAndroid) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       return downloadSavePath;
-      if (androidInfo.version.sdkInt < 30) {
-        return downloadSavePath;
-      } else {
-        final directory = await getExternalStorageDirectory();
-        return directory.path + Platform.pathSeparator + "Download";
-      }
+      // if (androidInfo.version.sdkInt < 30) {
+      //   return downloadSavePath;
+      // } else {
+      //   final directory = await getExternalStorageDirectory();
+      //   return directory.path + Platform.pathSeparator + "Download";
+      // }
     } else {
       final directory = await getApplicationDocumentsDirectory();
       return directory.path + Platform.pathSeparator + "Download";
@@ -517,9 +522,9 @@ class Util {
     Response response;
 
     try {
-      response = await dio.download(url, tempPath + "/" + saveName, deleteOnError: true, onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
+      response = await dio.download(url, tempPath + Platform.pathSeparator + saveName, deleteOnError: true, onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
       print(response);
-      return {"code": 1, "msg": "下载完成", "data": tempPath + "/" + saveName};
+      return {"code": 1, "msg": "下载完成", "data": tempPath + Platform.pathSeparator + saveName};
     } on DioError catch (error) {
       print(error);
       print("请求出错:$url");
@@ -536,14 +541,15 @@ class Util {
     int num = 0;
     String uniqueName;
     String ext = name.split(".").last;
+    String fullPath = "";
     while (unique) {
       if (num == 0) {
         uniqueName = name;
       } else {
         uniqueName = name.replaceAll(".$ext", "-$num.$ext");
       }
-      print(path + "/" + uniqueName);
-      if (File(path + "/" + uniqueName).existsSync()) {
+      fullPath = path + Platform.pathSeparator + uniqueName;
+      if (File(fullPath).existsSync()) {
         print("文件存在");
         num++;
       } else {
@@ -552,16 +558,17 @@ class Util {
       }
     }
     return uniqueName;
+    // return fullPath;
   }
 
   static Future<String> download(String saveName, String url) async {
     //检查权限
-    bool permission = false;
-    permission = await Permission.storage.request().isGranted;
-    if (!permission) {
-      Util.toast("请先授权APP访问存储权限");
-      return "";
-    }
+    // bool permission = false;
+    // permission = await Permission.storage.request().isGranted;
+    // if (!permission) {
+    //   Util.toast("请先授权APP访问存储权限");
+    //   return "";
+    // }
     String savePath = await getDownloadPath();
     print("savePath:$savePath");
     Directory saveDir = Directory(savePath);
@@ -575,7 +582,8 @@ class Util {
 
     saveName = getUniqueName(savePath, saveName);
     print(saveName);
-
+    // CancelToken cancelToken = CancelToken();
+    // DioDownload().downloadFile(url: url, savePath: saveName, cancelToken: cancelToken);
     String taskId = await FlutterDownloader.enqueue(url: url, fileName: saveName, savedDir: savePath, showNotification: true, openFileFromNotification: true);
     return taskId;
   }

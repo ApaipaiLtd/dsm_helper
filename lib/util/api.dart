@@ -788,18 +788,6 @@ class Api {
     return result;
   }
 
-  static Future<Map> info({String query}) async {
-    Map<String, dynamic> data = {
-      "_dc": DateTime.now().millisecond,
-    };
-    if (query != null) {
-      data['query'] = query;
-    }
-
-    var result = await Util.get("http://pan.fmtol.com:5000/webman/modules/SystemInfoApp/SystemInfo.cgi", data: data);
-    return result;
-  }
-
   static Future<Map> networkInfo() async {
     var result = await Util.post("entry.cgi", data: {
       "api": '"SYNO.Core.System"',

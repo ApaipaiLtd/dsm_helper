@@ -39,9 +39,11 @@ packages:
   better_player:
     dependency: "direct main"
     description:
-      name: better_player
-      url: "https://pub.flutter-io.cn"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "91a9625524cdff448e0a9deb5047bcf20cc8dcf1"
+      url: "https://github.com/tintran-dev/betterplayer.git"
+    source: git
     version: "0.0.83"
   boolean_selector:
     dependency: transitive
@@ -200,7 +202,7 @@ packages:
       name: extended_image
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "6.3.2"
+    version: "6.3.4"
   extended_image_library:
     dependency: transitive
     description:
@@ -235,7 +237,7 @@ packages:
       name: file_picker
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.2.2"
+    version: "5.2.3"
   fl_chart:
     dependency: "direct main"
     description:
@@ -341,7 +343,7 @@ packages:
       name: fluwx
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.11.0+1"
+    version: "3.12.0"
   font_awesome_flutter:
     dependency: transitive
     description:
@@ -454,6 +456,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.4"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
   matcher:
     dependency: transitive
     description:
@@ -672,7 +681,7 @@ packages:
       name: photo_manager
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.5.0"
+    version: "2.5.1+1"
   pinenacl:
     dependency: transitive
     description:
@@ -801,6 +810,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  simple_logger:
+    dependency: "direct main"
+    description:
+      name: simple_logger
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.9.0+1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -840,49 +856,49 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   syncfusion_flutter_pdf:
     dependency: transitive
     description:
       name: syncfusion_flutter_pdf
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   syncfusion_flutter_pdfviewer:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_pdfviewer
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   syncfusion_pdfviewer_macos:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_macos
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   syncfusion_pdfviewer_platform_interface:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_platform_interface
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   syncfusion_pdfviewer_web:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_web
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   syncfusion_pdfviewer_windows:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_windows
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.3.58"
+    version: "20.3.59"
   term_glyph:
     dependency: transitive
     description:
@@ -994,14 +1010,14 @@ packages:
       name: video_player
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.8"
+    version: "2.4.7"
   video_player_android:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: video_player_android
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.3.9"
+    version: "2.3.8"
   video_player_avfoundation:
     dependency: transitive
     description:

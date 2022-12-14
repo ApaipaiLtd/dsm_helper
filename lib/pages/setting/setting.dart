@@ -1,11 +1,10 @@
 import 'dart:convert';
 
-import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/backup/backup.dart';
 import 'package:dsm_helper/pages/control_panel/ssh/ssh.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/confirm_logout.dart';
-import 'package:dsm_helper/pages/setting/close_ad.dart';
+import 'package:dsm_helper/pages/setting/vip.dart';
 import 'package:dsm_helper/providers/dark_mode.dart';
 import 'package:dsm_helper/pages/setting/feedback.dart';
 import 'package:dsm_helper/pages/setting/helper_setting.dart';
@@ -14,10 +13,10 @@ import 'package:dsm_helper/pages/user/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/terminal_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Feedback;
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
-import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SettingButton extends StatelessWidget {
@@ -552,14 +551,18 @@ class _SettingState extends State<Setting> {
               padding: EdgeInsets.all(10),
               bevel: 5,
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context)
+                    .push(
                   CupertinoPageRoute(
                     builder: (context) {
                       return HelperSetting();
                     },
                     settings: RouteSettings(name: "helper_setting"),
                   ),
-                );
+                )
+                    .then((_) {
+                  setState(() {});
+                });
               },
               child: Image.asset(
                 "assets/icons/setting.png",
@@ -856,19 +859,23 @@ class _SettingState extends State<Setting> {
                   }
                 },
               ),
-              if (Util.notReviewAccount)
+              if (Util.notReviewAccount && Util.vipExpireTime.difference(DateTime.now()).inDays < 7 || kDebugMode)
                 SettingButton(
                   name: "关闭广告",
                   icon: "no_ad",
                   onPressed: () async {
-                    Navigator.of(context).push(
+                    Navigator.of(context)
+                        .push(
                       CupertinoPageRoute(
                         builder: (context) {
-                          return CloseAd();
+                          return Vip();
                         },
-                        settings: RouteSettings(name: "close_ad"),
+                        settings: RouteSettings(name: "vip"),
                       ),
-                    );
+                    )
+                        .then((value) {
+                      setState(() {});
+                    });
                   },
                 )
             ],

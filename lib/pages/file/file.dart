@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/models/file/file_model.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
@@ -23,6 +25,7 @@ import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vibrate/vibrate.dart';
 
 enum ListType { list, icon }
@@ -245,6 +248,27 @@ class FilesState extends State<Files> {
   }
 
   download(files) async {
+    // 检查权限
+    if (Platform.isAndroid) {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      if (androidInfo.version.sdkInt >= 30) {
+        bool permission = false;
+        permission = await Permission.manageExternalStorage.request().isGranted;
+        if (!permission) {
+          Util.toast("安卓11以上需授权文件管理权限");
+          return;
+        }
+      } else {
+        bool permission = false;
+        permission = await Permission.storage.request().isGranted;
+        if (!permission) {
+          Util.toast("请先授权APP访问存储权限");
+          return;
+        }
+      }
+    }
+
     for (var file in files) {
       String url = Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${Util.sid}";
       String filename = "";

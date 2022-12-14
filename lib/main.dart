@@ -10,6 +10,7 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/log.dart';
 import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -32,8 +33,10 @@ void main() async {
   String agreement = await Util.getStorage("agreement");
   Log.init();
   if (agreement != null && agreement == "1") {
-    registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
-    print("初始化穿山甲");
+    registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/").then((value) {
+      stopLog();
+    });
+    // print("初始化穿山甲");
     await pangle.init(
       iOS: IOSConfig(
         appId: '5215470',
@@ -41,29 +44,56 @@ void main() async {
       ),
       android: AndroidConfig(
         appId: '5215463',
-        debug: true,
+        debug: false,
         allowShowNotify: true,
         allowShowPageWhenScreenLock: false,
       ),
     );
     // 是否关闭广告
-    Util.getStorage("no_ad_time").then((res) {
-      if (res.isNotBlank) {
-        DateTime noAdTime = DateTime.parse(res);
-        if (noAdTime.isAfter(DateTime.now())) {
-          // 处于关闭广告有效期内
-          return;
-        } else {
-          Util.removeStorage("no_ad_time");
+    // 判断是否登录
+    bool isForever = false;
+    DateTime noAdTime;
+    String userToken = await Util.getStorage("user_token");
+    String noAdTimeStr = await Util.getStorage("no_ad_time");
+    if (noAdTimeStr.isNotBlank) {
+      noAdTime = DateTime.parse(noAdTimeStr);
+    }
+    if (userToken.isNotBlank) {
+      var res = await Util.post("http://dsm.apaipai.top/vip/info", data: {"token": userToken});
+      if (res['code'] == 1) {
+        if (res['data']['is_forever'] == 1) {
+          isForever = true;
+        }
+        if (res['data']['vip_expire_time'] != null) {
+          DateTime vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
+          Util.vipExpireTime = vipExpireTime;
+          if (noAdTime == null) {
+            if (vipExpireTime.isAfter(DateTime.now())) {
+              noAdTime = vipExpireTime;
+            }
+          } else {
+            if (vipExpireTime.isAfter(noAdTime)) {
+              noAdTime = vipExpireTime;
+            }
+          }
         }
       }
+    }
+
+    if (isForever || (noAdTime != null && noAdTime.isAfter(DateTime.now()))) {
+      // 处于关闭广告有效期内
+      if (kDebugMode) {
+        print("免广告有效期内");
+      }
+    } else {
+      Util.removeStorage("no_ad_time");
       pangle.loadSplashAd(
         iOS: IOSSplashConfig(slotId: '887561543'),
         android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
       );
-    });
+    }
   }
-  await FlutterDownloader.initialize(debug: false, ignoreSsl: true);
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
   Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
   Util.getStorage("download_wifi_only").then((value) {

@@ -210,7 +210,6 @@ class _MomentsState extends State<Moments> {
             Hero(
               tag: "photo-${photo['additional']['thumbnail']['unit_id']}",
               child: CupertinoExtendedImage(
-                // "http://pan.fmtol.com:5000/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key=%22${photo['additional']['thumbnail']['cache_key']}%22&type=%22unit%22&size=%22sm%22&api=%22${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail%22&method=%22get%22&version=1&_sid=${Util.sid}",
                 thumbUrl,
                 width: photoWidth,
                 height: photoWidth,
@@ -306,7 +305,6 @@ class _MomentsState extends State<Moments> {
             child: Hero(
               tag: "album-${album['additional']['thumbnail']['unit_id']}",
               child: CupertinoExtendedImage(
-                // "http://pan.fmtol.com:5000/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key=%22${photo['additional']['thumbnail']['cache_key']}%22&type=%22unit%22&size=%22sm%22&api=%22SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail%22&method=%22get%22&version=1&_sid=${Util.sid}",
                 thumbUrl,
                 width: albumWidth,
                 height: albumWidth,
@@ -347,7 +345,6 @@ class _MomentsState extends State<Moments> {
         width: itemWidth,
         height: itemWidth,
         child: CupertinoExtendedImage(
-          // "http://pan.fmtol.com:5000/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key=%22${photo['additional']['thumbnail']['cache_key']}%22&type=%22unit%22&size=%22sm%22&api=%22SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail%22&method=%22get%22&version=1&_sid=${Util.sid}",
           thumbUrl,
           width: itemWidth,
           height: itemWidth,

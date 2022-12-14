@@ -183,7 +183,6 @@ class TimelineState extends State<Timeline> {
       onTap: () {
         if (photo.type == 'video') {
           Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-            //http://pan.apaipai.top:5000/webapi/entry.cgi?item_id=%5B2%5D&api=%22SYNO.Foto.Download%22&method=%22download%22&version=1&SynoToken=YFzOPk0MYT3cw
             return VideoPlayer(
               url: photo.videoUrl(isTeam: isTeam),
               cover: photo.thumbUrl(isTeam: isTeam),
@@ -209,7 +208,6 @@ class TimelineState extends State<Timeline> {
             Hero(
               tag: photo,
               child: CupertinoExtendedImage(
-                // "http://pan.fmtol.com:5000/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key=%22${photo['additional']['thumbnail']['cache_key']}%22&type=%22unit%22&size=%22sm%22&api=%22${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail%22&method=%22get%22&version=1&_sid=${Util.sid}",
                 photo.thumbUrl(isTeam: isTeam),
                 width: photoWidth,
                 height: photoWidth,

@@ -47,7 +47,7 @@ class DownloadState extends State<Download> {
   @override
   void initState() {
     _bindBackgroundIsolate();
-    FlutterDownloader.registerCallback(downloadCallback);
+    FlutterDownloader.registerCallback(downloadCallback, step: 1);
     getData();
     super.initState();
   }
@@ -363,6 +363,66 @@ class DownloadState extends State<Download> {
                                   SizedBox(
                                     height: 22,
                                   ),
+                                  if (task.status == DownloadTaskStatus.failed)
+                                    NeuButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        await FlutterDownloader.retry(taskId: task.taskId);
+                                        await getData();
+                                      },
+                                      decoration: NeumorphicDecoration(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      bevel: 5,
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "重试",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  if (task.status == DownloadTaskStatus.running)
+                                    NeuButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        await FlutterDownloader.pause(taskId: task.taskId);
+                                        await getData();
+                                      },
+                                      decoration: NeumorphicDecoration(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      bevel: 5,
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "暂停",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  if (task.status == DownloadTaskStatus.paused)
+                                    NeuButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        print(task.taskId);
+                                        var res = await FlutterDownloader.resume(taskId: task.taskId);
+                                        print(res);
+                                        await getData();
+                                      },
+                                      decoration: NeumorphicDecoration(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      bevel: 5,
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "继续下载",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  if ([DownloadTaskStatus.paused, DownloadTaskStatus.running, DownloadTaskStatus.failed].contains(task.status))
+                                    SizedBox(
+                                      height: 16,
+                                    ),
                                   NeuButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
@@ -440,7 +500,8 @@ class DownloadState extends State<Download> {
                     selectedTasks = [];
                   });
                 },
-                child: Icon(Icons.close))
+                child: Icon(Icons.close),
+              )
             : null,
         title: Text(
           "下载",
@@ -511,8 +572,11 @@ class DownloadState extends State<Download> {
           : tasks.length > 0
               ? Stack(
                   children: [
-                    ListView(
-                      children: tasks.reversed.map(_buildTaskItem).toList(),
+                    ListView.builder(
+                      itemCount: tasks.length,
+                      itemBuilder: (context, i) {
+                        return _buildTaskItem(tasks.reversed.toList()[i]);
+                      },
                     ),
                     AnimatedPositioned(
                       bottom: selectedTasks.length > 0 ? 0 : -100,

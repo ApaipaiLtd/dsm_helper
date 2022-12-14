@@ -45,7 +45,7 @@ class _DownloadSettingState extends State<DownloadSetting> {
                   bool permission = false;
                   permission = await Permission.manageExternalStorage.request().isGranted;
                   if (!permission) {
-                    Util.toast("安卓11需授权文件管理权限");
+                    Util.toast("安卓11以上需授权文件管理权限");
                     return;
                   }
                 } else {
