@@ -72,6 +72,7 @@ class Util {
   ];
   static List<String> wechat = ["群晖助手", "群晖助手APP"];
   static DateTime vipExpireTime = DateTime.now();
+  static String appUrl = "https://dsm.apaipai.top";
   static String sid = "";
   static String account = "";
   static String baseUrl = "";
@@ -93,7 +94,7 @@ class Util {
 
   static bool get notReviewAccount => account != "jinx";
   static toast(String text) {
-    showToast(text ?? "", dismissOtherToast: true);
+    showToast(text ?? "", dismissOtherToast: true, textPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 8));
   }
 
   static String systemVersion(String version) {

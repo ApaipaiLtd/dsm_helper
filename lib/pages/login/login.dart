@@ -174,7 +174,7 @@ class _LoginState extends State<Login> {
                                       FocusScope.of(context).unfocus();
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                         return Browser(
-                                          url: 'https://dsm.apaipai.top/privacy',
+                                          url: '${Util.appUrl}/privacy',
                                           title: "隐私政策",
                                         );
                                       }));
@@ -202,7 +202,7 @@ class _LoginState extends State<Login> {
                                       FocusScope.of(context).unfocus();
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                         return Browser(
-                                          url: 'https://dsm.apaipai.top/privacy',
+                                          url: '${Util.appUrl}/privacy',
                                           title: "隐私政策",
                                         );
                                       }));
@@ -1124,7 +1124,7 @@ class _LoginState extends State<Login> {
                                 FocusScope.of(context).unfocus();
                                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                   return Browser(
-                                    url: 'https://dsm.apaipai.top/privacy',
+                                    url: '${Util.appUrl}/privacy',
                                     title: "隐私政策",
                                   );
                                 }));

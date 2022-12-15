@@ -22,7 +22,7 @@ class Api {
       //     "msg": "已是最新版本",
       //   };
       // }
-      var res = await Util.get("https://dsm.apaipai.top/version", host: "https://dsm.apaipai.top");
+      var res = await Util.get("${Util.appUrl}/version");
       if (res != null) {
         if (int.parse(buildNumber) < res['data']['build']) {
           return {
@@ -48,11 +48,6 @@ class Api {
       };
     }
 //    var res = await Util.post("base/update", data: {"platform": Platform.isAndroid ? "android" : "ios", "build": buildNumber});
-  }
-
-  static Future<Map> payment() async {
-    var res = await Util.get("https://dsm.apaipai.top/payment", host: "https://dsm.apaipai.top");
-    return res;
   }
 
   static Future<Map> api() async {
@@ -1387,7 +1382,7 @@ class Api {
   }
 
   static Future<Map> reward() async {
-    return await Util.get("https://dsm.apaipai.top/reward", host: "https://dsm.apaipai.top");
+    return await Util.get("${Util.appUrl}/reward");
   }
 
   static Future<Map> downloadStationInfo() async {

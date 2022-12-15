@@ -20,7 +20,7 @@ class VipRecordModel {
   });
   static Future<List<VipRecordModel>> fetch() async {
     String userToken = await Util.getStorage("user_token");
-    var res = await Util.post("http://dsm.apaipai.top/vip/record", data: {"token": userToken});
+    var res = await Util.post("${Util.appUrl}/vip/record", data: {"token": userToken});
     if (res['code'] == 1) {
       List<VipRecordModel> records = [];
       res['data'].forEach((e) {

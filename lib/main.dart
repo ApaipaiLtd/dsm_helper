@@ -59,7 +59,7 @@ void main() async {
       noAdTime = DateTime.parse(noAdTimeStr);
     }
     if (userToken.isNotBlank) {
-      var res = await Util.post("http://dsm.apaipai.top/vip/info", data: {"token": userToken});
+      var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
         if (res['data']['is_forever'] == 1) {
           isForever = true;
