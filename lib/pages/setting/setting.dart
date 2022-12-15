@@ -859,7 +859,7 @@ class _SettingState extends State<Setting> {
                   }
                 },
               ),
-              if (Util.notReviewAccount && Util.vipExpireTime.difference(DateTime.now()).inDays < 7 || kDebugMode)
+              if (Util.notReviewAccount && Util.vipExpireTime.difference(DateTime.now()).inDays < 7)
                 SettingButton(
                   name: "关闭广告",
                   icon: "no_ad",

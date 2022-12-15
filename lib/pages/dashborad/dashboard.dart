@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:dsm_helper/models/api_model.dart';
+import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/models/shortcut_item_model.dart';
 import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
@@ -77,9 +78,7 @@ class DashboardState extends State<Dashboard> {
   String msg = "";
   @override
   void initState() {
-    if (Util.notReviewAccount) {
-      showFirstLaunchDialog();
-    }
+    getGroups();
     networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
     getNotifyStrings();
     ApiModel.fetch().then((apis) {
@@ -95,6 +94,13 @@ class DashboardState extends State<Dashboard> {
     return _scaffoldKey.currentState.isDrawerOpen;
   }
 
+  getGroups() async {
+    Util.groups = await GroupsModel.fetch();
+    if (Util.notReviewAccount) {
+      showFirstLaunchDialog();
+    }
+  }
+
   closeDrawer() {
     if (_scaffoldKey.currentState.isDrawerOpen) {
       Navigator.of(context).pop();
@@ -102,7 +108,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   showFirstLaunchDialog() async {
-    bool firstLaunch = await Util.getStorage("first_launch_new") == null;
+    bool firstLaunch = await Util.getStorage("first_launch_new1") == null;
     if (firstLaunch) {
       showCupertinoDialog(
         context: context,
@@ -140,7 +146,7 @@ class DashboardState extends State<Dashboard> {
                           bevel: 20,
                           curveType: CurveType.flat,
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          child: Text("关注公众号'群晖助手'，获取最新${Util.appName}更新内容！\n前往'我的'-'关闭广告'页面，即可关闭开屏广告。"),
+                          child: Text("关注以下公众号，获取最新${Util.appName}更新内容！\n前往'我的-关闭广告'页面，即可关闭开屏广告。"),
                         ),
                         SizedBox(
                           height: 20,
@@ -154,7 +160,7 @@ class DashboardState extends State<Dashboard> {
                           child: Padding(
                               padding: EdgeInsets.all(15),
                               child: Column(
-                                children: Util.wechat.map((e) {
+                                children: Util.groups.wechat.map((e) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Row(
@@ -167,7 +173,7 @@ class DashboardState extends State<Dashboard> {
                                           width: 10,
                                         ),
                                         Text(
-                                          "${e}",
+                                          "${e.displayName}",
                                           style: TextStyle(fontSize: 16),
                                         ),
                                         Spacer(),
@@ -178,7 +184,7 @@ class DashboardState extends State<Dashboard> {
                                           ),
                                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                           onPressed: () {
-                                            ClipboardData data = new ClipboardData(text: "群晖助手");
+                                            ClipboardData data = new ClipboardData(text: e.name);
                                             Clipboard.setData(data);
                                             Util.toast("已复制到剪贴板");
                                           },

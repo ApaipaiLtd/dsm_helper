@@ -3,13 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cool_ui/cool_ui.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/api.dart';
-import 'package:dsm_helper/util/download_chunk.dart';
 import 'package:dsm_helper/util/log.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,21 +55,17 @@ enum UploadStatus {
 }
 
 class Util {
-  static List qqGroups = [
-    {
-      "name": "交流群①（已满）",
-      "key": '4woOsiYfPZO4lZ08fX4el43n926mj1r5',
-    },
-    {
-      "name": "交流群②（已满）",
-      "key": 'qp8XE0Ts1b_qR4wt5PThPJqhdWkBT2u5',
-    },
-    {
-      "name": "交流群③",
-      "key": 'rOqv_Fq8g4W_Xaa95B7f0AmN_xxlvHu-',
-    }
-  ];
-  static List<String> wechat = ["群晖助手", "群晖助手APP"];
+  static GroupsModel groups = GroupsModel(
+    qq: [
+      GroupModel(name: "交流群①", no: "240557031", key: "4woOsiYfPZO4lZ08fX4el43n926mj1r5", status: "已满"),
+      GroupModel(name: "交流群②", no: "97137990", key: "qp8XE0Ts1b_qR4wt5PThPJqhdWkBT2u5", status: "已满"),
+      GroupModel(name: "交流群③", no: "133302624", key: "rOqv_Fq8g4W_Xaa95B7f0AmN_xxlvHu-", status: ""),
+    ],
+    wechat: [
+      GroupModel(name: "群晖助手", no: "", key: "", status: "受限"),
+      GroupModel(name: "群晖助手APP", no: "", key: "", status: ""),
+    ],
+  );
   static DateTime vipExpireTime = DateTime.now();
   static String appUrl = "https://dsm.apaipai.top";
   static String sid = "";
