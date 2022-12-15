@@ -123,6 +123,7 @@ class _VipState extends State<Vip> {
         isLogin = true;
       });
       Util.toast("登录成功");
+      initData();
     } else {
       Util.toast(res['msg']);
     }
