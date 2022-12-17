@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/setting/vip_record.dart';
@@ -115,17 +114,24 @@ class _VipState extends State<Vip> {
   }
 
   login(String code) async {
-    var res = await Util.post("${Util.appUrl}/login/app", data: {"code": code});
-    if (res['code'] == 1) {
-      Util.setStorage("user_openid", res['data']['openid']);
-      Util.setStorage("user_token", res['data']['token']);
-      setState(() {
-        isLogin = true;
-      });
-      Util.toast("登录成功");
-      initData();
-    } else {
-      Util.toast(res['msg']);
+    var hide = showWeuiLoadingToast(context: context);
+    try {
+      var res = await Util.post("${Util.appUrl}/login/app", data: {"code": code});
+      if (res['code'] == 1) {
+        Util.setStorage("user_openid", res['data']['openid']);
+        Util.setStorage("user_token", res['data']['token']);
+        setState(() {
+          isLogin = true;
+        });
+        Util.toast("登录成功");
+        initData();
+      } else {
+        Util.toast(res['msg']);
+      }
+    } catch (e) {
+      Util.toast("登录失败：${e.message}");
+    } finally {
+      hide();
     }
   }
 
@@ -422,6 +428,7 @@ class _VipState extends State<Vip> {
                             child: NeuButton(
                               onPressed: () async {
                                 wxLogin();
+                                Navigator.of(context).pop();
                               },
                               decoration: NeumorphicDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,

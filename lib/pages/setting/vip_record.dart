@@ -86,7 +86,7 @@ class _VipRecordState extends State<VipRecord> {
               Text("开通方式：${record.type == 1 ? '积分兑换' : '在线支付'} - ${record.cost}"),
               Text("开通时间：${record.createTime}"),
               Text("生效时间：${record.startTime}"),
-              Text("过期时间：${record.endTime}"),
+              Text("过期时间：${record.isForever == 0 ? record.endTime : '永不过期'}"),
             ],
           )
         ],

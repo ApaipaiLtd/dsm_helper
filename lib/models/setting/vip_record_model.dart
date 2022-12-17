@@ -17,6 +17,7 @@ class VipRecordModel {
     this.cost,
     this.type,
     this.createTime,
+    this.isForever,
   });
   static Future<List<VipRecordModel>> fetch() async {
     String userToken = await Util.getStorage("user_token");
@@ -40,6 +41,7 @@ class VipRecordModel {
     cost = json['cost'];
     type = json['type'];
     createTime = json['create_time'];
+    isForever = json['is_forever'];
   }
   num id;
   num userId;
@@ -47,6 +49,7 @@ class VipRecordModel {
   String endTime;
   String cost;
   num type;
+  num isForever;
   String createTime;
   VipRecordModel copyWith({
     num id,
