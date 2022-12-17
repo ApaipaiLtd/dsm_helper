@@ -108,7 +108,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   showFirstLaunchDialog() async {
-    bool firstLaunch = await Util.getStorage("first_launch_new1") == null;
+    bool firstLaunch = await Util.getStorage("first_launch_new") == null;
     if (firstLaunch) {
       showCupertinoDialog(
         context: context,
@@ -1716,6 +1716,7 @@ class DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     SettingProvider settingProvider = Provider.of<SettingProvider>(context);
+    ShortcutProvider shortcutProvider = Provider.of<ShortcutProvider>(context);
     refreshDuration = settingProvider.refreshDuration;
     return Scaffold(
       key: _scaffoldKey,
@@ -1963,12 +1964,7 @@ class DashboardState extends State<Dashboard> {
               ? ListView(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount)
-                      Consumer<ShortcutProvider>(
-                        builder: (context, shortcutProvider, _) {
-                          return shortcutProvider.showShortcut ? ShortcutList(shortcutItems, system, volumes, disks, appNotify) : Container();
-                        },
-                      ),
+                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount && shortcutProvider.showShortcut) ShortcutList(shortcutItems, system, volumes, disks, appNotify, context),
                     if (widgets != null && widgets.length > 0)
                       ...widgets.map((widget) {
                         return _buildWidgetItem(widget);
