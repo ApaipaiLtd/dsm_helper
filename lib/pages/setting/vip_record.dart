@@ -29,7 +29,7 @@ class _VipRecordState extends State<VipRecord> {
       });
     } catch (e) {
       Util.toast(e.message);
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(false);
     }
   }
 

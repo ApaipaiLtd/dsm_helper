@@ -29,7 +29,7 @@ class VipRecordModel {
       });
       return records;
     } else {
-      throw Exception("加载失败");
+      throw Exception(res['msg']);
     }
   }
 

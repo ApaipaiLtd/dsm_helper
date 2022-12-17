@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cool_ui/cool_ui.dart';
+import 'package:dsm_helper/pages/setting/vip_login.dart';
 import 'package:dsm_helper/pages/setting/vip_record.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
@@ -260,7 +261,7 @@ class _VipState extends State<Vip> {
 
   close7() {
     if (!isLogin) {
-      loginAlert();
+      loginDialog();
     } else {
       String code = "";
       showCupertinoDialog(
@@ -386,7 +387,7 @@ class _VipState extends State<Vip> {
     sendWeChatAuth(scope: "snsapi_userinfo");
   }
 
-  loginAlert() {
+  loginDialog({bool alert: true}) {
     showCupertinoDialog(
       context: context,
       builder: (context) {
@@ -416,7 +417,7 @@ class _VipState extends State<Vip> {
                         height: 16,
                       ),
                       Text(
-                        "为了防止APP卸载后开通记录丢失，此功能需微信授权登录后使用",
+                        alert ? "为了防止APP卸载后开通记录丢失，此功能需登录账号后使用" : "请选择登录方式",
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
                       ),
                       SizedBox(
@@ -436,8 +437,35 @@ class _VipState extends State<Vip> {
                               ),
                               bevel: 20,
                               padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset(
+                                "assets/icons/wechat.png",
+                                width: 25,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Expanded(
+                            child: NeuButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                  return VipLogin();
+                                })).then((res) {
+                                  if (res != null && res) {
+                                    initData();
+                                  }
+                                });
+                              },
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              bevel: 20,
+                              padding: EdgeInsets.symmetric(vertical: 10),
                               child: Text(
-                                "登录",
+                                "账号登录",
                                 style: TextStyle(fontSize: 18),
                               ),
                             ),
@@ -477,7 +505,7 @@ class _VipState extends State<Vip> {
 
   Future<void> closeAd(String type) async {
     if (!isLogin) {
-      loginAlert();
+      loginDialog();
     } else if (isForever) {
       Util.toast("您已开通永久免广告特权，无需继续购买");
     } else {
@@ -520,7 +548,7 @@ class _VipState extends State<Vip> {
               bevel: 5,
               onPressed: () {
                 if (!isLogin) {
-                  wxLogin();
+                  loginDialog(alert: false);
                 } else {
                   Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                     return VipRecord();
