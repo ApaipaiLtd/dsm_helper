@@ -585,7 +585,9 @@ class Util {
   }
 
   static String formatSize(num size, {int format = 1024, int fixed = 2}) {
-    if (size < format) {
+    if (size == 0) {
+      return "0";
+    } else if (size < format) {
       return "$size";
     } else if (size < pow(format, 2)) {
       return "${(size / format).toStringAsFixed(fixed)}K";

@@ -247,7 +247,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}%",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -260,7 +260,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
-                                                reservedSize: 28,
+                                                reservedSize: 35,
                                                 interval: 10,
                                               )),
                                             ),
@@ -382,7 +382,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}%",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -395,7 +395,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
-                                                reservedSize: 28,
+                                                reservedSize: 35,
                                                 interval: 10,
                                               )),
                                             ),
@@ -704,7 +704,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}%",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -717,7 +717,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
-                                                reservedSize: 28,
+                                                reservedSize: 35,
                                                 interval: 10,
                                               )),
                                             ),
@@ -836,7 +836,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}%",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -849,7 +849,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
-                                                reservedSize: 28,
+                                                reservedSize: 35,
                                                 interval: 10,
                                               )),
                                             ),
@@ -950,7 +950,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           showTitles: true,
                                           getTitlesWidget: (value, _) {
                                             return Text(
-                                              "$value",
+                                              "${value.toInt()}%",
                                               style: TextStyle(
                                                 color: Color(0xff67727d),
                                                 fontSize: 12,
@@ -963,7 +963,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           //   value = value / 1000 / 1000;
                                           //   return (value.floor() * 1000).toString();
                                           // },
-                                          reservedSize: 28,
+                                          reservedSize: 35,
                                           interval: 10,
                                         )),
                                       ),
@@ -1313,7 +1313,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           showTitles: true,
                                           getTitlesWidget: (value, _) {
                                             return Text(
-                                              "$value",
+                                              "${value.toInt()}%",
                                               style: TextStyle(
                                                 color: Color(0xff67727d),
                                                 fontSize: 12,
@@ -1326,7 +1326,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           //   value = value / 1000 / 1000;
                                           //   return (value.floor() * 1000).toString();
                                           // },
-                                          reservedSize: 28,
+                                          reservedSize: 35,
                                           interval: 10,
                                         )),
                                       ),
@@ -1855,7 +1855,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}%",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -1868,7 +1868,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
-                                                reservedSize: 28,
+                                                reservedSize: 35,
                                                 interval: 10,
                                               )),
                                             ),
@@ -2291,7 +2291,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2305,7 +2305,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: 10,
+                                                // interval: 10,
                                               )),
                                             ),
                                             minY: 0,
@@ -2422,7 +2422,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2430,7 +2430,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 reservedSize: 28,
-                                                interval: 10,
+                                                // interval: 10,
                                               )),
                                             ),
                                             // maxY: 20,
@@ -2572,14 +2572,14 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}%",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
                                                     ),
                                                   );
                                                 },
-                                                reservedSize: 28,
+                                                reservedSize: 35,
                                                 interval: 10,
                                               )),
                                             ),
@@ -2954,21 +2954,15 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
                                                     ),
                                                   );
                                                 },
-                                                // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
-                                                // getTitles: (value) {
-                                                //   value = value / 1000 / 1000;
-                                                //   return (value.floor() * 1000).toString();
-                                                // },
                                                 reservedSize: 28,
-                                                interval: 10,
+                                                // interval: 10,
                                               )),
                                             ),
                                             minY: 0,
@@ -3085,7 +3079,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    "$value",
+                                                    "${value.toInt()}",
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -3099,7 +3093,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: 10,
+                                                // interval: 10,
                                               )),
                                             ),
                                             // maxY: 20,

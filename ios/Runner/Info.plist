@@ -50,6 +50,8 @@
 	<string>文件下载完成</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

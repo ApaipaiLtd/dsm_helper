@@ -921,7 +921,7 @@ class DashboardState extends State<Dashboard> {
                                             fontSize: 12,
                                           ));
                                     },
-                                    reservedSize: 28,
+                                    reservedSize: 35,
                                     interval: Util.chartInterval(maxNetworkSpeed),
                                   ),
                                 ),
