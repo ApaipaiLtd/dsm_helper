@@ -294,7 +294,7 @@ class _HelperSettingState extends State<HelperSetting> {
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                curveType: videoPlayer ? CurveType.emboss : CurveType.flat,
+                curveType: CurveType.flat,
                 bevel: 20,
                 child: Row(
                   children: [
