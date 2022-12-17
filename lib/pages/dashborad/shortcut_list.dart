@@ -33,14 +33,15 @@ List supportedShortcuts = [
 
 class ShortcutList extends StatelessWidget {
   final List<ShortcutItemModel> shortcutItems;
+  final BuildContext context;
   final Map system;
   final List volumes;
   final List disks;
   final Map appNotify;
-  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, {Key key}) : super(key: key);
+  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, this.context, {Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctx) {
     return NeuCard(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       bevel: 20,
@@ -53,7 +54,7 @@ class ShortcutList extends StatelessWidget {
         height: 140,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, i) {
+          itemBuilder: (ctx, i) {
             return _buildShortcutItem(context, shortcutItems[i]);
           },
           itemCount: shortcutItems.length,
@@ -67,15 +68,14 @@ class ShortcutList extends StatelessWidget {
     String name = "";
     CupertinoPageRoute route;
     int unread = 0;
+    Widget page;
+    String routerName;
     switch (shortcut.className) {
       case "SYNO.SDS.PkgManApp.Instance":
         icon = "assets/applications/${Util.version}/package_center.png";
         name = "套件中心";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return Packages(system['firmware_ver']);
-            },
-            settings: RouteSettings(name: "packages"));
+        page = Packages(system['firmware_ver']);
+        routerName = "packages";
         if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
           unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
         }
@@ -83,11 +83,8 @@ class ShortcutList extends StatelessWidget {
       case "SYNO.SDS.AdminCenter.Application":
         icon = "assets/applications/${Util.version}/control_panel.png";
         name = "控制面板";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
-            },
-            settings: RouteSettings(name: "control_panel"));
+        page = ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
+        routerName = "control_panel";
         if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
           unread = appNotify['SYNO.SDS.AdminCenter.Application']['unread'];
         }
@@ -95,62 +92,41 @@ class ShortcutList extends StatelessWidget {
       case "SYNO.SDS.StorageManager.Instance":
         icon = "assets/applications/${Util.version}/storage_manager.png";
         name = "存储空间管理员";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return StorageManager();
-            },
-            settings: RouteSettings(name: "storage_manager"));
+        page = StorageManager();
+        routerName = "storage_manager";
         break;
       case "SYNO.SDS.Docker.Application":
         icon = "assets/applications/docker.png";
         name = "Docker";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return Docker();
-          },
-          settings: RouteSettings(name: "docker"),
-        );
+        page = Docker();
+        routerName = "docker";
         break;
       case "SYNO.SDS.Docker.ContainerDetail.Instance":
         icon = "assets/applications/docker.png";
         name = "${shortcut.param.data.name}";
         if (shortcut.type == 'url') {
-          route = CupertinoPageRoute(
-            builder: (context) {
-              return Browser(
-                url: shortcut.url,
-                title: name,
-              );
-            },
-            settings: RouteSettings(name: "browser"),
+          page = Browser(
+            url: shortcut.url,
+            title: name,
           );
+          routerName = "browser";
         } else {
-          route = CupertinoPageRoute(
-            builder: (context) {
-              return ContainerDetail(name);
-            },
-            settings: RouteSettings(name: "docker_container_detail"),
-          );
+          page = ContainerDetail(name);
+          routerName = "docker_container_detail";
         }
 
         break;
       case "SYNO.SDS.LogCenter.Instance":
         icon = "assets/applications/${Util.version}/log_center.png";
         name = "日志中心";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return LogCenter();
-            },
-            settings: RouteSettings(name: "log_center"));
+        page = LogCenter();
+        routerName = "log_center";
         break;
       case "SYNO.SDS.ResourceMonitor.Instance":
         icon = "assets/applications/${Util.version}/resource_monitor.png";
         name = "资源监控";
-        route = CupertinoPageRoute(
-            builder: (context) {
-              return ResourceMonitor();
-            },
-            settings: RouteSettings(name: "resource_monitor"));
+        page = ResourceMonitor();
+        routerName = "resource_monitor";
 
         break;
       // case "SYNO.SDS.SecurityScan.Instance":
@@ -159,52 +135,35 @@ class ShortcutList extends StatelessWidget {
       case "SYNO.SDS.Virtualization.Application":
         icon = "assets/applications/${Util.version}/virtual_machine.png";
         name = "Virtual Machine Manager";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return VirtualMachine();
-          },
-          settings: RouteSettings(name: "virtual_machine_manager"),
-        );
+        page = VirtualMachine();
+        routerName = "virtual_machine_manager";
         break;
       case "SYNO.Photo.AppInstance":
         icon = "assets/applications/6/moments.png";
         name = "Moments";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return Moments();
-          },
-          settings: RouteSettings(name: "moments"),
-        );
+        page = Moments();
+        routerName = "moments";
         break;
       case "SYNO.Foto.AppInstance":
         icon = "assets/applications/7/synology_photos.png";
         name = "Synology Photos";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return Photos();
-          },
-          settings: RouteSettings(name: "photos"),
-        );
+        page = Photos();
+        routerName = "photos";
         break;
       case "SYNO.SDS.DownloadStation.Application":
         icon = "assets/applications/download_station.png";
         name = "Download Station";
-        route = CupertinoPageRoute(
-          builder: (context) {
-            return DownloadStation();
-          },
-          settings: RouteSettings(name: "download_station"),
-        );
+        page = DownloadStation();
+        routerName = "download_station";
         break;
       case "SYNO.SDS.XLPan.Application":
         icon = "assets/applications/xunlei.png";
         name = "迅雷";
-        route = CupertinoPageRoute(builder: (context) {
-          return Browser(
-            title: "迅雷-远程设备",
-            url: "https://pan.xunlei.com/yc/?fromApp=paipai",
-          );
-        });
+        page = Browser(
+          title: "迅雷-远程设备",
+          url: "https://pan.xunlei.com/yc/?fromApp=paipai",
+        );
+        routerName = "xunlei";
         break;
     }
     if (icon != "") {
@@ -212,7 +171,11 @@ class ShortcutList extends StatelessWidget {
         padding: EdgeInsets.only(left: 10, top: 20, bottom: 20, right: 10),
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).push(route);
+            Navigator.of(context).push(CupertinoPageRoute(
+                builder: (context) {
+                  return page;
+                },
+                settings: RouteSettings(name: routerName)));
           },
           child: NeuCard(
             bevel: 20,
