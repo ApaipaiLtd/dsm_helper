@@ -28,7 +28,21 @@ class _BrowserState extends State<Browser> {
     return Scaffold(
       appBar: AppBar(
         leading: AppBackButton(context),
-        title: Text(widget.title ?? "浏览网页"),
+        title: FutureBuilder<WebViewController>(
+          future: _controller.future,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return FutureBuilder(
+                future: snapshot.data.getTitle(),
+                builder: (context, shot) {
+                  return Text(shot?.data ?? widget.title ?? "加载中……");
+                },
+              );
+            } else {
+              return SizedBox();
+            }
+          },
+        ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
@@ -61,112 +75,115 @@ class _BrowserState extends State<Browser> {
               onWebViewCreated: (WebViewController webViewController) {
                 _controller.complete(webViewController);
               },
+              onPageFinished: (v) async {
+                var future = await _controller.future;
+                setState(() {});
+              },
             ),
           ),
-          NavigationControls(_controller.future),
+          FutureBuilder<WebViewController>(
+            future: _controller.future,
+            builder: (BuildContext context, AsyncSnapshot<WebViewController> snapshot) {
+              final bool webViewReady = snapshot.connectionState == ConnectionState.done;
+              final WebViewController controller = snapshot.data;
+              return SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Row(
+                    children: <Widget>[
+                      FutureBuilder<bool>(
+                        future: controller.canGoBack(),
+                        builder: (context, shot) {
+                          return NeuButton(
+                            decoration: NeumorphicDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.all(10),
+                            enabled: shot.data,
+                            onPressed: webViewReady
+                                ? () async {
+                                    await controller.goBack();
+                                    setState(() {});
+                                  }
+                                : null,
+                            child: Icon(
+                              Icons.arrow_back_ios_outlined,
+                              color: shot.data ? Colors.black : Colors.grey,
+                              size: 22,
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      FutureBuilder<bool>(
+                        future: controller.canGoForward(),
+                        builder: (context, shot) {
+                          return NeuButton(
+                            decoration: NeumorphicDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabled: shot.data,
+                            padding: EdgeInsets.all(10),
+                            onPressed: !webViewReady
+                                ? null
+                                : () async {
+                                    await controller.goForward();
+                                    setState(() {});
+                                  },
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 22,
+                              color: shot.data ? Colors.black : Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
+                      Spacer(),
+                      NeuButton(
+                        decoration: NeumorphicDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.all(10),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Icon(
+                          Icons.close,
+                          size: 22,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      NeuButton(
+                        decoration: NeumorphicDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.all(10),
+                        onPressed: !webViewReady
+                            ? null
+                            : () {
+                                controller.reload();
+                              },
+                        child: Icon(
+                          Icons.replay,
+                          size: 22,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
-    );
-  }
-}
-
-class NavigationControls extends StatelessWidget {
-  const NavigationControls(this._webViewControllerFuture) : assert(_webViewControllerFuture != null);
-
-  final Future<WebViewController> _webViewControllerFuture;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<WebViewController>(
-      future: _webViewControllerFuture,
-      builder: (BuildContext context, AsyncSnapshot<WebViewController> snapshot) {
-        final bool webViewReady = snapshot.connectionState == ConnectionState.done;
-        final WebViewController controller = snapshot.data;
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: Row(
-              children: <Widget>[
-                NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  onPressed: !webViewReady
-                      ? null
-                      : () async {
-                          if (await controller.canGoBack()) {
-                            await controller.goBack();
-                          } else {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                  child: Icon(
-                    Icons.arrow_back_ios_outlined,
-                    size: 22,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  onPressed: !webViewReady
-                      ? null
-                      : () async {
-                          if (await controller.canGoForward()) {
-                            await controller.goForward();
-                          }
-                        },
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 22,
-                  ),
-                ),
-                Spacer(),
-                NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Icon(
-                    Icons.close,
-                    size: 22,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  onPressed: !webViewReady
-                      ? null
-                      : () {
-                          controller.reload();
-                        },
-                  child: Icon(
-                    Icons.replay,
-                    size: 22,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
