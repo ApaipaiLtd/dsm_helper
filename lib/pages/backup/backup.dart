@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cool_ui/cool_ui.dart';
 import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/common/select_ablum.dart';
 import 'package:dsm_helper/util/function.dart';
@@ -130,11 +131,20 @@ class _BackupState extends State<Backup> {
   }
 
   Widget _buildAlbumLabel(AssetPathEntity album) {
-    return Label(
-      "${album.name} (${album.assetCount})",
-      Colors.lightBlueAccent,
-      fill: true,
-    );
+    return FutureBuilder<int>(
+        future: album.assetCountAsync,
+        builder: (context, snapshot) {
+          return Label(
+            "${album.name} (${snapshot.data})",
+            Colors.lightBlueAccent,
+            fill: true,
+          );
+        });
+    // return Label(
+    //   "${album.name} (${album.assetCountAsync})",
+    //   Colors.lightBlueAccent,
+    //   fill: true,
+    // );
   }
 
   @override
@@ -143,6 +153,29 @@ class _BackupState extends State<Backup> {
       appBar: AppBar(
         leading: AppBackButton(context),
         title: Text("相册备份"),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+            child: NeuButton(
+              decoration: NeumorphicDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.all(10),
+              bevel: 5,
+              onPressed: () async {
+                var hide = showWeuiLoadingToast(context: context);
+                await PhotoManager.clearFileCache();
+                hide();
+                Util.toast("缓存清理完成");
+              },
+              child: Text(
+                "清理缓存",
+                style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color),
+              ),
+            ),
+          ),
+        ],
       ),
       body: ListView(
         padding: EdgeInsets.all(20),
@@ -499,6 +532,7 @@ class _BackupState extends State<Backup> {
                         });
                       });
                       if (res['success']) {
+                        uploading.file.deleteSync();
                         Util.setStorage("last_backup_time", uploading.modifyTime.millisecondsSinceEpoch.toString());
                         setState(() {
                           lastBackupTime = uploading.modifyTime;

@@ -74,16 +74,16 @@ class _SelectAlbumState extends State<SelectAlbum> {
                 width: 10,
               ),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${album.name} (${album.assetCount})",
+                child: FutureBuilder<int>(
+                  future: album.assetCountAsync,
+                  builder: (context, snapshot) {
+                    return Text(
+                      "${album.name} (${snapshot.data})",
                       style: TextStyle(
                         fontSize: 16,
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
               SizedBox(
