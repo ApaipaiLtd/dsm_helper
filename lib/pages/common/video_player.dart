@@ -16,7 +16,8 @@ class VideoPlayer extends StatefulWidget {
   final String url;
   final String cover;
   final String nfo;
-  VideoPlayer({@required this.url, this.name, this.cover, this.nfo});
+  final bool network;
+  VideoPlayer({@required this.url, this.name, this.cover, this.nfo, this.network: true});
 
   @override
   _VideoPlayerState createState() => _VideoPlayerState();
@@ -70,11 +71,14 @@ class _VideoPlayerState extends State<VideoPlayer> {
       ],
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      widget.network ? BetterPlayerDataSourceType.network : BetterPlayerDataSourceType.file,
       widget.url,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
+    _betterPlayerController.setBetterPlayerControlsConfiguration(BetterPlayerControlsConfiguration(
+      controlBarColor: Colors.black26,
+    ));
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
         _setPlaceholderVisibleState(false);

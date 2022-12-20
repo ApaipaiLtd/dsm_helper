@@ -284,11 +284,6 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                             ),
                             GestureDetector(
                               onTap: () {
-                                // shareToWeChat(
-                                //   WeChatShareFileModel(WeChatFile.network(widget.images[currentIndex]), scene: WeChatScene.SESSION),
-                                // );
-                                print(widget.images[currentIndex]);
-                                // sendWeChatAuth(scope: "snsapi_userinfo", state: "wechat_sdk_demo_test");print
                                 WeChatImage wechatImage;
                                 if (widget.images[currentIndex].startsWith("http")) {
                                   wechatImage = WeChatImage.network(widget.images[currentIndex]);

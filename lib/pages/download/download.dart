@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:dsm_helper/pages/common/video_player.dart';
 import 'package:dsm_helper/pages/download/download_setting.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
@@ -262,6 +264,29 @@ class DownloadState extends State<Download> {
                     );
                   },
                   settings: RouteSettings(name: "preview_image")));
+            } else if (fileType == FileTypeEnum.movie) {
+              String videoPlayer = await Util.getStorage("video_player");
+              print(videoPlayer);
+              if (videoPlayer != null && videoPlayer == '1') {
+                AndroidIntent intent = AndroidIntent(
+                  action: 'action_view',
+                  data: task.savedDir + "/" + task.filename,
+                  arguments: {},
+                  type: "video/*",
+                );
+                await intent.launch();
+              } else {
+                Navigator.of(context).push(
+                  TransparentPageRoute(
+                      pageBuilder: (context, _, __) {
+                        return VideoPlayer(
+                          url: task.savedDir + "/" + task.filename,
+                          name: task.filename,
+                        );
+                      },
+                      settings: RouteSettings(name: "preview_image")),
+                );
+              }
             } else {
               var result = await FlutterDownloader.open(taskId: task.taskId);
               if (!result) {
@@ -286,7 +311,7 @@ class DownloadState extends State<Download> {
               tag: task.savedDir + "/" + task.filename,
               child: FileIcon(
                 fileType,
-                thumb: task.status == DownloadTaskStatus.complete ? task.savedDir + "/" + task.filename : null,
+                thumb: fileType == FileTypeEnum.image && task.status == DownloadTaskStatus.complete ? task.savedDir + "/" + task.filename : null,
                 network: false,
               ),
             ),
