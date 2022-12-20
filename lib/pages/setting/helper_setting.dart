@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/common/gesture_password.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
 import 'package:dsm_helper/pages/setting/vip.dart';
@@ -8,6 +9,7 @@ import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -570,6 +572,39 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ],
+          SizedBox(
+            height: 20,
+          ),
+          NeuButton(
+            onPressed: () {
+              var hide = showWeuiLoadingToast(context: context);
+              clearDiskCachedImages();
+              hide();
+              Util.toast("图片缓存清理完成");
+            },
+            // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: EdgeInsets.all(20),
+            decoration: NeumorphicDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            bevel: 20,
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/icons/clear_cache.png",
+                  width: 25,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  "清理图片缓存",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             height: 20,
           ),
