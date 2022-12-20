@@ -277,8 +277,8 @@ class DownloadState extends State<Download> {
                 await intent.launch();
               } else {
                 Navigator.of(context).push(
-                  TransparentPageRoute(
-                      pageBuilder: (context, _, __) {
+                  CupertinoPageRoute(
+                      builder: (context) {
                         return VideoPlayer(
                           url: task.savedDir + "/" + task.filename,
                           name: task.filename,
