@@ -1391,7 +1391,7 @@ class Api {
         "api": "SYNO.DownloadStation2.Task",
         "method": "list",
         "version": 2,
-        "limit": 25,
+        "limit": 500,
         "offset": 0,
         "sort_by": "task_id",
         "order": "ASC",
