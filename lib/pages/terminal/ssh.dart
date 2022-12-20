@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
-import 'package:dsm_helper/widgets/terminal_button.dart';
 import 'package:dsm_helper/widgets/virtual_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

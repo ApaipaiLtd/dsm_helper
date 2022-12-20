@@ -21,14 +21,12 @@ environment:
   sdk: ">=2.10.0 <3.0.0"
 
 dependency_overrides:
-  http: ^0.13.5  # dartssh 1.0.3+3 需要重写此版本
-  convert: ^3.1.1 # dartssh 1.0.3+3 需要重写此版本
-  webview_flutter: ^3.0.4 # flutter_html 1.0.3+3 需要重写此版本
 #  platform: ^3.1.0  # 3.0.0版本不支持flutter 2
-  ffi: ^2.0.1
-  xml: ^6.2.2
+  webview_flutter: ^3.0.4  # flutter_html 2.2.1 需要重写
+  ffi: ^2.0.1  # open_file 3.2.1 需要重写
+  xml: ^6.2.2  # flutter_html 2.2.1 需要重写
   collection: ^1.17.0
-  video_player_android: 2.3.8 #2.3.9打包失败
+#  video_player_android: 2.3.10 #2.3.9打包失败
 dependencies:
   flutter:
     sdk: flutter
@@ -46,7 +44,6 @@ dependencies:
   #  fluttertoast: ^7.1.6
   oktoast: 3.3.1 #3.2.0 起支持Flutter3，不再支持flutter2.x
   package_info_plus: ^3.0.2
-  pull_to_refresh: ^2.0.0
   shared_preferences: ^2.0.15
   permission_handler: ^10.2.0
   extended_image: 6.3.4  # 6.2.0 起支持Flutter3，不再支持flutter2.x
@@ -58,17 +55,17 @@ dependencies:
   flutter_downloader: ^1.9.1
   percent_indicator: ^4.2.2
   fl_chart: ^0.55.2
-  file_picker: ^5.2.3
+  file_picker: ^5.2.4
   open_file: ^3.2.1
   flutter_datetime_picker:
     git: https://github.com/Realank/flutter_datetime_picker.git
   flutter_swiper_null_safety: ^1.0.2
   html: ^0.15.1
   flutter_html: ^2.2.1
-  provider: ^6.0.4
+  provider: ^6.0.5
   wave: ^0.2.2
   modal_bottom_sheet: ^2.1.2
-  photo_manager: 2.5.1+1  #2.1.0+1 起支持Flutter3，不再支持flutter2.x
+  photo_manager: 2.5.2  #2.1.0+1 起支持Flutter3，不再支持flutter2.x
   vibrate: ^0.0.4
   url_launcher: ^6.1.7
   local_auth: ^2.1.2
@@ -78,17 +75,17 @@ dependencies:
   flutter_highlight: ^0.7.0
 #  syncfusion_flutter_charts: ^20.3.57
   syncfusion_flutter_pdfviewer: ^20.3.59
-  wechat_assets_picker: 8.1.4  # 7.3.0 起支持Flutter3，不再支持flutter2.x
-  fluwx: ^3.12.0
+  wechat_assets_picker: 8.2.0  # 7.3.0 起支持Flutter3，不再支持flutter2.x
+  fluwx: ^3.12.2
   better_player:
     git: https://github.com/tintran-dev/betterplayer.git
   device_info_plus: ^8.0.0
   xml2json: ^5.3.5
   wake_on_lan: ^3.0.0
   wakelock: ^0.6.2 #屏幕常亮
+  dartssh2: ^2.7.3
   pangle_flutter: ^1.9.7  # 穿山甲广告
   xterm: ^3.4.0
-  dartssh2: ^2.7.3
   draggable_scrollbar:
     git: https://gitee.com/apaipai/draggable_scrollbar.git
   neumorphic:
