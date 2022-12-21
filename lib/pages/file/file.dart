@@ -2462,7 +2462,7 @@ class FilesState extends State<Files> {
                 ),
               ),
             ),
-            if (paths.length > 0 && !multiSelect)
+            if (Util.notReviewAccount && paths.length > 0 && !multiSelect)
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
                 child: NeuButton(
