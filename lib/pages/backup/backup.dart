@@ -171,7 +171,7 @@ class _BackupState extends State<Backup> {
               },
               child: Text(
                 "清理缓存",
-                style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color),
+                style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
               ),
             ),
           ),

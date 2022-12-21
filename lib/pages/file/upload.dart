@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -310,20 +311,16 @@ class _UploadState extends State<Upload> {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "上传位置",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      Text(
-                        savePath == "" ? "请选择上传位置" : savePath,
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ],
+                  Text(
+                    "上传位置",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    savePath == "" ? "请选择上传位置" : savePath,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ],
               ),
@@ -338,7 +335,10 @@ class _UploadState extends State<Upload> {
                     itemCount: uploads.length,
                   )
                 : Center(
-                    child: Text("暂无待上传文件"),
+                    child: Text(
+                      "暂无待上传文件",
+                      style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                    ),
                   ),
           ),
           Padding(

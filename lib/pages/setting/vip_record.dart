@@ -1,4 +1,5 @@
 import 'package:dsm_helper/models/setting/vip_record_model.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,7 +61,10 @@ class _VipRecordState extends State<VipRecord> {
                         itemCount: records.length,
                       )
                     : Center(
-                        child: Text("暂无开通记录"),
+                        child: Text(
+                          "暂无开通记录",
+                          style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                        ),
                       ),
           ),
         ],

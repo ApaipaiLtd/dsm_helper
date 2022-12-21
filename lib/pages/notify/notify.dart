@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cool_ui/cool_ui.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/strings.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
@@ -151,7 +153,10 @@ class _NotifyState extends State<Notify> {
                     }).toList(),
                   )
                 : Center(
-                    child: Text("暂无消息"),
+                    child: Text(
+                      "暂无消息",
+                      style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                    ),
                   ),
           ),
           Padding(

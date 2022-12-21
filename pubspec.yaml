@@ -94,6 +94,7 @@ dependencies:
     git: https://gitee.com/apaipai/receive_sharing_intent.git
   webview_flutter: ^3.0.4
   simple_logger: ^1.9.0+1
+  extended_text: ^9.1.2
 #  flutter_filereader: ^3.0.0
 #  x5_webview: ^0.2.4
 dev_dependencies:

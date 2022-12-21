@@ -95,8 +95,6 @@ class _MediaConverterState extends State<MediaConverter> {
                         ),
                         child: FAProgressBar(
                           backgroundColor: Colors.transparent,
-                          changeColorValue: 90,
-                          changeProgressColor: Colors.red,
                           progressColor: Colors.blue,
                           currentValue: max(
                               converter['photo_remain'] > 0 ? ((converter['photo_total'] - converter['photo_remain']) * 100 / converter['photo_total']).ceil() : 0, converter['thumb_remain'] > 0 ? ((converter['thumb_total'] - converter['thumb_remain']) * 100 / converter['thumb_total']).ceil() : 0),
@@ -136,8 +134,6 @@ class _MediaConverterState extends State<MediaConverter> {
                         ),
                         child: FAProgressBar(
                           backgroundColor: Colors.transparent,
-                          changeColorValue: 90,
-                          changeProgressColor: Colors.red,
                           progressColor: Colors.blue,
                           currentValue: converter['video_total'] > 0 ? (converter['video_remain'] * 100 / converter['video_total']).ceil() : 0,
                           displayText: '%',

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
@@ -162,7 +163,7 @@ class _UpdateState extends State<Update> {
                       ),
                       Text(
                         "${widget.data['note'] ?? "暂无更新日志"}",
-                        style: TextStyle(fontSize: 18, color: Colors.black54),
+                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
                       ),
                     ],
                   ),

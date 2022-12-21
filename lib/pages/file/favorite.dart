@@ -1,3 +1,4 @@
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
@@ -436,7 +437,10 @@ class _FavoriteState extends State<Favorite> {
                       itemCount: favorites.length,
                     )
                   : Center(
-                      child: Text("暂无收藏"),
+                      child: Text(
+                        "暂无收藏",
+                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                      ),
                     ),
             ),
     );

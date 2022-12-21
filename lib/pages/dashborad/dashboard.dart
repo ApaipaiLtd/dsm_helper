@@ -19,6 +19,7 @@ import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -443,7 +444,7 @@ class DashboardState extends State<Dashboard> {
                           padding: EdgeInsets.all(20),
                           child: DefaultTextStyle(
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyText2.color,
+                              color: Theme.of(context).textTheme.bodyText1.color,
                             ),
                             child: Column(
                               children: [
@@ -665,7 +666,10 @@ class DashboardState extends State<Dashboard> {
                         ),
                       )
                     : Center(
-                        child: Text("暂无日志"),
+                        child: Text(
+                          "暂无日志",
+                          style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                        ),
                       ),
               ),
               SizedBox(
@@ -1118,7 +1122,10 @@ class DashboardState extends State<Dashboard> {
                       ),
                     )
                   : Center(
-                      child: Text("暂无日志"),
+                      child: Text(
+                        "暂无日志",
+                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                      ),
                     ),
             ),
             SizedBox(

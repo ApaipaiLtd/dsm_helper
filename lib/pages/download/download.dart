@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/pages/common/video_player.dart';
 import 'package:dsm_helper/pages/download/download_setting.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/util/function.dart';
@@ -733,7 +734,10 @@ class DownloadState extends State<Download> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("暂无下载任务"),
+                      Text(
+                        "暂无下载任务",
+                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                      ),
                       SizedBox(
                         height: 5,
                       ),

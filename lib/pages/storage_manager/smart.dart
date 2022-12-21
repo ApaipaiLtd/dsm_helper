@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -486,6 +487,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                     children: [
                                       Text(
                                         "${quickLast.isNotBlank ? quickLast : "暂无快速检测结果"}",
+                                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
                                       ),
                                       SizedBox(
                                         width: 10,
@@ -512,6 +514,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                     children: [
                                       Text(
                                         "${extendLast.isNotBlank ? extendLast : "暂无完整检测结果"}",
+                                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
                                       ),
                                       SizedBox(
                                         width: 10,
@@ -751,7 +754,10 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                   },
                                   itemCount: logs.length)
                               : Center(
-                                  child: Text("暂无历史记录"),
+                                  child: Text(
+                                    "暂无历史记录",
+                                    style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                                  ),
                                 ),
                     ],
                   ),

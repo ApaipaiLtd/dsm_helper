@@ -18,10 +18,12 @@ import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/pages/file/share.dart';
 import 'package:dsm_helper/pages/file/share_manager.dart';
 import 'package:dsm_helper/pages/file/upload.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
+import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -69,7 +71,7 @@ class FilesState extends State<Files> {
     _fileScrollController.addListener(() {
       String path = "";
       if (paths.length > 0) {
-        path = paths.join("/");
+        path = "/" + paths.join("/");
       } else {
         path = "/";
       }
@@ -2036,11 +2038,11 @@ class FilesState extends State<Files> {
         bevel: 20,
         child: listType == ListType.list || remote
             ? Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: 5),
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 20,
+                      width: 10,
                     ),
                     Hero(
                       tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
@@ -2056,31 +2058,36 @@ class FilesState extends State<Files> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          ExtendedText(
                             file['name'],
-                            style: TextStyle(fontSize: 16, color: file['additional']['mount_point_type'] == "remotefail" ? Colors.grey : null),
+                            style: TextStyle(fontSize: 14, color: file['additional']['mount_point_type'] == "remotefail" ? AppTheme.of(context).placeholderColor : null),
+                            overflowWidget: TextOverflowWidget(
+                              position: TextOverflowPosition.middle,
+                              align: TextOverflowAlign.right,
+                              child: Text("…"),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
                           SizedBox(
                             height: 5,
                           ),
-                          Row(
-                            children: [
-                              if (!file['isdir'])
-                                Text(
-                                  "${Util.formatSize(file['additional']['size'])}",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
-                                Text(
-                                  (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                            ],
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                if (!file['isdir']) TextSpan(text: "${Util.formatSize(file['additional']['size'])}"),
+                                if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
+                                  TextSpan(
+                                    text: (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
+                                  )
+                              ],
+                              style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
+                            ),
                           ),
                           if (remote)
                             Text(
                               file['path'],
-                              style: TextStyle(fontSize: 12, color: file['additional']['mount_point_type'] == "remotefail" ? Colors.grey : null),
+                              style: TextStyle(fontSize: 12, color: file['additional']['mount_point_type'] == "remotefail" ? AppTheme.of(context).placeholderColor : null),
                             ),
                         ],
                       ),
@@ -2090,7 +2097,7 @@ class FilesState extends State<Files> {
                     ),
                     actionButton,
                     SizedBox(
-                      width: 20,
+                      width: 10,
                     ),
                   ],
                 ),
@@ -2229,7 +2236,7 @@ class FilesState extends State<Files> {
                         children: [
                           Text(
                             value['path'].replaceAll(value['path'].split("/").last, ""),
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                            style: TextStyle(fontSize: 10, color: AppTheme.of(context).placeholderColor),
                           ),
                           Text(value['path'].split("/").last),
                         ],
@@ -2246,7 +2253,7 @@ class FilesState extends State<Files> {
                         children: [
                           Text(
                             value['dest_folder_path'].replaceAll(value['dest_folder_path'].split("/").last, ""),
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                            style: TextStyle(fontSize: 10, color: AppTheme.of(context).placeholderColor),
                           ),
                           Text(value['dest_folder_path'].split("/").last),
                         ],
@@ -2421,7 +2428,10 @@ class FilesState extends State<Files> {
                                           }).toList(),
                                         ] else
                                           Center(
-                                            child: Text("未挂载远程文件夹"),
+                                            child: Text(
+                                              "未挂载远程文件夹",
+                                              style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                                            ),
                                           ),
                                       ],
                                     ),
@@ -3353,7 +3363,10 @@ class FilesState extends State<Files> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("$msg"),
+                        Text(
+                          "$msg",
+                          style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                        ),
                         SizedBox(
                           height: 20,
                         ),

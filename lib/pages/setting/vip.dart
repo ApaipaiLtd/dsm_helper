@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/setting/vip_login.dart';
 import 'package:dsm_helper/pages/setting/vip_record.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -557,7 +558,7 @@ class _VipState extends State<Vip> {
               },
               child: Text(
                 isLogin ? "开通记录" : "恢复购买",
-                style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color),
+                style: TextStyle(color: AppTheme.of(context).titleColor),
               ),
             ),
           ),

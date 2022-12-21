@@ -1,4 +1,5 @@
 import 'package:dsm_helper/pages/control_panel/power/add_power_task.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
@@ -1070,7 +1071,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                     itemCount: powerTasks.length,
                                   )
                                 : Center(
-                                    child: Text("暂无开关机计划，请点击下方新增按钮添加"),
+                                    child: Text(
+                                      "暂无开关机计划，请点击下方新增按钮添加",
+                                      style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                                    ),
                                   ),
                           ),
                           Padding(

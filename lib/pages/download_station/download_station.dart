@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dsm_helper/pages/download_station/add_task.dart';
 import 'package:dsm_helper/pages/download_station/detail.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
@@ -387,7 +388,10 @@ class _DownloadStationState extends State<DownloadStation> {
                   ],
                 )
               : Center(
-                  child: Text("暂无下载任务"),
+                  child: Text(
+                    "暂无下载任务",
+                    style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                  ),
                 ),
     );
   }

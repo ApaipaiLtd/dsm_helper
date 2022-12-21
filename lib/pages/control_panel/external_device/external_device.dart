@@ -1,3 +1,4 @@
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -314,7 +315,10 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                             },
                             itemCount: esatas.length)
                         : Center(
-                            child: Text("暂无外接设备"),
+                            child: Text(
+                              "暂无外接设备",
+                              style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                            ),
                           ),
                 Center(
                   child: Text("未开发"),
