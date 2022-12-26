@@ -33,7 +33,7 @@ class _BrowserState extends State<Browser> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return FutureBuilder(
-                future: snapshot.data.getTitle(),
+                future: snapshot.data?.getTitle(),
                 builder: (context, shot) {
                   return Text(shot?.data ?? widget.title ?? "加载中……");
                 },
@@ -92,7 +92,7 @@ class _BrowserState extends State<Browser> {
                   child: Row(
                     children: <Widget>[
                       FutureBuilder<bool>(
-                        future: controller.canGoBack(),
+                        future: controller?.canGoBack() ?? Future.value(false),
                         builder: (context, shot) {
                           return NeuButton(
                             decoration: NeumorphicDecoration(
@@ -119,7 +119,7 @@ class _BrowserState extends State<Browser> {
                         width: 10,
                       ),
                       FutureBuilder<bool>(
-                        future: controller.canGoForward(),
+                        future: controller?.canGoForward() ?? Future.value(false),
                         builder: (context, shot) {
                           return NeuButton(
                             decoration: NeumorphicDecoration(
