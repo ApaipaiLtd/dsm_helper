@@ -532,7 +532,11 @@ class _BackupState extends State<Backup> {
                         });
                       });
                       if (res['success']) {
-                        uploading.file.deleteSync();
+                        if (Platform.isIOS) {
+                          // 仅在iOS删除源文件（iOS非真实源文件）
+                          uploading.file.deleteSync();
+                        }
+
                         Util.setStorage("last_backup_time", uploading.modifyTime.millisecondsSinceEpoch.toString());
                         setState(() {
                           lastBackupTime = uploading.modifyTime;
