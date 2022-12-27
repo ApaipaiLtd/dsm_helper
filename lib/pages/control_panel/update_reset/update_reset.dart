@@ -36,7 +36,6 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
 
   getData() async {
     var res = await Api.firmwareVersion();
-    print(res);
     if (res['success']) {
       setState(() {
         firmwareDate = res['data']['firmware_date'];
@@ -158,7 +157,7 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
                           Expanded(
                             child: checking
                                 ? CupertinoActivityIndicator()
-                                : update != null
+                                : update != null && (update['available'] ?? true)
                                     ? Text.rich(TextSpan(
                                         children: [
                                           TextSpan(
