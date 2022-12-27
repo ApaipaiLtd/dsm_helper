@@ -874,20 +874,16 @@ class Api {
 
   static Future<Map> upload(String uploadPath, String filePath, CancelToken cancelToken, Function(int, int) onSendProgress) async {
     File file = File(filePath);
-    // var permission = await checkPermission(uploadPath, filePath);
     MultipartFile multipartFile = MultipartFile.fromFileSync(
       filePath,
       filename: filePath.split("/").last,
-      // contentType: file.
-      contentType: MediaType.parse("text/plain"),
+      // contentType: MediaType.parse("text/plain"),
     );
-    // var url = "entry.cgi?api=SYNO.FileStation.Upload&method=upload&version=2&_sid=${Util.sid}";
     var url = "entry.cgi";
     var params = {
       "api": "SYNO.FileStation.Upload",
       "method": "upload",
       "version": min(apiList['SYNO.FileStation.Upload'].minVersion ?? 1, 3),
-      // "SynoToken": "TwZGw9JzHWWDc",
     };
     var data = {
       "path": uploadPath,
@@ -896,18 +892,9 @@ class Api {
       "mtime": file.lastModifiedSync().millisecondsSinceEpoch,
       "overwrite": false,
       "file": multipartFile,
-      // "_sid": Util.sid,
     };
-    // var data = {
-    //   "_sid": Util.sid,
-    //   "mtime": DateTime.now().millisecondsSinceEpoch,
-    //   "overwrite": true,
-    //   "path": uploadPath,
-    //   "size": file.lengthSync(),
-    //   "file": multipartFile,
-    // };
+
     var result = await Util.upload(url, params: params, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
-    // print(result);
     return result;
   }
 

@@ -45,6 +45,7 @@ class FilesState extends State<Files> {
   List smbFolders = [];
   List ftpFolders = [];
   List sftpFolders = [];
+  List davFolders = [];
   bool loading = true;
   bool favoriteLoading = true;
   List favorites = [];
@@ -68,6 +69,7 @@ class FilesState extends State<Files> {
     getSmbFolder();
     getFtpFolder();
     getSftpFolder();
+    getDavFolder();
     _fileScrollController.addListener(() {
       String path = "";
       if (paths.length > 0) {
@@ -126,8 +128,10 @@ class FilesState extends State<Files> {
           paths = items;
         });
       } else {
-        Uri uri = Uri.parse(path);
-        String first = "${uri.scheme}://${uri.userInfo}@${uri.host}";
+        List<String> parts = path.split("://");
+        String scheme = parts[0];
+        String first = "$scheme://${parts[1].split("/").first}";
+        // String first = "${uri.scheme}://${uri.userInfo}@${uri.host}";
         List<String> items = path.replaceAll(first, "").split("/");
         items[0] = first;
         setState(() {
@@ -331,6 +335,15 @@ class FilesState extends State<Files> {
     if (res['success']) {
       setState(() {
         sftpFolders = res['data']['folders'];
+      });
+    }
+  }
+
+  getDavFolder() async {
+    var res = await Api.remoteLink("davs");
+    if (res['success']) {
+      setState(() {
+        davFolders = res['data']['folders'];
       });
     }
   }
@@ -2072,22 +2085,23 @@ class FilesState extends State<Files> {
                           SizedBox(
                             height: 5,
                           ),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                if (!file['isdir']) TextSpan(text: "${Util.formatSize(file['additional']['size'])}"),
-                                if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
-                                  TextSpan(
-                                    text: (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
-                                  )
-                              ],
-                              style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
+                          if (!file['isdir'] && file['additional'] != null || (file['additional']['time'] != null && file['additional']['time']['mtime'] != null))
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  if (!file['isdir']) TextSpan(text: "${Util.formatSize(file['additional']['size'])}"),
+                                  if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
+                                    TextSpan(
+                                      text: (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
+                                    )
+                                ],
+                                style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
+                              ),
                             ),
-                          ),
                           if (remote)
                             Text(
                               file['path'],
-                              style: TextStyle(fontSize: 12, color: file['additional']['mount_point_type'] == "remotefail" ? AppTheme.of(context).placeholderColor : null),
+                              style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
                             ),
                         ],
                       ),
@@ -2395,6 +2409,7 @@ class FilesState extends State<Files> {
                                             getFtpFolder();
                                             getSftpFolder();
                                             getSmbFolder();
+                                            getDavFolder();
                                           },
                                           child: Icon(
                                             Icons.refresh,
@@ -2416,14 +2431,8 @@ class FilesState extends State<Files> {
                                   child: SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        if ((smbFolders + ftpFolders + sftpFolders).length > 0) ...[
-                                          ...smbFolders.map((folder) {
-                                            return _buildFileItem(folder, remote: true);
-                                          }).toList(),
-                                          ...ftpFolders.map((folder) {
-                                            return _buildFileItem(folder, remote: true);
-                                          }).toList(),
-                                          ...sftpFolders.map((folder) {
+                                        if ((smbFolders + ftpFolders + sftpFolders + davFolders).length > 0) ...[
+                                          ...(smbFolders + ftpFolders + sftpFolders + davFolders).map((folder) {
                                             return _buildFileItem(folder, remote: true);
                                           }).toList(),
                                         ] else
