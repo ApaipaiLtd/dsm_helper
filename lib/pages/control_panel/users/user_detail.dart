@@ -737,17 +737,18 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                 borderRadius: BorderRadius.circular(20),
               ),
               onPressed: () async {
-                if (password != confirmPassword) {
-                  Util.toast("密码输入不一致");
-                  return;
-                }
-                if (password != '' && password.length < 6) {
-                  Util.toast("密码最低6位");
-                  return;
-                }
-                if (password != '') {
+                if (password.isNotBlank || confirmPassword.isNotBlank) {
+                  if (password != confirmPassword) {
+                    Util.toast("密码输入不一致");
+                    return;
+                  }
+                  if (password != '' && password.length < 6) {
+                    Util.toast("密码最低6位");
+                    return;
+                  }
                   user['password'] = password;
                 }
+
                 //对比当前groups与原始groups
                 List newGroups = groups.where((group) => group['is_member']).map((e) => e['name']).toList();
                 List addGroup = newGroups.where((group) => !originGroups.contains(group)).toList();
