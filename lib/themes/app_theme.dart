@@ -8,10 +8,12 @@ class AppTheme extends ThemeExtension<AppTheme> {
   final Color primaryColor;
   final Color placeholderColor;
   final Color titleColor;
+  final Color progressColor;
   AppTheme({
     this.primaryColor,
     this.placeholderColor,
     this.titleColor,
+    this.progressColor,
   });
 
   @override
@@ -29,6 +31,6 @@ class AppTheme extends ThemeExtension<AppTheme> {
 
   @override
   AppTheme lerp(ThemeExtension<AppTheme> other, double t) {
-    throw UnimplementedError();
+    return this;
   }
 }

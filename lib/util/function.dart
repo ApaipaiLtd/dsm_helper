@@ -437,7 +437,7 @@ class Util {
     // headers['Connection'] = "keep-alive";
     // headers['User-Agent'] = "DS get 1.12.4 rv:168 (Dalvik/2.1.0 (Linux; U; Android 11; MI 9 Build/RKQ1.200826.002))";
     //Proxy-Connection: keep-alive
-    print(headers);
+    // print(headers);
     Dio dio = new Dio(
       new BaseOptions(
         baseUrl: (host ?? baseUrl) + "/webapi/",

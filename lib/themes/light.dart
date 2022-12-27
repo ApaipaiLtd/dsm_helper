@@ -8,12 +8,13 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       titleColor: Color(0xff121212),
       placeholderColor: Color(0xffa9a9a9),
       primaryColor: Color(0xff333333),
+      progressColor: Color(0xfff4f4f4),
     ),
   ],
   textTheme: TextTheme(
     bodyText1: TextStyle(
       fontSize: 12.0,
-      color: Colors.white,
+      color: Color(0xff121212),
     ),
     bodyText2: TextStyle(
       fontSize: 15.0,
@@ -38,9 +39,9 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     centerTitle: true,
     elevation: 0,
     color: Color(0xFFF4F4F4),
-    iconTheme: IconThemeData(color: Colors.black),
-    actionsIconTheme: IconThemeData(color: Colors.black),
-    titleTextStyle: TextStyle(fontSize: 20.0, color: Colors.black),
+    iconTheme: IconThemeData(color: Color(0xff121212)),
+    actionsIconTheme: IconThemeData(color: Color(0xff121212)),
+    titleTextStyle: TextStyle(fontSize: 20.0, color: Color(0xff121212)),
     systemOverlayStyle: SystemUiOverlayStyle.dark,
   ),
   backgroundColor: Color(0xFFF4F4F4),

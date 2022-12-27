@@ -9,6 +9,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
       titleColor: Color(0xffa6a6a6),
       placeholderColor: Color(0xffa6a6a6),
       primaryColor: Color(0xff121212),
+      progressColor: Color(0xffd3d3d3),
     ),
   ],
   backgroundColor: Color(0xff121212),

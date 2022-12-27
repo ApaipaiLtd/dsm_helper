@@ -144,13 +144,13 @@ class _UploadState extends State<Upload> {
                   Text(
                     "${upload.name}",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
                   if (upload.subPath.isNotBlank)
                     Text(
                       upload.subPath,
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
                     ),
                   SizedBox(
                     height: 5,
@@ -311,18 +311,21 @@ class _UploadState extends State<Upload> {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "上传位置",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  Text(
-                    savePath == "" ? "请选择上传位置" : savePath,
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ],
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "上传位置",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      savePath == "" ? "请选择上传位置" : savePath,
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -543,7 +546,7 @@ class _UploadState extends State<Upload> {
                         setState(() {
                           upload.status = UploadStatus.running;
                         });
-                        print("上传路径：$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}");
+                        // print("上传路径：$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}");
                         var res = await Api.upload("$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}", upload.path, upload.cancelToken, (progress, total) {
                           setState(() {
                             upload.uploadSize = progress;
