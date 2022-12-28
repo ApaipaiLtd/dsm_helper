@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/models/file/file_model.dart';
+import 'package:dsm_helper/pages/common/audio_player.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/common/pdf_viewer.dart';
 import 'package:dsm_helper/pages/common/text_editor.dart';
@@ -1345,6 +1346,15 @@ class FilesState extends State<Files> {
               }));
             }
 
+            break;
+          case FileTypeEnum.music:
+            String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open";
+            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+              return AudioPlayer(
+                url: url,
+                name: file['name'],
+              );
+            }));
             break;
           // case FileType.music:
           //   AndroidIntent intent = AndroidIntent(
