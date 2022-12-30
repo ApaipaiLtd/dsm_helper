@@ -4,6 +4,7 @@ import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
+import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
@@ -188,6 +189,7 @@ void main() async {
         ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
         ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
         ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
+        ChangeNotifierProvider.value(value: AudioPlayerProvider()),
       ],
       child: MyApp(authPage),
     ),

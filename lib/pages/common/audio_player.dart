@@ -1,10 +1,13 @@
 import 'dart:math';
 
+import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart' as ja;
-import 'package:rxdart/rxdart.dart';
+import 'package:neumorphic/neumorphic.dart';
+import 'package:provider/provider.dart';
 
 class AudioPlayer extends StatefulWidget {
   AudioPlayer({this.name, this.url, Key key}) : super(key: key);
@@ -16,25 +19,40 @@ class AudioPlayer extends StatefulWidget {
 
 class _AudioPlayerState extends State<AudioPlayer> {
   ja.AudioPlayer player = ja.AudioPlayer();
-  Duration duration;
+  String title = "";
   @override
   void initState() {
-    setSource();
+    var audioPlayerProvider = context.read<AudioPlayerProvider>();
+    player = audioPlayerProvider.player;
+    if (widget.url != null) {
+      title = widget.name ?? "";
+      if (audioPlayerProvider.url != widget.url) {
+        audioPlayerProvider.setUrl(widget.url, title);
+        setSource();
+      }
+    } else {
+      title = audioPlayerProvider.name;
+    }
+    setState(() {});
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   setSource() async {
-    duration = await player.setUrl(widget.url);
+    await player.setUrl(widget.url);
     await player.play();
   }
 
-  Stream<PositionData> get _positionDataStream => Rx.combineLatest3<Duration, Duration, Duration, PositionData>(player.positionStream, player.bufferedPositionStream, player.durationStream, (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: AppBackButton(context),
-        title: Text(widget.name),
+        title: Text(title),
       ),
       body: SafeArea(
         child: Column(
@@ -47,27 +65,26 @@ class _AudioPlayerState extends State<AudioPlayer> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
-                      child: Image.asset(
-                    "assets/music.png",
-                    width: 300,
-                  )),
+                    child: Image.asset(
+                      "assets/music_cover.png",
+                      width: 300,
+                    ),
+                  ),
                 ),
-                Text(widget.name),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(title),
               ],
             ),
+            SizedBox(
+              height: 20,
+            ),
             ControlButtons(player),
-            StreamBuilder<PositionData>(
-              stream: _positionDataStream,
-              builder: (context, snapshot) {
-                final positionData = snapshot.data;
-                return SeekBar(
-                  duration: positionData?.duration ?? Duration.zero,
-                  position: positionData?.position ?? Duration.zero,
-                  bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
-                  onChangeEnd: (newPosition) {
-                    player.seek(newPosition);
-                  },
-                );
+            SeekBar(
+              player: player,
+              onChangeEnd: (newPosition) {
+                player.seek(newPosition);
               },
             ),
           ],
@@ -132,8 +149,13 @@ class ControlButtons extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          icon: const Icon(Icons.volume_up),
+        NeuButton(
+          child: const Icon(Icons.volume_up),
+          decoration: NeumorphicDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          bevel: 10,
           onPressed: () {
             showSliderDialog(
               context: context,
@@ -147,12 +169,15 @@ class ControlButtons extends StatelessWidget {
             );
           },
         ),
-        StreamBuilder<ja.SequenceState>(
-          stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon: const Icon(Icons.skip_previous),
-            onPressed: player.hasPrevious ? player.seekToPrevious : null,
-          ),
+        // StreamBuilder<ja.SequenceState>(
+        //   stream: player.sequenceStateStream,
+        //   builder: (context, snapshot) => IconButton(
+        //     icon: const Icon(Icons.skip_previous),
+        //     onPressed: player.hasPrevious ? player.seekToPrevious : null,
+        //   ),
+        // ),
+        SizedBox(
+          width: 30,
         ),
         StreamBuilder<ja.PlayerState>(
           stream: player.playerStateStream,
@@ -161,48 +186,82 @@ class ControlButtons extends StatelessWidget {
             final processingState = playerState?.processingState;
             final playing = playerState?.playing;
             if (processingState == ja.ProcessingState.loading || processingState == ja.ProcessingState.buffering) {
-              return Container(
-                margin: const EdgeInsets.all(8.0),
-                width: 64.0,
-                height: 64.0,
-                child: const CircularProgressIndicator(),
+              return NeuButton(
+                child: const CupertinoActivityIndicator(
+                  radius: 32,
+                ),
+                decoration: NeumorphicDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                bevel: 10,
+                onPressed: player.play,
               );
             } else if (playing != true) {
-              return IconButton(
-                icon: const Icon(Icons.play_arrow),
-                iconSize: 64.0,
+              return NeuButton(
+                child: const Icon(
+                  Icons.play_arrow,
+                  size: 64,
+                ),
+                decoration: NeumorphicDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                bevel: 10,
                 onPressed: player.play,
               );
             } else if (processingState != ja.ProcessingState.completed) {
-              return IconButton(
-                icon: const Icon(Icons.pause),
-                iconSize: 64.0,
+              return NeuButton(
+                child: const Icon(
+                  Icons.pause,
+                  size: 64,
+                ),
+                decoration: NeumorphicDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                bevel: 10,
                 onPressed: player.pause,
               );
             } else {
-              return IconButton(
-                icon: const Icon(Icons.play_arrow),
-                iconSize: 64.0,
+              return NeuButton(
+                child: const Icon(
+                  Icons.play_arrow,
+                  size: 64,
+                ),
+                decoration: NeumorphicDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                bevel: 10,
                 onPressed: () => player.seek(Duration.zero, index: player.effectiveIndices.first),
               );
             }
           },
         ),
-        StreamBuilder<ja.SequenceState>(
-          stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon: const Icon(Icons.skip_next),
-            onPressed: player.hasNext ? player.seekToNext : null,
-          ),
+        // StreamBuilder<ja.SequenceState>(
+        //   stream: player.sequenceStateStream,
+        //   builder: (context, snapshot) => IconButton(
+        //     icon: const Icon(Icons.skip_next),
+        //     onPressed: player.hasNext ? player.seekToNext : null,
+        //   ),
+        // ),
+        SizedBox(
+          width: 30,
         ),
         StreamBuilder<double>(
           stream: player.speedStream,
-          builder: (context, snapshot) => IconButton(
-            icon: Text("${snapshot.data?.toStringAsFixed(1)}x", style: const TextStyle(fontWeight: FontWeight.bold)),
+          builder: (context, snapshot) => NeuButton(
+            child: Text("${snapshot.data?.toStringAsFixed(1)}x", style: const TextStyle(fontWeight: FontWeight.bold)),
+            decoration: NeumorphicDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            bevel: 10,
             onPressed: () {
               showSliderDialog(
                 context: context,
-                title: "Adjust speed",
+                title: "速度",
                 divisions: 10,
                 min: 0.5,
                 max: 1.5,
@@ -219,17 +278,13 @@ class ControlButtons extends StatelessWidget {
 }
 
 class SeekBar extends StatefulWidget {
-  final Duration duration;
-  final Duration position;
-  final Duration bufferedPosition;
+  final ja.AudioPlayer player;
   final ValueChanged<Duration> onChanged;
   final ValueChanged<Duration> onChangeEnd;
 
   const SeekBar({
     Key key,
-    @required this.duration,
-    @required this.position,
-    @required this.bufferedPosition,
+    @required this.player,
     this.onChanged,
     this.onChangeEnd,
   }) : super(key: key);
@@ -283,57 +338,68 @@ class SeekBarState extends State<SeekBar> {
             inactiveTrackColor: Colors.grey.shade300,
           ),
           child: ExcludeSemantics(
-            child: Slider(
-              min: 0.0,
-              max: widget.duration.inMilliseconds.toDouble(),
-              value: min(widget.bufferedPosition.inMilliseconds.toDouble(), widget.duration.inMilliseconds.toDouble()),
-              onChanged: (value) {
-                setState(() {
-                  _dragValue = value;
-                });
-                widget.onChanged?.call(Duration(milliseconds: value.round()));
-              },
-              onChangeEnd: (value) {
-                widget.onChangeEnd?.call(Duration(milliseconds: value.round()));
-                _dragValue = null;
+            child: StreamBuilder(
+              stream: widget.player.bufferedPositionStream,
+              builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+                Duration _duration = widget.player.duration ?? Duration.zero;
+                Duration _position = snapshot.data ?? Duration.zero;
+                return Slider(
+                  min: 0.0,
+                  max: _duration.inMilliseconds.toDouble(),
+                  value: min(_position.inMilliseconds.toDouble(), _duration.inMilliseconds.toDouble()),
+                  onChanged: (value) {
+                    setState(() {
+                      _dragValue = value;
+                    });
+                    widget.onChanged?.call(Duration(milliseconds: value.round()));
+                  },
+                  onChangeEnd: (value) {
+                    widget.onChangeEnd?.call(Duration(milliseconds: value.round()));
+                    _dragValue = null;
+                  },
+                );
               },
             ),
           ),
         ),
-        SliderTheme(
-          data: _sliderThemeData.copyWith(
-            inactiveTrackColor: Colors.transparent,
-          ),
-          child: Slider(
-            min: 0.0,
-            max: widget.duration.inMilliseconds.toDouble(),
-            value: min(_dragValue ?? widget.position.inMilliseconds.toDouble(), widget.duration.inMilliseconds.toDouble()),
-            onChanged: (value) {
-              setState(() {
-                _dragValue = value;
-              });
-              widget.onChanged?.call(Duration(milliseconds: value.round()));
-            },
-            onChangeEnd: (value) {
-              widget.onChangeEnd?.call(Duration(milliseconds: value.round()));
-              _dragValue = null;
-            },
-          ),
-        ),
-        Positioned(
-          left: 16.0,
-          bottom: 0.0,
-          child: Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_position")?.group(1) ?? '$_position', style: TextStyle(color: AppTheme.of(context).placeholderColor, fontSize: 12)),
-        ),
-        Positioned(
-          right: 16.0,
-          bottom: 0.0,
-          child: Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ?? '$_remaining', style: TextStyle(color: AppTheme.of(context).placeholderColor, fontSize: 12)),
+        StreamBuilder(
+          stream: widget.player.positionStream,
+          builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+            Duration _duration = widget.player.duration ?? Duration.zero;
+            Duration _position = snapshot.data ?? Duration.zero;
+            Duration _remaining = _duration - _position;
+            return Column(
+              children: [
+                Slider(
+                  min: 0.0,
+                  max: _duration.inMilliseconds.toDouble(),
+                  value: min(_dragValue ?? _position.inMilliseconds.toDouble(), _duration.inMilliseconds.toDouble()),
+                  onChanged: (value) {
+                    setState(() {
+                      _dragValue = value;
+                    });
+                    widget.onChanged?.call(Duration(milliseconds: value.round()));
+                  },
+                  onChangeEnd: (value) {
+                    widget.onChangeEnd?.call(Duration(milliseconds: value.round()));
+                    _dragValue = null;
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_position")?.group(1) ?? '$_position', style: TextStyle(color: AppTheme.of(context).placeholderColor, fontSize: 12)),
+                      Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ?? '$_remaining', style: TextStyle(color: AppTheme.of(context).placeholderColor, fontSize: 12))
+                    ],
+                  ),
+                )
+              ],
+            );
+          },
         ),
       ],
     );
   }
-
-  Duration get _position => widget.position;
-  Duration get _remaining => widget.duration - widget.position;
 }

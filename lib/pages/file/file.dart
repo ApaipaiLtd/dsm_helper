@@ -4,7 +4,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
-import 'package:dsm_helper/models/file/file_model.dart';
+import 'package:just_audio/just_audio.dart' as ja;
 import 'package:dsm_helper/pages/common/audio_player.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/common/pdf_viewer.dart';
@@ -19,16 +19,25 @@ import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/pages/file/share.dart';
 import 'package:dsm_helper/pages/file/share_manager.dart';
 import 'package:dsm_helper/pages/file/upload.dart';
+import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_floating/floating/assist/floating_slide_type.dart';
+import 'package:flutter_floating/floating/floating.dart';
+import 'package:flutter_floating/floating/listener/floating_listener.dart';
+import 'package:flutter_floating/floating/manager/floating_manager.dart';
+import 'package:flutter_floating/floating_increment.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 enum ListType { list, icon }
@@ -64,6 +73,7 @@ class FilesState extends State<Files> {
   Timer timer;
   ListType listType = ListType.list;
   Map scrollPosition = {};
+  Floating audioPlayerFloating;
   @override
   void initState() {
     getShareList();
@@ -71,6 +81,7 @@ class FilesState extends State<Files> {
     getFtpFolder();
     getSftpFolder();
     getDavFolder();
+
     _fileScrollController.addListener(() {
       String path = "";
       if (paths.length > 0) {
@@ -81,6 +92,79 @@ class FilesState extends State<Files> {
       scrollPosition[path] = _fileScrollController.offset;
     });
     super.initState();
+  }
+
+  initFloating() {
+    if (audioPlayerFloating == null) {
+      var audioPlayerProvider = context.read<AudioPlayerProvider>();
+      ja.AudioPlayer player = audioPlayerProvider.player;
+
+      audioPlayerFloating = floatingManager.createFloating(
+        "audio_player_floating",
+        Floating(
+          SizedBox(
+            width: 50,
+            height: 50,
+            child: Stack(
+              children: [
+                NeuCard(
+                  decoration: NeumorphicDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                  bevel: 10,
+                  width: 50,
+                  height: 50,
+                  child: ExtendedImage.asset("assets/music_cover.png"),
+                ),
+                StreamBuilder(
+                  stream: player.positionStream,
+                  builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+                    Duration _duration = player.duration ?? Duration.zero;
+                    Duration _position = snapshot.data ?? Duration(seconds: 1);
+                    return CircularPercentIndicator(
+                      radius: 25,
+                      animation: true,
+                      progressColor: Colors.blue,
+                      animateFromLastPercent: true,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      lineWidth: 3,
+                      backgroundColor: Colors.black12,
+                      percent: _position.inMilliseconds.toDouble() / _duration.inMilliseconds.toDouble(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          slideType: FloatingSlideType.onRightAndBottom,
+          bottom: 200,
+          right: 0,
+          isShowLog: true,
+          slideBottomHeight: 100,
+        ),
+      );
+      FloatingListener listener = FloatingListener()
+        ..downListener = (x, y) {
+          if (audioPlayerFloating.isShowing) {
+            audioPlayerFloating.close();
+          }
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+            return AudioPlayer();
+          })).then((_) {
+            AudioPlayerProvider audioPlayerProvider = context.read<AudioPlayerProvider>();
+            if (audioPlayerProvider.player.playing && audioPlayerProvider.player.playerState.processingState != ja.ProcessingState.completed) {
+              audioPlayerFloating.open(context);
+            }
+          });
+        };
+      audioPlayerFloating.addFloatingListener(listener);
+      audioPlayerProvider.player.playerStateStream.forEach((ja.PlayerState playerState) {
+        if (playerState.playing == false || playerState.processingState == ja.ProcessingState.completed) {
+          audioPlayerFloating.close();
+        }
+      });
+    }
   }
 
   Future<List> getVolumes() async {
@@ -1348,13 +1432,22 @@ class FilesState extends State<Files> {
 
             break;
           case FileTypeEnum.music:
+            initFloating();
+            if (audioPlayerFloating.isShowing) {
+              audioPlayerFloating.close();
+            }
             String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open";
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return AudioPlayer(
                 url: url,
                 name: file['name'],
               );
-            }));
+            })).then((_) {
+              AudioPlayerProvider audioPlayerProvider = context.read<AudioPlayerProvider>();
+              if (audioPlayerProvider.player.playing && audioPlayerProvider.player.playerState.processingState != ja.ProcessingState.completed) {
+                audioPlayerFloating.open(context);
+              }
+            });
             break;
           // case FileType.music:
           //   AndroidIntent intent = AndroidIntent(
