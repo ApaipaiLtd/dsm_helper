@@ -2262,6 +2262,8 @@ class Api {
         "method": "get",
         "version": min(apiList['SYNO.Core.Network'].minVersion ?? 1, 2),
       },
+      {"api": "SYNO.Core.Network.Ethernet", "method": "list", "version": 2},
+      {"api": "SYNO.Core.Network.PPPoE", "method": "list", "version": 1},
       {"api": "SYNO.Core.Network.Proxy", "method": "get", "version": 1},
       {"api": "SYNO.Core.Network.Router.Gateway.List", "method": "get", "version": 1, "iptype": "ipv4", "type": "wan"},
       {"api": "SYNO.Core.Web.DSM", "method": "get", "version": 2}

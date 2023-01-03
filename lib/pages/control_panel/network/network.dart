@@ -1,5 +1,7 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/expansion_container.dart';
+import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,8 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
   Map proxy = {};
   Map gateway = {};
   Map dsm = {};
+  List ethernets = [];
+  List pppoes = [];
   bool loading = true;
   @override
   void initState() {
@@ -49,6 +53,16 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                   _dnsPrimaryController.value = TextEditingValue(text: network['dns_primary']);
                   _dnsSecondaryController.value = TextEditingValue(text: network['dns_secondary']);
                 }
+              });
+              break;
+            case "SYNO.Core.Network.Ethernet":
+              setState(() {
+                ethernets = item['data'];
+              });
+              break;
+            case "SYNO.Core.Network.PPPoE":
+              setState(() {
+                pppoes = item['data'];
               });
               break;
             case "SYNO.Core.Network.Proxy":
@@ -378,8 +392,206 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                           ),
                         ],
                       ),
-                      Center(
-                        child: Text("开发中"),
+                      ListView(
+                        children: [
+                          ...ethernets.map((ethernet) {
+                            return NeuCard(
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                              bevel: 10,
+                              curveType: CurveType.flat,
+                              // padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: ExpansionContainer(
+                                title: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "局域网${ethernets.indexOf(ethernet) + 1}",
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        if (ethernet['status'] == 'connected') Label("已联机", Colors.blue) else if (ethernet['status'] == 'disconnected') Label("尚未联机", Colors.grey) else Label(ethernet['status'], Colors.orangeAccent),
+                                      ],
+                                    ),
+                                    if (ethernet['status'] == 'connected')
+                                      Row(
+                                        children: [
+                                          Text(ethernet['use_dhcp'] ? 'DHCP' : '静态IP'),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(ethernet['ip']),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                                showFirst: false,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text("子网掩码(mask)："),
+                                            Expanded(
+                                              child: Text(
+                                                ethernet['mask'] == '' ? '--' : ethernet['mask'],
+                                                textAlign: TextAlign.right,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text("IPv6地址："),
+                                              Expanded(
+                                                child: ethernet['ipv6'] != null && ethernet['ipv6'].length > 0
+                                                    ? Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                                        children: (ethernet['ipv6'] as List).map((ipv6) {
+                                                          return Text(ipv6);
+                                                        }).toList(),
+                                                      )
+                                                    : Text(
+                                                        "--",
+                                                        textAlign: TextAlign.right,
+                                                      ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text("网络状态："),
+                                            Expanded(
+                                              child: Text(
+                                                "${ethernet['max_supported_speed']} Mb/s,${ethernet['duplex'] ? '全双工' : '半双工'}, MTU ${ethernet['mtu']}",
+                                                textAlign: TextAlign.right,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          ...pppoes.map((pppoe) {
+                            return NeuCard(
+                              decoration: NeumorphicDecoration(
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                              bevel: 10,
+                              curveType: CurveType.flat,
+                              // padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: ExpansionContainer(
+                                title: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "PPPoE",
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        if (pppoe['status'] == 'connected') Label("已联机", Colors.blue) else if (pppoe['status'] == 'disconnected') Label("尚未联机", Colors.grey) else Label(pppoe['status'], Colors.orangeAccent),
+                                      ],
+                                    ),
+                                    if (pppoe['status'] == 'connected')
+                                      Row(
+                                        children: [
+                                          Text(pppoe['use_dhcp'] ? 'DHCP' : '静态IP'),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(pppoe['ip']),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                                showFirst: false,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text("子网掩码(mask)："),
+                                            Expanded(
+                                              child: Text(
+                                                pppoe['mask'] == '' ? '--' : pppoe['mask'],
+                                                textAlign: TextAlign.right,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text("IPv6地址："),
+                                              Expanded(
+                                                child: pppoe['ipv6'] != null && pppoe['ipv6'].length > 0
+                                                    ? Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                                        children: (pppoe['ipv6'] as List).map((ipv6) {
+                                                          return Text(ipv6);
+                                                        }).toList(),
+                                                      )
+                                                    : Text(
+                                                        "--",
+                                                        textAlign: TextAlign.right,
+                                                      ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        if (pppoe['status'] == 'connected')
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: Row(
+                                              children: [
+                                                Text("网络状态："),
+                                                Expanded(
+                                                  child: Text(
+                                                    "${pppoe['max_supported_speed']} Mb/s,${pppoe['duplex'] ? '全双工' : '半双工'}, MTU ${pppoe['mtu']}",
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ],
                       ),
                       Center(
                         child: Text("开发中"),
