@@ -87,7 +87,7 @@
 	<key>NSMotionUsageDescription</key>
 	<string>获取运动数据</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>需要访问您的相册以选择照片</string>
+	<string>照片上传、相册备份功能需要访问您的相册</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>保存提醒至备忘录</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
