@@ -241,7 +241,7 @@ class Api {
       "offset": 0,
       "folder_path": path,
       "filetype": '"all"',
-      "limit": 1000,
+      "limit": 5000,
       "sort_by": '"$sortBy"',
       "sort_direction": '"$sortDirection"',
       "additional": '["perm", "time", "size","mount_point_type","real_path"]',

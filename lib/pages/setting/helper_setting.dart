@@ -33,6 +33,7 @@ class _HelperSettingState extends State<HelperSetting> {
   bool biometrics = false;
   bool canCheckBiometrics = false;
   bool videoPlayer = false;
+  bool launchAccountPage = false;
   BiometricType biometricsType = BiometricType.fingerprint;
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _HelperSettingState extends State<HelperSetting> {
     String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
     String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
     String videoPlayerStr = await Util.getStorage("video_player");
+    String launchAccountPageStr = await Util.getStorage('launch_account_page');
     if (videoPlayerStr != null) {
       videoPlayer = videoPlayerStr == '1';
     }
@@ -62,6 +64,11 @@ class _HelperSettingState extends State<HelperSetting> {
       biometrics = launchAuthBiometricsStr == "1";
     } else {
       biometrics = false;
+    }
+    if (launchAccountPageStr != null) {
+      launchAccountPage = launchAccountPageStr == "1";
+    } else {
+      launchAccountPage = false;
     }
     canCheckBiometrics = await auth.canCheckBiometrics;
     setState(() {});
@@ -318,6 +325,48 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             );
           }),
+          SizedBox(
+            height: 20,
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                launchAccountPage = !launchAccountPage;
+                Util.setStorage("launch_account_page", launchAccountPage ? "1" : "0");
+              });
+            },
+            child: NeuCard(
+              // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.all(20),
+              decoration: NeumorphicDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              curveType: launchAccountPage ? CurveType.emboss : CurveType.flat,
+              bevel: 20,
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/icons/change.png",
+                    width: 25,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    "启动时默认进入选择账号页面",
+                    style: TextStyle(fontSize: 16, height: 1.6),
+                  ),
+                  Spacer(),
+                  if (launchAccountPage)
+                    Icon(
+                      CupertinoIcons.checkmark_alt,
+                      color: Color(0xffff9813),
+                    ),
+                ],
+              ),
+            ),
+          ),
           SizedBox(
             height: 20,
           ),

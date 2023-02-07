@@ -12,7 +12,8 @@ import 'package:vibrate/vibrate.dart';
 
 class AuthPage extends StatefulWidget {
   final bool launch;
-  AuthPage({this.launch: true});
+  final bool launchAccountPage;
+  AuthPage({this.launch = true, this.launchAccountPage = false});
   @override
   _AuthPageState createState() => _AuthPageState();
 }
@@ -143,9 +144,12 @@ class _AuthPageState extends State<AuthPage> {
                   successCallback: (s) {
                     if (s == password) {
                       //密码验证通过
-                      print(widget.launch);
                       if (widget.launch) {
-                        Navigator.of(context).pushReplacementNamed("/login");
+                        if (widget.launchAccountPage) {
+                          Navigator.of(context).pushReplacementNamed("/accounts");
+                        } else {
+                          Navigator.of(context).pushReplacementNamed("/login");
+                        }
                       } else {
                         Navigator.of(context).pop();
                       }

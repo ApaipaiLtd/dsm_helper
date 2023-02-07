@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/home.dart';
+import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/providers/audio_player_provider.dart';
@@ -114,10 +115,11 @@ void main() async {
   bool showShortcuts = true;
   bool showWallpaper = true;
   int refreshDuration = 10;
+  bool launchAccountPage = false;
   String launchAuthStr = await Util.getStorage("launch_auth");
   String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
   String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
-
+  String launchAccountPageStr = await Util.getStorage('launch_account_page');
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   Util.appName = packageInfo.appName;
   if (launchAuthStr != null) {
@@ -134,6 +136,12 @@ void main() async {
     biometrics = launchAuthBiometricsStr == "1";
   } else {
     biometrics = false;
+  }
+
+  if (launchAccountPageStr != null) {
+    launchAccountPage = launchAccountPageStr == "1";
+  } else {
+    launchAccountPage = false;
   }
 
   bool authPage = launchAuth && (password || biometrics);
@@ -191,7 +199,7 @@ void main() async {
         ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
         ChangeNotifierProvider.value(value: AudioPlayerProvider()),
       ],
-      child: MyApp(authPage),
+      child: MyApp(authPage, launchAccountPage),
     ),
   );
 
@@ -205,7 +213,8 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   final bool authPage;
-  MyApp(this.authPage);
+  final bool launchAccountPage;
+  MyApp(this.authPage, this.launchAccountPage);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -229,45 +238,32 @@ class _MyAppState extends State<MyApp> {
                 loadingText: "请稍后",
                 loadingBackButtonClose: true,
               ),
-              child: darkModeProvider.darkMode == 2
-                  ? MaterialApp(
-                      title: '${Util.appName}',
-                      debugShowCheckedModeBanner: false,
-                      theme: lightTheme,
-                      darkTheme: darkTheme,
-                      localizationsDelegates: [
-                        GlobalCupertinoLocalizations.delegate,
-                        GlobalMaterialLocalizations.delegate,
-                        GlobalWidgetsLocalizations.delegate,
-                      ],
-                      supportedLocales: [
-                        const Locale('zh', 'CN'),
-                      ],
-                      home: widget.authPage ? AuthPage() : Login(),
-                      routes: {
-                        "/login": (BuildContext context) => Login(),
-                        "/home": (BuildContext context) => Home(),
-                      },
-                    )
-                  : MaterialApp(
-                      title: '${Util.appName}',
-                      debugShowCheckedModeBanner: false,
-                      theme: darkModeProvider.darkMode == 0 ? lightTheme : darkTheme,
-                      localizationsDelegates: [
-                        GlobalCupertinoLocalizations.delegate,
-                        GlobalMaterialLocalizations.delegate,
-                        GlobalWidgetsLocalizations.delegate,
-                      ],
-                      supportedLocales: [
-                        const Locale('zh', 'CN'),
-                      ],
-                      home: widget.authPage ? AuthPage() : Login(),
-                      // onGenerateRoute: ,
-                      routes: {
-                        "/login": (BuildContext context) => Login(),
-                        "/home": (BuildContext context) => Home(),
-                      },
-                    ),
+              child: MaterialApp(
+                title: '${Util.appName}',
+                debugShowCheckedModeBanner: false,
+                theme: darkModeProvider.darkMode == 2 ? lightTheme : (darkModeProvider.darkMode == 0 ? lightTheme : darkTheme),
+                darkTheme: darkModeProvider.darkMode == 2 ? darkTheme : null,
+                localizationsDelegates: [
+                  GlobalCupertinoLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  const Locale('zh', 'CN'),
+                ],
+                home: widget.authPage
+                    ? AuthPage(
+                        launchAccountPage: widget.launchAccountPage,
+                      )
+                    : widget.launchAccountPage
+                        ? Accounts()
+                        : Login(),
+                routes: {
+                  "/login": (BuildContext context) => Login(),
+                  "/home": (BuildContext context) => Home(),
+                  "/accounts": (BuildContext context) => Accounts(),
+                },
+              ),
             ),
           ),
         );
