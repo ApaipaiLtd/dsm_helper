@@ -1203,10 +1203,13 @@ class Api {
   static Future<Map> processGroup() async {
     var data = {
       "api": "SYNO.Core.System.ProcessGroup",
-      "method": "service_info",
+      "method": Util.version == 7 ? 'list' : "service_info",
       "version": 1,
       "_sid": Util.sid,
     };
+    if (Util.version == 7) {
+      data['node'] = 'xnode-2572';
+    }
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -1579,12 +1582,12 @@ class Api {
 
   static Future<Map> externalDevice() async {
     List apis = [
-      // {
-      //   "api": "SYNO.Core.ExternalDevice.Storage.USB",
-      //   "method": "list",
-      //   "version": 1,
-      //   "additional": ["all"]
-      // },
+      {
+        "api": "SYNO.Core.ExternalDevice.Storage.USB",
+        "method": "list",
+        "version": 1,
+        "additional": ["all"]
+      },
       {
         "api": "SYNO.Core.ExternalDevice.Storage.eSATA",
         "method": "list",

@@ -584,11 +584,11 @@ class Util {
     return taskId;
   }
 
-  static String formatSize(num size, {int format = 1024, int fixed = 2}) {
+  static String formatSize(num size, {int format = 1024, int fixed = 2, bool showByte = false}) {
     if (size == 0) {
-      return "0";
+      return "0${showByte ? 'Bytes' : ''}";
     } else if (size < format) {
-      return "$size";
+      return "$size${showByte ? 'Bytes' : ''}";
     } else if (size < pow(format, 2)) {
       return "${(size / format).toStringAsFixed(fixed)}K";
     } else if (size < pow(format, 3)) {

@@ -56,6 +56,7 @@ class DashboardState extends State<Dashboard> {
   List<ShortcutItemModel> shortcutItems = [];
   WallpaperModel wallpaperModel;
   List esatas = [];
+  List usbs = [];
   Map appNotify;
   Map system;
   Map restoreSizePos;
@@ -256,6 +257,12 @@ class DashboardState extends State<Dashboard> {
               setState(() {
                 esatas = item['data']['devices'];
               });
+              break;
+            case "SYNO.Core.ExternalDevice.Storage.USB":
+              setState(() {
+                usbs = item['data']['devices'];
+              });
+              break;
           }
         }
       });
@@ -1754,7 +1761,7 @@ class DashboardState extends State<Dashboard> {
                   ),
                 ),
               ),
-            if (esatas.length > 0)
+            if ((esatas + usbs).length > 0)
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
                 child: NeuButton(
@@ -1787,7 +1794,7 @@ class DashboardState extends State<Dashboard> {
                                   SizedBox(
                                     height: 12,
                                   ),
-                                  ...esatas.map(_buildESataItem).toList(),
+                                  ...(esatas + usbs).map(_buildESataItem).toList(),
                                   Row(
                                     children: [
                                       Expanded(

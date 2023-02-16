@@ -16,6 +16,7 @@ class ExternalDevice extends StatefulWidget {
 class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProviderStateMixin {
   TabController _tabController;
   List esatas = [];
+  List usbs = [];
   bool loading = true;
   @override
   void initState() {
@@ -38,6 +39,12 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
               setState(() {
                 esatas = item['data']['devices'];
               });
+              break;
+            case "SYNO.Core.ExternalDevice.Storage.USB":
+              setState(() {
+                usbs = item['data']['devices'];
+              });
+              break;
           }
         }
       });
@@ -302,18 +309,18 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                           ),
                         ),
                       )
-                    : esatas.length > 0
+                    : (esatas + usbs).length > 0
                         ? ListView.separated(
                             padding: EdgeInsets.all(20),
                             itemBuilder: (context, i) {
-                              return _buildESataItem(esatas[i]);
+                              return _buildESataItem((esatas + usbs)[i]);
                             },
                             separatorBuilder: (context, i) {
                               return SizedBox(
                                 height: 20,
                               );
                             },
-                            itemCount: esatas.length)
+                            itemCount: (esatas + usbs).length)
                         : Center(
                             child: Text(
                               "暂无外接设备",

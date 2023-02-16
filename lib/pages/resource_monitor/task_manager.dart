@@ -18,6 +18,7 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
   TabController _tabController;
   List processes = [];
   List services = [];
+  List slices = [];
   Timer timer;
   bool loading = true;
   @override
@@ -36,8 +37,14 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
     if (process['success']) {
       setState(() {
         loading = false;
-        processes = process['data']['process'];
-        services = group['data']['services'];
+        try {
+          processes = process['data']['process'];
+          if (Util.version == 7) {
+            slices = group['data']['slices'];
+          } else {
+            services = group['data']['services'];
+          }
+        } catch (e) {}
       });
     }
   }
@@ -85,6 +92,54 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
           // SizedBox(
           //   height: 10,
           // ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSliceItem(slice) {
+    var cpuTime;
+    if (slice['cpu_time'] is num) {
+      cpuTime = Util.timeLong(slice['cpu_time'].toInt());
+    }
+    return NeuCard(
+      decoration: NeumorphicDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      margin: EdgeInsets.all(10),
+      padding: EdgeInsets.all(20),
+      curveType: CurveType.flat,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "${slice['name'] != '' ? slice['name'] : slice['name_i18n'] != '' ? slice['name_i18n'] : slice['unit_name']}",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              Text("内存：${slice['memory'] is num ? Util.formatSize(slice['memory'], fixed: 1) : slice['memory']}")
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Expanded(child: Text("CPU(%)：${slice['cpu_utilization'] is num ? slice['cpu_utilization'].toStringAsFixed(2) : slice['cpu_utilization']}")),
+              Expanded(child: Text("CPU Time：${slice['cpu_time'] is String ? slice['cpu_time'] : '${cpuTime['hours']}:${cpuTime['minutes']}:${cpuTime['seconds']}'}")),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(child: Text("读取(秒)：${slice['byte_read_per_sec'] is num ? Util.formatSize(slice['byte_read_per_sec'], fixed: 1, showByte: true) : slice['byte_read_per_sec']}")),
+              Expanded(child: Text("写入(秒)：${slice['byte_write_per_sec'] is num ? Util.formatSize(slice['byte_write_per_sec'], fixed: 1, showByte: true) : slice['byte_write_per_sec']}")),
+            ],
+          ),
         ],
       ),
     );
@@ -165,7 +220,9 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
             )
           : Column(
               children: [
-                TabBar(
+                Container(
+                  color: Theme.of(context).backgroundColor,
+                  child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
                     indicatorSize: TabBarIndicatorSize.label,
@@ -184,18 +241,29 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                         child: Text("进程"),
                       ),
-                    ]),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      ListView.builder(
-                        padding: EdgeInsets.all(20),
-                        itemBuilder: (context, i) {
-                          return _buildServiceItem(services[i]);
-                        },
-                        itemCount: services.length,
-                      ),
+                      if (Util.version == 7)
+                        ListView.builder(
+                          padding: EdgeInsets.all(20),
+                          itemBuilder: (context, i) {
+                            return _buildSliceItem(slices[i]);
+                          },
+                          itemCount: slices.length,
+                        )
+                      else
+                        ListView.builder(
+                          padding: EdgeInsets.all(20),
+                          itemBuilder: (context, i) {
+                            return _buildServiceItem(services[i]);
+                          },
+                          itemCount: services.length,
+                        ),
                       ListView.builder(
                         padding: EdgeInsets.all(20),
                         itemBuilder: (context, i) {
