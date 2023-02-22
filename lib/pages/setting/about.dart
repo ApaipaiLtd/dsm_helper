@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:dsm_helper/pages/common/browser.dart';
+import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -18,6 +20,8 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   bool checking = false;
   PackageInfo packageInfo;
+  TapGestureRecognizer _licenseRecognizer = TapGestureRecognizer();
+  TapGestureRecognizer _privacyRecognizer = TapGestureRecognizer();
   @override
   void initState() {
     getInfo();
@@ -96,18 +100,58 @@ class _AboutState extends State<About> {
                   curveType: CurveType.flat,
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Image.asset(
-                          "assets/icons/apaipai.png",
-                          width: 20,
+                        Row(
+                          children: [
+                            Image.asset(
+                              "assets/icons/apaipai.png",
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "青岛阿派派软件有限公司版权所有",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
                         SizedBox(
-                          width: 10,
+                          height: 10,
                         ),
-                        Text(
-                          "青岛阿派派软件有限公司版权所有",
-                          style: TextStyle(fontSize: 16),
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "用户协议",
+                                style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                                recognizer: _licenseRecognizer
+                                  ..onTap = () {
+                                    FocusScope.of(context).unfocus();
+                                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                      return License();
+                                    }));
+                                  },
+                              ),
+                              TextSpan(text: "    "),
+                              TextSpan(
+                                text: "隐私政策",
+                                style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                                recognizer: _privacyRecognizer
+                                  ..onTap = () {
+                                    FocusScope.of(context).unfocus();
+                                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                      return Browser(
+                                        url: '${Util.appUrl}/privacy',
+                                        title: "隐私政策",
+                                      );
+                                    }));
+                                  },
+                              ),
+                            ],
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
                     ),

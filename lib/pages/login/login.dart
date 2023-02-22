@@ -166,7 +166,7 @@ class _LoginState extends State<Login> {
                                       }));
                                     },
                                 ),
-                                TextSpan(text: "和 "),
+                                TextSpan(text: " 和 "),
                                 TextSpan(
                                   text: "隐私政策",
                                   style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
