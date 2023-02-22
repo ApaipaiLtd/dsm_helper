@@ -57,18 +57,15 @@ class _AccountsState extends State<Accounts> {
         //仅首次重新登录
         if (server['loading']) {
           String host = server['base_url'];
-          print(host);
           Api.shareList(sid: server['sid'], checkSsl: server['check_ssl'], cookie: server['smid'], host: host).then((checkLogin) async {
             if (checkLogin['success']) {
               server['is_login'] = true;
-              print("登录有效");
               //获取系统信息
               serverInfo(server);
             } else {
               //登录失败，尝试重新登录
               var res = await Api.login(host: host, account: server['account'], password: server['password'], otpCode: "", rememberDevice: false, cookie: server['smid']);
               if (res['success']) {
-                print("重新登录成功");
                 setState(() {
                   server['is_login'] = true;
                 });
@@ -78,6 +75,7 @@ class _AccountsState extends State<Accounts> {
               } else {
                 setState(() {
                   server['loading'] = false;
+                  server['error'] = '登录失败';
                 });
               }
             }
@@ -125,8 +123,17 @@ class _AccountsState extends State<Accounts> {
           server['read'] = res['data']['disk']['total']['read_byte'];
           server['write'] = res['data']['disk']['total']['write_byte'];
         }
-
         server['loading'] = false;
+      });
+    } else if (res['error']['code'] == 105) {
+      setState(() {
+        server['loading'] = false;
+        server['error'] = "权限不足，无法获取资源监控信息";
+      });
+    } else {
+      setState(() {
+        server['loading'] = false;
+        server['error'] = '获取资源监控信息失败';
       });
     }
   }
@@ -275,175 +282,181 @@ class _AccountsState extends State<Accounts> {
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Column(
-                          children: [
-                            NeuCard(
-                              curveType: CurveType.flat,
-                              margin: EdgeInsets.only(top: 10, right: 10),
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(60),
-                                // color: Colors.red,
-                              ),
-                              padding: EdgeInsets.all(5),
-                              bevel: 8,
-                              child: CircularPercentIndicator(
-                                radius: 30,
-                                // progressColor: Colors.lightBlueAccent,
-                                animation: true,
-                                linearGradient: LinearGradient(
-                                  colors: server['cpu'] <= 90
-                                      ? [
-                                          Colors.blue,
-                                          Colors.blueAccent,
-                                        ]
-                                      : [
-                                          Colors.red,
-                                          Colors.orangeAccent,
-                                        ],
-                                ),
-                                animateFromLastPercent: true,
-                                circularStrokeCap: CircularStrokeCap.round,
-                                lineWidth: 8,
-                                backgroundColor: Colors.black12,
-                                percent: server['cpu'] / 100,
-                                center: server['loading']
-                                    ? CupertinoActivityIndicator()
-                                    : Text(
-                                        "${server['cpu']}%",
-                                        style: TextStyle(color: server['cpu'] <= 90 ? Colors.blue : Colors.red, fontSize: 16),
-                                      ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text("CPU"),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            NeuCard(
-                              curveType: CurveType.flat,
-                              margin: EdgeInsets.only(top: 10, right: 10),
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(60),
-                                // color: Colors.red,
-                              ),
-                              // width: ,
-                              padding: EdgeInsets.all(5),
-                              bevel: 8,
-                              child: CircularPercentIndicator(
-                                radius: 30,
-                                // progressColor: Colors.lightBlueAccent,
-                                animation: true,
-                                linearGradient: LinearGradient(
-                                  colors: server['ram'] <= 90
-                                      ? [
-                                          Colors.blue,
-                                          Colors.blueAccent,
-                                        ]
-                                      : [
-                                          Colors.red,
-                                          Colors.orangeAccent,
-                                        ],
-                                ),
-                                animateFromLastPercent: true,
-                                circularStrokeCap: CircularStrokeCap.round,
-                                lineWidth: 8,
-                                backgroundColor: Colors.black12,
-                                percent: server['ram'] / 100,
-                                center: server['loading']
-                                    ? CupertinoActivityIndicator()
-                                    : Text(
-                                        "${server['ram']}%",
-                                        style: TextStyle(color: server['ram'] <= 90 ? Colors.blue : Colors.red, fontSize: 16),
-                                      ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text("RAM"),
-                          ],
-                        ),
-                        Expanded(
-                          child: Column(
+                    if (server['error'] == null)
+                      Row(
+                        children: [
+                          Column(
                             children: [
-                              SizedBox(
-                                height: 85,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.upload_sharp,
-                                          color: Colors.blue,
-                                          size: 16,
+                              NeuCard(
+                                curveType: CurveType.flat,
+                                margin: EdgeInsets.only(top: 10, right: 10),
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(60),
+                                  // color: Colors.red,
+                                ),
+                                padding: EdgeInsets.all(5),
+                                bevel: 8,
+                                child: CircularPercentIndicator(
+                                  radius: 30,
+                                  // progressColor: Colors.lightBlueAccent,
+                                  animation: true,
+                                  linearGradient: LinearGradient(
+                                    colors: server['cpu'] <= 90
+                                        ? [
+                                            Colors.blue,
+                                            Colors.blueAccent,
+                                          ]
+                                        : [
+                                            Colors.red,
+                                            Colors.orangeAccent,
+                                          ],
+                                  ),
+                                  animateFromLastPercent: true,
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                  lineWidth: 8,
+                                  backgroundColor: Colors.black12,
+                                  percent: server['cpu'] / 100,
+                                  center: server['loading']
+                                      ? CupertinoActivityIndicator()
+                                      : Text(
+                                          "${server['cpu']}%",
+                                          style: TextStyle(color: server['cpu'] <= 90 ? Colors.blue : Colors.red, fontSize: 16),
                                         ),
-                                        Text(
-                                          "${server['loading'] ? "-" : "${Util.formatSize(server['tx'], fixed: 0)}/S"}",
-                                          style: TextStyle(color: Colors.blue, fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.download_sharp,
-                                          color: Colors.green,
-                                          size: 16,
-                                        ),
-                                        Text(
-                                          "${server['loading'] ? "-" : "${Util.formatSize(server['rx'], fixed: 0)}/S"}",
-                                          style: TextStyle(color: Colors.green, fontSize: 12),
-                                        ),
-                                      ],
-                                    )
-                                  ],
                                 ),
                               ),
-                              Text("网络"),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text("CPU"),
                             ],
                           ),
-                        ),
-                        Expanded(
-                          child: Column(
+                          Column(
                             children: [
-                              SizedBox(
-                                height: 85,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "R:${server['loading'] ? "-" : "${Util.formatSize(server['read'], fixed: 0)}/S"}",
-                                      style: TextStyle(color: Colors.blue, fontSize: 12),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "W:${server['loading'] ? "-" : "${Util.formatSize(server['write'], fixed: 0)}/S"}",
-                                      style: TextStyle(color: Colors.green, fontSize: 12),
-                                    )
-                                  ],
+                              NeuCard(
+                                curveType: CurveType.flat,
+                                margin: EdgeInsets.only(top: 10, right: 10),
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(60),
+                                  // color: Colors.red,
+                                ),
+                                // width: ,
+                                padding: EdgeInsets.all(5),
+                                bevel: 8,
+                                child: CircularPercentIndicator(
+                                  radius: 30,
+                                  // progressColor: Colors.lightBlueAccent,
+                                  animation: true,
+                                  linearGradient: LinearGradient(
+                                    colors: server['ram'] <= 90
+                                        ? [
+                                            Colors.blue,
+                                            Colors.blueAccent,
+                                          ]
+                                        : [
+                                            Colors.red,
+                                            Colors.orangeAccent,
+                                          ],
+                                  ),
+                                  animateFromLastPercent: true,
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                  lineWidth: 8,
+                                  backgroundColor: Colors.black12,
+                                  percent: server['ram'] / 100,
+                                  center: server['loading']
+                                      ? CupertinoActivityIndicator()
+                                      : Text(
+                                          "${server['ram']}%",
+                                          style: TextStyle(color: server['ram'] <= 90 ? Colors.blue : Colors.red, fontSize: 16),
+                                        ),
                                 ),
                               ),
-                              Text("磁盘"),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text("RAM"),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 85,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.upload_sharp,
+                                            color: Colors.blue,
+                                            size: 16,
+                                          ),
+                                          Text(
+                                            "${server['loading'] ? "-" : "${Util.formatSize(server['tx'], fixed: 0)}/S"}",
+                                            style: TextStyle(color: Colors.blue, fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.download_sharp,
+                                            color: Colors.green,
+                                            size: 16,
+                                          ),
+                                          Text(
+                                            "${server['loading'] ? "-" : "${Util.formatSize(server['rx'], fixed: 0)}/S"}",
+                                            style: TextStyle(color: Colors.green, fontSize: 12),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Text("网络"),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 85,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "R:${server['loading'] ? "-" : "${Util.formatSize(server['read'], fixed: 0)}/S"}",
+                                        style: TextStyle(color: Colors.blue, fontSize: 12),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "W:${server['loading'] ? "-" : "${Util.formatSize(server['write'], fixed: 0)}/S"}",
+                                        style: TextStyle(color: Colors.green, fontSize: 12),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Text("磁盘"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      Container(
+                        height: 108,
+                        child: Center(child: Text(server['error'])),
+                      ),
                   ],
                 ),
               )

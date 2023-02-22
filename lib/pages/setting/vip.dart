@@ -75,7 +75,7 @@ class _VipState extends State<Vip> {
     super.dispose();
   }
 
-  initData({bool tips: false}) async {
+  initData({bool tips = false}) async {
     String noAdTimeStr = await Util.getStorage("no_ad_time");
     if (noAdTimeStr.isNotBlank) {
       noAdTime = DateTime.parse(noAdTimeStr);
@@ -95,9 +95,7 @@ class _VipState extends State<Vip> {
       var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
         isLogin = true;
-        if (res['data']['is_forever'] == 1) {
-          isForever = true;
-        }
+        isForever = Util.vipForever = true;
         if (res['data']['vip_expire_time'] != null) {
           Util.vipExpireTime = vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
           if (noAdTime == null) {

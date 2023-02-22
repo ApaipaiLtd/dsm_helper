@@ -67,6 +67,7 @@ class Util {
     ],
   );
   static DateTime vipExpireTime = DateTime.now();
+  static bool vipForever = false;
   static String appUrl = "https://dsm.apaipai.top";
   static String sid = "";
   static String account = "";
@@ -289,7 +290,6 @@ class Util {
     headers["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
     headers['origin'] = host ?? baseUrl;
     headers['referer'] = host ?? baseUrl;
-    print(headers);
     Dio dio = new Dio(
       BaseOptions(
         baseUrl: url.startsWith("http") ? "" : ((host ?? baseUrl) + "/webapi/"),
@@ -315,7 +315,7 @@ class Util {
           List cookies = [];
           //从原始cookie中提取did
           String did = "";
-          if (Util.cookie != null) {
+          if (Util.cookie != null && Util.cookie != '') {
             List originCookies = Util.cookie.split("; ");
             for (int i = 0; i < originCookies.length; i++) {
               Cookie cookie = Cookie.fromSetCookieValue(originCookies[i]);
@@ -367,6 +367,8 @@ class Util {
         "error": {"code": code},
         "data": null
       };
+    } catch (e) {
+      print(e);
     }
   }
 

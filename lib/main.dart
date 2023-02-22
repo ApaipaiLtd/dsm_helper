@@ -66,9 +66,7 @@ void main() async {
     if (userToken.isNotBlank) {
       var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
-        if (res['data']['is_forever'] == 1) {
-          isForever = true;
-        }
+        isForever = Util.vipForever = res['data']['is_forever'] == 1;
         if (res['data']['vip_expire_time'] != null) {
           DateTime vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
           Util.vipExpireTime = vipExpireTime;

@@ -15,12 +15,11 @@ import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vibrate/vibrate.dart';
-import 'package:wake_on_lan/wake_on_lan.dart';
 
 class Login extends StatefulWidget {
   final Map server;
   final String type;
-  Login({this.server, this.type: "login"});
+  Login({this.server, this.type = "login"});
   @override
   _LoginState createState() => _LoginState();
 }
@@ -111,6 +110,8 @@ class _LoginState extends State<Login> {
       } else {
         if (widget.type == "login") {
           getInfo();
+        } else {
+          _portController.value = TextEditingValue(text: port);
         }
       }
     });
@@ -564,34 +565,34 @@ class _LoginState extends State<Login> {
     }
   }
 
-  wakeup() async {
-    print("wakeup");
-    // final client = HttpDnsClient("http://180.76.76.76");
-    // final result = await client.lookup("baidu.com");
-    // print(result);
-    String ipv4 = '192.168.0.100';
-    IPv4Address ipv4Address;
-    MACAddress macAddress;
-    if (IPv4Address.validate(ipv4)) {
-      ipv4Address = IPv4Address(ipv4);
-      //Continue execution
-    } else {
-      Util.toast("IP地址有误");
-      return;
-      // Handle invalid address case
-    }
-    String mac = '02-11-32-27-31-2F';
-    if (MACAddress.validate(mac)) {
-      macAddress = MACAddress(mac);
-      //Continue execution
-    } else {
-      Util.toast("MAC地址有误");
-      return;
-      // Handle invalid address case
-    }
-    WakeOnLAN wol = WakeOnLAN(ipv4Address, macAddress, port: 1234);
-    await wol.wake().then((v) => print('sent'));
-  }
+  // wakeup() async {
+  //   print("wakeup");
+  //   // final client = HttpDnsClient("http://180.76.76.76");
+  //   // final result = await client.lookup("baidu.com");
+  //   // print(result);
+  //   String ipv4 = '192.168.0.100';
+  //   IPv4Address ipv4Address;
+  //   MACAddress macAddress;
+  //   if (IPv4Address.validate(ipv4)) {
+  //     ipv4Address = IPv4Address(ipv4);
+  //     //Continue execution
+  //   } else {
+  //     Util.toast("IP地址有误");
+  //     return;
+  //     // Handle invalid address case
+  //   }
+  //   String mac = '02-11-32-27-31-2F';
+  //   if (MACAddress.validate(mac)) {
+  //     macAddress = MACAddress(mac);
+  //     //Continue execution
+  //   } else {
+  //     Util.toast("MAC地址有误");
+  //     return;
+  //     // Handle invalid address case
+  //   }
+  //   WakeOnLAN wol = WakeOnLAN(ipv4Address, macAddress, port: 1234);
+  //   await wol.wake().then((v) => print('sent'));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1031,16 +1032,18 @@ class _LoginState extends State<Login> {
                 borderRadius: BorderRadius.circular(20),
               ),
               onPressed: () {
+                print(login);
                 if (!read) {
                   Util.toast("请先阅读并同意用户协议和隐私政策");
                   return;
                 }
                 if (login) {
-                  if (login == true) {
-                    cancelToken?.cancel("取消登录");
-                    cancelToken = CancelToken();
-                    return;
-                  }
+                  cancelToken?.cancel("取消登录");
+                  cancelToken = CancelToken();
+                  setState(() {
+                    login = false;
+                  });
+                  return;
                 } else {
                   _login();
                 }

@@ -16,7 +16,7 @@ import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'shared_folders/shared_folders.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:neumorphic/neumorphic.dart';
 
 class ControlPanel extends StatefulWidget {

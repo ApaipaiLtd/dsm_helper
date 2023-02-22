@@ -13,7 +13,7 @@ import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
 import 'package:dsm_helper/util/badge.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:neumorphic/neumorphic.dart';
 
 class ApplicationList extends StatelessWidget {

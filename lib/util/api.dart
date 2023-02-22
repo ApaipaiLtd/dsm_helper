@@ -64,7 +64,7 @@ class Api {
     }
   }
 
-  static Future<Map> login({String host, String account, String password, String otpCode: "", CancelToken cancelToken, bool rememberDevice: false, String cookie}) async {
+  static Future<Map> login({String host, String account, String password, String otpCode = "", CancelToken cancelToken, bool rememberDevice: false, String cookie}) async {
     var data = {
       "account": account,
       "passwd": password,

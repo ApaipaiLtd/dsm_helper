@@ -46,7 +46,7 @@ class DownloadState extends State<Download> {
   Timer timer;
   bool multiSelect = false;
 
-  ReceivePort _port = ReceivePort();
+  ReceivePort _receiverPort = ReceivePort();
   @override
   void initState() {
     _bindBackgroundIsolate();
@@ -57,21 +57,20 @@ class DownloadState extends State<Download> {
 
   static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
     print('Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
-    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port');
-    send.send([id, status, progress]);
+    IsolateNameServer.lookupPortByName('downloader_send_port')?.send([id, status.value, progress]);
   }
 
   void _bindBackgroundIsolate() {
-    bool isSuccess = IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
+    bool isSuccess = IsolateNameServer.registerPortWithName(_receiverPort.sendPort, 'downloader_send_port');
     if (!isSuccess) {
       _unbindBackgroundIsolate();
       _bindBackgroundIsolate();
       return;
     }
-    _port.listen((dynamic data) {
+    _receiverPort.listen((dynamic data) {
       print('UI Isolate Callback: $data');
       String id = data[0];
-      DownloadTaskStatus status = data[1];
+      DownloadTaskStatus status = DownloadTaskStatus(data[1]);
       int progress = data[2];
 
       if (tasks != null && tasks.isNotEmpty) {
