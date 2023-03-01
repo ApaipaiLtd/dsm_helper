@@ -2174,14 +2174,9 @@ class FilesState extends State<Files> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ExtendedText(
+                          Text(
                             file['name'],
                             style: TextStyle(fontSize: 14, color: file['additional']['mount_point_type'] == "remotefail" ? AppTheme.of(context).placeholderColor : null),
-                            overflowWidget: TextOverflowWidget(
-                              position: TextOverflowPosition.middle,
-                              align: TextOverflowAlign.right,
-                              child: Text("…"),
-                            ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),

@@ -290,10 +290,12 @@ class DashboardState extends State<Dashboard> {
             widgets = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['modulelist'] ?? [];
             restoreSizePos = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['restoreSizePos'];
           }
-          applications = init['data']['UserSettings']['Desktop']['valid_appview_order'] ?? init['data']['UserSettings']['Desktop']['appview_order'] ?? [];
+          if (init['data']['UserSettings']['Desktop'] != null) {
+            applications = init['data']['UserSettings']['Desktop']['valid_appview_order'] ?? init['data']['UserSettings']['Desktop']['appview_order'] ?? [];
 
-          shortcutItems = ShortcutItemModel.fromList(init['data']['UserSettings']['Desktop']['ShortcutItems']);
-          wallpaperModel = WallpaperModel.fromJson(init['data']['UserSettings']['Desktop']['wallpaper']);
+            shortcutItems = ShortcutItemModel.fromList(init['data']['UserSettings']['Desktop']['ShortcutItems']);
+            wallpaperModel = WallpaperModel.fromJson(init['data']['UserSettings']['Desktop']['wallpaper']);
+          }
         }
         if (init['data']['Session'] != null) {
           hostname = init['data']['Session']['hostname'];
@@ -1735,229 +1737,230 @@ class DashboardState extends State<Dashboard> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(
-          "控制台",
-        ),
-        leadingWidth: 180,
-        leading: Row(
-          mainAxisSize: MainAxisSize.min,
+        title: Stack(
+          alignment: Alignment.center,
           children: [
-            if (Util.notReviewAccount)
-              Padding(
-                padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                child: NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
+            Row(
+              children: [
+                if (Util.notReviewAccount)
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                    child: NeuButton(
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      bevel: 5,
+                      onPressed: () {
+                        _scaffoldKey.currentState.openDrawer();
+                      },
+                      child: Image.asset(
+                        "assets/icons/application.png",
+                        width: 20,
+                      ),
+                    ),
                   ),
-                  padding: EdgeInsets.all(10),
-                  bevel: 5,
-                  onPressed: () {
-                    _scaffoldKey.currentState.openDrawer();
-                  },
-                  child: Image.asset(
-                    "assets/icons/application.png",
-                    width: 20,
-                  ),
-                ),
-              ),
-            if ((esatas + usbs).length > 0)
-              Padding(
-                padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                child: NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  bevel: 5,
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (context) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: NeuCard(
-                            width: double.infinity,
-                            bevel: 5,
-                            curveType: CurveType.emboss,
-                            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    "外接设备",
-                                    style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  ...(esatas + usbs).map(_buildESataItem).toList(),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: NeuButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).push(CupertinoPageRoute(
-                                                builder: (context) {
-                                                  return ExternalDevice();
-                                                },
-                                                settings: RouteSettings(name: "external_device")));
-                                          },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 5,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Text(
-                                            "查看详情",
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
+                if ((esatas + usbs).length > 0)
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                    child: NeuButton(
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      bevel: 5,
+                      onPressed: () {
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (context) {
+                            return Material(
+                              color: Colors.transparent,
+                              child: NeuCard(
+                                width: double.infinity,
+                                bevel: 5,
+                                curveType: CurveType.emboss,
+                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        "外接设备",
+                                        style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
                                       ),
                                       SizedBox(
-                                        width: 16,
+                                        height: 12,
                                       ),
-                                      Expanded(
-                                        child: NeuButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                          },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
+                                      ...(esatas + usbs).map(_buildESataItem).toList(),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: NeuButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).push(CupertinoPageRoute(
+                                                    builder: (context) {
+                                                      return ExternalDevice();
+                                                    },
+                                                    settings: RouteSettings(name: "external_device")));
+                                              },
+                                              decoration: NeumorphicDecoration(
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
+                                              ),
+                                              bevel: 5,
+                                              padding: EdgeInsets.symmetric(vertical: 10),
+                                              child: Text(
+                                                "查看详情",
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ),
                                           ),
-                                          bevel: 5,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Text(
-                                            "取消",
-                                            style: TextStyle(fontSize: 18),
+                                          SizedBox(
+                                            width: 16,
                                           ),
-                                        ),
+                                          Expanded(
+                                            child: NeuButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                              },
+                                              decoration: NeumorphicDecoration(
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
+                                              ),
+                                              bevel: 5,
+                                              padding: EdgeInsets.symmetric(vertical: 10),
+                                              child: Text(
+                                                "取消",
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 8,
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                  child: Image.asset(
-                    "assets/icons/external_devices.png",
-                    width: 20,
+                      child: Image.asset(
+                        "assets/icons/external_devices.png",
+                        width: 20,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            if (converter != null && (converter['photo_remain'] + converter['thumb_remain'] + converter['video_remain'] > 0))
-              Padding(
-                padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                child: NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
+                if (converter != null && (converter['photo_remain'] + converter['thumb_remain'] + converter['video_remain'] > 0))
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                    child: NeuButton(
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      bevel: 5,
+                      onPressed: () {
+                        showCupertinoModalPopup(
+                            context: context,
+                            builder: (context) {
+                              return MediaConverter(converter);
+                            });
+                      },
+                      child: Image.asset(
+                        "assets/icons/converter.gif",
+                        width: 20,
+                      ),
+                    ),
                   ),
-                  padding: EdgeInsets.all(10),
-                  bevel: 5,
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return MediaConverter(converter);
+                Spacer(),
+                if (Util.notReviewAccount)
+                  Padding(
+                    padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                    child: NeuButton(
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      bevel: 5,
+                      onPressed: () {
+                        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                          return WidgetSetting(widgets, restoreSizePos);
+                        })).then((res) {
+                          if (res != null) {
+                            setState(() {
+                              widgets = res;
+                              getData();
+                            });
+                          }
                         });
-                  },
-                  child: Image.asset(
-                    "assets/icons/converter.gif",
-                    width: 20,
+                      },
+                      child: Image.asset(
+                        "assets/icons/edit.png",
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                  child: NeuButton(
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(10),
+                    bevel: 5,
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(
+                              builder: (context) {
+                                return Notify(notifies);
+                              },
+                              settings: RouteSettings(name: "notify")))
+                          .then((res) {
+                        if (res != null && res) {
+                          setState(() {
+                            notifies = [];
+                          });
+                        }
+                      });
+                    },
+                    child: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Image.asset(
+                          "assets/icons/message.png",
+                          width: 20,
+                          height: 20,
+                        ),
+                        if (notifies.length > 0)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            width: 5,
+                            height: 5,
+                          )
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
+            ),
+            Text("控制台")
           ],
         ),
-        actions: [
-          if (Util.notReviewAccount)
-            Padding(
-              padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-              child: NeuButton(
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.all(10),
-                bevel: 5,
-                onPressed: () {
-                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                    return WidgetSetting(widgets, restoreSizePos);
-                  })).then((res) {
-                    if (res != null) {
-                      setState(() {
-                        widgets = res;
-                        getData();
-                      });
-                    }
-                  });
-                },
-                child: Image.asset(
-                  "assets/icons/edit.png",
-                  width: 20,
-                  height: 20,
-                ),
-              ),
-            ),
-          Padding(
-            padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.all(10),
-              bevel: 5,
-              onPressed: () {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(
-                        builder: (context) {
-                          return Notify(notifies);
-                        },
-                        settings: RouteSettings(name: "notify")))
-                    .then((res) {
-                  if (res != null && res) {
-                    setState(() {
-                      notifies = [];
-                    });
-                  }
-                });
-              },
-              child: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Image.asset(
-                    "assets/icons/message.png",
-                    width: 20,
-                    height: 20,
-                  ),
-                  if (notifies.length > 0)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      width: 5,
-                      height: 5,
-                    )
-                ],
-              ),
-            ),
-          ),
-        ],
+        automaticallyImplyLeading: false,
       ),
       body: loading
           ? Center(

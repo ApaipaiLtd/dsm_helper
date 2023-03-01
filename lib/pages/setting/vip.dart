@@ -95,7 +95,10 @@ class _VipState extends State<Vip> {
       var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
         isLogin = true;
-        isForever = Util.vipForever = true;
+        if (res['data']['is_forever'] == 1) {
+          isForever = Util.vipForever = true;
+        }
+        // isForever = Util.vipForever = true;
         if (res['data']['vip_expire_time'] != null) {
           Util.vipExpireTime = vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
           if (noAdTime == null) {
