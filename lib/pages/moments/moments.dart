@@ -42,7 +42,7 @@ class _MomentsState extends State<Moments> {
     getVideos();
     getShares();
     if (Util.version == 7) {
-      print("DSM 版本为7");
+      debugPrint("DSM 版本为7");
       getGeocoding();
       getGeneral();
     }
@@ -125,7 +125,6 @@ class _MomentsState extends State<Moments> {
     if (res['success'] && mounted) {
       setState(() {
         geocoding = res['data']["list"];
-        print(geocoding);
       });
     }
   }

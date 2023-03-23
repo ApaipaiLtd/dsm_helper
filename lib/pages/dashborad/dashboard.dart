@@ -237,8 +237,7 @@ class DashboardState extends State<Dashboard> {
 
   getNotifyStrings() async {
     var res = await Api.notifyStrings();
-    print("notifyStrings");
-    print(res);
+    debugPrint("notifyStrings");
     if (res['success']) {
       setState(() {
         Util.notifyStrings = res['data'] ?? {};

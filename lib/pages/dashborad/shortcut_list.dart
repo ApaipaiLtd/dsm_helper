@@ -83,7 +83,7 @@ class ShortcutList extends StatelessWidget {
       case "SYNO.SDS.AdminCenter.Application":
         icon = "assets/applications/${Util.version}/control_panel.png";
         name = "控制面板";
-        page = ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
+        page = ControlPanel(system, volumes, disks, appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null ? appNotify['SYNO.SDS.AdminCenter.Application']['fn'] : null);
         routerName = "control_panel";
         if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
           unread = appNotify['SYNO.SDS.AdminCenter.Application']['unread'];

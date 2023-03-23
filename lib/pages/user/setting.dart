@@ -37,7 +37,6 @@ class _UserSettingState extends State<UserSetting> {
       setState(() {
         loading = false;
         normalUser = res['data'];
-        print(normalUser);
       });
       _usernameController.value = TextEditingValue(text: normalUser['username']);
       _fullnameController.value = TextEditingValue(text: normalUser['fullname']);

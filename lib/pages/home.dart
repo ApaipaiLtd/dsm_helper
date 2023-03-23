@@ -45,7 +45,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
       handleFiles(value);
     }, onError: (err) {
-      print("getIntentDataStream error: $err");
+      debugPrint("getIntentDataStream error: $err");
     });
 
     // For sharing images coming from outside the app while the app is closed
@@ -59,7 +59,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         handleTorrent(value);
       }
     }, onError: (err) {
-      print("getLinkStream error: $err");
+      debugPrint("getLinkStream error: $err");
     });
 
     // For sharing or opening urls/text coming from outside the app while the app is closed

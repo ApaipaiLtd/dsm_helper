@@ -74,6 +74,8 @@ class Api {
       "method": "login",
       "session": "FileStation",
       "enable_device_token": rememberDevice ? "yes" : "no",
+      "enable_sync_token": "yes",
+      "isIframeLogin": "yes",
     };
     return await Util.get("auth.cgi", host: host, data: data, cancelToken: cancelToken, cookie: cookie);
   }
@@ -140,7 +142,6 @@ class Api {
         "enable_share_compress",
       ]),
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -183,7 +184,6 @@ class Api {
     } else {
       shareInfo['share_quota'] = 0;
     }
-    print(shareInfo);
     //"{"name":"testc","vol_path":"/volume3","desc":"bjxjbddb","enable_share_cow":true,"enable_share_compress":true,"share_quota":1024,"encryption":true,"enc_passwd":""}"
     var data = {
       "api": '"SYNO.Core.Share"',
@@ -299,7 +299,6 @@ class Api {
       "version": 1,
       "_sid": Util.sid,
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -376,7 +375,6 @@ class Api {
       "_sid": Util.sid,
       "path": json.encode(path),
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -411,7 +409,6 @@ class Api {
       "version": 2,
       "_sid": Util.sid,
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -427,7 +424,6 @@ class Api {
       "version": 2,
       "_sid": Util.sid,
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -453,7 +449,6 @@ class Api {
       "password": password,
       "codepage": codepage,
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -533,7 +528,6 @@ class Api {
       data['request_name'] = requestName;
       data['request_info'] = requestInfo;
     }
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -610,7 +604,6 @@ class Api {
     if (password != null) {
       data['password'] = '"$password"';
     }
-    print(data);
     var task = await Util.post("entry.cgi", data: data);
     return task;
   }
@@ -1164,8 +1157,6 @@ class Api {
       "version": 1,
       "_sid": Util.sid,
     };
-    print(dataStr);
-    print(data['data']);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -1231,7 +1222,6 @@ class Api {
       "version": 1,
       "_sid": Util.sid,
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -1305,7 +1295,6 @@ class Api {
       data['limit'] = 1000;
       data['offset'] = 0;
     }
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -1490,7 +1479,6 @@ class Api {
       "version": 2,
       "_sid": Util.sid,
     };
-    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 
@@ -1808,7 +1796,6 @@ class Api {
       },
       {"api": "SYNO.Core.FileServ.FTP.SFTP", "method": "set", "version": "1", "enable": sftp['enable'], "sftp_portnum": sftp['portnum'], "portnum": sftp['portnum']}
     ];
-    print(apis);
     var result = await Util.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
@@ -1888,7 +1875,6 @@ class Api {
   }
 
   static Future<Map> quickConnect(String connectConnectID, {String baseUrl: "global.quickconnect.cn"}) async {
-    print("connect:" + baseUrl);
     Dio dio = new Dio(
       new BaseOptions(
         baseUrl: "https://$baseUrl/",

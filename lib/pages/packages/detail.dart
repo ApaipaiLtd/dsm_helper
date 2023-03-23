@@ -463,7 +463,7 @@ class _PackageDetailState extends State<PackageDetail> {
                             style: {
                               "ol": Style(
                                 padding: EdgeInsets.zero,
-                                margin: EdgeInsets.zero,
+                                margin: Margins.zero,
                               ),
                               "li": Style(),
                             },

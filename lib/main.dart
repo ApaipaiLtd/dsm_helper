@@ -86,7 +86,7 @@ void main() async {
     if (isForever || (noAdTime != null && noAdTime.isAfter(DateTime.now()))) {
       // 处于关闭广告有效期内
       if (kDebugMode) {
-        print("免广告有效期内");
+        debugPrint("免广告有效期内");
       }
     } else {
       Util.removeStorage("no_ad_time");

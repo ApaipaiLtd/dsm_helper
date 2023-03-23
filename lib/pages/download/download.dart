@@ -56,7 +56,7 @@ class DownloadState extends State<Download> {
   }
 
   static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
-    print('Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
+    debugPrint('Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
     IsolateNameServer.lookupPortByName('downloader_send_port')?.send([id, status.value, progress]);
   }
 
@@ -68,7 +68,7 @@ class DownloadState extends State<Download> {
       return;
     }
     _receiverPort.listen((dynamic data) {
-      print('UI Isolate Callback: $data');
+      debugPrint('UI Isolate Callback: $data');
       String id = data[0];
       DownloadTaskStatus status = DownloadTaskStatus(data[1]);
       int progress = data[2];
@@ -121,7 +121,7 @@ class DownloadState extends State<Download> {
         selectedTasks = [];
       });
     } else {
-      print("可以返回");
+      debugPrint("可以返回");
       return Future.value(true);
     }
 
@@ -266,7 +266,7 @@ class DownloadState extends State<Download> {
                   settings: RouteSettings(name: "preview_image")));
             } else if (fileType == FileTypeEnum.movie) {
               String videoPlayer = await Util.getStorage("video_player");
-              print(videoPlayer);
+              debugPrint(videoPlayer);
               if (videoPlayer != null && videoPlayer == '1') {
                 AndroidIntent intent = AndroidIntent(
                   action: 'action_view',
@@ -428,9 +428,9 @@ class DownloadState extends State<Download> {
                                     NeuButton(
                                       onPressed: () async {
                                         Navigator.of(context).pop();
-                                        print(task.taskId);
+                                        debugPrint(task.taskId);
                                         var res = await FlutterDownloader.resume(taskId: task.taskId);
-                                        print(res);
+                                        debugPrint(res);
                                         await getData();
                                       },
                                       decoration: NeumorphicDecoration(

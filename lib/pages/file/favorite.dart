@@ -96,7 +96,7 @@ class _FavoriteState extends State<Favorite> {
                                       width: (MediaQuery.of(context).size.width - 100) / 4,
                                       child: NeuButton(
                                         onPressed: () async {
-                                          print(favorite['path']);
+                                          debugPrint(favorite['path']);
                                           TextEditingController nameController = TextEditingController.fromValue(TextEditingValue(text: favorite['name']));
                                           Navigator.of(context).pop();
                                           String name = "";

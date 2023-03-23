@@ -354,7 +354,6 @@ class Util {
         return response.data;
       }
     } on DioError catch (error) {
-      print(error.message);
       String code = "";
       if (error.message.contains("CERTIFICATE_VERIFY_FAILED")) {
         code = "SSL/HTTPS证书有误";
@@ -418,7 +417,7 @@ class Util {
 
       return response.data;
     } on DioError catch (error) {
-      print("请求出错:${headers['origin']} $url 请求内容:$data");
+      debugPrint("请求出错:${headers['origin']} $url 请求内容:$data");
       return {
         "success": false,
         "error": {"code": error.message},
@@ -476,7 +475,7 @@ class Util {
         return response.data;
       }
     } on DioError catch (error) {
-      print("请求出错:$baseUrl/$url 请求内容:$data msg:${error.message}");
+      debugPrint("请求出错:$baseUrl/$url 请求内容:$data msg:${error.message}");
       return {
         "success": false,
         "error": {"code": error.message},
@@ -521,11 +520,9 @@ class Util {
 
     try {
       response = await dio.download(url, tempPath + Platform.pathSeparator + saveName, deleteOnError: true, onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
-      print(response);
       return {"code": 1, "msg": "下载完成", "data": tempPath + Platform.pathSeparator + saveName};
     } on DioError catch (error) {
-      print(error);
-      print("请求出错:$url");
+      debugPrint("请求出错:$url");
       if (error.type == DioErrorType.cancel) {
         return {"code": 0, "msg": "下载已取消", "data": null};
       } else {
@@ -548,10 +545,10 @@ class Util {
       }
       fullPath = path + Platform.pathSeparator + uniqueName;
       if (File(fullPath).existsSync()) {
-        print("文件存在");
+        debugPrint("文件存在");
         num++;
       } else {
-        print("文件不存在");
+        debugPrint("文件不存在");
         unique = false;
       }
     }
@@ -568,18 +565,18 @@ class Util {
     //   return "";
     // }
     String savePath = await getDownloadPath();
-    print("savePath:$savePath");
+    debugPrint("savePath:$savePath");
     Directory saveDir = Directory(savePath);
     if (!saveDir.existsSync()) {
-      print("文件夹不存在");
+      debugPrint("文件夹不存在");
       Directory dir = await saveDir.create(recursive: true);
       print(dir);
     } else {
-      print("文件夹已存在");
+      debugPrint("文件夹已存在");
     }
 
     saveName = getUniqueName(savePath, saveName);
-    print(saveName);
+    debugPrint(saveName);
     // CancelToken cancelToken = CancelToken();
     // DioDownload().downloadFile(url: url, savePath: saveName, cancelToken: cancelToken);
     String taskId = await FlutterDownloader.enqueue(url: url, fileName: saveName, savedDir: savePath, showNotification: true, openFileFromNotification: true);

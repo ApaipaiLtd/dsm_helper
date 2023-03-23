@@ -4,6 +4,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:flutter_floating/floating/listener/event_listener.dart';
 import 'package:just_audio/just_audio.dart' as ja;
 import 'package:dsm_helper/pages/common/audio_player.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
@@ -31,9 +32,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_floating/floating/assist/floating_slide_type.dart';
 import 'package:flutter_floating/floating/floating.dart';
-import 'package:flutter_floating/floating/listener/floating_listener.dart';
 import 'package:flutter_floating/floating/manager/floating_manager.dart';
-import 'package:flutter_floating/floating_increment.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -144,7 +143,7 @@ class FilesState extends State<Files> {
           slideBottomHeight: 100,
         ),
       );
-      FloatingListener listener = FloatingListener()
+      FloatingEventListener listener = FloatingEventListener()
         ..downListener = (x, y) {
           if (audioPlayerFloating.isShowing) {
             audioPlayerFloating.close();
@@ -178,10 +177,10 @@ class FilesState extends State<Files> {
     String path = "";
     print(paths);
     if (paths.length > 0 && paths[0].contains("//")) {
-      print("远程");
+      debugPrint("远程");
       path = paths.join("/");
     } else {
-      print("本地");
+      debugPrint("本地");
       path = (paths.length > 0 ? "/" : '') + paths.join("/");
     }
     goPath(path);
@@ -242,7 +241,7 @@ class FilesState extends State<Files> {
         });
       }
     } else {
-      print("搜索出错");
+      debugPrint("搜索出错");
     }
   }
 
@@ -488,7 +487,7 @@ class FilesState extends State<Files> {
   }
 
   goPath(String path) async {
-    print("path:$path");
+    debugPrint("path:$path");
     Util.vibrate(FeedbackType.light);
     setState(() {
       success = true;
@@ -1410,7 +1409,7 @@ class FilesState extends State<Files> {
                     try {
                       cover = files.firstWhere((element) => element['name'].startsWith("$name-cover") || element['name'].startsWith("cover"))['path'];
                     } catch (e) {
-                      print("无封面图");
+                      debugPrint("无封面图");
                     }
                   }
                 }
@@ -1418,7 +1417,7 @@ class FilesState extends State<Files> {
               try {
                 nfo = files.firstWhere((element) => element['name'] == "$name.nfo")['path'];
               } catch (e) {
-                print("无NFO文件");
+                debugPrint("无NFO文件");
               }
               Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                 return VideoPlayer(
@@ -2174,10 +2173,17 @@ class FilesState extends State<Files> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          ExtendedText(
                             file['name'],
                             style: TextStyle(fontSize: 14, color: file['additional']['mount_point_type'] == "remotefail" ? AppTheme.of(context).placeholderColor : null),
-                            overflow: TextOverflow.ellipsis,
+                            overflowWidget: TextOverflowWidget(
+                              position: TextOverflowPosition.middle,
+                              align: TextOverflowAlign.right,
+                              child: Text(
+                                "…",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
                             maxLines: 2,
                           ),
                           SizedBox(
@@ -2268,12 +2274,12 @@ class FilesState extends State<Files> {
           String path = "";
           List<String> items = [];
           if (paths.length > 1 && paths[0].contains("//")) {
-            print("远程");
+            debugPrint("远程");
             items = paths.getRange(0, index + 1).toList();
             path = items.join("/");
             goPath(path);
           } else {
-            print("本地");
+            debugPrint("本地");
             items = paths.getRange(0, index + 1).toList();
             path = "/" + items.join("/");
           }
@@ -2309,10 +2315,10 @@ class FilesState extends State<Files> {
         String path = "";
         print(paths);
         if (paths.length > 0 && paths[0].contains("//")) {
-          print("远程");
+          debugPrint("远程");
           path = paths.join("/");
         } else {
-          print("本地");
+          debugPrint("本地");
           path = (paths.length > 0 ? "/" : '') + paths.join("/");
         }
         goPath(path);

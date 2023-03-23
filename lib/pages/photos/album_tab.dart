@@ -50,32 +50,32 @@ class AlbumTabState extends State<AlbumTab> {
 
   getAlbum() async {
     albums = await AlbumModel.fetch(additional: ["sharing_info", "thumbnail"], limit: 100, isTeam: isTeam);
-    print("相册：${albums.length}");
+    debugPrint("相册：${albums.length}");
     setState(() {});
   }
 
   getRecently() async {
     recentlyAdds = await PhotoModel.recentlyAdd(limit: 4, isTeam: isTeam, additional: ['thumbnail'], type: 'photo');
-    print("最近添加：${recentlyAdds.length}");
+    debugPrint("最近添加：${recentlyAdds.length}");
     setState(() {});
   }
 
   getVideos() async {
     videos = await PhotoModel.fetch(limit: 4, isTeam: isTeam, additional: ['thumbnail'], type: 'video');
-    print("视频：${recentlyAdds.length}");
+    debugPrint("视频：${recentlyAdds.length}");
     setState(() {});
   }
 
   getShares() async {}
   getGeocoding() async {
     geocodings = await GeocodingModel.fetch(limit: 4, isTeam: isTeam, additional: ['thumbnail']);
-    print("位置：${recentlyAdds.length}");
+    debugPrint("位置：${recentlyAdds.length}");
     setState(() {});
   }
 
   getGeneral() async {
     generalTags = await GeneralTagModel.fetch(limit: 4, isTeam: isTeam, additional: ['thumbnail']);
-    print("标签：${recentlyAdds.length}");
+    debugPrint("标签：${recentlyAdds.length}");
     setState(() {});
   }
 

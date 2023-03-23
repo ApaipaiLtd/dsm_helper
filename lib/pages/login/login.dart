@@ -358,8 +358,8 @@ class _LoginState extends State<Login> {
         Util.baseUrl = "${https ? "https" : "http"}://$host:$port";
       }
       //开始自动登录
-      print("BaseUrl:$baseUrl");
-      print("Util.BaseUrl:${Util.baseUrl}");
+      debugPrint("BaseUrl:$baseUrl");
+      debugPrint("Util.BaseUrl:${Util.baseUrl}");
       Util.sid = sid;
       //如果开启了自动登录，则判断当前登录状态
       if (autoLogin) {
@@ -375,7 +375,7 @@ class _LoginState extends State<Login> {
             });
           } else {
             //如果登录失效，尝试重新登录
-            print("尝试重新登录");
+            debugPrint("尝试重新登录");
             _login();
           }
         } else {
@@ -402,7 +402,7 @@ class _LoginState extends State<Login> {
     });
     if (host.contains(".") || host.contains(':')) {
       String baseUri = "${https ? "https" : "http"}://${host.trim()}:${port.trim()}";
-      print(baseUri);
+      debugPrint(baseUri);
       doLogin(baseUri);
     } else {
       qcLogin();
@@ -410,9 +410,8 @@ class _LoginState extends State<Login> {
   }
 
   qcLogin({String qcHost: "global.quickconnect.cn"}) async {
-    print("QuickConnectID:$host");
+    debugPrint("QuickConnectID:$host");
     var res = await Api.quickConnect(host, baseUrl: qcHost);
-    print(res);
     if (res['errno'] == 0) {
       if (res['server']['fqdn'] != "NULL") {
         qcAddresses.add("http://${res['server']['fqdn']}/");
@@ -502,7 +501,7 @@ class _LoginState extends State<Login> {
       bool exist = false;
       for (int i = 0; i < servers.length; i++) {
         if (servers[i]['https'] == https && servers[i]['host'] == host && servers[i]['port'] == port && servers[i]['account'] == account) {
-          print("账号已存在，更新信息");
+          debugPrint("账号已存在，更新信息");
           if (rememberPassword) {
             servers[i]['password'] = password;
           } else {
@@ -520,7 +519,7 @@ class _LoginState extends State<Login> {
         }
       }
       if (!exist) {
-        print("账号不存在");
+        debugPrint("账号不存在");
         Map server = {
           "https": https,
           "host": host,

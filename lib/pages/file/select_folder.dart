@@ -252,7 +252,7 @@ class _SelectFolderState extends State<SelectFolder> {
       } else {
         path = paths.join("/").substring(1);
       }
-      print(path);
+      debugPrint(path);
       goPath(path);
       return Future.value(false);
     } else {

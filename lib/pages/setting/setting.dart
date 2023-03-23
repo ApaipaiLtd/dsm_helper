@@ -145,7 +145,6 @@ class _SettingState extends State<Setting> {
 
   getData() async {
     var res = await Api.terminalInfo();
-    print(res);
     if (res['success']) {
       setState(() {
         ssh = res['data']['enable_ssh'];

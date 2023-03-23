@@ -1,11 +1,6 @@
-import 'package:dsm_helper/models/photos/album_model.dart';
 import 'package:dsm_helper/models/photos/folder_model.dart';
-import 'package:dsm_helper/models/photos/general_tag_model.dart';
-import 'package:dsm_helper/models/photos/geocoding_model.dart';
-import 'package:dsm_helper/models/photos/photo_model.dart';
 import 'package:dsm_helper/pages/photos/widgets/photo_item_widget.dart';
 import 'package:dsm_helper/pages/photos/widgets/thumbnail_card.dart';
-import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -38,7 +33,7 @@ class FolderState extends State<Folder> {
       folders.add(root);
       fetchFolderDetail(root);
     } catch (e) {
-      print(e);
+      debugPrint(e);
     }
   }
 
