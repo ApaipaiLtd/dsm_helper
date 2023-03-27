@@ -1092,6 +1092,17 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
+  static Future<Map> eventRun(taskName) async {
+    var data = {
+      "api": "SYNO.Core.EventScheduler",
+      "version": 1,
+      "method": "run",
+      "task_name": taskName,
+      "_sid": Util.sid,
+    };
+    return await Util.post("entry.cgi", data: data);
+  }
+
   static Future<Map> taskRecord(int task) async {
     var data = {
       "api": "SYNO.Core.TaskScheduler",

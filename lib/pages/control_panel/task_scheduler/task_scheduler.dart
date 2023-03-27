@@ -74,7 +74,7 @@ class _TaskSchedulerState extends State<TaskScheduler> {
                     height: 5,
                   ),
                   Text(
-                    "下次：${task['next_trigger_time']}",
+                    "下次：${task['type'] == 'script' ? task['next_trigger_time'] : (task['next_trigger_time'] == 'bootup' ? '开机' : task['next_trigger_time'] == 'shutdown' ? '关机' : task['next_trigger_time'])} ",
                     style: TextStyle(fontSize: 13),
                   ),
                   Text(
@@ -165,7 +165,16 @@ class _TaskSchedulerState extends State<TaskScheduler> {
                     setState(() {
                       task['running'] = true;
                     });
-                    var res = await Api.taskRun([task['id']]);
+                    var res;
+                    if (task['type'] == 'script') {
+                      res = await Api.taskRun([task['id']]);
+                    } else if (task['type'] == 'event_script') {
+                      res = await Api.eventRun([task['name']]);
+                    } else {
+                      Util.toast("暂不支持此类型任务");
+                      return;
+                    }
+
                     setState(() {
                       task['running'] = false;
                     });

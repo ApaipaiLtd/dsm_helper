@@ -2613,6 +2613,36 @@ class FilesState extends State<Files> {
                 ),
               ),
             Spacer(),
+            if (paths.length > 0)
+              Padding(
+                padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                child: NeuButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .push(CupertinoPageRoute(
+                            builder: (content) {
+                              return Search("/" + paths.join("/"));
+                            },
+                            settings: RouteSettings(name: "search")))
+                        .then((res) {
+                      if (res != null) {
+                        search(res['folders'], res['pattern'], res['search_content']);
+                      }
+                    });
+                  },
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  bevel: 5,
+                  padding: EdgeInsets.all(10),
+                  child: Image.asset(
+                    "assets/icons/search.png",
+                    width: 20,
+                  ),
+                ),
+              ),
             Padding(
               padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
               child: NeuButton(
@@ -3022,45 +3052,45 @@ class FilesState extends State<Files> {
                                           ),
                                         ),
                                       ),
-                                      if (paths.length > 0)
-                                        Container(
-                                          constraints: BoxConstraints(maxWidth: 112),
-                                          width: (MediaQuery.of(context).size.width - 100) / 4,
-                                          child: NeuButton(
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context)
-                                                  .push(CupertinoPageRoute(
-                                                      builder: (content) {
-                                                        return Search("/" + paths.join("/"));
-                                                      },
-                                                      settings: RouteSettings(name: "search")))
-                                                  .then((res) {
-                                                if (res != null) {
-                                                  search(res['folders'], res['pattern'], res['search_content']);
-                                                }
-                                              });
-                                            },
-                                            decoration: NeumorphicDecoration(
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            bevel: 20,
-                                            padding: EdgeInsets.symmetric(vertical: 10),
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  "assets/icons/search.png",
-                                                  width: 30,
-                                                ),
-                                                Text(
-                                                  "搜索",
-                                                  style: TextStyle(fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                      // if (paths.length > 0)
+                                      //   Container(
+                                      //     constraints: BoxConstraints(maxWidth: 112),
+                                      //     width: (MediaQuery.of(context).size.width - 100) / 4,
+                                      //     child: NeuButton(
+                                      //       onPressed: () async {
+                                      //         Navigator.of(context).pop();
+                                      //         Navigator.of(context)
+                                      //             .push(CupertinoPageRoute(
+                                      //                 builder: (content) {
+                                      //                   return Search("/" + paths.join("/"));
+                                      //                 },
+                                      //                 settings: RouteSettings(name: "search")))
+                                      //             .then((res) {
+                                      //           if (res != null) {
+                                      //             search(res['folders'], res['pattern'], res['search_content']);
+                                      //           }
+                                      //         });
+                                      //       },
+                                      //       decoration: NeumorphicDecoration(
+                                      //         color: Theme.of(context).scaffoldBackgroundColor,
+                                      //         borderRadius: BorderRadius.circular(10),
+                                      //       ),
+                                      //       bevel: 20,
+                                      //       padding: EdgeInsets.symmetric(vertical: 10),
+                                      //       child: Column(
+                                      //         children: [
+                                      //           Image.asset(
+                                      //             "assets/icons/search.png",
+                                      //             width: 30,
+                                      //           ),
+                                      //           Text(
+                                      //             "搜索",
+                                      //             style: TextStyle(fontSize: 12),
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
                                     ],
                                   ),
                                 ),
