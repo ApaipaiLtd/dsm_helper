@@ -2618,7 +2618,6 @@ class FilesState extends State<Files> {
                 padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
                 child: NeuButton(
                   onPressed: () async {
-                    Navigator.of(context).pop();
                     Navigator.of(context)
                         .push(CupertinoPageRoute(
                             builder: (content) {

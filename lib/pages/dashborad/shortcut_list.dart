@@ -74,7 +74,7 @@ class ShortcutList extends StatelessWidget {
       case "SYNO.SDS.PkgManApp.Instance":
         icon = "assets/applications/${Util.version}/package_center.png";
         name = "套件中心";
-        page = Packages(system['firmware_ver']);
+        page = Packages(system != null ? system['firmware_ver'] : 'DSM ${Util.version}.0-10049');
         routerName = "packages";
         if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
           unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
