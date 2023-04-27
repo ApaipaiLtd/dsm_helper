@@ -14,8 +14,9 @@ import 'package:neumorphic/neumorphic.dart';
 
 class PackageDetail extends StatefulWidget {
   final Map package;
+  final bool beta;
   final String method;
-  PackageDetail(this.package, {this.method});
+  PackageDetail(this.package, {this.beta = false, this.method});
   @override
   _PackageDetailState createState() => _PackageDetailState();
 }
@@ -174,7 +175,7 @@ class _PackageDetailState extends State<PackageDetail> {
     setState(() {
       installButtonText = "请稍后";
     });
-    var res = await Api.installPackageQueue(widget.package['id']);
+    var res = await Api.installPackageQueue(widget.package['id'], widget.package['version'], beta: widget.beta);
     if (res['success']) {
       if (res['data']['paused_pkgs'].length > 0) {
         showCupertinoModalPopup(
@@ -313,6 +314,8 @@ class _PackageDetailState extends State<PackageDetail> {
           });
         });
       });
+    } else if (res['error']['code'] == 4501) {
+      Util.toast("此套件需配置信息，当前暂不支持，请在WEB端安装");
     } else {
       Util.toast("安装套件失败，代码${res['error']['code']}");
     }

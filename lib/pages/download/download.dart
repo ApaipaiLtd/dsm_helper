@@ -45,10 +45,16 @@ class DownloadState extends State<Download> {
   List<DownloadInfo> selectedTasks = [];
   Timer timer;
   bool multiSelect = false;
+  String downloadPath = '';
 
   ReceivePort _receiverPort = ReceivePort();
   @override
   void initState() {
+    Util.getDownloadPath().then((value) {
+      setState(() {
+        downloadPath = value;
+      });
+    });
     _bindBackgroundIsolate();
     FlutterDownloader.registerCallback(downloadCallback, step: 1);
     getData();
@@ -528,8 +534,20 @@ class DownloadState extends State<Download> {
                 child: Icon(Icons.close),
               )
             : null,
-        title: Text(
-          "下载",
+        title: Column(
+          children: [
+            Text(
+              "下载",
+            ),
+            if (Platform.isAndroid)
+              Text(
+                downloadPath,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
         ),
         actions: [
           if (multiSelect)

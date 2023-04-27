@@ -204,7 +204,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
     return name;
   }
 
-  Widget _buildButton(package) {
+  Widget _buildButton(package, {bool beta = false}) {
     Widget button;
     if (package['can_update'] == null || package['installed'] == null) {
       button = NeuCard(
@@ -222,7 +222,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           Navigator.of(context)
               .push(CupertinoPageRoute(
                   builder: (context) {
-                    return PackageDetail(package, method: "update");
+                    return PackageDetail(package, beta: beta, method: "update");
                   },
                   settings: RouteSettings(name: "package_detail")))
               .then((_) async {
@@ -378,7 +378,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           Navigator.of(context)
               .push(CupertinoPageRoute(
                   builder: (context) {
-                    return PackageDetail(package, method: "install");
+                    return PackageDetail(package, beta: beta, method: "install");
                   },
                   settings: RouteSettings(name: "package_detail")))
               .then((_) async {
@@ -493,7 +493,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
         Navigator.of(context)
             .push(CupertinoPageRoute(
                 builder: (context) {
-                  return PackageDetail(package);
+                  return PackageDetail(package, beta: isBeta);
                 },
                 settings: RouteSettings(name: "package_detail")))
             .then((_) async {
@@ -567,7 +567,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            Padding(padding: EdgeInsets.all(20), child: _buildButton(package)),
+            Padding(padding: EdgeInsets.all(20), child: _buildButton(package, beta: isBeta)),
           ],
         ),
       ),

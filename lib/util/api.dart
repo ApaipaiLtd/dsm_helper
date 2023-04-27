@@ -1028,9 +1028,9 @@ class Api {
   // api: SYNO.Core.Package.Installation
   // method: get_queue
   // version: 1
-  static Future<Map> installPackageQueue(String pkg) async {
+  static Future<Map> installPackageQueue(String pkg, String version, {bool beta = false}) async {
     var data = {
-      "pkgs": '[{"pkg":"$pkg","beta":false}]',
+      "pkgs": '[{"pkg":"$pkg", "version": "$version","beta":$beta}]',
       "api": "SYNO.Core.Package.Installation",
       "version": 1,
       "method": "get_queue",

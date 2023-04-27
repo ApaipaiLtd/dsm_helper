@@ -119,14 +119,14 @@ class _BackupState extends State<Backup> {
   getAssetCount() async {
     uploads = [];
     albums.forEach((path) async {
-      path.filterOption.copyWith(orders: [OrderOption(type: OrderOptionType.createDate, asc: true)]);
-      var length = await path.assetCountAsync;
-      if (length > 0) {
-        List<AssetEntity> assetList = await path.getAssetListRange(start: 0, end: length);
-        setState(() {
-          uploads.addAll(assetList);
-        });
-      }
+      // path.filterOption.copyWith(orders: [OrderOption(type: OrderOptionType.createDate, asc: true)]);
+      // var length = await path.assetCountAsync;
+      // if (length > 0) {
+      List<AssetEntity> assetList = await path.getAssetListRange(start: 0, end: 100000000);
+      setState(() {
+        uploads.addAll(assetList);
+      });
+      // }
     });
   }
 

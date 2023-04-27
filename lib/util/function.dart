@@ -3,8 +3,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cool_ui/cool_ui.dart';
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
@@ -71,7 +71,7 @@ class Util {
   static String appUrl = "https://dsm.apaipai.top";
   static String sid = "";
   static String account = "";
-  static String baseUrl = "";
+  static String baseUrl = "https://dsm.apaipai.top";
   static String hostname = "";
   static int version = 6;
   static bool checkSsl = true;
@@ -299,7 +299,7 @@ class Util {
     );
     //忽略Https校验
     if (!(checkSsl ?? Util.checkSsl)) {
-      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
@@ -389,22 +389,22 @@ class Util {
         headers: headers,
       ),
     );
-    // (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+    // (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
     //   client.findProxy = (uri) {
     //     return "PROXY 192.168.1.159:8888";
     //   };
     // };
     //忽略Https校验
-    dio.interceptors.add(LogInterceptor(
-      requestHeader: false,
-      request: false,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      logPrint: logPrint,
-    ));
+    // dio.interceptors.add(LogInterceptor(
+    //   requestHeader: false,
+    //   request: false,
+    //   requestBody: true,
+    //   responseBody: true,
+    //   responseHeader: false,
+    //   logPrint: logPrint,
+    // ));
     if (!(checkSsl ?? Util.checkSsl)) {
-      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
@@ -445,14 +445,14 @@ class Util {
         headers: headers,
       ),
     );
-    // (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+    // (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
     //   client.findProxy = (uri) {
     //     return "PROXY 192.168.0.107:8888";
     //   };
     // };
     //忽略Https校验
     if (!checkSsl) {
-      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
         client.badCertificateCallback = (cert, host, port) {
           return true;
         };
