@@ -126,81 +126,84 @@ class _UsersState extends State<Users> {
                         bevel: 5,
                         curveType: CurveType.emboss,
                         decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                "终止连接",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                "确认要终止此连接？",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
-                              ),
-                              SizedBox(
-                                height: 22,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          user['running'] = true;
-                                        });
-                                        var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
-                                        setState(() {
-                                          user['running'] = false;
-                                        });
+                        child: SafeArea(
+                          top: false,
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  "终止连接",
+                                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(
+                                  height: 12,
+                                ),
+                                Text(
+                                  "确认要终止此连接？",
+                                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
+                                ),
+                                SizedBox(
+                                  height: 22,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          setState(() {
+                                            user['running'] = true;
+                                          });
+                                          var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
+                                          setState(() {
+                                            user['running'] = false;
+                                          });
 
-                                        if (res['success']) {
-                                          Util.toast("连接已终止");
-                                        }
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "终止连接",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Expanded(
-                                    child: NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "取消",
-                                        style: TextStyle(fontSize: 18),
+                                          if (res['success']) {
+                                            Util.toast("连接已终止");
+                                          }
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "终止连接",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                            ],
+                                    SizedBox(
+                                      width: 16,
+                                    ),
+                                    Expanded(
+                                      child: NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "取消",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

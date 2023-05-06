@@ -94,76 +94,79 @@ class _SharedFoldersState extends State<SharedFolders> {
             bevel: 5,
             curveType: CurveType.emboss,
             decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  "删除共享文件夹",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  "我已了解所选共享文件夹及其快照将被永久删除并无法恢复",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: Colors.red),
-                ),
-                SizedBox(
-                  height: 22,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: NeuButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                          var res = await Api.deleteSharedFolder([folder]);
-                          print(res);
-                          if (res['success']) {
-                            Util.toast("共享文件夹删除成功");
-                            getData();
-                          } else {
-                            Util.toast("共享文件夹删除出错");
-                          }
-                        },
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 5,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          "确认删除",
-                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    Expanded(
-                      child: NeuButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                        },
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 5,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          "取消",
-                          style: TextStyle(fontSize: 18),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    "删除共享文件夹",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    "我已了解所选共享文件夹及其快照将被永久删除并无法恢复",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: Colors.red),
+                  ),
+                  SizedBox(
+                    height: 22,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NeuButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            var res = await Api.deleteSharedFolder([folder]);
+                            print(res);
+                            if (res['success']) {
+                              Util.toast("共享文件夹删除成功");
+                              getData();
+                            } else {
+                              Util.toast("共享文件夹删除出错");
+                            }
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "确认删除",
+                            style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-              ],
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: NeuButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "取消",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -294,72 +297,50 @@ class _SharedFoldersState extends State<SharedFolders> {
                                 bevel: 5,
                                 curveType: CurveType.emboss,
                                 decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                      "选择操作",
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    if (folder['support_snapshot']) ...[
-                                      NeuButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                        },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "克隆",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
+                                child: SafeArea(
+                                  top: false,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        "选择操作",
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                                       ),
                                       SizedBox(
-                                        height: 16,
+                                        height: 12,
                                       ),
-                                    ],
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context)
-                                            .push(CupertinoPageRoute(
-                                                builder: (context) {
-                                                  return AddSharedFolders(volumes, folder: folder);
-                                                },
-                                                settings: RouteSettings(name: "add_shared_folders")))
-                                            .then((res) {
-                                          if (res != null && res) {
-                                            getData();
-                                          }
-                                        });
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "编辑",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 16,
-                                    ),
-                                    if (folder['enable_recycle_bin']) ...[
+                                      if (folder['support_snapshot']) ...[
+                                        NeuButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                          },
+                                          decoration: NeumorphicDecoration(
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
+                                          ),
+                                          bevel: 5,
+                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          child: Text(
+                                            "克隆",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                      ],
                                       NeuButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
-                                          Api.cleanRecycleBin(folder['name']).then((res) {
-                                            if (res['success']) {
-                                              Util.toast("请求已发送");
+                                          Navigator.of(context)
+                                              .push(CupertinoPageRoute(
+                                                  builder: (context) {
+                                                    return AddSharedFolders(volumes, folder: folder);
+                                                  },
+                                                  settings: RouteSettings(name: "add_shared_folders")))
+                                              .then((res) {
+                                            if (res != null && res) {
+                                              getData();
                                             }
                                           });
                                         },
@@ -370,34 +351,59 @@ class _SharedFoldersState extends State<SharedFolders> {
                                         bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
-                                          "清空回收站",
+                                          "编辑",
                                           style: TextStyle(fontSize: 18),
                                         ),
                                       ),
                                       SizedBox(
                                         height: 16,
                                       ),
+                                      if (folder['enable_recycle_bin']) ...[
+                                        NeuButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            Api.cleanRecycleBin(folder['name']).then((res) {
+                                              if (res['success']) {
+                                                Util.toast("请求已发送");
+                                              }
+                                            });
+                                          },
+                                          decoration: NeumorphicDecoration(
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
+                                          ),
+                                          bevel: 5,
+                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          child: Text(
+                                            "清空回收站",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                      ],
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          deleteFolder(folder['name']);
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "删除",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
                                     ],
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        deleteFolder(folder['name']);
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "删除",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             );

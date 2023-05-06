@@ -276,75 +276,78 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                         bevel: 5,
                         curveType: CurveType.emboss,
                         decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              "确认删除",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Text(
-                              "确认要删除此任务？",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                            ),
-                            SizedBox(
-                              height: 22,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: NeuButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                      var res = await Api.downloadTaskAction([task['id']], "delete");
-                                      if (res['success']) {
-                                        Util.toast("任务删除成功");
-                                        Navigator.of(context).pop(true);
-                                      } else {
-                                        Util.toast("任务删除失败，代码：${res['error']['code']}");
-                                      }
-                                    },
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    bevel: 5,
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "确认删除",
-                                      style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Expanded(
-                                  child: NeuButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                    },
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    bevel: 5,
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "取消",
-                                      style: TextStyle(fontSize: 18),
+                        child: SafeArea(
+                          top: false,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                "确认删除",
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                "确认要删除此任务？",
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                height: 22,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: NeuButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        var res = await Api.downloadTaskAction([task['id']], "delete");
+                                        if (res['success']) {
+                                          Util.toast("任务删除成功");
+                                          Navigator.of(context).pop(true);
+                                        } else {
+                                          Util.toast("任务删除失败，代码：${res['error']['code']}");
+                                        }
+                                      },
+                                      decoration: NeumorphicDecoration(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      bevel: 5,
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "确认删除",
+                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                          ],
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                    child: NeuButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                      },
+                                      decoration: NeumorphicDecoration(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      bevel: 5,
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "取消",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );

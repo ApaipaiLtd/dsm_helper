@@ -405,69 +405,72 @@ class _ShareState extends State<Share> {
                                       bevel: 5,
                                       curveType: CurveType.emboss,
                                       decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text(
-                                            "确认取消",
-                                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                          ),
-                                          SizedBox(
-                                            height: 12,
-                                          ),
-                                          Text(
-                                            "确认要取消此共享链接？",
-                                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                                          ),
-                                          SizedBox(
-                                            height: 22,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: NeuButton(
-                                                  onPressed: () async {
-                                                    Navigator.of(context).pop();
-                                                    deleteShare();
-                                                  },
-                                                  decoration: NeumorphicDecoration(
-                                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                                    borderRadius: BorderRadius.circular(25),
-                                                  ),
-                                                  bevel: 5,
-                                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(
-                                                    "取消共享",
-                                                    style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 16,
-                                              ),
-                                              Expanded(
-                                                child: NeuButton(
-                                                  onPressed: () async {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  decoration: NeumorphicDecoration(
-                                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                                    borderRadius: BorderRadius.circular(25),
-                                                  ),
-                                                  bevel: 5,
-                                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(
-                                                    "取消",
-                                                    style: TextStyle(fontSize: 18),
+                                      child: SafeArea(
+                                        top: false,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Text(
+                                              "确认取消",
+                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                            ),
+                                            SizedBox(
+                                              height: 12,
+                                            ),
+                                            Text(
+                                              "确认要取消此共享链接？",
+                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                                            ),
+                                            SizedBox(
+                                              height: 22,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: NeuButton(
+                                                    onPressed: () async {
+                                                      Navigator.of(context).pop();
+                                                      deleteShare();
+                                                    },
+                                                    decoration: NeumorphicDecoration(
+                                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                                      borderRadius: BorderRadius.circular(25),
+                                                    ),
+                                                    bevel: 5,
+                                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                                    child: Text(
+                                                      "取消共享",
+                                                      style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                        ],
+                                                SizedBox(
+                                                  width: 16,
+                                                ),
+                                                Expanded(
+                                                  child: NeuButton(
+                                                    onPressed: () async {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    decoration: NeumorphicDecoration(
+                                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                                      borderRadius: BorderRadius.circular(25),
+                                                    ),
+                                                    bevel: 5,
+                                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                                    child: Text(
+                                                      "取消",
+                                                      style: TextStyle(fontSize: 18),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );

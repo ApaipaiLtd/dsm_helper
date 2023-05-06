@@ -47,7 +47,7 @@ class GroupModel {
     key = json['key'];
     status = json['status'];
   }
-  String get displayName => "$name${status.isNotBlank ? '(${status})' : ''}";
+  String get displayName => "$name${status.isNotBlank ? '($status)' : ''}";
   num id;
   num type;
   String name;

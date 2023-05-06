@@ -65,50 +65,25 @@ class _PhotosState extends State<Photos> {
                           bevel: 5,
                           curveType: CurveType.emboss,
                           decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                          child: Padding(
-                            padding: EdgeInsets.all(22),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                NeuButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      isTeam = !isTeam;
-                                    });
-                                    if (isTimeline) {
-                                      timelineKey.currentState.getData(isTeam: isTeam);
-                                    } else {
-                                      folderKey.currentState.getData(isTeam: isTeam);
-                                    }
-                                    albumTabKey.currentState.getData(isTeam: isTeam);
-                                    Navigator.of(context).pop();
-                                  },
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 5,
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Text(
-                                    "切换到${isTeam ? '个人空间' : '共享空间'}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                if (currentIndex == 0) ...[
+                          child: SafeArea(
+                            top: false,
+                            child: Padding(
+                              padding: EdgeInsets.all(22),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
                                   NeuButton(
                                     onPressed: () async {
-                                      Navigator.of(context).pop();
                                       setState(() {
-                                        isTimeline = !isTimeline;
+                                        isTeam = !isTeam;
                                       });
                                       if (isTimeline) {
                                         timelineKey.currentState.getData(isTeam: isTeam);
                                       } else {
                                         folderKey.currentState.getData(isTeam: isTeam);
                                       }
+                                      albumTabKey.currentState.getData(isTeam: isTeam);
+                                      Navigator.of(context).pop();
                                     },
                                     decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -117,33 +92,61 @@ class _PhotosState extends State<Photos> {
                                     bevel: 5,
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
-                                      "切换到${isTimeline ? '文件夹' : '时间线'}视图",
+                                      "切换到${isTeam ? '个人空间' : '共享空间'}",
                                       style: TextStyle(fontSize: 18),
                                     ),
                                   ),
                                   SizedBox(
                                     height: 16,
                                   ),
+                                  if (currentIndex == 0) ...[
+                                    NeuButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          isTimeline = !isTimeline;
+                                        });
+                                        if (isTimeline) {
+                                          timelineKey.currentState.getData(isTeam: isTeam);
+                                        } else {
+                                          folderKey.currentState.getData(isTeam: isTeam);
+                                        }
+                                      },
+                                      decoration: NeumorphicDecoration(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      bevel: 5,
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "切换到${isTimeline ? '文件夹' : '时间线'}视图",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                  ],
+                                  NeuButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                    },
+                                    decoration: NeumorphicDecoration(
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    bevel: 5,
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    child: Text(
+                                      "取消",
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
                                 ],
-                                NeuButton(
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
-                                  },
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 5,
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Text(
-                                    "取消",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),

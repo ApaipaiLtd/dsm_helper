@@ -222,69 +222,72 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Container(
           height: MediaQuery.of(context).size.height * 0.8,
-          child: Column(
-            children: [
-              Container(
-                height: 45,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ListView.separated(
-                        controller: _scrollController,
-                        itemBuilder: _buildPathItem,
-                        itemCount: paths.length,
-                        scrollDirection: Axis.horizontal,
-                        separatorBuilder: (context, i) {
-                          return Container(
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                            child: Icon(
-                              CupertinoIcons.right_chevron,
-                              size: 14,
-                            ),
-                          );
-                        },
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Container(
+                  height: 45,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ListView.separated(
+                          controller: _scrollController,
+                          itemBuilder: _buildPathItem,
+                          itemCount: paths.length,
+                          scrollDirection: Axis.horizontal,
+                          separatorBuilder: (context, i) {
+                            return Container(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              child: Icon(
+                                CupertinoIcons.right_chevron,
+                                size: 14,
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: NeuButton(
-                        onPressed: () {
-                          if (selectedFiles.length > 0) {
-                            Navigator.of(context).pop(selectedFiles);
-                          } else {
-                            if (paths.length > 1) {
-                              Navigator.of(context).pop([Directory("/storage/emulated/0" + paths.join("/"))]);
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: NeuButton(
+                          onPressed: () {
+                            if (selectedFiles.length > 0) {
+                              Navigator.of(context).pop(selectedFiles);
+                            } else {
+                              if (paths.length > 1) {
+                                Navigator.of(context).pop([Directory("/storage/emulated/0" + paths.join("/"))]);
+                              }
+                              // Navigator.of(context).pop(["/storage/emulated/0" + paths.join("/").substring(1)]);
                             }
-                            // Navigator.of(context).pop(["/storage/emulated/0" + paths.join("/").substring(1)]);
-                          }
-                        },
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        bevel: 5,
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        child: Text(
-                          "完成",
-                          style: TextStyle(fontSize: 12, color: Colors.blue),
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          child: Text(
+                            "完成",
+                            style: TextStyle(fontSize: 12, color: Colors.blue),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ],
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.only(bottom: selectedFiles.length > 0 ? 140 : 20),
-                  children: files.map(_buildFileItem).toList(),
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.only(bottom: selectedFiles.length > 0 ? 140 : 20),
+                    children: files.map(_buildFileItem).toList(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

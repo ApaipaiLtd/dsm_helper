@@ -728,56 +728,58 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: NeuButton(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: NeuButton(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () async {
+                  if (password.isNotBlank || confirmPassword.isNotBlank) {
+                    if (password != confirmPassword) {
+                      Util.toast("密码输入不一致");
+                      return;
+                    }
+                    if (password != '' && password.length < 6) {
+                      Util.toast("密码最低6位");
+                      return;
+                    }
+                    user['password'] = password;
+                  }
+
+                  //对比当前groups与原始groups
+                  List newGroups = groups.where((group) => group['is_member']).map((e) => e['name']).toList();
+                  List addGroup = newGroups.where((group) => !originGroups.contains(group)).toList();
+                  List removeGroup = originGroups.where((group) => !newGroups.contains(group)).toList();
+
+                  setState(() {
+                    saving = true;
+                  });
+
+                  var res = await Api.userSave(user, addGroup, removeGroup);
+                  setState(() {
+                    saving = false;
+                  });
+                  if (res['success']) {
+                    widget.user['name'] = user['new_name'];
+                    widget.user['email'] = user['email'];
+                    Util.toast("保存成功");
+                  } else {
+                    Util.toast("保存失败,代码${res['error']['code']}");
+                  }
+                },
+                child: saving
+                    ? CupertinoActivityIndicator(
+                        radius: 13,
+                      )
+                    : Text(
+                        ' 保存 ',
+                        style: TextStyle(fontSize: 18),
+                      ),
               ),
-              onPressed: () async {
-                if (password.isNotBlank || confirmPassword.isNotBlank) {
-                  if (password != confirmPassword) {
-                    Util.toast("密码输入不一致");
-                    return;
-                  }
-                  if (password != '' && password.length < 6) {
-                    Util.toast("密码最低6位");
-                    return;
-                  }
-                  user['password'] = password;
-                }
-
-                //对比当前groups与原始groups
-                List newGroups = groups.where((group) => group['is_member']).map((e) => e['name']).toList();
-                List addGroup = newGroups.where((group) => !originGroups.contains(group)).toList();
-                List removeGroup = originGroups.where((group) => !newGroups.contains(group)).toList();
-
-                setState(() {
-                  saving = true;
-                });
-
-                var res = await Api.userSave(user, addGroup, removeGroup);
-                setState(() {
-                  saving = false;
-                });
-                if (res['success']) {
-                  widget.user['name'] = user['new_name'];
-                  widget.user['email'] = user['email'];
-                  Util.toast("保存成功");
-                } else {
-                  Util.toast("保存失败,代码${res['error']['code']}");
-                }
-              },
-              child: saving
-                  ? CupertinoActivityIndicator(
-                      radius: 13,
-                    )
-                  : Text(
-                      ' 保存 ',
-                      style: TextStyle(fontSize: 18),
-                    ),
             ),
           ),
         ],

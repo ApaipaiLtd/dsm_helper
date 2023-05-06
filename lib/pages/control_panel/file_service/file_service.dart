@@ -20,7 +20,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
   TextEditingController _timeoutController = TextEditingController();
   TextEditingController _ftpPortController = TextEditingController();
   TextEditingController _sftpPortController = TextEditingController();
-  List utf8Modes = ['禁用', '自动', '强制'];
+  List<String> utf8Modes = ['禁用', '自动', '强制'];
   bool loading = true;
   TabController _tabController;
   Map smb;
@@ -992,49 +992,51 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                     ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(20),
-                  child: NeuButton(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    onPressed: () async {
-                      if (saving) {
-                        return;
-                      }
-                      setState(() {
-                        saving = true;
-                      });
-                      var res = await Api.fileServiceSave(smb, syslogClient, afp, nfs, ftp, sftp);
-
-                      if (res['success']) {
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: NeuButton(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      onPressed: () async {
+                        if (saving) {
+                          return;
+                        }
                         setState(() {
-                          saving = false;
+                          saving = true;
                         });
-                        Util.toast("保存成功");
-                        getData();
-                      }
-                    },
-                    child: saving
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CupertinoActivityIndicator(),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Text(
-                                ' 保存中 ',
-                                style: TextStyle(fontSize: 18),
-                              )
-                            ],
-                          )
-                        : Text(
-                            ' 保存 ',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                        var res = await Api.fileServiceSave(smb, syslogClient, afp, nfs, ftp, sftp);
+
+                        if (res['success']) {
+                          setState(() {
+                            saving = false;
+                          });
+                          Util.toast("保存成功");
+                          getData();
+                        }
+                      },
+                      child: saving
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CupertinoActivityIndicator(),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  ' 保存中 ',
+                                  style: TextStyle(fontSize: 18),
+                                )
+                              ],
+                            )
+                          : Text(
+                              ' 保存 ',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                    ),
                   ),
                 )
               ],

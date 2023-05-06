@@ -65,76 +65,79 @@ class _EditDdnsState extends State<EditDdns> {
             bevel: 5,
             curveType: CurveType.emboss,
             decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  "确认删除",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  "确认要删除以下DDNS？",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                ),
-                SizedBox(
-                  height: 22,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: NeuButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                          var res = await Api.ddnsDelete(widget.ddns['id']);
-                          print(res);
-                          if (res['success']) {
-                            Util.toast("DDNS删除成功");
-                            Navigator.of(context).pop(true);
-                          } else {
-                            Util.toast("删除失败，代码:${res['error']['code']}");
-                          }
-                        },
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 5,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          "确认删除",
-                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: NeuButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                        },
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 5,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          "取消",
-                          style: TextStyle(fontSize: 18),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    "确认删除",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    "确认要删除以下DDNS？",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(
+                    height: 22,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NeuButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            var res = await Api.ddnsDelete(widget.ddns['id']);
+                            print(res);
+                            if (res['success']) {
+                              Util.toast("DDNS删除成功");
+                              Navigator.of(context).pop(true);
+                            } else {
+                              Util.toast("删除失败，代码:${res['error']['code']}");
+                            }
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "确认删除",
+                            style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-              ],
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: NeuButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "取消",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -235,7 +238,7 @@ class _EditDdnsState extends State<EditDdns> {
                       context: context,
                       builder: (context) {
                         return NeuPicker(
-                          widget.providers.map((e) => e['provider']).toList(),
+                          widget.providers.map((e) => e['provider'] as String).toList(),
                           value: widget.providers.indexWhere((element) => element['provider'] == ddns['provider']),
                           onConfirm: (v) {
                             setState(() {
@@ -424,28 +427,30 @@ class _EditDdnsState extends State<EditDdns> {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: NeuButton(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onPressed: () async {
-                if (checkForm()) {
-                  var res = await Api.ddnsSave(ddns);
-                  if (res['success']) {
-                    Util.toast("保存成功");
-                    Navigator.of(context).pop(true);
-                  } else {
-                    Util.toast("保存失败,代码${res['error']['code']}");
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: NeuButton(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () async {
+                  if (checkForm()) {
+                    var res = await Api.ddnsSave(ddns);
+                    if (res['success']) {
+                      Util.toast("保存成功");
+                      Navigator.of(context).pop(true);
+                    } else {
+                      Util.toast("保存失败,代码${res['error']['code']}");
+                    }
                   }
-                }
-              },
-              child: Text(
-                ' 保存 ',
-                style: TextStyle(fontSize: 18),
+                },
+                child: Text(
+                  ' 保存 ',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             ),
           ),

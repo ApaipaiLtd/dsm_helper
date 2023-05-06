@@ -124,45 +124,48 @@ class _SelectAlbumState extends State<SelectAlbum> {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Container(
         height: MediaQuery.of(context).size.height * 0.8,
-        child: Column(
-          children: [
-            Container(
-              height: 45,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: NeuButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(selectedAlbums);
-                      },
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      bevel: 5,
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      child: Text(
-                        "完成",
-                        style: TextStyle(fontSize: 12, color: Colors.blue),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Container(
+                height: 45,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: NeuButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(selectedAlbums);
+                        },
+                        decoration: NeumorphicDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        bevel: 5,
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        child: Text(
+                          "完成",
+                          style: TextStyle(fontSize: 12, color: Colors.blue),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
+                    SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-                child: ListView(
-              padding: EdgeInsets.only(bottom: 20),
-              children: albums.map(_buildAlbumItem).toList(),
-            )),
-          ],
+              Expanded(
+                  child: ListView(
+                padding: EdgeInsets.only(bottom: 20),
+                children: albums.map(_buildAlbumItem).toList(),
+              )),
+            ],
+          ),
         ),
       ),
     );

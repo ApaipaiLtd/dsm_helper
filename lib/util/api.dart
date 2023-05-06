@@ -365,7 +365,7 @@ class Api {
   }
 
   ///webapi/FileStation/file_delete.cgi?api=SYNO.FileStation.Delete&version=1&method=start&path=%2Fvideo%2Fdel_folder
-  static Future<Map> deleteTask(List path) async {
+  static Future<Map> deleteTask(List<String> path) async {
     var data = {
       "api": '"SYNO.FileStation.Delete"',
       "method": '"start"',
@@ -555,6 +555,18 @@ class Api {
       "_sid": Util.sid,
     };
     return await Util.post("entry.cgi", data: data);
+  }
+
+  static Future<Map> backgroundTask() async {
+    return await Util.post("entry.cgi", data: {
+      "is_list_sharemove": true,
+      "is_vfs": true,
+      "bkg_info": true,
+      "api": 'SYNO.FileStation.BackgroundTask',
+      "method": 'list',
+      "version": 3,
+      "_sid": Util.sid,
+    });
   }
 
   static Future<Map> copyMoveResult(String taskId) async {

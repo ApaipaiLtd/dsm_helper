@@ -248,74 +248,77 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                               bevel: 20,
                               curveType: CurveType.emboss,
                               decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                              child: Padding(
-                                padding: EdgeInsets.all(20),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                      "选择所在位置",
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    ...widget.volumes.map((volume) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(bottom: 20),
-                                        child: NeuButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedVolumeIndex = widget.volumes.indexOf(volume);
-                                            });
-                                            volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
-                                            Navigator.of(context).pop();
-                                          },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 20,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Container(
-                                            padding: EdgeInsets.only(left: 20),
-                                            width: double.infinity,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("${volume['display_name']}(可用容量：${Util.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Text(
-                                                  "${volume['description']}",
-                                                  style: TextStyle(color: Colors.grey),
-                                                ),
-                                              ],
+                              child: SafeArea(
+                                top: false,
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        "选择所在位置",
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                        height: 12,
+                                      ),
+                                      ...widget.volumes.map((volume) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(bottom: 20),
+                                          child: NeuButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                selectedVolumeIndex = widget.volumes.indexOf(volume);
+                                              });
+                                              volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
+                                              Navigator.of(context).pop();
+                                            },
+                                            decoration: NeumorphicDecoration(
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
+                                            ),
+                                            bevel: 20,
+                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                            child: Container(
+                                              padding: EdgeInsets.only(left: 20),
+                                              width: double.infinity,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("${volume['display_name']}(可用容量：${Util.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    "${volume['description']}",
+                                                    style: TextStyle(color: Colors.grey),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
+                                        );
+                                      }).toList(),
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
                                         ),
-                                      );
-                                    }).toList(),
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
+                                        bevel: 20,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "取消",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
                                       ),
-                                      bevel: 20,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "取消",
-                                        style: TextStyle(fontSize: 18),
+                                      SizedBox(
+                                        height: 8,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -745,64 +748,67 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                       bevel: 20,
                                       curveType: CurveType.emboss,
                                       decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Text(
-                                              "选择单位",
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                            ),
-                                            SizedBox(
-                                              height: 12,
-                                            ),
-                                            ...units.map((unit) {
-                                              return Padding(
-                                                padding: EdgeInsets.only(bottom: 20),
-                                                child: NeuButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      selectedUnitIndex = units.indexOf(unit);
-                                                    });
-                                                    unitController.value = TextEditingValue(text: units[selectedUnitIndex]);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  decoration: NeumorphicDecoration(
-                                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                                    borderRadius: BorderRadius.circular(25),
-                                                  ),
-                                                  bevel: 20,
-                                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    child: Text(
-                                                      "$unit",
-                                                      textAlign: TextAlign.center,
+                                      child: SafeArea(
+                                        top: false,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(20),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Text(
+                                                "选择单位",
+                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                              ),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              ...units.map((unit) {
+                                                return Padding(
+                                                  padding: EdgeInsets.only(bottom: 20),
+                                                  child: NeuButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        selectedUnitIndex = units.indexOf(unit);
+                                                      });
+                                                      unitController.value = TextEditingValue(text: units[selectedUnitIndex]);
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    decoration: NeumorphicDecoration(
+                                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                                      borderRadius: BorderRadius.circular(25),
+                                                    ),
+                                                    bevel: 20,
+                                                    padding: EdgeInsets.symmetric(vertical: 20),
+                                                    child: Container(
+                                                      width: double.infinity,
+                                                      child: Text(
+                                                        "$unit",
+                                                        textAlign: TextAlign.center,
+                                                      ),
                                                     ),
                                                   ),
+                                                );
+                                              }).toList(),
+                                              NeuButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                decoration: NeumorphicDecoration(
+                                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                                  borderRadius: BorderRadius.circular(25),
                                                 ),
-                                              );
-                                            }).toList(),
-                                            NeuButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                              },
-                                              decoration: NeumorphicDecoration(
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(25),
+                                                bevel: 20,
+                                                padding: EdgeInsets.symmetric(vertical: 10),
+                                                child: Text(
+                                                  "取消",
+                                                  style: TextStyle(fontSize: 18),
+                                                ),
                                               ),
-                                              bevel: 20,
-                                              padding: EdgeInsets.symmetric(vertical: 10),
-                                              child: Text(
-                                                "取消",
-                                                style: TextStyle(fontSize: 18),
+                                              SizedBox(
+                                                height: 8,
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 8,
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -835,25 +841,27 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: NeuButton(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                onPressed: _save,
-                child: creating
-                    ? Center(
-                        child: CupertinoActivityIndicator(
-                          radius: 13,
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: NeuButton(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  decoration: NeumorphicDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  onPressed: _save,
+                  child: creating
+                      ? Center(
+                          child: CupertinoActivityIndicator(
+                            radius: 13,
+                          ),
+                        )
+                      : Text(
+                          ' 保存 ',
+                          style: TextStyle(fontSize: 18),
                         ),
-                      )
-                    : Text(
-                        ' 保存 ',
-                        style: TextStyle(fontSize: 18),
-                      ),
+                ),
               ),
             ),
           ],

@@ -1,9 +1,11 @@
 import 'package:dsm_helper/pages/docker/detail.dart';
 import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/util/log.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -75,6 +77,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
 
   getImage() async {
     var res = await Api.dockerImageInfo();
+    Log.logger.info(res);
     setState(() {
       imageLoading = false;
     });
@@ -115,85 +118,88 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
               bevel: 5,
               curveType: CurveType.emboss,
               decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "确认操作",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    action == "signal"
-                        ? "是否确定要强制停止容器？所有未保存的数据将丢失！"
-                        : preserveProfile
-                            ? "容器 ${container['name']} 将被清除。清除后，容器中的所有数据将丢失。是否确定继续？"
-                            : "容器 ${container['name']} 将被删除。删除后，容器中的所有数据将丢失。是否确定继续？",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 22,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: NeuButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              powerLoading[container['id']] = true;
-                            });
-                            var res = await Api.dockerPower(container['name'], action, preserveProfile: preserveProfile);
-                            if (res['success']) {
-                              Util.toast("请求发送成功");
-                              getContainer();
-                            } else {
-                              Util.toast("请求发送失败，代码：${res['error']['code']}");
-                            }
-                            setState(() {
-                              powerLoading[container['id']] = false;
-                            });
-                          },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "确认",
-                            style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                        child: NeuButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                          },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "取消",
-                            style: TextStyle(fontSize: 18),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      "确认操作",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      action == "signal"
+                          ? "是否确定要强制停止容器？所有未保存的数据将丢失！"
+                          : preserveProfile
+                              ? "容器 ${container['name']} 将被清除。清除后，容器中的所有数据将丢失。是否确定继续？"
+                              : "容器 ${container['name']} 将被删除。删除后，容器中的所有数据将丢失。是否确定继续？",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(
+                      height: 22,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: NeuButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                powerLoading[container['id']] = true;
+                              });
+                              var res = await Api.dockerPower(container['name'], action, preserveProfile: preserveProfile);
+                              if (res['success']) {
+                                Util.toast("请求发送成功");
+                                getContainer();
+                              } else {
+                                Util.toast("请求发送失败，代码：${res['error']['code']}");
+                              }
+                              setState(() {
+                                powerLoading[container['id']] = false;
+                              });
+                            },
+                            decoration: NeumorphicDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            bevel: 5,
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              "确认",
+                              style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                ],
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Expanded(
+                          child: NeuButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                            decoration: NeumorphicDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            bevel: 5,
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              "取消",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -297,131 +303,134 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               bevel: 5,
                               curveType: CurveType.emboss,
                               decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    "选择操作",
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  if (container['status'] == "stopped") ...[
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        power(container, "start");
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "启动",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
+                              child: SafeArea(
+                                top: false,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      "选择操作",
+                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                                     ),
                                     SizedBox(
-                                      height: 22,
+                                      height: 12,
                                     ),
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        power(container, "delete", preserveProfile: true);
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
+                                    if (container['status'] == "stopped") ...[
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          power(container, "start");
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "启动",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
                                       ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "清除",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                      SizedBox(
+                                        height: 22,
                                       ),
-                                    ),
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          power(container, "delete", preserveProfile: true);
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "清除",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          power(container, "delete", preserveProfile: false);
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "删除",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          power(container, "stop");
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "停止",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          power(container, "signal");
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "强制停止",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      NeuButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          power(container, "restart");
+                                        },
+                                        decoration: NeumorphicDecoration(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                        bevel: 5,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Text(
+                                          "重新启动",
+                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                        ),
+                                      ),
+                                    ],
                                     SizedBox(
-                                      height: 22,
-                                    ),
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        power(container, "delete", preserveProfile: false);
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "删除",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                  ] else ...[
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        power(container, "stop");
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "停止",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 22,
-                                    ),
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        power(container, "signal");
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "强制停止",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 22,
-                                    ),
-                                    NeuButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        power(container, "restart");
-                                      },
-                                      decoration: NeumorphicDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "重新启动",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
+                                      height: 8,
                                     ),
                                   ],
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           );
@@ -550,14 +559,40 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "${image['repository']}:${image['tags'].join(",")}",
-              style: TextStyle(fontSize: 18),
+            Row(
+              children: [
+                Flexible(
+                  child: ExtendedText(
+                    "${image['repository']}:${image['tags'].join(",")}",
+                    maxLines: 1,
+                    overflowWidget: TextOverflowWidget(
+                      position: TextOverflowPosition.middle,
+                      align: TextOverflowAlign.right,
+                      child: Text(
+                        "…",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Label(Util.formatSize(image['size'], fixed: 0, format: 1000), Theme.of(context).primaryColor),
+              ],
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(Util.formatSize(image['size'], fixed: 0, format: 1000)),
+            if (image['description'] != null || image['description'] != '') ...[
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "${image['description']}",
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              )
+            ],
           ],
         ),
       ),

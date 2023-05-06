@@ -9,6 +9,7 @@ import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:xml2json/xml2json.dart';
 
 class VideoPlayer extends StatefulWidget {
@@ -138,18 +139,18 @@ class _VideoPlayerState extends State<VideoPlayer> {
         title: Text(widget.name ?? '视频播放'),
         leading: AppBackButton(context),
         actions: [
-          if (Platform.isAndroid)
-            Padding(
-              padding: EdgeInsets.only(left: 0, top: 8, bottom: 8, right: 8),
-              child: NeuButton(
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.all(10),
-                bevel: 5,
-                onPressed: () async {
-                  // player.pause();
+          Padding(
+            padding: EdgeInsets.only(left: 0, top: 8, bottom: 8, right: 8),
+            child: NeuButton(
+              decoration: NeumorphicDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.all(10),
+              bevel: 5,
+              onPressed: () async {
+                // player.pause();
+                if (Platform.isAndroid) {
                   AndroidIntent intent = AndroidIntent(
                     action: 'action_view',
                     data: widget.url,
@@ -157,13 +158,16 @@ class _VideoPlayerState extends State<VideoPlayer> {
                     type: "video/*",
                   );
                   await intent.launch();
-                },
-                child: Image.asset(
-                  "assets/icons/player.png",
-                  width: 20,
-                ),
+                } else {
+                  launchUrlString("vlc://${widget.url}");
+                }
+              },
+              child: Image.asset(
+                "assets/icons/player.png",
+                width: 20,
               ),
             ),
+          ),
         ],
       ),
       body: Column(
@@ -193,7 +197,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 // Text("${widget.url}"),
                 Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text("注意：视频播放器目前并不稳定，如遇到黑屏、无声、卡顿等任何问题，请点击右上角按钮使用第三方播放器播放！（iOS暂不支持）"),
+                  child: Text(
+                    "注意：视频播放器目前并不稳定，如遇到黑屏、无声、卡顿等任何问题，请点击右上角按钮使用第三方播放器播放！${Platform.isIOS ? '(仅支持vlc player，请确保已安装)' : ''}",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
                 ),
                 if (widget.nfo != null && nfoDetail != null)
                   Padding(

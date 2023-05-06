@@ -93,71 +93,74 @@ class _PackageDetailState extends State<PackageDetail> {
             bevel: 20,
             curveType: CurveType.emboss,
             decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "选择套件安装位置",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  ...volumes.map((volume) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: NeuButton(
-                        onPressed: () async {
-                          install(volume['volume_path']);
-                          Navigator.of(context).pop();
-                        },
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 20,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          padding: EdgeInsets.only(left: 20),
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("${volume['display_name']}(可用容量：${Util.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "${volume['description']}",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      "选择套件安装位置",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    ...volumes.map((volume) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 20),
+                        child: NeuButton(
+                          onPressed: () async {
+                            install(volume['volume_path']);
+                            Navigator.of(context).pop();
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 20,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Container(
+                            padding: EdgeInsets.only(left: 20),
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("${volume['display_name']}(可用容量：${Util.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "${volume['description']}",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+                      );
+                    }).toList(),
+                    NeuButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                      decoration: NeumorphicDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(25),
                       ),
-                    );
-                  }).toList(),
-                  NeuButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(25),
+                      bevel: 20,
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "取消",
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                    bevel: 20,
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "取消",
-                      style: TextStyle(fontSize: 18),
+                    SizedBox(
+                      height: 8,
                     ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -188,71 +191,74 @@ class _PackageDetailState extends State<PackageDetail> {
                 bevel: 5,
                 curveType: CurveType.emboss,
                 decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        "确认更新",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      Text(
-                        '更新${res['data']['cause_pausing_pkgs'].join(",")}时，${res['data']['paused_pkgs'].join("，")}将被停用。',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 22,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: NeuButton(
-                              onPressed: () async {
-                                install(installPath);
-                                Navigator.of(context).pop();
-                              },
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 5,
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                "继续更新",
-                                style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Expanded(
-                            child: NeuButton(
-                              onPressed: () async {
-                                Navigator.of(context).pop();
-                              },
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 5,
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                "取消",
-                                style: TextStyle(fontSize: 18),
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          "确认更新",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          '更新${res['data']['cause_pausing_pkgs'].join(",")}时，${res['data']['paused_pkgs'].join("，")}将被停用。',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                        ),
+                        SizedBox(
+                          height: 22,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: NeuButton(
+                                onPressed: () async {
+                                  install(installPath);
+                                  Navigator.of(context).pop();
+                                },
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                bevel: 5,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  "继续更新",
+                                  style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                    ],
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                              child: NeuButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                },
+                                decoration: NeumorphicDecoration(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                bevel: 5,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Text(
+                                  "取消",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -695,69 +701,72 @@ class _PackageDetailState extends State<PackageDetail> {
                                     bevel: 5,
                                     curveType: CurveType.emboss,
                                     decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          "卸载套件",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(
-                                          height: 12,
-                                        ),
-                                        Text(
-                                          "确认要卸载此套件？",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                                        ),
-                                        SizedBox(
-                                          height: 22,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: NeuButton(
-                                                onPressed: () async {
-                                                  Navigator.of(context).pop();
-                                                  uninstallPackage();
-                                                },
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 5,
-                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                child: Text(
-                                                  "卸载",
-                                                  style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Expanded(
-                                              child: NeuButton(
-                                                onPressed: () async {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 5,
-                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                child: Text(
-                                                  "取消",
-                                                  style: TextStyle(fontSize: 18),
+                                    child: SafeArea(
+                                      top: false,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(
+                                            "卸载套件",
+                                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          Text(
+                                            "确认要卸载此套件？",
+                                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                                          ),
+                                          SizedBox(
+                                            height: 22,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: NeuButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(context).pop();
+                                                    uninstallPackage();
+                                                  },
+                                                  decoration: NeumorphicDecoration(
+                                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                                    borderRadius: BorderRadius.circular(25),
+                                                  ),
+                                                  bevel: 5,
+                                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                                  child: Text(
+                                                    "卸载",
+                                                    style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
-                                      ],
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Expanded(
+                                                child: NeuButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  decoration: NeumorphicDecoration(
+                                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                                    borderRadius: BorderRadius.circular(25),
+                                                  ),
+                                                  bevel: 5,
+                                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                                  child: Text(
+                                                    "取消",
+                                                    style: TextStyle(fontSize: 18),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
@@ -795,75 +804,78 @@ class _PackageDetailState extends State<PackageDetail> {
                                           bevel: 5,
                                           curveType: CurveType.emboss,
                                           decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text(
-                                                "停用套件",
-                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                              ),
-                                              SizedBox(
-                                                height: 12,
-                                              ),
-                                              Text(
-                                                "确认要停用此套件？",
-                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                                              ),
-                                              SizedBox(
-                                                height: 22,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: NeuButton(
-                                                      onPressed: () async {
-                                                        Navigator.of(context).pop();
-                                                        var res = await Api.launchPackage(widget.package['id'], widget.package['dsm_apps'], "stop");
-                                                        if (res['success']) {
-                                                          Util.toast("已停用");
-                                                          setState(() {
-                                                            widget.package['launched'] = false;
-                                                          });
-                                                        }
-                                                      },
-                                                      decoration: NeumorphicDecoration(
-                                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                                        borderRadius: BorderRadius.circular(25),
-                                                      ),
-                                                      bevel: 5,
-                                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                                      child: Text(
-                                                        "停用",
-                                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 20,
-                                                  ),
-                                                  Expanded(
-                                                    child: NeuButton(
-                                                      onPressed: () async {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      decoration: NeumorphicDecoration(
-                                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                                        borderRadius: BorderRadius.circular(25),
-                                                      ),
-                                                      bevel: 20,
-                                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                                      child: Text(
-                                                        "取消",
-                                                        style: TextStyle(fontSize: 18),
+                                          child: SafeArea(
+                                            top: false,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Text(
+                                                  "停用套件",
+                                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                                ),
+                                                SizedBox(
+                                                  height: 12,
+                                                ),
+                                                Text(
+                                                  "确认要停用此套件？",
+                                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                                                ),
+                                                SizedBox(
+                                                  height: 22,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: NeuButton(
+                                                        onPressed: () async {
+                                                          Navigator.of(context).pop();
+                                                          var res = await Api.launchPackage(widget.package['id'], widget.package['dsm_apps'], "stop");
+                                                          if (res['success']) {
+                                                            Util.toast("已停用");
+                                                            setState(() {
+                                                              widget.package['launched'] = false;
+                                                            });
+                                                          }
+                                                        },
+                                                        decoration: NeumorphicDecoration(
+                                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                                          borderRadius: BorderRadius.circular(25),
+                                                        ),
+                                                        bevel: 5,
+                                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                                        child: Text(
+                                                          "停用",
+                                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                            ],
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Expanded(
+                                                      child: NeuButton(
+                                                        onPressed: () async {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        decoration: NeumorphicDecoration(
+                                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                                          borderRadius: BorderRadius.circular(25),
+                                                        ),
+                                                        bevel: 20,
+                                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                                        child: Text(
+                                                          "取消",
+                                                          style: TextStyle(fontSize: 18),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       );

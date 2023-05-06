@@ -4,8 +4,6 @@ import 'package:dsm_helper/models/photos/access_permission_model.dart';
 import 'package:dsm_helper/models/photos/photo_model.dart';
 import 'package:dsm_helper/models/photos/thumbnail_model.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/models/photos/access_permission_model.dart';
-import 'package:dsm_helper/models/photos/thumbnail_model.dart';
 
 /// additional : {"thumbnail":[{"cache_key":"611690_1665630858","m":"ready","preview":"broken","sm":"ready","unit_id":611690,"xl":"ready"},{"cache_key":"611689_1665630860","m":"ready","preview":"broken","sm":"ready","unit_id":611689,"xl":"ready"},{"cache_key":"611688_1665630855","m":"ready","preview":"broken","sm":"ready","unit_id":611688,"xl":"ready"},{"cache_key":"611687_1665630852","m":"ready","preview":"broken","sm":"ready","unit_id":611687,"xl":"ready"}]}
 /// id : 14770
