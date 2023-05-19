@@ -254,7 +254,7 @@ class DashboardState extends State<Dashboard> {
                               child: NeuButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
-                                  Util.setStorage("first_launch_new", "0");
+                                  Util.setStorage("first_launch_channel", "0");
                                 },
                                 decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
