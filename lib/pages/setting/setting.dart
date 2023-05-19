@@ -708,11 +708,94 @@ class _SettingState extends State<Setting> {
                       Util.toast("未获取到SSH状态，正在重试");
                       getData();
                     } else {
-                      setState(() {
-                        sshLoading = true;
-                      });
-                      await Api.setTerminal(!ssh, telnet, sshPort);
-                      await getData();
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: NeuCard(
+                              width: double.infinity,
+                              bevel: 5,
+                              curveType: CurveType.emboss,
+                              decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                              child: SafeArea(
+                                top: false,
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        "提示",
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                        height: 12,
+                                      ),
+                                      Text(
+                                        "确认${ssh ? '关闭' : '开启'}SSH吗？",
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                                      ),
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: NeuButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  sshLoading = true;
+                                                });
+                                                await Api.setTerminal(!ssh, telnet, sshPort);
+                                                await getData();
+                                              },
+                                              decoration: NeumorphicDecoration(
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
+                                              ),
+                                              bevel: 5,
+                                              padding: EdgeInsets.symmetric(vertical: 10),
+                                              child: Text(
+                                                "确认${ssh ? '关闭' : '开启'}SSH",
+                                                style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 16,
+                                          ),
+                                          Expanded(
+                                            child: NeuButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                              },
+                                              decoration: NeumorphicDecoration(
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
+                                              ),
+                                              bevel: 5,
+                                              padding: EdgeInsets.symmetric(vertical: 10),
+                                              child: Text(
+                                                "取消",
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     }
                   },
                   onLongPress: () {

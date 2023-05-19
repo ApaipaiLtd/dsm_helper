@@ -1264,7 +1264,9 @@ class FilesState extends State<Files> {
                             var res = await Api.deleteTask(files);
                             backgroundProcess[res['data']['taskid']] = {
                               "timer": null,
-                              "data": null,
+                              "data": {
+                                "progress": 0,
+                              },
                               "type": 'delete',
                               "path": files,
                             };
@@ -1381,7 +1383,10 @@ class FilesState extends State<Files> {
                       if (res['success']) {
                         backgroundProcess[res['data']['taskid']] = {
                           "timer": null,
-                          "data": null,
+                          "data": {
+                            "dest_folder_path": destPath,
+                            "progress": 0,
+                          },
                           "path": [file],
                           "type": 'compress',
                         };
@@ -2472,6 +2477,7 @@ class FilesState extends State<Files> {
           curveType: CurveType.flat,
           margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
           bevel: 10,
+          width: double.infinity,
           decoration: NeumorphicDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
@@ -2489,15 +2495,15 @@ class FilesState extends State<Files> {
                       ),
                       TextSpan(
                         text: task['path'].map((e) => e.split("/").last).join(","),
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
                       ),
-                      if (['copy', 'move', 'achieve', 'compress'].contains(task['type'])) ...[
+                      if (['copy', 'move', 'achieve', 'compress'].contains(task['type']) && value != null) ...[
                         TextSpan(
                           text: " 至 ",
                         ),
                         TextSpan(
                           text: value['dest_folder_path'] ?? '',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: AppTheme.of(context).placeholderColor),
                         ),
                       ],
                     ],
@@ -2507,23 +2513,24 @@ class FilesState extends State<Files> {
                 SizedBox(
                   height: 10,
                 ),
-                NeuCard(
-                  curveType: CurveType.flat,
-                  bevel: 10,
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(8),
+                if (value != null)
+                  NeuCard(
+                    curveType: CurveType.flat,
+                    bevel: 10,
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: FAProgressBar(
+                      backgroundColor: Colors.transparent,
+                      changeColorValue: 100,
+                      changeProgressColor: Colors.green,
+                      progressColor: Colors.blue,
+                      size: 20,
+                      currentValue: (num.parse("${value['progress']}") * 100).toInt(),
+                      displayText: '%',
+                    ),
                   ),
-                  child: FAProgressBar(
-                    backgroundColor: Colors.transparent,
-                    changeColorValue: 100,
-                    changeProgressColor: Colors.green,
-                    progressColor: Colors.blue,
-                    size: 20,
-                    currentValue: (num.parse("${value['progress']}") * 100).toInt(),
-                    displayText: '%',
-                  ),
-                ),
               ],
             ),
           ),
@@ -3481,7 +3488,10 @@ class FilesState extends State<Files> {
                                           multiSelect = false;
                                           backgroundProcess[res['data']['taskid']] = {
                                             "timer": null,
-                                            "data": null,
+                                            "data": {
+                                              "dest_folder_path": folder[0],
+                                              "progress": 0,
+                                            },
                                             "type": 'move',
                                             "path": files,
                                           };
@@ -3524,7 +3534,10 @@ class FilesState extends State<Files> {
                                           multiSelect = false;
                                           backgroundProcess[res['data']['taskid']] = {
                                             "timer": null,
-                                            "data": null,
+                                            "data": {
+                                              "dest_folder_path": folder[0],
+                                              "progress": 0,
+                                            },
                                             "type": "copy",
                                             "path": files,
                                           };

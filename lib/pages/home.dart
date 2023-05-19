@@ -9,9 +9,10 @@ import 'package:dsm_helper/widgets/update_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
+import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'dashborad/dashboard.dart';
@@ -35,65 +36,96 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool password = false;
   bool biometrics = false;
   bool authPage = false;
-  List<SharedMediaFile> _sharedFiles;
+  List<SharedFile> _sharedFiles;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     getData();
     Util.setStorage("agreement", "1");
+    FlutterSharingIntent.instance.getInitialSharing().then((List<SharedFile> value) {
+      print("Shared: getInitialMedia ${value.map((f) => f.path).join(",")}");
+      handleFiles(value);
+    });
     // For sharing images coming from outside the app while the app is in the memory
-    ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
+    FlutterSharingIntent.instance.getMediaStream().listen((List<SharedFile> value) {
       handleFiles(value);
+      print("Shared: getMediaStream ${value.map((f) => f.path).join(",")}");
     }, onError: (err) {
-      debugPrint("getIntentDataStream error: $err");
+      print("getIntentDataStream error: $err");
     });
-
-    // For sharing images coming from outside the app while the app is closed
-    ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
-      handleFiles(value);
-    });
-    // For sharing or opening urls/text coming from outside the app while the app is in the memory
-    ReceiveSharingIntent.getTextStream().listen((String value) {
-      // Util.toast("getTextStream:$value");
-      if (value != null) {
-        handleTorrent(value);
-      }
-    }, onError: (err) {
-      debugPrint("getLinkStream error: $err");
-    });
-
-    // For sharing or opening urls/text coming from outside the app while the app is closed
-    ReceiveSharingIntent.getInitialText().then((String value) {
-      if (value != null) {
-        handleTorrent(value);
-      }
-    });
+    // For sharing images coming from outside the app while the app is in the memory
+    // ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
+    //   handleFiles(value);
+    // }, onError: (err) {
+    //   debugPrint("getIntentDataStream error: $err");
+    // });
+    //
+    // // For sharing images coming from outside the app while the app is closed
+    // ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
+    //   handleFiles(value);
+    // });
+    // // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    // ReceiveSharingIntent.getTextStream().listen((String value) {
+    //   // Util.toast("getTextStream:$value");
+    //   if (value != null) {
+    //     handleTorrent(value);
+    //   }
+    // }, onError: (err) {
+    //   debugPrint("getLinkStream error: $err");
+    // });
+    //
+    // // For sharing or opening urls/text coming from outside the app while the app is closed
+    // ReceiveSharingIntent.getInitialText().then((String value) {
+    //   if (value != null) {
+    //     handleTorrent(value);
+    //   }
+    // });
     super.initState();
   }
 
-  handleFiles(List<SharedMediaFile> files) {
+  handleFiles(List<SharedFile> files) async {
     _sharedFiles = files;
     if (_sharedFiles != null && _sharedFiles.length > 0) {
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-        return Upload(
-          "",
-          selectedFilesPath: _sharedFiles.map((e) => e.path).toList(),
-        );
-      }));
+      if (_sharedFiles.length == 1 && _sharedFiles.first.path.endsWith(".torrent")) {
+        String filePath = '';
+        if (Platform.isAndroid) {
+          filePath = await FlutterSharingIntent.getAbsolutePath(_sharedFiles.first.path);
+        } else {
+          filePath = _sharedFiles.first.path;
+        }
+        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+          return AddDownloadTask(
+            torrentPath: filePath,
+          );
+        }));
+        //   if (content.startsWith("content://") && content.endsWith(".torrent")) {
+        //     // final filePath = await FlutterSharingIntent.getAbsolutePath(content);
+        //
+        //     }));
+        //     // if (filePath.endsWith("torrent")) {}
+        //   }
+      } else {
+        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+          return Upload(
+            "",
+            selectedFilesPath: _sharedFiles.map((e) => e.path).toList(),
+          );
+        }));
+      }
     }
   }
 
-  handleTorrent(String content) async {
-    if (content.startsWith("content://") && content.endsWith(".torrent")) {
-      final filePath = await ReceiveSharingIntent.getAbsolutePath(content);
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-        return AddDownloadTask(
-          torrentPath: filePath,
-        );
-      }));
-      if (filePath.endsWith("torrent")) {}
-    }
-  }
+  // handleTorrent(String content) async {
+  //   if (content.startsWith("content://") && content.endsWith(".torrent")) {
+  //     // final filePath = await FlutterSharingIntent.getAbsolutePath(content);
+  //     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+  //       return AddDownloadTask(
+  //         torrentPath: ,
+  //       );
+  //     }));
+  //     // if (filePath.endsWith("torrent")) {}
+  //   }
+  // }
 
   @override
   void dispose() {

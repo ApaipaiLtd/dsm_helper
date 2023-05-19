@@ -171,6 +171,53 @@ class _AboutState extends State<About> {
                     child: Padding(
                         padding: EdgeInsets.all(15),
                         child: Column(
+                          children: Util.groups.channel.map((e) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/qq.png",
+                                    width: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    e.displayName,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Spacer(),
+                                  NeuButton(
+                                    decoration: NeumorphicDecoration(
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                    onPressed: () {
+                                      launchUrlString(e.key, mode: LaunchMode.externalApplication);
+                                    },
+                                    child: Text("加入"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  NeuCard(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    curveType: CurveType.flat,
+                    child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Column(
                           children: Util.groups.qq.map((e) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 5),
@@ -205,8 +252,6 @@ class _AboutState extends State<About> {
                           }).toList(),
                         )),
                   ),
-                ],
-                if (Util.notReviewAccount) ...[
                   SizedBox(
                     height: 20,
                   ),
@@ -257,76 +302,6 @@ class _AboutState extends State<About> {
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // NeuCard(
-                  //   margin: EdgeInsets.symmetric(horizontal: 20),
-                  //   decoration: NeumorphicDecoration(
-                  //     color: Theme.of(context).scaffoldBackgroundColor,
-                  //     borderRadius: BorderRadius.circular(20),
-                  //   ),
-                  //   curveType: CurveType.flat,
-                  //   child: Padding(
-                  //     padding: EdgeInsets.all(20),
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Row(
-                  //           children: [
-                  //             Image.asset(
-                  //               "assets/icons/coffee.png",
-                  //               width: 20,
-                  //             ),
-                  //             SizedBox(
-                  //               width: 10,
-                  //             ),
-                  //             Text(
-                  //               "给作者买杯咖啡",
-                  //               style: TextStyle(fontSize: 16),
-                  //             ),
-                  //             Spacer(),
-                  //             NeuButton(
-                  //               decoration: NeumorphicDecoration(
-                  //                 color: Theme.of(context).scaffoldBackgroundColor,
-                  //                 borderRadius: BorderRadius.circular(20),
-                  //               ),
-                  //               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  //               onPressed: () {
-                  //                 Navigator.of(context).push(CupertinoPageRoute(
-                  //                   builder: (context) {
-                  //                     return Reward();
-                  //                   },
-                  //                   settings: RouteSettings(name: "reward"),
-                  //                 ));
-                  //               },
-                  //               child: Text("打赏名单"),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //         SizedBox(
-                  //           height: 20,
-                  //         ),
-                  //         Center(
-                  //           child: NeuCard(
-                  //             decoration: NeumorphicDecoration(
-                  //               color: Theme.of(context).scaffoldBackgroundColor,
-                  //               borderRadius: BorderRadius.circular(20),
-                  //             ),
-                  //             curveType: CurveType.flat,
-                  //             child: ClipRRect(
-                  //               borderRadius: BorderRadius.circular(20),
-                  //               child: Image.asset(
-                  //                 "assets/pay_qr.png",
-                  //                 width: MediaQuery.of(context).size.width / 2 - 50,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                 ],
                 SizedBox(
                   height: 20,

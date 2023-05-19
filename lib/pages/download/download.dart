@@ -108,16 +108,16 @@ class DownloadState extends State<Download> {
     setState(() {
       loading = false;
     });
-    //如果存在下载中任务，每秒刷新一次
-    // if (tasks.where((task) => task.status == DownloadTaskStatus.running || task.status == DownloadTaskStatus.enqueued || task.status == DownloadTaskStatus.undefined).length > 0) {
-    //   if (timer == null) {
-    //     timer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //       getData();
-    //     });
-    //   }
-    // } else {
-    //   timer?.cancel();
-    // }
+    // 如果存在下载中任务，每秒刷新一次
+    if (tasks.where((task) => task.status == DownloadTaskStatus.running || task.status == DownloadTaskStatus.enqueued || task.status == DownloadTaskStatus.undefined).length > 0) {
+      if (timer == null) {
+        timer = Timer.periodic(Duration(seconds: 1), (timer) {
+          getData();
+        });
+      }
+    } else {
+      timer?.cancel();
+    }
   }
 
   Future<bool> onWillPop() {
@@ -459,8 +459,110 @@ class DownloadState extends State<Download> {
                                     NeuButton(
                                       onPressed: () async {
                                         Navigator.of(context).pop();
-                                        await FlutterDownloader.remove(taskId: task.taskId, shouldDeleteContent: true);
-                                        await getData();
+                                        Util.vibrate(FeedbackType.warning);
+                                        showCupertinoModalPopup(
+                                          context: context,
+                                          builder: (context) {
+                                            return Material(
+                                              color: Colors.transparent,
+                                              child: NeuCard(
+                                                width: double.infinity,
+                                                padding: EdgeInsets.all(22),
+                                                bevel: 5,
+                                                curveType: CurveType.emboss,
+                                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                                child: SafeArea(
+                                                  top: false,
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "确认删除",
+                                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 12,
+                                                      ),
+                                                      Text(
+                                                        "确认要删除文件？",
+                                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 22,
+                                                      ),
+                                                      NeuButton(
+                                                        onPressed: () async {
+                                                          Navigator.of(context).pop();
+                                                          await FlutterDownloader.remove(taskId: task.taskId, shouldDeleteContent: true);
+                                                          await getData();
+                                                        },
+                                                        decoration: NeumorphicDecoration(
+                                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                                          borderRadius: BorderRadius.circular(25),
+                                                        ),
+                                                        bevel: 5,
+                                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                                        child: Text(
+                                                          "同时删除已下载文件",
+                                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 22,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: NeuButton(
+                                                              onPressed: () async {
+                                                                Navigator.of(context).pop();
+                                                                await FlutterDownloader.remove(taskId: task.taskId, shouldDeleteContent: false);
+                                                                await getData();
+                                                              },
+                                                              decoration: NeumorphicDecoration(
+                                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                                borderRadius: BorderRadius.circular(25),
+                                                              ),
+                                                              bevel: 5,
+                                                              padding: EdgeInsets.symmetric(vertical: 10),
+                                                              child: Text(
+                                                                "确认删除",
+                                                                style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Expanded(
+                                                            child: NeuButton(
+                                                              onPressed: () async {
+                                                                Navigator.of(context).pop();
+                                                              },
+                                                              decoration: NeumorphicDecoration(
+                                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                                borderRadius: BorderRadius.circular(25),
+                                                              ),
+                                                              bevel: 5,
+                                                              padding: EdgeInsets.symmetric(vertical: 10),
+                                                              child: Text(
+                                                                "取消",
+                                                                style: TextStyle(fontSize: 18),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 8,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
                                       },
                                       decoration: NeumorphicDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,

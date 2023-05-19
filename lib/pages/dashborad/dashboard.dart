@@ -31,6 +31,7 @@ import 'package:flutter/services.dart';
 import 'package:neumorphic/neumorphic.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({key}) : super(key: key);
@@ -110,7 +111,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   showFirstLaunchDialog() async {
-    bool firstLaunch = await Util.getStorage("first_launch_new") == null;
+    bool firstLaunch = await Util.getStorage("first_launch_channel") == null;
     if (firstLaunch) {
       showCupertinoDialog(
         context: context,
@@ -148,7 +149,53 @@ class DashboardState extends State<Dashboard> {
                           bevel: 20,
                           curveType: CurveType.flat,
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          child: Text("关注以下公众号，获取最新${Util.appName}更新内容！\n前往'我的-关闭广告'页面，即可关闭开屏广告。"),
+                          child: Text("前往'设置-关闭广告'页面，即可关闭开屏广告。"),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        NeuCard(
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          curveType: CurveType.flat,
+                          child: Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Column(
+                                children: Util.groups.channel.map((e) {
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          "assets/icons/qq.png",
+                                          width: 20,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "${e.displayName}",
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        Spacer(),
+                                        NeuButton(
+                                          decoration: NeumorphicDecoration(
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                          onPressed: () {
+                                            launchUrlString(e.key, mode: LaunchMode.externalApplication);
+                                          },
+                                          child: Text("加入"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              )),
                         ),
                         SizedBox(
                           height: 20,

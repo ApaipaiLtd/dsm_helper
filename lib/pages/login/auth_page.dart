@@ -32,6 +32,11 @@ class _AuthPageState extends State<AuthPage> {
     super.initState();
   }
 
+  Map<BiometricType, String> biometricTypeName = {
+    BiometricType.face: "FaceId",
+    BiometricType.fingerprint: "指纹",
+    BiometricType.iris: "人脸",
+  };
   @override
   void dispose() {
     Util.isAuthPage = false;
@@ -44,6 +49,22 @@ class _AuthPageState extends State<AuthPage> {
     password = pass ?? "";
     String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
     if (launchAuthBiometricsStr == "1") {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+      setState(() {});
+      if (canCheckBiometrics) {
+        List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
+        if (Platform.isIOS) {
+          setState(() {
+            if (availableBiometrics.contains(BiometricType.face)) {
+              biometricsType = BiometricType.face;
+            } else if (availableBiometrics.contains(BiometricType.fingerprint)) {
+              biometricsType = BiometricType.fingerprint;
+            } else if (availableBiometrics.contains(BiometricType.iris)) {
+              biometricsType = BiometricType.iris;
+            }
+          });
+        }
+      }
       if (Platform.isIOS) {
         await Future.delayed(Duration(milliseconds: 300));
       }
@@ -57,7 +78,7 @@ class _AuthPageState extends State<AuthPage> {
             IOSAuthMessages(
               lockOut: "认证失败次数过多，请稍后再试",
               goToSettingsButton: "设置",
-              goToSettingsDescription: "系统未设置${biometricsType == BiometricType.fingerprint ? "指纹" : "Face ID"}，点击设置按钮前往系统设置页面",
+              goToSettingsDescription: "系统未设置${biometricTypeName[biometricsType]}，点击设置按钮前往系统设置页面",
               cancelButton: "取消",
             ),
             AndroidAuthMessages(
@@ -73,6 +94,7 @@ class _AuthPageState extends State<AuthPage> {
           ],
           localizedReason: '请触摸指纹传感器',
         );
+        auth.stopAuthentication();
         if (didAuthenticate) {
           //验证成功
           Util.vibrate(FeedbackType.light);
@@ -82,13 +104,13 @@ class _AuthPageState extends State<AuthPage> {
             Navigator.of(context).pop();
           }
         } else {
-          // Util.vibrate(FeedbackType.warning);
-          // Util.toast("${biometricsType == BiometricType.fingerprint ? "指纹" : "Face ID"}验证失败，请使用图形密码登录");
+          Util.vibrate(FeedbackType.warning);
+          Util.toast("${biometricTypeName[biometricsType]}验证失败，请使用图形密码登录");
         }
       } on PlatformException catch (e) {
         Util.vibrate(FeedbackType.warning);
         if (e.code == auth_error.notAvailable) {
-          Util.toast("生物验证不可用，请使用图形密码登录");
+          Util.toast("${biometricTypeName[biometricsType]}验证不可用，请使用图形密码登录");
         } else if (e.code == auth_error.passcodeNotSet) {
           Util.toast("系统未设置密码");
         } else if (e.code == auth_error.lockedOut) {

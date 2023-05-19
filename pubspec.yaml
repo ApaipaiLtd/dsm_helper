@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.0.138+138
+version: 0.0.139+139
 
 environment:
   sdk: ">=2.10.0 <3.0.0"
@@ -82,8 +82,10 @@ dependencies:
     git: https://gitee.com/apaipai/draggable_scrollbar.git
   neumorphic:
     git: https://gitee.com/apaipai/neumorphic.git
-  receive_sharing_intent:
-    git: https://gitee.com/apaipai/receive_sharing_intent.git
+#  receive_sharing_intent:
+#    git: https://gitee.com/apaipai/receive_sharing_intent.git
+  flutter_sharing_intent:
+    path: extensions/flutter_sharing_intent
   webview_flutter: ^4.2.0
   simple_logger: ^1.9.0+2
   extended_text: ^10.0.1

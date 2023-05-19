@@ -8,21 +8,26 @@ import 'package:dsm_helper/util/function.dart';
 /// status : ""
 
 class GroupsModel {
-  GroupsModel({this.qq, this.wechat});
+  GroupsModel({this.qq, this.wechat, this.channel});
   List<GroupModel> qq;
   List<GroupModel> wechat;
+  List<GroupModel> channel;
   static Future<GroupsModel> fetch() async {
     var res = await Util.post("${Util.appUrl}/app/groups");
     if (res['code'] == 1) {
       List<GroupModel> qq = [];
       List<GroupModel> wechat = [];
+      List<GroupModel> channel = [];
       res['data']['qq'].forEach((e) {
         qq.add(GroupModel.fromJson(e));
       });
       res['data']['wechat'].forEach((e) {
         wechat.add(GroupModel.fromJson(e));
       });
-      return GroupsModel(qq: qq, wechat: wechat);
+      res['data']['channel'].forEach((e) {
+        channel.add(GroupModel.fromJson(e));
+      });
+      return GroupsModel(qq: qq, wechat: wechat, channel: channel);
     } else {
       throw Exception("加载失败");
     }
