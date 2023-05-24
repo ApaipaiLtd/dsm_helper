@@ -12,6 +12,7 @@ import 'package:dsm_helper/util/api.dart';
 import 'package:dsm_helper/util/log.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:oktoast/oktoast.dart';
@@ -69,6 +70,7 @@ class Util {
       GroupModel(name: "群晖助手APP", no: "", key: "", status: ""),
     ],
   );
+  static bool isWechatInstalled = false;
   static DateTime vipExpireTime = DateTime.now();
   static bool vipForever = false;
   static String appUrl = "https://dsm.apaipai.top";
@@ -300,6 +302,14 @@ class Util {
         // connectTimeout: timeout,
       ),
     );
+    if (kDebugMode) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+        client.findProxy = (uri) {
+          return "PROXY 192.168.0.107:7890";
+        };
+        return client;
+      }; //
+    }
     //忽略Https校验
     if (!(checkSsl ?? Util.checkSsl)) {
       (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
@@ -392,6 +402,14 @@ class Util {
         headers: headers,
       ),
     );
+    if (kDebugMode) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+        client.findProxy = (uri) {
+          return "PROXY 192.168.0.107:7890";
+        };
+        return client;
+      }; //
+    }
     // (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
     //   client.findProxy = (uri) {
     //     return "PROXY 192.168.1.159:8888";

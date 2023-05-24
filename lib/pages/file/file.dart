@@ -112,14 +112,34 @@ class FilesState extends State<Files> {
       if (res['data']['tasks'] != null && res['data']['tasks'].length > 0) {
         for (var task in res['data']['tasks']) {
           if (backgroundProcess[task['taskid']] == null) {
-            String type = task['api'] == 'SYNO.FileStation.CopyMove' ? (task['params']['remove_src'] ? 'move' : 'copy') : 'achieve';
-            backgroundProcess[task['taskid']] = {
-              "timer": null,
-              "data": task,
-              'type': type,
-              'path': task['params']['path'],
-            };
-            getProcessingTaskResult(task['taskid']);
+            String type = "";
+            switch (task['api']) {
+              case 'SYNO.FileStation.CopyMove':
+                if (task['params']['remove_src']) {
+                  type = "move";
+                } else {
+                  type = "copy";
+                }
+                break;
+              case 'SYNO.FileStation.Delete':
+                type = "delete";
+                break;
+              case 'SYNO.FileStation.Compress':
+                type = "compress";
+                break;
+              case 'SYNO.FileStation.Extract':
+                type = 'extract';
+                break;
+            }
+            if (type.isNotBlank) {
+              backgroundProcess[task['taskid']] = {
+                "timer": null,
+                "data": task,
+                'type': type,
+                'path': task['params']['path'],
+              };
+              getProcessingTaskResult(task['taskid']);
+            }
           }
         }
       }
@@ -1479,12 +1499,14 @@ class FilesState extends State<Files> {
             List<String> images = [];
             List<String> thumbs = [];
             List<String> names = [];
+            List<String> paths = [];
             int index = 0;
             for (int i = 0; i < files.length; i++) {
               if (Util.fileType(files[i]['name']) == FileTypeEnum.image) {
                 images.add(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
                 thumbs.add(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
                 names.add(files[i]['name']);
+                paths.add(files[i]['path']);
                 if (files[i]['name'] == file['name']) {
                   index = images.length - 1;
                 }
@@ -1497,6 +1519,10 @@ class FilesState extends State<Files> {
                   index,
                   thumbs: thumbs,
                   names: names,
+                  paths: paths,
+                  onDelete: () {
+                    refresh();
+                  },
                 );
               },
             ));

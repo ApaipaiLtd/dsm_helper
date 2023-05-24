@@ -458,7 +458,7 @@ class _LoginState extends State<Login> {
           }
         });
       }
-    } else if (res['errno'] == 4 && res['errinfo'] == "get_server_info.go:105[]" && res['sites'].length > 0) {
+    } else if (res['errno'] == 4 && res['errinfo'].startsWith("get_server_info.go") && res['sites'].length > 0) {
       qcLogin(qcHost: res['sites'][0]);
     } else {
       Util.toast("无法连接到服务器，请检查QuickConnect ID是否正确");

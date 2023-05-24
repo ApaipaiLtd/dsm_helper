@@ -5,20 +5,24 @@ import 'dart:math';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/hero_widget.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:neumorphic/neumorphic.dart';
+import 'package:vibrate/vibrate.dart';
 
 class ImagePreview extends StatefulWidget {
   final List<String> images;
   final List<String> thumbs;
   final List<String> names;
+  final List<String> paths;
   final int index;
   final bool network;
   final Object tag;
+  final Function onDelete;
   final PageController pageController;
 
-  ImagePreview(this.images, this.index, {this.network = true, this.tag, this.thumbs: const [], this.names: const []}) : this.pageController = PageController(initialPage: index);
+  ImagePreview(this.images, this.index, {this.network = true, this.tag, this.thumbs: const [], this.names: const [], this.paths: const [], this.onDelete}) : this.pageController = PageController(initialPage: index);
 
   @override
   _ImagePreviewState createState() => _ImagePreviewState();
@@ -51,6 +55,110 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
     }
 
     return initialScale;
+  }
+
+  deleteFile(int index) {
+    Util.vibrate(FeedbackType.warning);
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return Material(
+          color: Colors.transparent,
+          child: NeuCard(
+            width: double.infinity,
+            padding: EdgeInsets.all(22),
+            bevel: 5,
+            curveType: CurveType.emboss,
+            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    "确认删除",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    "确认要删除文件？",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(
+                    height: 22,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NeuButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            var res = await Api.deleteTask([widget.paths[index]]);
+                            if (res['success']) {
+                              Util.toast("文件删除成功");
+                              if (widget.thumbs != null && widget.thumbs.length > index) {
+                                widget.thumbs?.removeAt(index);
+                              }
+
+                              if (widget.images != null && widget.images.length > index) {
+                                widget.images?.removeAt(index);
+                              }
+                              if (widget.paths != null && widget.paths.length > index) {
+                                widget.paths?.removeAt(index);
+                              }
+                              if (widget.names != null && widget.names.length > index) {
+                                widget.names?.removeAt(index);
+                              }
+                              setState(() {});
+                              widget.onDelete?.call();
+                            }
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "确认删除",
+                            style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: NeuButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                          decoration: NeumorphicDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          bevel: 5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "取消",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -271,7 +379,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
 
               return Column(
                 children: [
-                  if (Platform.isAndroid)
+                  if (Util.isWechatInstalled)
                     SafeArea(
                       child: Container(
                         height: 56,
@@ -307,7 +415,16 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                       ),
                     ),
                   Spacer(),
-                  MySwiperPlugin(widget.images, currentIndex, rebuildIndex),
+                  MySwiperPlugin(
+                    widget.images,
+                    currentIndex,
+                    rebuildIndex,
+                    onDelete: widget.paths != null && widget.paths.length > currentIndex
+                        ? (index) {
+                            deleteFile(index);
+                          }
+                        : null,
+                  ),
                 ],
               );
             },
@@ -366,7 +483,8 @@ class MySwiperPlugin extends StatelessWidget {
   final List pics;
   final int index;
   final StreamController<int> reBuild;
-  MySwiperPlugin(this.pics, this.index, this.reBuild);
+  final Function(int) onDelete;
+  MySwiperPlugin(this.pics, this.index, this.reBuild, {this.onDelete});
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
@@ -375,7 +493,6 @@ class MySwiperPlugin extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 NeuButton(
                   decoration: NeumorphicDecoration(
@@ -405,6 +522,26 @@ class MySwiperPlugin extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                Spacer(),
+                if (onDelete != null)
+                  NeuButton(
+                    decoration: NeumorphicDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    bevel: 0,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    onPressed: () {
+                      onDelete?.call(data.data);
+                    },
+                    child: Icon(
+                      Icons.delete_forever,
+                      size: 13,
+                    ),
+                  ),
+                SizedBox(
+                  width: 10,
                 ),
                 NeuCard(
                   decoration: NeumorphicDecoration(

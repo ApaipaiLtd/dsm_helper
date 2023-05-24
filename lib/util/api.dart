@@ -1911,6 +1911,14 @@ class Api {
     "id":"dsm",
     "get_ca_fingerprints":true
 }''';
+    // if (kDebugMode) {
+    //   (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+    //     client.findProxy = (uri) {
+    //       return "PROXY 192.168.0.107:7890";
+    //     };
+    //     return client;
+    //   }; //
+    // }
     Response response;
     try {
       response = await dio.post("Serv.php", data: data);
@@ -1941,6 +1949,14 @@ class Api {
     );
     String data = '''{"version":1,"command":"request_tunnel","serverID":"$connectConnectID","id":"dsm","location":"cn","platform":"Android 11"}''';
     Response response;
+    // if (kDebugMode) {
+    //   (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+    //     client.findProxy = (uri) {
+    //       return "PROXY 192.168.0.107:7890";
+    //     };
+    //     return client;
+    //   }; //
+    // }
     try {
       response = await dio.post("Serv.php", data: data);
       if (response.data is String) {
