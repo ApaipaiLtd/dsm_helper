@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.0.141+142
+version: 0.0.142+143
 
 environment:
   sdk: ">=2.10.0 <3.0.0"
@@ -69,8 +69,8 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^21.2.3
   wechat_assets_picker: 8.4.2  # 7.3.0 起支持Flutter3，不再支持flutter2.x
   fluwx: ^3.13.1
-  better_player:
-    git: https://github.com/AnonymHK/betterplayer.git
+#  better_player:
+#    git: https://github.com/AnonymHK/betterplayer.git
   device_info_plus: ^8.2.2
   xml2json: ^5.3.6
 #  wake_on_lan: ^3.0.0
@@ -92,6 +92,8 @@ dependencies:
   just_audio: ^0.9.32
   rxdart: ^0.27.7
   flutter_floating: ^1.0.6
+  fplayer: ^1.0.4
+  easy_app_installer: ^1.0.0
 #  flutter_filereader: ^3.0.0
 #  x5_webview: ^0.2.4
 dev_dependencies:

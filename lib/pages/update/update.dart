@@ -3,6 +3,7 @@ import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:easy_app_installer/easy_app_installer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -20,7 +21,6 @@ class Update extends StatefulWidget {
 
 class _UpdateState extends State<Update> {
   bool downloading = false;
-  bool exist = false;
   CancelToken cancelToken = CancelToken();
   double progress = 0;
   bool loading = true;
@@ -31,15 +31,6 @@ class _UpdateState extends State<Update> {
   @override
   void initState() {
     fileName = "dsm_helper-${widget.data['build']}.apk";
-    Util.fileExist(fileName).then((res) {
-      setState(() {
-        if (res != null) {
-          exist = true;
-          filePath = res;
-        }
-        loading = false;
-      });
-    });
     if (widget.direct) {
       download();
     }
@@ -50,22 +41,22 @@ class _UpdateState extends State<Update> {
     setState(() {
       downloading = true;
     });
-    cancelToken = CancelToken();
-    var res = await Util.downloadPkg(fileName, widget.data['url'], (downloaded, total) {
-      setState(() {
-        downloadedSize = downloaded;
-        totalSize = total;
-        progress = downloaded / total;
-      });
-    }, cancelToken);
-    if (res['code'] == 1) {
-      setState(() {
-        exist = true;
-        filePath = res['data'];
-      });
-      install();
-    } else {
-      Util.toast(res['msg']);
+    try {
+      /// 仅支持将APK下载到沙盒目录下
+      /// 当前这个示例最终生成的文件路径就是 '/data/user/0/$applicationPackageName/files/updateApk/new.apk'
+      /// 如果连续调用此方法，并且参数传递的完全一致，那么Native端将拒绝执行后续任务，直到下载中的任务执行完毕。
+      await EasyAppInstaller.instance.downloadAndInstallApk(
+        fileUrl: widget.data['url'],
+        fileDirectory: "apk",
+        fileName: fileName,
+        onDownloadingListener: (progress) {
+          setState(() {
+            this.progress = progress / 100;
+          });
+        },
+      );
+    } catch (e) {
+      Util.toast("下载失败");
     }
     setState(() {
       downloading = false;
@@ -77,7 +68,6 @@ class _UpdateState extends State<Update> {
     bool hasPermission = await Permission.requestInstallPackages.request().isGranted;
     print("install permission: $hasPermission");
     if (!hasPermission) {
-      print("xxx");
       showCupertinoModalPopup(
         context: context,
         builder: (context) {
@@ -262,35 +252,24 @@ class _UpdateState extends State<Update> {
               ],
             ),
           ),
-          if (exist && !downloading) ...[
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  progress = 0;
-                });
-                download();
-              },
-              child: Text(
-                "重新下载",
-                style: TextStyle(color: Colors.grey, decoration: TextDecoration.underline, fontSize: 14),
-              ),
+          GestureDetector(
+            onTap: () {
+              launchUrlString(widget.data['url'], mode: LaunchMode.externalApplication);
+            },
+            child: Text(
+              "使用浏览器下载",
+              style: TextStyle(color: Colors.grey, decoration: TextDecoration.underline, fontSize: 14),
             ),
-            SizedBox(
-              height: 20,
-            ),
-          ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
           if (!downloading)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: NeuButton(
                 onPressed: () {
-                  if (exist) {
-                    install();
-                  } else if (downloading) {
-                    cancel();
-                  } else {
-                    download();
-                  }
+                  download();
                 },
                 // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 padding: EdgeInsets.symmetric(vertical: 20),
@@ -300,7 +279,7 @@ class _UpdateState extends State<Update> {
                 ),
                 bevel: 20,
                 child: Text(
-                  exist ? "开始安装" : "开始下载",
+                  "开始下载",
                   style: TextStyle(fontSize: 18),
                 ),
               ),

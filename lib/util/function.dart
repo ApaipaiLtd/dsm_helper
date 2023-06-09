@@ -302,14 +302,14 @@ class Util {
         // connectTimeout: timeout,
       ),
     );
-    if (kDebugMode) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
-        client.findProxy = (uri) {
-          return "PROXY 192.168.0.107:7890";
-        };
-        return client;
-      }; //
-    }
+    // if (kDebugMode) {
+    //   (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+    //     client.findProxy = (uri) {
+    //       return "PROXY 192.168.0.107:7890";
+    //     };
+    //     return client;
+    //   }; //
+    // }
     //忽略Https校验
     if (!(checkSsl ?? Util.checkSsl)) {
       (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
@@ -368,7 +368,7 @@ class Util {
       }
     } on DioError catch (error) {
       String code = "";
-      if (error.message.contains("CERTIFICATE_VERIFY_FAILED")) {
+      if (error.message != null && error.message.contains("CERTIFICATE_VERIFY_FAILED")) {
         code = "SSL/HTTPS证书有误";
       } else {
         code = error.message;
@@ -402,14 +402,14 @@ class Util {
         headers: headers,
       ),
     );
-    if (kDebugMode) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
-        client.findProxy = (uri) {
-          return "PROXY 192.168.0.107:7890";
-        };
-        return client;
-      }; //
-    }
+    // if (kDebugMode) {
+    //   (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+    //     client.findProxy = (uri) {
+    //       return "PROXY 192.168.0.107:7890";
+    //     };
+    //     return client;
+    //   }; //
+    // }
     // (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
     //   client.findProxy = (uri) {
     //     return "PROXY 192.168.1.159:8888";

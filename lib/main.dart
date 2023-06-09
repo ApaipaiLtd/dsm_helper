@@ -25,7 +25,6 @@ import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '/providers/dark_mode.dart';
 
 void main() async {
