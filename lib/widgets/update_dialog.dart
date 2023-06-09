@@ -66,7 +66,7 @@ class UpdateDialog extends StatelessWidget {
                               height: 3.5,
                             ),
                             Text(
-                              "V${packageInfo.version} build ${packageInfo.buildNumber} → V${updateInfo['version']} build ${updateInfo['build']}",
+                              "V${packageInfo.version} build ${packageInfo.buildNumber} → V${updateInfo['buildVersion']} build ${updateInfo['buildVersionNo']}",
                               style: TextStyle(fontSize: 10, color: Color(0xffFFDFD8)),
                             ),
                           ],
@@ -90,7 +90,7 @@ class UpdateDialog extends StatelessWidget {
                               style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14, height: 1.5),
                             ),
                             Text(
-                              "${updateInfo['note']}",
+                              "${updateInfo['buildUpdateDescription']}",
                               style: TextStyle(color: Colors.black, fontSize: 14, height: 2),
                             ),
                             SizedBox(

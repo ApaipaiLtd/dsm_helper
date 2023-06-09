@@ -22,31 +22,30 @@ class Api {
       //     "msg": "已是最新版本",
       //   };
       // }
-      var res = await Util.get("${Util.appUrl}/version");
+      // String url = "aHR0cHM6Ly93d3cucGd5ZXIuY29tL2FwaXYyL2FwcC9jaGVjaw==";
+      var res = await Util.post("https://www.pgyer.com/apiv2/app/check", data: {
+        "_api_key": "f4621000de0337cc74a156cea513e828",
+        "appKey": "ed1169bc9b9d290ef91c7e21d4ffb008",
+        "buildVersion": buildNumber,
+      });
       if (res != null) {
-        if (int.parse(buildNumber) < res['data']['build']) {
-          return {
-            "code": 1,
-            "msg": "版本更新",
-            "data": res['data'],
-          };
-        } else {
-          return {
-            "code": 0,
-            "msg": "已是最新版本",
-          };
-        }
+        try {
+          if (res['code'] == 0) {
+            if (true) {
+              return {
+                "code": 1,
+                "msg": "版本更新",
+                "data": res['data'],
+              };
+            }
+          }
+        } catch (e) {}
       }
-      return {
-        "code": 0,
-        "msg": "已是最新版本",
-      };
-    } else {
-      return {
-        "code": 0,
-        "msg": "已是最新版本",
-      };
     }
+    return {
+      "code": 0,
+      "msg": "已是最新版本",
+    };
 //    var res = await Util.post("base/update", data: {"platform": Platform.isAndroid ? "android" : "ios", "build": buildNumber});
   }
 
