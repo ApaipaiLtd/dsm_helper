@@ -748,7 +748,11 @@ class _SettingState extends State<Setting> {
                                                 setState(() {
                                                   sshLoading = true;
                                                 });
-                                                await Api.setTerminal(!ssh, telnet, sshPort);
+                                                var res = await Api.setTerminal(!ssh, telnet, sshPort);
+                                                print(res);
+                                                if (!res['success']) {
+                                                  Util.toast("操作失败，代码：${res['error']['code']}");
+                                                }
                                                 await getData();
                                               },
                                               decoration: NeumorphicDecoration(

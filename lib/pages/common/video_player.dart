@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fplayer/fplayer.dart';
 import 'package:neumorphic/neumorphic.dart';
@@ -226,7 +227,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
             height: MediaQuery.of(context).size.width * 9 / 16,
             color: Colors.black,
             fsFit: FFit.contain, // 全屏模式下的填充
-            fit: FFit.fill, // 正常模式下的填充
+            fit: FFit.contain, // 正常模式下的填充
+            cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
+
             panelBuilder: fPanelBuilder(
               // 单视频配置
               title: widget.name,
@@ -371,30 +374,31 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 SizedBox(
                   height: 20,
                 ),
-                if (actors.length > 0)
+                if (actors != null && actors.length > 0) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: Text("演员表："),
                   ),
-                ...actors.map(
-                  (e) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: Text("${e['role']}"),
-                        ),
-                        Expanded(
-                          child: Text("${e['name']}"),
-                        ),
-                        Expanded(
-                          child: Text("${e['type']}"),
-                        ),
-                      ],
+                  ...actors.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: Text("${e['role']}"),
+                          ),
+                          Expanded(
+                            child: Text("${e['name']}"),
+                          ),
+                          Expanded(
+                            child: Text("${e['type']}"),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

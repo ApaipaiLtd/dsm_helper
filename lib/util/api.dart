@@ -31,7 +31,7 @@ class Api {
       if (res != null) {
         try {
           if (res['code'] == 0) {
-            if (true) {
+            if (int.parse(buildNumber) < res['data']['buildVersionNo']) {
               return {
                 "code": 1,
                 "msg": "版本更新",
@@ -854,15 +854,26 @@ class Api {
   }
 
   static Future<Map> setTerminal(bool ssh, bool telnet, String sshPort) async {
+    var apis = [
+      {
+        "api": "SYNO.Core.Terminal",
+        "enable_telnet": telnet,
+        "enable_ssh": ssh,
+        "ssh_port": sshPort,
+        "version": "3",
+        "method": "set",
+      }
+    ];
     var data = {
-      "api": '"SYNO.Core.Terminal"',
-      "enable_telnet": telnet,
-      "enable_ssh": ssh,
-      "ssh_port": sshPort,
-      "version": 3,
-      "method": "set",
-      "_sid": Util.sid,
+      "stop_when_error": false,
+      "mode": "sequential",
+      "api": "SYNO.Entry.Request",
+      "method": "request",
+      "version": 1,
+      "compound": jsonEncode(apis),
+      // "_sid": Util.sid,
     };
+    print(data);
     return await Util.post("entry.cgi", data: data);
   }
 

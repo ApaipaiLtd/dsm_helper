@@ -21,6 +21,9 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        flatDir {
+            dirs "$rootProject.projectDir/aars"
+        }
 //        maven { url 'https://repo1.maven.org/maven2/' }
 //        maven { url 'https://maven.aliyun.com/repository/google' }
 //        maven { url 'https://maven.aliyun.com/repository/jcenter' }

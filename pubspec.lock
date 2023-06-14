@@ -403,10 +403,9 @@ packages:
   fplayer:
     dependency: "direct main"
     description:
-      name: fplayer
-      sha256: a9eaaf22367b6eea2738d11f1f99421b715e0c4d2d8a233e9349490671147555
-      url: "https://pub.flutter-io.cn"
-    source: hosted
+      path: fplayer
+      relative: true
+    source: path
     version: "1.0.4"
   gallery_saver:
     dependency: "direct main"
