@@ -200,7 +200,7 @@ class Util {
   }
 
   static FileTypeEnum fileType(String name) {
-    List<String> image = ["png", "jpg", "jpeg", "gif", "bmp", "ico"];
+    List<String> image = ["png", "jpg", "jpeg", "gif", "bmp", "ico", "tiff", "tif"];
     List<String> movie = [
       "3gp",
       "3g2",
@@ -382,6 +382,13 @@ class Util {
     } catch (e) {
       print(e);
     }
+  }
+
+  static String base64ToString(String source) {
+    List<int> bytes = base64.decode(source);
+    String result = utf8.decode(bytes);
+
+    return result;
   }
 
   static void logPrint(Object obj) {

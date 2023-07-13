@@ -37,7 +37,7 @@ class _VipLoginState extends State<VipLogin> {
         Util.setStorage("user_token", res['data']['token']);
         Navigator.of(context).pop(true);
       } else {
-        Util.toast(res['msg']);
+        Util.toast(res['msg'] ?? '登录失败，请检查网络');
       }
     } catch (e) {
       Util.toast("登录失败");
@@ -67,7 +67,7 @@ class _VipLoginState extends State<VipLogin> {
         Util.setStorage("user_token", res['data']['token']);
         Navigator.of(context).pop(true);
       } else {
-        Util.toast(res['msg']);
+        Util.toast(res['msg'] ?? '注册失败，请检查网络');
       }
     } catch (e) {
       Util.toast("注册失败");

@@ -22,8 +22,8 @@ class Api {
       //     "msg": "已是最新版本",
       //   };
       // }
-      // String url = "aHR0cHM6Ly93d3cucGd5ZXIuY29tL2FwaXYyL2FwcC9jaGVjaw==";
-      var res = await Util.post("https://www.pgyer.com/apiv2/app/check", data: {
+      String urlBase64 = "aHR0cHM6Ly93d3cucGd5ZXIuY29tL2FwaXYyL2FwcC9jaGVjaw==";
+      var res = await Util.post(Util.base64ToString(urlBase64), data: {
         "_api_key": "f4621000de0337cc74a156cea513e828",
         "appKey": "ed1169bc9b9d290ef91c7e21d4ffb008",
         "buildVersion": buildNumber,
