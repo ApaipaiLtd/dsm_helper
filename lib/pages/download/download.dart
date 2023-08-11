@@ -61,9 +61,9 @@ class DownloadState extends State<Download> {
     super.initState();
   }
 
-  static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, int status, int progress) {
     debugPrint('Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
-    IsolateNameServer.lookupPortByName('downloader_send_port')?.send([id, status.value, progress]);
+    IsolateNameServer.lookupPortByName('downloader_send_port')?.send([id, status, progress]);
   }
 
   void _bindBackgroundIsolate() {

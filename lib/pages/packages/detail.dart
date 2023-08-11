@@ -461,7 +461,7 @@ class _PackageDetailState extends State<PackageDetail> {
                           // ),
                           Html(
                             data: widget.package['changelog'],
-                            onLinkTap: (link, _, __, ___) {
+                            onLinkTap: (link, _, __) {
                               AndroidIntent intent = AndroidIntent(
                                 action: 'action_view',
                                 data: link,
@@ -471,7 +471,7 @@ class _PackageDetailState extends State<PackageDetail> {
                             },
                             style: {
                               "ol": Style(
-                                padding: EdgeInsets.zero,
+                                padding: HtmlPaddings.zero,
                                 margin: Margins.zero,
                               ),
                               "li": Style(),

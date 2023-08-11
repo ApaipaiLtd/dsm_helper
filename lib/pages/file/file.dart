@@ -415,7 +415,7 @@ class FilesState extends State<Files> {
         ),
       );
       FloatingEventListener listener = FloatingEventListener()
-        ..downListener = (x, y) {
+        ..downListener = (point) {
           if (audioPlayerFloating.isShowing) {
             audioPlayerFloating.close();
           }

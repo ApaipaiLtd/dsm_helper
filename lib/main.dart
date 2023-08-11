@@ -53,6 +53,11 @@ void main() async {
         allowShowPageWhenScreenLock: false,
       ),
     );
+    // 域名优选
+    // Util.appUrl = 
+    var check = await Future.any([Util.get('https://dsm.apaipai.top/index/check'),Util.get('https://dsm.flutter.fit/index/check'),]);
+    print(check);
+    Util.appUrl = "https://${check['data']}";
     // 是否关闭广告
     // 判断是否登录
     bool isForever = false;
