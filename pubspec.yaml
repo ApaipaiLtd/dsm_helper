@@ -21,7 +21,7 @@ environment:
   sdk: ">=2.10.0 <3.0.0"
 
 dependency_overrides:
-  ffi: ^2.0.1  # open_file 3.2.1 需要重写
+  ffi: 2.0.1  # open_file 3.2.1 需要重写
 dependencies:
   flutter:
     sdk: flutter
@@ -53,7 +53,7 @@ dependencies:
     git: https://github.com/Realank/flutter_datetime_picker.git
   flutter_swiper_null_safety: ^1.0.2
   html: 0.15.3
-  flutter_html: ^3.0.0-alpha.6
+  flutter_html: 3.0.0-alpha.6
   provider: ^6.0.5
   wave: ^0.2.2
   modal_bottom_sheet: ^3.0.0-pre

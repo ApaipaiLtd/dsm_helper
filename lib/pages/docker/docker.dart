@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:neumorphic/neumorphic.dart';
 
 class Docker extends StatefulWidget {
+  final String title;
+  Docker({this.title: 'Docker'});
   @override
   _DockerState createState() => _DockerState();
 }
@@ -272,12 +274,19 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(container['image']),
+                              child: Text(
+                                container['image'],
+                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
                             ),
                             SizedBox(
                               width: 10,
                             ),
-                            if (container['status'] == "running") Text(DateTime.fromMillisecondsSinceEpoch(container['up_time'] * 1000).timeAgo),
+                            if (container['status'] == "running")
+                              Text(
+                                DateTime.fromMillisecondsSinceEpoch(container['up_time'] * 1000).timeAgo,
+                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
                           ],
                         ),
                       ],
@@ -491,7 +500,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.blue,
-                              size: 10,
+                              size: 20,
+                              displayText: "%",
                               currentValue: (container['cpu']).ceil(),
                             ),
                           ),
@@ -529,7 +539,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.green,
-                              size: 10,
+                              size: 20,
+                              displayText: "%",
                               currentValue: container['memoryPercent'].ceil(),
                             ),
                           ),
@@ -604,7 +615,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         leading: AppBackButton(context),
-        title: Text("Docker"),
+        title: Text(widget.title),
       ),
       body: Column(
         children: [

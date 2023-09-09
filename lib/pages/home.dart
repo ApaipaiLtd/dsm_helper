@@ -7,6 +7,7 @@ import 'package:dsm_helper/pages/setting/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
@@ -174,7 +175,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   getData() async {
     if (Platform.isAndroid) {
       packageInfo = await PackageInfo.fromPlatform();
-      var res = await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
+      String buildNumber = packageInfo.buildNumber;
+      if (kDebugMode) {
+        buildNumber = '1';
+      }
+      var res = await Api.update(buildNumber); //packageInfo.buildNumber
       if (res['code'] == 1) {
         showCupertinoDialog(
           context: context,

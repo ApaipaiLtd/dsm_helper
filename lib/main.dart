@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cool_ui/cool_ui.dart';
@@ -33,6 +34,22 @@ void main() async {
     return true;
   };
 
+  Future<String> getBestDomain(List<String> domains) async {
+    final completer = Completer<String>();
+    for (String domain in domains) {
+      try {
+        Util.get(domain).then((res) {
+          if (res != null && res['code'] == 1) {
+            if (!completer.isCompleted) {
+              completer.complete("http://${res['data']}");
+            }
+          }
+        });
+      } catch (e) {}
+    }
+    return completer.future;
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
   String agreement = await Util.getStorage("agreement");
   Log.init();
@@ -54,10 +71,7 @@ void main() async {
       ),
     );
     // 域名优选
-    // Util.appUrl = 
-    var check = await Future.any([Util.get('https://dsm.apaipai.top/index/check'),Util.get('https://dsm.flutter.fit/index/check'),]);
-    print(check);
-    Util.appUrl = "https://${check['data']}";
+    Util.appUrl = await getBestDomain(['http://dsm.apaipai.top/index/check', 'http://dsm.flutter.fit/index/check']);
     // 是否关闭广告
     // 判断是否登录
     bool isForever = false;

@@ -12,7 +12,7 @@ import 'function.dart';
 
 class Api {
   static Map<String, ApiModel> apiList = {};
-  static Future<Map> update(String buildNumber) async {
+  static Future<Map> update(String buildNumber, {bool force = false}) async {
     if (Platform.isAndroid) {
       // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -31,12 +31,19 @@ class Api {
       if (res != null) {
         try {
           if (res['code'] == 0) {
-            if (int.parse(buildNumber) < res['data']['buildVersionNo']) {
-              return {
-                "code": 1,
-                "msg": "版本更新",
-                "data": res['data'],
-              };
+            List<String> ignoredVersions = [];
+            String ignoredVersionsString = await Util.getStorage("ignoredVersions");
+            if (ignoredVersionsString.isNotBlank) {
+              ignoredVersions = ignoredVersionsString.split(",");
+            }
+            if (int.parse(buildNumber) < int.parse(res['data']['buildVersionNo'])) {
+              if (force || !ignoredVersions.contains(res['data']['buildVersionNo'])) {
+                return {
+                  "code": 1,
+                  "msg": "版本更新",
+                  "data": res['data'],
+                };
+              }
             }
           }
         } catch (e) {}

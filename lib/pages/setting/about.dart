@@ -459,7 +459,7 @@ class _AboutState extends State<About> {
                   setState(() {
                     checking = true;
                   });
-                  await Util.checkUpdate(true, context);
+                  await Util.checkUpdate(true, context, force: true);
                   setState(() {
                     checking = false;
                   });

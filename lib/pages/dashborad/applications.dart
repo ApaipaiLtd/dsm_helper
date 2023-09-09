@@ -451,6 +451,50 @@ class ApplicationList extends StatelessWidget {
             ),
           );
           break;
+        case "SYNO.SDS.ContainerManager.Application":
+          apps.add(
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) {
+                    return Docker(title: "Container Manager");
+                  },
+                  settings: RouteSettings(name: "Container Manager"),
+                ));
+              },
+              child: NeuCard(
+                width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
+                curveType: CurveType.flat,
+                decoration: NeumorphicDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                bevel: 20,
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      "assets/applications/container_manager.png",
+                      height: 45,
+                      width: 45,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Container Manager",
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+          break;
         case "SYNO.SDS.DownloadStation.Application":
           apps.add(
             GestureDetector(

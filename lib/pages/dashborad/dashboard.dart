@@ -55,6 +55,7 @@ class DashboardState extends State<Dashboard> {
   List applications = [];
   List fileLogs = [];
   List<ShortcutItemModel> shortcutItems = [];
+  List validAppViewOrder = [];
   WallpaperModel wallpaperModel;
   List esatas = [];
   List usbs = [];
@@ -340,6 +341,7 @@ class DashboardState extends State<Dashboard> {
             applications = init['data']['UserSettings']['Desktop']['valid_appview_order'] ?? init['data']['UserSettings']['Desktop']['appview_order'] ?? [];
 
             shortcutItems = ShortcutItemModel.fromList(init['data']['UserSettings']['Desktop']['ShortcutItems']);
+            validAppViewOrder = init['data']['UserSettings']['Desktop']['valid_appview_order'];
             wallpaperModel = WallpaperModel.fromJson(init['data']['UserSettings']['Desktop']['wallpaper']);
           }
         }
@@ -2033,7 +2035,16 @@ class DashboardState extends State<Dashboard> {
               ? ListView(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount && shortcutProvider.showShortcut) ShortcutList(shortcutItems, system, volumes, disks, appNotify, context),
+                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount && shortcutProvider.showShortcut)
+                      ShortcutList(
+                        shortcutItems,
+                        system,
+                        volumes,
+                        disks,
+                        appNotify,
+                        context,
+                        validAppViewOrder: validAppViewOrder,
+                      ),
                     if (widgets != null && widgets.length > 0)
                       ...widgets.map((widget) {
                         return _buildWidgetItem(widget);

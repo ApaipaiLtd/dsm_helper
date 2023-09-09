@@ -1,4 +1,5 @@
 import 'package:dsm_helper/pages/update/update.dart';
+import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -76,6 +77,9 @@ class UpdateDialog extends StatelessWidget {
                     Container(
                       child: Container(
                         width: 300,
+                        constraints: BoxConstraints(
+                          minHeight: 120,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
@@ -116,23 +120,51 @@ class UpdateDialog extends StatelessWidget {
                 child: Container(
                   width: 300,
                   alignment: Alignment.center,
-                  child: CupertinoButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(CupertinoPageRoute(
-                          builder: (context) {
-                            return Update(updateInfo, direct: true);
-                          },
-                          settings: RouteSettings(name: "update")));
-                    },
-                    color: CupertinoTheme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(50),
-                    minSize: 0,
-                    padding: EdgeInsets.symmetric(horizontal: 29, vertical: 5),
-                    child: Text(
-                      "立即更新",
-                      style: TextStyle(fontSize: 17.5, color: Colors.white),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CupertinoButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          List<String> ignoredVersions = [];
+                          String ignoredVersionsString = await Util.getStorage("ignoredVersions");
+                          if (ignoredVersionsString.isNotBlank) {
+                            ignoredVersions = ignoredVersionsString.split(",");
+                          }
+                          ignoredVersions.add(packageInfo.buildNumber);
+                          Util.setStorage("ignoredVersions", ignoredVersions.join(","));
+                        },
+                        color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(50),
+                        minSize: 0,
+                        padding: EdgeInsets.symmetric(horizontal: 29, vertical: 5),
+                        child: Text(
+                          "忽略此版本",
+                          style: TextStyle(fontSize: 17.5, color: Colors.grey),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      CupertinoButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(CupertinoPageRoute(
+                              builder: (context) {
+                                return Update(updateInfo, direct: true);
+                              },
+                              settings: RouteSettings(name: "update")));
+                        },
+                        color: CupertinoTheme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(50),
+                        minSize: 0,
+                        padding: EdgeInsets.symmetric(horizontal: 29, vertical: 5),
+                        child: Text(
+                          "立即更新",
+                          style: TextStyle(fontSize: 17.5, color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

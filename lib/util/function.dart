@@ -734,9 +734,13 @@ class Util {
     return r.toString();
   }
 
-  static checkUpdate(bool showMsg, BuildContext context) async {
+  static checkUpdate(bool showMsg, BuildContext context, {bool force = false}) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    var res = await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
+    String buildNumber = packageInfo.buildNumber;
+    if (kDebugMode) {
+      buildNumber = '1';
+    }
+    var res = await Api.update(buildNumber, force: force); //packageInfo.buildNumber
     if (res['code'] == 1) {
       Navigator.of(context).push(CupertinoPageRoute(
           builder: (context) {

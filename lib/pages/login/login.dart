@@ -8,6 +8,7 @@ import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -283,7 +284,11 @@ class _LoginState extends State<Login> {
   checkUpdate() async {
     if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      var res = await Api.update(packageInfo.buildNumber); //packageInfo.buildNumber
+      String buildNumber = packageInfo.buildNumber;
+      if (kDebugMode) {
+        buildNumber = '1';
+      }
+      var res = await Api.update(buildNumber); //packageInfo.buildNumber
       if (res['code'] == 1) {
         setState(() {
           updateInfo = res['data'];

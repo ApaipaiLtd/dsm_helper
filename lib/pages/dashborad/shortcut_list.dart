@@ -38,7 +38,8 @@ class ShortcutList extends StatelessWidget {
   final List volumes;
   final List disks;
   final Map appNotify;
-  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, this.context, {Key key}) : super(key: key);
+  final List validAppViewOrder;
+  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, this.context, {this.validAppViewOrder, Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext ctx) {
@@ -66,7 +67,6 @@ class ShortcutList extends StatelessWidget {
   Widget _buildShortcutItem(BuildContext context, ShortcutItemModel shortcut) {
     String icon = "";
     String name = "";
-    CupertinoPageRoute route;
     int unread = 0;
     Widget page;
     String routerName;
@@ -96,13 +96,26 @@ class ShortcutList extends StatelessWidget {
         routerName = "storage_manager";
         break;
       case "SYNO.SDS.Docker.Application":
-        icon = "assets/applications/docker.png";
-        name = "Docker";
-        page = Docker();
+        if (validAppViewOrder.contains("SYNO.SDS.ContainerManager.Application")) {
+          icon = "assets/applications/container_manager.png";
+          name = "Container Manager";
+          page = Docker(
+            title: "Container Manager",
+          );
+        } else {
+          icon = "assets/applications/docker.png";
+          name = "Docker";
+          page = Docker();
+        }
+
         routerName = "docker";
         break;
       case "SYNO.SDS.Docker.ContainerDetail.Instance":
-        icon = "assets/applications/docker.png";
+        if (validAppViewOrder.contains("SYNO.SDS.ContainerManager.Application")) {
+          icon = "assets/applications/container_manager.png";
+        } else {
+          icon = "assets/applications/docker.png";
+        }
         name = "${shortcut.param.data.name}";
         if (shortcut.type == 'url') {
           page = Browser(
@@ -204,7 +217,7 @@ class ShortcutList extends StatelessWidget {
                           "$name",
                           textAlign: TextAlign.center,
                           maxLines: 1,
-                          overflow: TextOverflow.clip,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 14),
                         ),
                       ],
