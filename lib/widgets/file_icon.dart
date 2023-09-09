@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 
 class FileIcon extends StatelessWidget {
   final FileTypeEnum fileType;
-  final String thumb;
+  final String? thumb;
   final bool network;
   final double width;
   final double height;
   final BoxFit fit;
-  FileIcon(this.fileType, {this.thumb, this.network: true, this.width: 40, this.height: 40, this.fit: BoxFit.contain});
+  FileIcon(this.fileType, {this.thumb, this.network = true, this.width: 40, this.height: 40, this.fit: BoxFit.contain});
   @override
   Widget build(BuildContext context) {
     if (fileType == FileTypeEnum.folder) {
@@ -28,7 +28,6 @@ class FileIcon extends StatelessWidget {
         height: 60,
       );
     } else if (fileType == FileTypeEnum.movie) {
-      print(thumb);
       return thumb == null
           ? Image.asset(
               "assets/icons/movie.png",
@@ -37,7 +36,7 @@ class FileIcon extends StatelessWidget {
             )
           : network
               ? CupertinoExtendedImage(
-                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
                   width: width,
                   height: height,
                   fit: fit,
@@ -53,7 +52,7 @@ class FileIcon extends StatelessWidget {
                   ),
                 )
               : ExtendedImage.file(
-                  File(thumb),
+                  File(thumb!),
                   width: width,
                   height: height,
                   fit: fit,
@@ -67,13 +66,13 @@ class FileIcon extends StatelessWidget {
             )
           : network
               ? CupertinoExtendedImage(
-                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
                   width: width,
                   height: height,
                   fit: fit,
                 )
               : ExtendedImage.file(
-                  File(thumb),
+                  File(thumb!),
                   width: width,
                   height: height,
                   fit: fit,

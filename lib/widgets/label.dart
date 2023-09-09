@@ -10,8 +10,8 @@ class Label extends StatelessWidget {
   final String name;
   final Color color;
   final bool fill;
-  final double fontSize;
-  final double height;
+  final double? fontSize;
+  final double? height;
   @override
   Widget build(BuildContext context) {
     return Container(

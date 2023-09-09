@@ -355,7 +355,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                   // },
                 ),
                 onTap: () {
-                  slidePageKey.currentState.popPage();
+                  slidePageKey.currentState?.popPage();
                   Navigator.pop(context);
                 },
               );

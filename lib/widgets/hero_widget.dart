@@ -4,9 +4,9 @@ import 'package:extended_image/extended_image.dart';
 /// make hero better when slide out
 class HeroWidget extends StatefulWidget {
   const HeroWidget({
-    @required this.child,
-    @required this.tag,
-    @required this.slidePagekey,
+    required this.child,
+    required this.tag,
+    required this.slidePagekey,
     this.slideType = SlideType.onlyImage,
   });
   final Widget child;

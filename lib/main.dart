@@ -75,7 +75,7 @@ void main() async {
     // 是否关闭广告
     // 判断是否登录
     bool isForever = false;
-    DateTime noAdTime;
+    DateTime? noAdTime;
     Util.isWechatInstalled = await isWeChatInstalled;
     String userToken = await Util.getStorage("user_token");
     String noAdTimeStr = await Util.getStorage("no_ad_time");

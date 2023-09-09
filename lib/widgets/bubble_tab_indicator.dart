@@ -33,38 +33,36 @@ class BubbleTabIndicator extends Decoration {
         assert(padding != null),
         assert(insets != null);
 
-  @override
-  Decoration lerpFrom(Decoration a, double t) {
-    if (a is BubbleTabIndicator) {
-      return new BubbleTabIndicator(
-        padding: EdgeInsetsGeometry.lerp(a.padding, padding, t),
-        insets: EdgeInsetsGeometry.lerp(a.insets, insets, t),
-      );
-    }
-    return super.lerpFrom(a, t);
-  }
+  // @override
+  // Decoration lerpFrom(Decoration a, double t) {
+  //   if (a is BubbleTabIndicator) {
+  //     return new BubbleTabIndicator(
+  //       padding: EdgeInsetsGeometry.lerp(a.padding, padding, t),
+  //       insets: EdgeInsetsGeometry.lerp(a.insets, insets, t),
+  //     );
+  //   }
+  //   return super.lerpFrom(a, t);
+  // }
+  //
+  // @override
+  // Decoration lerpTo(Decoration b, double t) {
+  //   if (b is BubbleTabIndicator) {
+  //     return new BubbleTabIndicator(
+  //       padding: EdgeInsetsGeometry.lerp(padding, b.padding, t),
+  //       insets: EdgeInsetsGeometry.lerp(insets, b.insets, t),
+  //     );
+  //   }
+  //   return super.lerpTo(b, t);
+  // }
 
   @override
-  Decoration lerpTo(Decoration b, double t) {
-    if (b is BubbleTabIndicator) {
-      return new BubbleTabIndicator(
-        padding: EdgeInsetsGeometry.lerp(padding, b.padding, t),
-        insets: EdgeInsetsGeometry.lerp(insets, b.insets, t),
-      );
-    }
-    return super.lerpTo(b, t);
-  }
-
-  @override
-  _BubblePainter createBoxPainter([VoidCallback onChanged]) {
+  _BubblePainter createBoxPainter([VoidCallback? onChanged]) {
     return new _BubblePainter(this, onChanged);
   }
 }
 
 class _BubblePainter extends BoxPainter {
-  _BubblePainter(this.decoration, VoidCallback onChanged)
-      : assert(decoration != null),
-        super(onChanged);
+  _BubblePainter(this.decoration, VoidCallback? onChanged) : super(onChanged);
 
   final BubbleTabIndicator decoration;
 
@@ -96,10 +94,8 @@ class _BubblePainter extends BoxPainter {
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    assert(configuration != null);
-    assert(configuration.size != null);
-    final Rect rect = Offset(offset.dx, (configuration.size.height / 2) - indicatorHeight / 2) & Size(configuration.size.width, indicatorHeight);
-    final TextDirection textDirection = configuration.textDirection;
+    final Rect rect = Offset(offset.dx, (configuration.size!.height / 2) - indicatorHeight / 2) & Size(configuration.size!.width, indicatorHeight);
+    final TextDirection textDirection = configuration.textDirection!;
     final Rect indicator = _indicatorRectFor(rect, textDirection);
     final Paint paint = Paint();
     paint.color = indicatorColor;

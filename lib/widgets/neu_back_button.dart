@@ -3,8 +3,8 @@ import 'package:neumorphic/neumorphic.dart';
 
 class AppBackButton extends StatefulWidget {
   final BuildContext context;
-  final Color color;
-  final Color iconColor;
+  final Color? color;
+  final Color? iconColor;
   final double bevel;
   AppBackButton(this.context, {this.color, this.iconColor, this.bevel: 5.0});
   @override
@@ -12,13 +12,13 @@ class AppBackButton extends StatefulWidget {
 }
 
 class _AppBackButtonState extends State<AppBackButton> {
-  ModalRoute<dynamic> parentRoute;
+  ModalRoute<dynamic>? parentRoute;
   bool canPop = false;
   @override
   void initState() {
     parentRoute = ModalRoute.of(widget.context);
     setState(() {
-      canPop = parentRoute.canPop;
+      canPop = parentRoute?.canPop ?? true;
     });
     super.initState();
   }

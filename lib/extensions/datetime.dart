@@ -1,15 +1,5 @@
 extension DateTimeExt on DateTime {
   String format(String format) {
-    if (this == null) {
-      return "";
-    }
-    int year = this.year;
-    int month = this.month;
-    int day = this.day;
-    int hour = this.hour;
-    int minute = this.minute;
-    int second = this.second;
-    int weekday = this.weekday;
     List week = ["日", "一", "二", "三", "四", "五", "六", "日"];
     //替换年份
     format = format.replaceAll("Y", year.toString());
@@ -29,15 +19,15 @@ extension DateTimeExt on DateTime {
   }
 
   bool isSameDay(DateTime otherTime) {
-    return this.year == otherTime.year && this.month == otherTime.month && this.day == otherTime.day;
+    return year == otherTime.year && month == otherTime.month && day == otherTime.day;
   }
 
   bool isSameMonth(DateTime otherTime) {
-    return this.year == otherTime.year && this.month == otherTime.month;
+    return year == otherTime.year && month == otherTime.month;
   }
 
   String get timeAgo {
-    int elapsed = DateTime.now().millisecondsSinceEpoch - this.millisecondsSinceEpoch;
+    int elapsed = DateTime.now().millisecondsSinceEpoch - millisecondsSinceEpoch;
 
     final num seconds = elapsed ~/ 1000;
     final num minutes = seconds ~/ 60;
@@ -65,5 +55,5 @@ extension DateTimeExt on DateTime {
     return result;
   }
 
-  int get secondsSinceEpoch => this.millisecondsSinceEpoch ~/ 1000;
+  int get secondsSinceEpoch => millisecondsSinceEpoch ~/ 1000;
 }

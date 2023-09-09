@@ -35,7 +35,7 @@ class _VirtualKeyboardViewState extends State<VirtualKeyboardView> {
                   ),
                   TerminalButton(
                     onPressed: () {
-                      widget.terminal.onOutput('/');
+                      widget.terminal.onOutput?.call('/');
                     },
                     child: Text("/"),
                   ),
@@ -217,7 +217,7 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
   }
 
   @override
-  String call(TerminalKeyboardEvent event) {
+  String? call(TerminalKeyboardEvent event) {
     return _inputHandler.call(event.copyWith(
       ctrl: event.ctrl || _ctrl,
       shift: event.shift || _shift,

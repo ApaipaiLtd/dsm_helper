@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 
 class CupertinoExtendedImage extends StatelessWidget {
   final String url;
-  final BoxFit fit;
-  final double width;
-  final double height;
+  final BoxFit? fit;
+  final double? width;
+  final double? height;
   final BoxShape boxShape;
   final BorderRadius borderRadius;
-  final Widget placeholder;
+  final Widget? placeholder;
   CupertinoExtendedImage(
     this.url, {
     this.fit,
     this.width,
     this.height,
-    this.boxShape: BoxShape.rectangle,
-    this.borderRadius: BorderRadius.zero,
+    this.boxShape = BoxShape.rectangle,
+    this.borderRadius = BorderRadius.zero,
     this.placeholder,
   });
   @override
@@ -47,7 +47,6 @@ class CupertinoExtendedImage extends StatelessWidget {
                     height: 40,
                   ),
                 );
-            break;
           case LoadState.completed:
             return ExtendedRawImage(
               image: state.extendedImageInfo?.image,
@@ -55,7 +54,6 @@ class CupertinoExtendedImage extends StatelessWidget {
               height: height,
               fit: fit,
             );
-            break;
           case LoadState.failed:
             return placeholder ??
                 Container(
@@ -68,7 +66,6 @@ class CupertinoExtendedImage extends StatelessWidget {
                     height: 40,
                   ),
                 );
-            break;
           default:
             return Container();
         }
@@ -85,13 +82,13 @@ class CupertinoCircleAvatar extends StatelessWidget {
   final double size;
   final Color foregroundColor;
   CupertinoCircleAvatar({
-    this.url,
-    this.backgroundColor: Colors.blue,
-    this.size: 30,
-    this.text: "",
-    this.fontSize: 18,
-    this.foregroundColor: CupertinoColors.white,
-  }) : assert(url != null || text != null);
+    required this.url,
+    this.backgroundColor = Colors.blue,
+    this.size = 30,
+    this.text = "",
+    this.fontSize = 18,
+    this.foregroundColor = CupertinoColors.white,
+  });
   @override
   Widget build(BuildContext context) {
     return url.isBlank
