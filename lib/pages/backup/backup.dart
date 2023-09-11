@@ -7,11 +7,10 @@ import 'package:dsm_helper/pages/common/select_ablum.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 import '../file/select_folder.dart';
@@ -29,7 +28,8 @@ class UploadItem {
   AssetType type;
   DateTime modifyTime;
 
-  CancelToken cancelToken;
+  late CancelToken cancelToken;
+
   UploadItem(this.file, this.modifyTime, this.type, {this.fileSize = 0, this.uploadSize = 0, this.status = UploadStatus.wait}) {
     cancelToken = CancelToken();
   }
@@ -44,10 +44,11 @@ class _BackupState extends State<Backup> {
   List<AssetEntity> uploads = [];
   List<AssetPathEntity> albums = [];
   String backupFolder = "";
-  DateTime lastBackupTime = DateTime.now().add(Duration(days: -5));
-  UploadItem uploading;
+  DateTime? lastBackupTime = DateTime.now().add(Duration(days: -5));
+  UploadItem? uploading;
   bool cancel = false;
   bool continueBackup = true;
+
   @override
   void initState() {
     getData();
@@ -55,12 +56,12 @@ class _BackupState extends State<Backup> {
   }
 
   getData() async {
-    String last = await Util.getStorage("last_backup_time");
+    String? last = SpUtil.getString("last_backup_time");
 
-    lastBackupTime = last.isNotBlank ? DateTime.fromMillisecondsSinceEpoch(int.parse(last)) : null;
-    backupFolder = await Util.getStorage("backup_folder") ?? "";
+    lastBackupTime = last != null && last.isNotBlank ? DateTime.fromMillisecondsSinceEpoch(int.parse(last)) : null;
+    backupFolder = SpUtil.getString("backup_folder", defValue: '')!;
     setState(() {});
-    String backupAlbumStr = await Util.getStorage("backup_album");
+    String backupAlbumStr = SpUtil.getString("backup_album", defValue: '')!;
     List backupAlbums = [];
     if (await PhotoManager.requestPermissionExtend() == PermissionState.authorized) {
       if (backupAlbumStr.isNotBlank) {
@@ -151,18 +152,14 @@ class _BackupState extends State<Backup> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("相册备份"),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            child: CupertinoButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () async {
                 var hide = showWeuiLoadingToast(context: context);
                 await PhotoManager.clearFileCache();
@@ -171,7 +168,6 @@ class _BackupState extends State<Backup> {
               },
               child: Text(
                 "清理缓存",
-                style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
               ),
             ),
           ),
@@ -181,16 +177,15 @@ class _BackupState extends State<Backup> {
         padding: EdgeInsets.all(20),
         children: [
           if (uploading != null) ...[
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: CurveType.flat,
               child: Stack(
                 children: [
                   Container(
-                    width: (MediaQuery.of(context).size.width - 40) * (uploading.uploadSize / (uploading.fileSize == 0 ? 1 : uploading.fileSize)),
+                    width: (MediaQuery.of(context).size.width - 40) * (uploading!.uploadSize / (uploading!.fileSize == 0 ? 1 : uploading!.fileSize)),
                     height: 70,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
@@ -201,9 +196,9 @@ class _BackupState extends State<Backup> {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     child: Row(
                       children: [
-                        uploading.type == AssetType.image
+                        uploading!.type == AssetType.image
                             ? Image.file(
-                                uploading.file,
+                                uploading!.file,
                                 height: 40,
                                 width: 40,
                               )
@@ -216,7 +211,7 @@ class _BackupState extends State<Backup> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                uploading.file.path.split("/").last,
+                                uploading!.file.path.split("/").last,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                                 style: TextStyle(fontSize: 13),
@@ -225,7 +220,7 @@ class _BackupState extends State<Backup> {
                                 height: 5,
                               ),
                               Text(
-                                uploading.file.parent.path,
+                                uploading!.file.parent.path,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -243,7 +238,7 @@ class _BackupState extends State<Backup> {
               height: 20,
             ),
           ],
-          NeuButton(
+          CupertinoButton(
             onPressed: () {
               showCupertinoModalPopup(
                 context: context,
@@ -256,15 +251,13 @@ class _BackupState extends State<Backup> {
                 if (res != null && res.length == 1) {
                   setState(() {
                     backupFolder = res[0];
-                    Util.setStorage("backup_folder", backupFolder);
+                    SpUtil.putString("backup_folder", backupFolder);
                   });
                 }
               });
             },
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
+            borderRadius: BorderRadius.circular(20),
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: Row(
               children: [
                 Column(
@@ -286,7 +279,7 @@ class _BackupState extends State<Backup> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
             onPressed: () {
               showCupertinoModalPopup(
                 context: context,
@@ -303,16 +296,14 @@ class _BackupState extends State<Backup> {
                     albums = res;
                   });
                   List backupAlbums = albums.map((e) => e.id).toList();
-                  Util.setStorage("backup_album", json.encode(backupAlbums));
+                  SpUtil.putString("backup_album", json.encode(backupAlbums));
 
                   getAssetCount();
                 }
               });
             },
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(20),
             padding: EdgeInsets.all(12),
             child: Container(
               width: double.infinity,
@@ -349,13 +340,12 @@ class _BackupState extends State<Backup> {
                 continueBackup = true;
               });
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: EdgeInsets.all(12),
-              curveType: continueBackup ? CurveType.emboss : CurveType.flat,
               child: Row(
                 children: [
                   Expanded(
@@ -367,11 +357,11 @@ class _BackupState extends State<Backup> {
                           style: TextStyle(fontSize: 18),
                         ),
                         Text(
-                          lastBackupTime != null ? lastBackupTime.format("Y-m-d H:i:s") : "从未备份过",
+                          lastBackupTime != null ? lastBackupTime!.format("Y-m-d H:i:s") : "从未备份过",
                           style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                         Text(
-                          "${uploads.where((AssetEntity upload) => (lastBackupTime == null || upload.modifiedDateTime.millisecondsSinceEpoch > lastBackupTime.millisecondsSinceEpoch) && upload.type == AssetType.image).length}张照片 ${uploads.where((upload) => (lastBackupTime == null || upload.modifiedDateTime.millisecondsSinceEpoch > lastBackupTime.millisecondsSinceEpoch) && upload.type == AssetType.video).length}个视频",
+                          "${uploads.where((AssetEntity upload) => (lastBackupTime == null || upload.modifiedDateTime.millisecondsSinceEpoch > lastBackupTime!.millisecondsSinceEpoch) && upload.type == AssetType.image).length}张照片 ${uploads.where((upload) => (lastBackupTime == null || upload.modifiedDateTime.millisecondsSinceEpoch > lastBackupTime!.millisecondsSinceEpoch) && upload.type == AssetType.video).length}个视频",
                           style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       ],
@@ -395,13 +385,12 @@ class _BackupState extends State<Backup> {
                 continueBackup = false;
               });
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: EdgeInsets.all(12),
-              curveType: continueBackup ? CurveType.flat : CurveType.emboss,
               child: Row(
                 children: [
                   Expanded(
@@ -435,13 +424,11 @@ class _BackupState extends State<Backup> {
             onTap: () {
               Util.toast("暂不支持自动备份");
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: CurveType.flat,
-              bevel: 12,
               padding: EdgeInsets.all(12),
               child: Row(
                 children: [
@@ -475,12 +462,10 @@ class _BackupState extends State<Backup> {
             height: 20,
           ),
           uploading == null
-              ? NeuButton(
+              ? CupertinoButton(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
                   onPressed: () async {
                     if (backupFolder.isBlank) {
                       Util.vibrate(FeedbackType.warning);
@@ -494,7 +479,7 @@ class _BackupState extends State<Backup> {
                     }
                     List<AssetEntity> tasks;
                     if (lastBackupTime != null && continueBackup) {
-                      tasks = uploads.where((element) => element.modifiedDateTime.millisecondsSinceEpoch > lastBackupTime.millisecondsSinceEpoch).toList();
+                      tasks = uploads.where((element) => element.modifiedDateTime.millisecondsSinceEpoch > lastBackupTime!.millisecondsSinceEpoch).toList();
                     } else {
                       tasks = uploads;
                     }
@@ -515,36 +500,36 @@ class _BackupState extends State<Backup> {
                         Util.toast("备份任务已暂停");
                         break;
                       }
-                      uploading = UploadItem(await tasks[i].originFile, tasks[i].modifiedDateTime, tasks[i].type);
+                      uploading = UploadItem((await tasks[i].originFile)!, tasks[i].modifiedDateTime, tasks[i].type);
 
-                      if (uploading.status != UploadStatus.wait) {
+                      if (uploading!.status != UploadStatus.wait) {
                         continue;
                       }
                       //上传文件
                       setState(() {
-                        uploading.status = UploadStatus.running;
+                        uploading!.status = UploadStatus.running;
                       });
-                      var res = await Api.upload(backupFolder, uploading.file.path, uploading.cancelToken, (progress, total) {
+                      var res = await Api.upload(backupFolder, uploading!.file.path, uploading!.cancelToken, (progress, total) {
                         // print("$progress,$total");
                         setState(() {
-                          uploading.uploadSize = progress;
-                          uploading.fileSize = total;
+                          uploading!.uploadSize = progress;
+                          uploading!.fileSize = total;
                         });
                       });
                       if (res['success']) {
                         if (Platform.isIOS) {
                           // 仅在iOS删除源文件（iOS非真实源文件）
-                          uploading.file.deleteSync();
+                          uploading!.file.deleteSync();
                         }
 
-                        Util.setStorage("last_backup_time", uploading.modifyTime.millisecondsSinceEpoch.toString());
+                        SpUtil.putString("last_backup_time", uploading!.modifyTime.millisecondsSinceEpoch.toString());
                         setState(() {
-                          lastBackupTime = uploading.modifyTime;
-                          uploading.status = UploadStatus.complete;
+                          lastBackupTime = uploading!.modifyTime;
+                          uploading!.status = UploadStatus.complete;
                         });
                       } else {
                         setState(() {
-                          uploading.status = UploadStatus.failed;
+                          uploading!.status = UploadStatus.failed;
                         });
                       }
                       if (i == tasks.length - 1) {
@@ -559,12 +544,10 @@ class _BackupState extends State<Backup> {
                   },
                   child: Text("开始备份"),
                 )
-              : NeuButton(
+              : CupertinoButton(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
                   onPressed: () async {
                     cancel = true;
                     Util.toast("当前文件上传完成后将暂停任务");

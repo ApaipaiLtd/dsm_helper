@@ -12,9 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
 import 'package:flutter_sharing_intent/model/sharing_file.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:sp_util/sp_util.dart';
 
 import 'dashborad/dashboard.dart';
 import 'download_station/add_task.dart';
@@ -28,8 +28,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _currentIndex = 0;
-  DateTime lastPopTime;
-  PackageInfo packageInfo;
+  DateTime? lastPopTime;
+
   GlobalKey<FilesState> _filesStateKey = GlobalKey<FilesState>();
   GlobalKey<DashboardState> _dashboardStateKey = GlobalKey<DashboardState>();
   //判断是否需要启动密码
@@ -37,12 +37,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool password = false;
   bool biometrics = false;
   bool authPage = false;
-  List<SharedFile> _sharedFiles;
+  List<SharedFile> _sharedFiles = [];
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     getData();
-    Util.setStorage("agreement", "1");
+    SpUtil.putBool("agreement", true);
     FlutterSharingIntent.instance.getInitialSharing().then((List<SharedFile> value) {
       print("Shared: getInitialMedia ${value.map((f) => f.path).join(",")}");
       handleFiles(value);
@@ -86,13 +86,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   handleFiles(List<SharedFile> files) async {
     _sharedFiles = files;
-    if (_sharedFiles != null && _sharedFiles.length > 0) {
-      if (_sharedFiles.length == 1 && _sharedFiles.first.path.endsWith(".torrent")) {
+    if (_sharedFiles.isNotEmpty) {
+      if (_sharedFiles.length == 1 && (_sharedFiles.first.path?.endsWith(".torrent") ?? false)) {
         String filePath = '';
         if (Platform.isAndroid) {
-          filePath = await FlutterSharingIntent.getAbsolutePath(_sharedFiles.first.path);
+          filePath = await FlutterSharingIntent.getAbsolutePath(_sharedFiles.first.path!);
         } else {
-          filePath = _sharedFiles.first.path;
+          filePath = _sharedFiles.first.path!;
         }
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
           return AddDownloadTask(
@@ -109,7 +109,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
           return Upload(
             "",
-            selectedFilesPath: _sharedFiles.map((e) => e.path).toList(),
+            selectedFilesPath: _sharedFiles.map((e) => e.path ?? '').toList(),
           );
         }));
       }
@@ -143,25 +143,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   checkAuth() async {
     // print("是否需要启动密码")
-    String launchAuthStr = await Util.getStorage("launch_auth");
-    String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
-    String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
-    if (launchAuthStr != null) {
-      launchAuth = launchAuthStr == "1";
-    } else {
-      launchAuth = false;
-    }
-    if (launchAuthPasswordStr != null) {
-      password = launchAuthPasswordStr == "1";
-    } else {
-      password = false;
-    }
-    if (launchAuthBiometricsStr != null) {
-      biometrics = launchAuthBiometricsStr == "1";
-    } else {
-      biometrics = false;
-    }
-
+    launchAuth = SpUtil.getBool("launch_auth", defValue: true)!;
+    password = SpUtil.getBool("launch_auth_password", defValue: true)!;
+    biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: true)!;
     authPage = launchAuth && (password || biometrics);
     if (Util.isAuthPage == false && authPage) {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -174,7 +158,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   getData() async {
     if (Platform.isAndroid) {
-      packageInfo = await PackageInfo.fromPlatform();
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
       String buildNumber = packageInfo.buildNumber;
       if (kDebugMode) {
         buildNumber = '1';
@@ -195,22 +179,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     Util.vibrate(FeedbackType.light);
     Future<bool> value = Future.value(true);
     if (_currentIndex == 0) {
-      if (_dashboardStateKey.currentState.isDrawerOpen) {
-        _dashboardStateKey.currentState.closeDrawer();
+      if (_dashboardStateKey.currentState?.isDrawerOpen ?? false) {
+        _dashboardStateKey.currentState?.closeDrawer();
         return Future.value(false);
       }
     } else if (_currentIndex == 1) {
-      if (_filesStateKey.currentState.isDrawerOpen) {
-        _filesStateKey.currentState.closeDrawer();
+      if (_filesStateKey.currentState?.isDrawerOpen ?? false) {
+        _filesStateKey.currentState?.closeDrawer();
         return Future.value(false);
       }
-      value = _filesStateKey.currentState.onWillPop();
+      value = _filesStateKey.currentState?.onWillPop() ?? Future.value(true);
     } else if (_currentIndex == 2) {
-      value = Util.downloadKey.currentState.onWillPop();
+      value = Util.downloadKey.currentState?.onWillPop() ?? Future.value(true);
     }
     value.then((v) {
       if (v) {
-        if (lastPopTime == null || DateTime.now().difference(lastPopTime) > Duration(seconds: 2)) {
+        if (lastPopTime == null || DateTime.now().difference(lastPopTime!) > Duration(seconds: 2)) {
           lastPopTime = DateTime.now();
           Util.toast('再按一次退出${Util.appName}');
         } else {
@@ -238,83 +222,48 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           ],
           index: _currentIndex,
         ),
-        bottomNavigationBar: NeuSwitch(
+        bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          thumbColor: Theme.of(context).scaffoldBackgroundColor,
           // padding: EdgeInsets.symmetric(vertical: 5),
-          onValueChanged: (v) {
+          onTap: (v) {
             setState(() {
               _currentIndex = v;
             });
           },
-          groupValue: _currentIndex,
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-          children: {
-            0: Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Column(
-                children: [
-                  Image.asset(
-                    "assets/tabbar/meter.png",
-                    width: 30,
-                    height: 30,
-                  ),
-                  Text(
-                    "控制台",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                "assets/tabbar/meter.png",
+                width: 30,
+                height: 30,
               ),
+              tooltip: "控制台",
             ),
-            1: Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Column(
-                children: [
-                  Image.asset(
-                    "assets/tabbar/folder.png",
-                    width: 30,
-                    height: 30,
-                  ),
-                  Text(
-                    "文件",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                "assets/tabbar/folder.png",
+                width: 30,
+                height: 30,
               ),
+              tooltip: "文件",
             ),
-            2: Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Column(
-                children: [
-                  Image.asset(
-                    "assets/tabbar/save.png",
-                    width: 30,
-                    height: 30,
-                  ),
-                  Text(
-                    "下载",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                "assets/tabbar/save.png",
+                width: 30,
+                height: 30,
               ),
+              tooltip: "下载",
             ),
-            3: Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Column(
-                children: [
-                  Image.asset(
-                    "assets/tabbar/setting.png",
-                    width: 30,
-                    height: 30,
-                  ),
-                  Text(
-                    "设置",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                "assets/tabbar/setting.png",
+                width: 30,
+                height: 30,
               ),
+              tooltip: "设置",
             ),
-          },
+          ],
         ),
       ),
     );

@@ -82,10 +82,10 @@ class ExpansionContainer extends StatefulWidget {
   /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
   /// be non-null.
   const ExpansionContainer({
-    Key key,
+    super.key,
     this.leading,
-    @required this.title,
-    this.showFirst: false,
+    required this.title,
+    this.showFirst = false,
     this.first,
     this.subtitle,
     this.onExpansionChanged,
@@ -104,15 +104,12 @@ class ExpansionContainer extends StatefulWidget {
     this.iconColor,
     this.collapsedIconColor,
     this.controlAffinity,
-    this.bottomTitle: false,
-  })  : assert(initiallyExpanded != null),
-        assert(maintainState != null),
-        assert(
+    this.bottomTitle = false,
+  }) : assert(
           expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
           'CrossAxisAlignment.baseline is not supported since the expanded children '
           'are aligned in a column, not a row. Try to use another constant.',
-        ),
-        super(key: key);
+        );
 
   /// A widget to display before the title.
   ///
@@ -120,7 +117,7 @@ class ExpansionContainer extends StatefulWidget {
   ///
   /// Note that depending on the value of [controlAffinity], the [leading] widget
   /// may replace the rotating expansion arrow icon.
-  final Widget leading;
+  final Widget? leading;
 
   /// The primary content of the list item.
   ///
@@ -130,9 +127,9 @@ class ExpansionContainer extends StatefulWidget {
   /// Additional content displayed below the title.
   ///
   /// Typically a [Text] widget.
-  final Widget subtitle;
+  final Widget? subtitle;
 
-  final Widget first;
+  final Widget? first;
 
   final bool showFirst;
 
@@ -141,7 +138,7 @@ class ExpansionContainer extends StatefulWidget {
   /// When the tile starts expanding, this function is called with the value
   /// true. When the tile starts collapsing, this function is called with
   /// the value false.
-  final ValueChanged<bool> onExpansionChanged;
+  final ValueChanged<bool>? onExpansionChanged;
 
   /// The widgets that are displayed when the tile expands.
   ///
@@ -149,16 +146,16 @@ class ExpansionContainer extends StatefulWidget {
   final List<Widget> children;
 
   /// The color to display behind the sublist when expanded.
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// When not null, defines the background color of tile when the sublist is collapsed.
-  final Color collapsedBackgroundColor;
+  final Color? collapsedBackgroundColor;
 
   /// A widget to display after the title.
   ///
   /// Note that depending on the value of [controlAffinity], the [trailing] widget
   /// may replace the rotating expansion arrow icon.
-  final Widget trailing;
+  final Widget? trailing;
 
   /// Specifies if the list tile is initially expanded (true) or collapsed (false, the default).
   final bool initiallyExpanded;
@@ -177,7 +174,7 @@ class ExpansionContainer extends StatefulWidget {
   /// the expanded [children] widgets.
   ///
   /// When the value is null, the tile's padding is `EdgeInsets.symmetric(horizontal: 16.0)`.
-  final EdgeInsetsGeometry tilePadding;
+  final EdgeInsetsGeometry? tilePadding;
 
   /// Specifies the alignment of [children], which are arranged in a column when
   /// the tile is expanded.
@@ -193,7 +190,7 @@ class ExpansionContainer extends StatefulWidget {
   /// The width of the column is the width of the widest child widget in [children].
   ///
   /// When the value is null, the value of `expandedAlignment` is [Alignment.center].
-  final Alignment expandedAlignment;
+  final Alignment? expandedAlignment;
 
   /// Specifies the alignment of each child within [children] when the tile is expanded.
   ///
@@ -209,38 +206,38 @@ class ExpansionContainer extends StatefulWidget {
   /// instead.
   ///
   /// When the value is null, the value of `expandedCrossAxisAlignment` is [CrossAxisAlignment.center].
-  final CrossAxisAlignment expandedCrossAxisAlignment;
+  final CrossAxisAlignment? expandedCrossAxisAlignment;
 
   /// Specifies padding for [children].
   ///
   /// When the value is null, the value of `childrenPadding` is [EdgeInsets.zero].
-  final EdgeInsetsGeometry childrenPadding;
+  final EdgeInsetsGeometry? childrenPadding;
 
   /// The icon color of tile's expansion arrow icon when the sublist is expanded.
   ///
   /// Used to override to the [ListTileTheme.iconColor].
-  final Color iconColor;
+  final Color? iconColor;
 
   /// The icon color of tile's expansion arrow icon when the sublist is collapsed.
   ///
   /// Used to override to the [ListTileTheme.iconColor].
-  final Color collapsedIconColor;
+  final Color? collapsedIconColor;
 
   /// The color of the tile's titles when the sublist is expanded.
   ///
   /// Used to override to the [ListTileTheme.textColor].
-  final Color textColor;
+  final Color? textColor;
 
   /// The color of the tile's titles when the sublist is collapsed.
   ///
   /// Used to override to the [ListTileTheme.textColor].
-  final Color collapsedTextColor;
+  final Color? collapsedTextColor;
 
   /// Typically used to force the expansion arrow icon to the tile's leading or trailing edge.
   ///
   /// By default, the value of `controlAffinity` is [ListTileControlAffinity.platform],
   /// which means that the expansion arrow icon will appear on the tile's trailing edge.
-  final ListTileControlAffinity controlAffinity;
+  final ListTileControlAffinity? controlAffinity;
   final bool bottomTitle;
   @override
   State<ExpansionContainer> createState() => _ExpansionContainerState();
@@ -256,10 +253,10 @@ class _ExpansionContainerState extends State<ExpansionContainer> with SingleTick
   final ColorTween _iconColorTween = ColorTween();
   final ColorTween _backgroundColorTween = ColorTween();
 
-  AnimationController _controller;
-  Animation<double> _iconTurns;
-  Animation<double> _heightFactor;
-  Animation<Color> _backgroundColor;
+  late AnimationController _controller;
+  late Animation<double> _iconTurns;
+  late Animation<double> _heightFactor;
+  late Animation<Color> _backgroundColor;
 
   bool _isExpanded = false;
 
@@ -271,7 +268,7 @@ class _ExpansionContainerState extends State<ExpansionContainer> with SingleTick
     _iconTurns = _controller.drive(_halfTween.chain(_easeInTween));
     _backgroundColor = _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
-    _isExpanded = PageStorage.of(context)?.readState(context) as bool ?? widget.initiallyExpanded;
+    _isExpanded = PageStorage.of(context).readState(context) as bool ?? widget.initiallyExpanded;
     if (_isExpanded) _controller.value = 1.0;
   }
 

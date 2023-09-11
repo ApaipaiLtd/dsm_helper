@@ -9,9 +9,9 @@ import 'package:dsm_helper/util/function.dart';
 
 class GroupsModel {
   GroupsModel({this.qq, this.wechat, this.channel});
-  List<GroupModel> qq;
-  List<GroupModel> wechat;
-  List<GroupModel> channel;
+  List<GroupModel>? qq;
+  List<GroupModel>? wechat;
+  List<GroupModel>? channel;
   static Future<GroupsModel> fetch() async {
     var res = await Util.post("${Util.appUrl}/app/groups");
     if (res['code'] == 1) {
@@ -52,20 +52,20 @@ class GroupModel {
     key = json['key'];
     status = json['status'];
   }
-  String get displayName => "$name${status.isNotBlank ? '($status)' : ''}";
-  num id;
-  num type;
-  String name;
-  String no;
-  String key;
-  String status;
+  String get displayName => "$name${status != null && status!.isNotBlank ? '($status)' : ''}";
+  num? id;
+  num? type;
+  String? name;
+  String? no;
+  String? key;
+  String? status;
   GroupModel copyWith({
-    num id,
-    num type,
-    String name,
-    String no,
-    String key,
-    String status,
+    num? id,
+    num? type,
+    String? name,
+    String? no,
+    String? key,
+    String? status,
   }) =>
       GroupModel(
         id: id ?? this.id,

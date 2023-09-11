@@ -42,19 +42,19 @@ class WallpaperModel {
       wallpaperType = json['wallpaper_type'];
     }
   }
-  String classicalDesktop;
-  bool customizeColor;
-  bool customizeWallpaper = false;
-  bool customizeBackground = false;
+  String? classicalDesktop;
+  bool? customizeColor;
+  bool? customizeWallpaper = false;
+  bool? customizeBackground = false;
   String customizeBackgroundType = "image";
-  int index;
-  String menuStyle;
-  bool newImage;
-  int wallpaper;
-  String wallpaperExt;
-  String wallpaperPath;
-  String wallpaperPosition;
-  String wallpaperType;
+  int? index;
+  String? menuStyle;
+  bool? newImage;
+  int? wallpaper;
+  String? wallpaperExt;
+  String? wallpaperPath;
+  String? wallpaperPosition;
+  String? wallpaperType;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

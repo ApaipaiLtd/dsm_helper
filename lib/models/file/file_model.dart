@@ -17,15 +17,15 @@ class FileModel {
     name = json['name'];
     path = json['path'];
   }
-  FileAdditional additional;
-  bool isdir;
-  String name;
-  String path;
+  FileAdditional? additional;
+  bool? isdir;
+  String? name;
+  String? path;
   FileModel copyWith({
-    FileAdditional additional,
-    bool isdir,
-    String name,
-    String path,
+    FileAdditional? additional,
+    bool? isdir,
+    String? name,
+    String? path,
   }) =>
       FileModel(
         additional: additional ?? this.additional,
@@ -36,7 +36,7 @@ class FileModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (additional != null) {
-      map['additional'] = additional.toJson();
+      map['additional'] = additional!.toJson();
     }
     map['isdir'] = isdir;
     map['name'] = name;
@@ -67,17 +67,17 @@ class FileAdditional {
     size = json['size'];
     time = json['time'] != null ? FileTime.fromJson(json['time']) : null;
   }
-  String mountPointType;
-  FilePerm perm;
-  String realPath;
-  num size;
-  FileTime time;
+  String? mountPointType;
+  FilePerm? perm;
+  String? realPath;
+  num? size;
+  FileTime? time;
   FileAdditional copyWith({
-    String mountPointType,
-    FilePerm perm,
-    String realPath,
-    num size,
-    FileTime time,
+    String? mountPointType,
+    FilePerm? perm,
+    String? realPath,
+    num? size,
+    FileTime? time,
   }) =>
       FileAdditional(
         mountPointType: mountPointType ?? this.mountPointType,
@@ -90,12 +90,12 @@ class FileAdditional {
     final map = <String, dynamic>{};
     map['mount_point_type'] = mountPointType;
     if (perm != null) {
-      map['perm'] = perm.toJson();
+      map['perm'] = perm!.toJson();
     }
     map['real_path'] = realPath;
     map['size'] = size;
     if (time != null) {
-      map['time'] = time.toJson();
+      map['time'] = time!.toJson();
     }
     return map;
   }
@@ -120,15 +120,15 @@ class FileTime {
     ctime = json['ctime'];
     mtime = json['mtime'];
   }
-  num atime;
-  num crtime;
-  num ctime;
-  num mtime;
+  num? atime;
+  num? crtime;
+  num? ctime;
+  num? mtime;
   FileTime copyWith({
-    num atime,
-    num crtime,
-    num ctime,
-    num mtime,
+    num? atime,
+    num? crtime,
+    num? ctime,
+    num? mtime,
   }) =>
       FileTime(
         atime: atime ?? this.atime,
@@ -162,13 +162,13 @@ class FilePerm {
     isAclMode = json['is_acl_mode'];
     posix = json['posix'];
   }
-  Acl acl;
-  bool isAclMode;
-  num posix;
+  Acl? acl;
+  bool? isAclMode;
+  num? posix;
   FilePerm copyWith({
-    Acl acl,
-    bool isAclMode,
-    num posix,
+    Acl? acl,
+    bool? isAclMode,
+    num? posix,
   }) =>
       FilePerm(
         acl: acl ?? this.acl,
@@ -178,7 +178,7 @@ class FilePerm {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (acl != null) {
-      map['acl'] = acl.toJson();
+      map['acl'] = acl!.toJson();
     }
     map['is_acl_mode'] = isAclMode;
     map['posix'] = posix;
@@ -208,17 +208,17 @@ class Acl {
     read = json['read'];
     write = json['write'];
   }
-  bool append;
-  bool del;
-  bool exec;
-  bool read;
-  bool write;
+  bool? append;
+  bool? del;
+  bool? exec;
+  bool? read;
+  bool? write;
   Acl copyWith({
-    bool append,
-    bool del,
-    bool exec,
-    bool read,
-    bool write,
+    bool? append,
+    bool? del,
+    bool? exec,
+    bool? read,
+    bool? write,
   }) =>
       Acl(
         append: append ?? this.append,

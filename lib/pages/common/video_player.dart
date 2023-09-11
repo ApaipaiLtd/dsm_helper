@@ -4,21 +4,20 @@ import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fplayer/fplayer.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:xml2json/xml2json.dart';
 
 class VideoPlayer extends StatefulWidget {
-  final String name;
   final String url;
-  final String cover;
-  final String nfo;
+  final String? name;
+  final String? cover;
+  final String? nfo;
   final bool network;
-  VideoPlayer({@required this.url, this.name, this.cover, this.nfo, this.network: true});
+  VideoPlayer({required this.url, this.name, this.cover, this.nfo, this.network: true});
 
   @override
   _VideoPlayerState createState() => _VideoPlayerState();
@@ -32,7 +31,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   String date = "";
   String year = '';
   List actors = [];
-  Map nfoDetail;
+  Map? nfoDetail;
 
   int seekTime = 100000;
   // @override
@@ -152,17 +151,17 @@ class _VideoPlayerState extends State<VideoPlayer> {
   parseNfo() async {
     if (widget.nfo != null) {
       final myTransformer = Xml2Json();
-      String nfoUrl = Util.baseUrl + "/fbdownload/info.nfo?dlink=%22${Util.utf8Encode(widget.nfo)}%22&_sid=%22${Util.sid}%22&mode=open";
+      String nfoUrl = Util.baseUrl + "/fbdownload/info.nfo?dlink=%22${Util.utf8Encode(widget.nfo!)}%22&_sid=%22${Util.sid}%22&mode=open";
       var res = await Util.get(nfoUrl, decode: false);
       try {
         myTransformer.parse(res);
         var json = jsonDecode(myTransformer.toParker());
         setState(() {
           nfoDetail = json['episodedetails'] ?? json['movie'];
-          description = nfoDetail['plot'];
-          date = nfoDetail['dateadded'];
-          actors = nfoDetail['actor'];
-          year = nfoDetail['year'];
+          description = nfoDetail?['plot'];
+          date = nfoDetail?['dateadded'];
+          actors = nfoDetail?['actor'];
+          year = nfoDetail?['year'];
         });
       } catch (e) {}
     }
@@ -173,17 +172,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.name ?? '视频播放'),
-        leading: AppBackButton(context),
         actions: [
           Padding(
             padding: EdgeInsets.only(left: 0, top: 8, bottom: 8, right: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            child: CupertinoButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () async {
                 // player.pause();
                 if (Platform.isAndroid) {
@@ -228,11 +223,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
             color: Colors.black,
             fsFit: FFit.contain, // 全屏模式下的填充
             fit: FFit.contain, // 正常模式下的填充
-            cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
+            cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover!)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
 
             panelBuilder: fPanelBuilder(
               // 单视频配置
-              title: widget.name,
+              title: widget.name!,
               // subTitle: '视频副标题',
               // 右下方截屏按钮
               isSnapShot: false,
@@ -374,7 +369,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 SizedBox(
                   height: 20,
                 ),
-                if (actors != null && actors.length > 0) ...[
+                if (actors.length > 0) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: Text("演员表："),

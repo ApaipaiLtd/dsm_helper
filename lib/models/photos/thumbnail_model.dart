@@ -27,14 +27,14 @@ class ThumbnailModel {
     xl = json['xl'];
     folderCoverSeq = json['folder_cover_seq'];
   }
-  String cacheKey;
-  String m;
-  String preview;
-  String sm;
-  num unitId;
-  String xl;
-  num folderCoverSeq;
-  String thumbUrl({String size = 'sm', int folderId, bool isTeam: false}) {
+  String? cacheKey;
+  String? m;
+  String? preview;
+  String? sm;
+  num? unitId;
+  String? xl;
+  num? folderCoverSeq;
+  String thumbUrl({String size = 'sm', int? folderId, bool isTeam: false}) {
     if (unitId != null) {
       return '${Util.baseUrl}/webapi/entry.cgi?id=$unitId&cache_key="$cacheKey"&type="unit"&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
     } else {
@@ -43,13 +43,13 @@ class ThumbnailModel {
   }
 
   ThumbnailModel copyWith({
-    String cacheKey,
-    String m,
-    String preview,
-    String sm,
-    num unitId,
-    String xl,
-    num folderCoverSeq,
+    String? cacheKey,
+    String? m,
+    String? preview,
+    String? sm,
+    num? unitId,
+    String? xl,
+    num? folderCoverSeq,
   }) =>
       ThumbnailModel(
         cacheKey: cacheKey ?? this.cacheKey,

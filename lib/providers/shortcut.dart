@@ -1,5 +1,6 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/material.dart';
+import 'package:sp_util/sp_util.dart';
 
 class ShortcutProvider with ChangeNotifier {
   bool _showShortcut = true;
@@ -8,6 +9,6 @@ class ShortcutProvider with ChangeNotifier {
   void changeMode(bool showShortcut) async {
     _showShortcut = showShortcut;
     notifyListeners();
-    Util.setStorage("show_shortcut", showShortcut ? "1" : "0");
+    SpUtil.putBool("show_shortcut", showShortcut);
   }
 }

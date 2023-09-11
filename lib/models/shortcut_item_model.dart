@@ -38,14 +38,14 @@ class ShortcutItemModel {
     type = json['type'];
     url = json['url'];
   }
-  String className;
-  String icon;
-  bool needHide;
-  bool needUpdate;
-  Param param;
-  String title;
-  String type;
-  String url;
+  String? className;
+  String? icon;
+  bool? needHide;
+  bool? needUpdate;
+  Param? param;
+  String? title;
+  String? type;
+  String? url;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -54,7 +54,7 @@ class ShortcutItemModel {
     map['needHide'] = needHide;
     map['needUpdate'] = needUpdate;
     if (param != null) {
-      map['param'] = param.toJson();
+      map['param'] = param!.toJson();
     }
     map['title'] = title;
     map['type'] = type;
@@ -73,12 +73,12 @@ class Param {
   Param.fromJson(dynamic json) {
     data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
-  Data data;
+  Data? data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (data != null) {
-      map['data'] = data.toJson();
+      map['data'] = data!.toJson();
     }
     return map;
   }
@@ -94,7 +94,7 @@ class Data {
   Data.fromJson(dynamic json) {
     name = json['name'];
   }
-  String name;
+  String? name;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

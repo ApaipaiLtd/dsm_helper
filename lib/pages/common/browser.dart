@@ -1,13 +1,12 @@
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Browser extends StatefulWidget {
   final String url;
-  final String title;
-  Browser({this.url, this.title});
+  final String? title;
+  Browser({required this.url, this.title});
   @override
   _BrowserState createState() => _BrowserState();
 }
@@ -47,12 +46,11 @@ Page resource error:
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
-        title: FutureBuilder<String>(
+        title: FutureBuilder<String?>(
           future: _webviewController.platform.getTitle(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Text(snapshot?.data ?? widget.title ?? "加载中……");
+              return Text(snapshot.data ?? widget.title ?? "加载中……");
             } else {
               return SizedBox();
             }
@@ -61,13 +59,10 @@ Page resource error:
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            child: CupertinoButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () {
                 launchUrlString(widget.url, mode: LaunchMode.externalApplication);
               },
@@ -96,13 +91,10 @@ Page resource error:
                     future: _webviewController.canGoBack(),
                     builder: (context, shot) {
                       bool canGoBack = shot.data ?? false;
-                      return NeuButton(
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                      return CupertinoButton(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
                         padding: EdgeInsets.all(10),
-                        enabled: canGoBack,
                         onPressed: () async {
                           await _webviewController.goBack();
                           setState(() {});
@@ -122,17 +114,16 @@ Page resource error:
                     future: _webviewController.canGoForward(),
                     builder: (context, shot) {
                       bool canGoForward = shot.data ?? false;
-                      return NeuButton(
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        enabled: canGoForward,
+                      return CupertinoButton(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
                         padding: EdgeInsets.all(10),
-                        onPressed: () async {
-                          await _webviewController.goForward();
-                          setState(() {});
-                        },
+                        onPressed: canGoForward
+                            ? () async {
+                                await _webviewController.goForward();
+                                setState(() {});
+                              }
+                            : null,
                         child: Icon(
                           Icons.arrow_forward_ios,
                           size: 22,
@@ -142,11 +133,9 @@ Page resource error:
                     },
                   ),
                   Spacer(),
-                  NeuButton(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  CupertinoButton(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(10),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -159,11 +148,9 @@ Page resource error:
                   SizedBox(
                     width: 10,
                   ),
-                  NeuButton(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  CupertinoButton(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(10),
                     onPressed: () {
                       _webviewController.reload();

@@ -4,7 +4,6 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class SelectLocalFolder extends StatefulWidget {
   final bool multi;
@@ -76,23 +75,20 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
     return Container(
       margin: index == 0 ? EdgeInsets.only(left: 20) : null,
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: NeuButton(
+      child: CupertinoButton(
         onPressed: () {
           String path = "";
           List<String> items = [];
           if (index == 0) {
             path = "/";
           } else {
-            items = paths.getRange(0, index + 1).toList();
+            items = paths.getRange(0, index + 1).toList().cast<String>();
             path = items.join("/");
           }
           goPath(path);
         },
-        decoration: NeumorphicDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        bevel: 5,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: index == 0
             ? Icon(
@@ -114,7 +110,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
       child: Opacity(
         opacity: 1,
-        child: NeuButton(
+        child: CupertinoButton(
           onPressed: () async {
             if (isFile) {
               selectedFiles.add(file);
@@ -124,11 +120,8 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
           },
           // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: EdgeInsets.symmetric(vertical: 20),
-          decoration: NeumorphicDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          bevel: 8,
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(20),
           child: Row(
             children: [
               SizedBox(
@@ -153,11 +146,9 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
               SizedBox(
                 width: 10,
               ),
-              NeuButton(
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              CupertinoButton(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 onPressed: () {
                   setState(() {
                     if (widget.multi) {
@@ -172,7 +163,6 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                   });
                 },
                 padding: EdgeInsets.all(5),
-                bevel: 5,
                 child: SizedBox(
                   width: 20,
                   height: 20,
@@ -251,7 +241,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () {
                             if (selectedFiles.length > 0) {
                               Navigator.of(context).pop(selectedFiles);
@@ -262,11 +252,8 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
                               // Navigator.of(context).pop(["/storage/emulated/0" + paths.join("/").substring(1)]);
                             }
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           child: Text(
                             "完成",

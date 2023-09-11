@@ -19,13 +19,13 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sp_util/sp_util.dart';
 import '/providers/dark_mode.dart';
 
 void main() async {
@@ -51,12 +51,11 @@ void main() async {
   }
 
   WidgetsFlutterBinding.ensureInitialized();
-  String agreement = await Util.getStorage("agreement");
+  String agreement = await SpUtil.getString("agreement") ?? '';
   Log.init();
-  if (agreement != null && agreement == "1") {
-    registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/").then((value) {
-      stopLog();
-    });
+  if (agreement == "1") {
+    Fluwx fluwx = Fluwx();
+    fluwx.registerApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
     // print("初始化穿山甲");
     await pangle.init(
       iOS: IOSConfig(
@@ -67,7 +66,6 @@ void main() async {
         appId: '5215463',
         debug: false,
         allowShowNotify: true,
-        allowShowPageWhenScreenLock: false,
       ),
     );
     // 域名优选
@@ -76,9 +74,9 @@ void main() async {
     // 判断是否登录
     bool isForever = false;
     DateTime? noAdTime;
-    Util.isWechatInstalled = await isWeChatInstalled;
-    String userToken = await Util.getStorage("user_token");
-    String noAdTimeStr = await Util.getStorage("no_ad_time");
+    Util.isWechatInstalled = await fluwx.isWeChatInstalled;
+    String userToken = SpUtil.getString("user_token", defValue: '')!;
+    String noAdTimeStr =SpUtil.getString("no_ad_time", defValue: '')!;
     if (noAdTimeStr.isNotBlank) {
       noAdTime = DateTime.parse(noAdTimeStr);
     }
@@ -108,105 +106,39 @@ void main() async {
         debugPrint("免广告有效期内");
       }
     } else {
-      Util.removeStorage("no_ad_time");
+      SpUtil.remove("no_ad_time");
       pangle.loadSplashAd(
         iOS: IOSSplashConfig(slotId: '887561543'),
         android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
       );
     }
   }
-  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+  // await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
-  Util.downloadSavePath = await Util.getStorage("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
-  Util.getStorage("download_wifi_only").then((value) {
-    if (value != null) {
-      Util.downloadWifiOnly = value == "1";
-    } else {
-      Util.downloadWifiOnly = true;
-    }
-  });
+  Util.downloadSavePath = await SpUtil.getString("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
+  Util.downloadWifiOnly =  SpUtil.getBool("download_wifi_only", defValue: true)!;
   //判断是否需要启动密码
-  bool launchAuth = false;
-  bool password = false;
-  bool biometrics = false;
-  bool showShortcuts = true;
-  bool showWallpaper = true;
-  int refreshDuration = 10;
-  bool launchAccountPage = false;
-  String launchAuthStr = await Util.getStorage("launch_auth");
-  String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
-  String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
-  String launchAccountPageStr = await Util.getStorage('launch_account_page');
+  bool launchAuth = SpUtil.getBool("launch_auth", defValue: false)!;
+  bool password = SpUtil.getBool("launch_auth_password", defValue: false)!;
+  bool biometrics = SpUtil.getBool("launch_auth_biometrics",defValue: false)!;
+  bool showShortcuts = SpUtil.getBool("show_shortcut",defValue: true)!;
+  bool showWallpaper =SpUtil.getBool("show_wallpaper",defValue: true)!;
+  int refreshDuration = SpUtil.getInt("refresh_duration", defValue: 10)!;
+  bool launchAccountPage = SpUtil.getBool("launch_account_page", defValue: false)!;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   Util.appName = packageInfo.appName;
-  if (launchAuthStr != null) {
-    launchAuth = launchAuthStr == "1";
-  } else {
-    launchAuth = false;
-  }
-  if (launchAuthPasswordStr != null) {
-    password = launchAuthPasswordStr == "1";
-  } else {
-    password = false;
-  }
-  if (launchAuthBiometricsStr != null) {
-    biometrics = launchAuthBiometricsStr == "1";
-  } else {
-    biometrics = false;
-  }
-
-  if (launchAccountPageStr != null) {
-    launchAccountPage = launchAccountPageStr == "1";
-  } else {
-    launchAccountPage = false;
-  }
 
   bool authPage = launchAuth && (password || biometrics);
 
   //暗色模式
-  String darkModeStr = await Util.getStorage("dark_mode");
-  int darkMode = 2;
-  if (darkModeStr.isNotBlank) {
-    darkMode = int.parse(darkModeStr);
-  }
+  int darkMode = SpUtil.getInt("dark_mode", defValue: 2)!;
 
   //震动开关
-  String vibrateOn = await Util.getStorage("vibrate_on");
-  String vibrateNormal = await Util.getStorage("vibrate_normal");
-  String vibrateWarning = await Util.getStorage("vibrate_warning");
-  String showShortcutsStr = await Util.getStorage("show_shortcut");
-  if (showShortcutsStr.isNotBlank) {
-    showShortcuts = showShortcutsStr == "1";
-  }
-  String showWallpaperStr = await Util.getStorage("show_wallpaper");
-  if (showWallpaperStr.isNotBlank) {
-    showWallpaper = showWallpaperStr == "1";
-  }
-  String refreshDurationStr = await Util.getStorage("refresh_duration");
-  if (refreshDurationStr.isNotBlank) {
-    refreshDuration = int.parse(refreshDurationStr);
-  }
-  if (vibrateOn.isNotBlank) {
-    Util.vibrateOn = vibrateOn == "1";
-  } else {
-    Util.vibrateOn = true;
-  }
-  if (vibrateNormal.isNotBlank) {
-    Util.vibrateNormal = vibrateNormal == "1";
-  } else {
-    Util.vibrateNormal = true;
-  }
-  if (vibrateWarning.isNotBlank) {
-    Util.vibrateWarning = vibrateWarning == "1";
-  } else {
-    Util.vibrateWarning = true;
-  }
-  String checkSsl = await Util.getStorage("check_ssl");
-  if (checkSsl.isNotBlank) {
-    Util.checkSsl = checkSsl == "1";
-  } else {
-    Util.checkSsl = true;
-  }
+  Util.vibrateOn = SpUtil.getBool("vibrate_on", defValue: true)!;
+  Util.vibrateNormal = SpUtil.getBool("vibrate_normal",defValue: true)!;
+  Util.vibrateWarning =SpUtil.getBool("vibrate_warning", defValue: true)!;
+
+  Util.checkSsl = SpUtil.getBool("check_ssl", defValue: true)!;
   runApp(
     MultiProvider(
       providers: [

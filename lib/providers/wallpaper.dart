@@ -1,5 +1,6 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/material.dart';
+import 'package:sp_util/sp_util.dart';
 
 class WallpaperProvider with ChangeNotifier {
   bool _showWallpaper = true;
@@ -8,6 +9,6 @@ class WallpaperProvider with ChangeNotifier {
   void changeMode(bool showWallpaper) async {
     _showWallpaper = showWallpaper;
     notifyListeners();
-    Util.setStorage("show_wallpaper", showWallpaper ? "1" : "0");
+    SpUtil.putBool("show_wallpaper", showWallpaper);
   }
 }

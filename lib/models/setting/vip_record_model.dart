@@ -1,4 +1,5 @@
 import 'package:dsm_helper/util/function.dart';
+import 'package:sp_util/sp_util.dart';
 
 /// id : 1
 /// user_id : 1
@@ -20,7 +21,7 @@ class VipRecordModel {
     this.isForever,
   });
   static Future<List<VipRecordModel>> fetch() async {
-    String userToken = await Util.getStorage("user_token");
+    String userToken = SpUtil.getString("user_token", defValue: '')!;
     var res = await Util.post("${Util.appUrl}/vip/record", data: {"token": userToken});
     if (res['code'] == 1) {
       List<VipRecordModel> records = [];
@@ -43,22 +44,22 @@ class VipRecordModel {
     createTime = json['create_time'];
     isForever = json['is_forever'];
   }
-  num id;
-  num userId;
-  String startTime;
-  String endTime;
-  String cost;
-  num type;
-  num isForever;
-  String createTime;
+  num? id;
+  num? userId;
+  String? startTime;
+  String? endTime;
+  String? cost;
+  num? type;
+  num? isForever;
+  String? createTime;
   VipRecordModel copyWith({
-    num id,
-    num userId,
-    String startTime,
-    String endTime,
-    String cost,
-    num type,
-    String createTime,
+    num? id,
+    num? userId,
+    String? startTime,
+    String? endTime,
+    String? cost,
+    num? type,
+    String? createTime,
   }) =>
       VipRecordModel(
         id: id ?? this.id,

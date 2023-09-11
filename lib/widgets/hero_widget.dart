@@ -18,13 +18,13 @@ class HeroWidget extends StatefulWidget {
 }
 
 class _HeroWidgetState extends State<HeroWidget> {
-  RectTween _rectTween;
+  late Tween<Rect> _rectTween;
   @override
   Widget build(BuildContext context) {
     return Hero(
       tag: widget.tag,
-      createRectTween: (Rect begin, Rect end) {
-        _rectTween = RectTween(begin: begin, end: end);
+      createRectTween: (Rect? begin, Rect? end) {
+        _rectTween = Tween(begin: begin, end: end);
         return _rectTween;
       },
       // make hero better when slide out
@@ -37,7 +37,7 @@ class _HeroWidgetState extends State<HeroWidget> {
           final Widget toHeroWidget = (toHeroContext.widget as Hero).child;
           return AnimatedBuilder(
             animation: animation,
-            builder: (BuildContext buildContext, Widget child) {
+            builder: (BuildContext buildContext, Widget? child) {
               Widget animatedBuilderChild = hero.child;
 
               // make hero more smoothly
@@ -49,8 +49,8 @@ class _HeroWidgetState extends State<HeroWidget> {
                     opacity: 1 - animation.value,
                     child: UnconstrainedBox(
                       child: SizedBox(
-                        width: _rectTween?.begin?.width,
-                        height: _rectTween?.begin?.height,
+                        width: _rectTween.begin?.width,
+                        height: _rectTween.begin?.height,
                         child: toHeroWidget,
                       ),
                     ),

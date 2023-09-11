@@ -11,7 +11,7 @@ class TimelineModel {
     this.days,
     this.offset,
   });
-  static Future<List<TimelineModel>> fetch({bool isTeam = false, String type, int geocodingId, int generalTagId, bool recentlyAdd: false, List<int> itemTypes = const []}) async {
+  static Future<List<TimelineModel>> fetch({bool isTeam = false, String? type, int? geocodingId, int? generalTagId, bool recentlyAdd: false, List<int> itemTypes = const []}) async {
     Map<String, dynamic> data = {
       "timeline_group_unit": "day",
       "api": "SYNO.Foto${isTeam ? 'Team' : ''}.Browse.${recentlyAdd ? 'RecentlyAdded' : 'Timeline'}",
@@ -52,29 +52,29 @@ class TimelineModel {
     if (json['list'] != null) {
       days = [];
       json['list'].forEach((v) {
-        days.add(Day.fromJson(v));
+        days!.add(Day.fromJson(v));
       });
     }
     offset = json['offset'];
   }
-  num limit;
-  List<Day> days;
-  num offset;
+  num? limit;
+  List<Day>? days;
+  num? offset;
   TimelineModel copyWith({
-    num limit,
-    List<List> list,
-    num offset,
+    num? limit,
+    List<Day>? days,
+    num? offset,
   }) =>
       TimelineModel(
         limit: limit ?? this.limit,
-        days: list ?? this.days,
+        days: days ?? this.days,
         offset: offset ?? this.offset,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['limit'] = limit;
     if (days != null) {
-      map['list'] = days.map((v) => v.toJson()).toList();
+      map['list'] = days!.map((v) => v.toJson()).toList();
     }
     map['offset'] = offset;
     return map;
@@ -100,15 +100,15 @@ class Day {
     month = json['month'];
     year = json['year'];
   }
-  num day;
-  num itemCount;
-  num month;
-  num year;
-  num startPosition;
-  num endPosition;
-  List<PhotoModel> photos;
+  int? day;
+  int? itemCount;
+  int? month;
+  int? year;
+  num? startPosition;
+  num? endPosition;
+  List<PhotoModel> photos = [];
 
-  Future fetchPhotos({bool isTeam = false, String type, int geocodingId, int generalTagId, bool recentlyAdd: false, List<int> itemTypes = const []}) async {
+  Future fetchPhotos({bool isTeam = false, String? type, int? geocodingId, int? generalTagId, bool recentlyAdd: false, List<int> itemTypes = const []}) async {
     Map<String, dynamic> data = {
       "offset": 0,
       "limit": itemCount,
@@ -133,7 +133,7 @@ class Day {
     //   data['method'] = "list_with_filter";
     // }
     if (year != null && month != null && day != null) {
-      int start = DateTime(year, month, day, 8).secondsSinceEpoch;
+      int start = DateTime(year!, month!, day!, 8).secondsSinceEpoch;
       int end = start + 60 * 60 * 24 - 1;
       data['start_time'] = start;
       data['end_time'] = end;
@@ -171,10 +171,10 @@ class Day {
   }
 
   Day copyWith({
-    num day,
-    num itemCount,
-    num month,
-    num year,
+    int? day,
+    int? itemCount,
+    int? month,
+    int? year,
   }) =>
       Day(
         day: day ?? this.day,

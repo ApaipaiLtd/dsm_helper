@@ -189,7 +189,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
     });
   }
 
-  List<String> getCategoryName(List categoryIds) {
+  List<String> getCategoryName(List? categoryIds) {
     List<String> name = [];
     if (categoryIds == null) {
       return [];

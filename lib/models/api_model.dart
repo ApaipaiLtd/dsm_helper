@@ -27,9 +27,9 @@ class ApiModel {
     minVersion = json['minVersion'];
     path = json['path'];
   }
-  num maxVersion;
-  num minVersion;
-  String path;
+  num? maxVersion;
+  num? minVersion;
+  String? path;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

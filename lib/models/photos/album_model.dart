@@ -45,12 +45,12 @@ class AlbumModel {
   });
 
   static Future<List<AlbumModel>> fetch({
-    bool isTeam: false,
-    int offset: 0,
-    int limit: 5000,
-    String sortBy: "create_time",
-    String sortDirection: "desc",
-    bool shared: false,
+    bool isTeam = false,
+    int offset = 0,
+    int limit = 5000,
+    String sortBy = "create_time",
+    String sortDirection = "desc",
+    bool shared = false,
     List<String> additional = const [],
   }) async {
     Map<String, dynamic> data = {
@@ -102,26 +102,26 @@ class AlbumModel {
     type = json['type'];
     version = json['version'];
   }
-  PhotoAdditional additional;
+  PhotoAdditional? additional;
   dynamic cantMigrateCondition;
   dynamic condition;
-  num createTime;
-  num endTime;
-  bool freezeAlbum;
-  num id;
-  num itemCount;
-  String name;
-  num ownerUserId;
-  String passphrase;
-  bool shared;
-  String sortBy;
-  String sortDirection;
-  num startTime;
-  bool temporaryShared;
-  String type;
-  num version;
+  num? createTime;
+  num? endTime;
+  bool? freezeAlbum;
+  num? id;
+  num? itemCount;
+  String? name;
+  num? ownerUserId;
+  String? passphrase;
+  bool? shared;
+  String? sortBy;
+  String? sortDirection;
+  num? startTime;
+  bool? temporaryShared;
+  String? type;
+  num? version;
   String get shareText {
-    if (additional.sharingInfo.privacyType == 'public-view') {
+    if (additional?.sharingInfo?.privacyType == 'public-view') {
       return '公开共享';
     } else {
       return '私人共享';
@@ -129,24 +129,24 @@ class AlbumModel {
   }
 
   AlbumModel copyWith({
-    PhotoAdditional additional,
+    PhotoAdditional? additional,
     dynamic cantMigrateCondition,
     dynamic condition,
-    num createTime,
-    num endTime,
-    bool freezeAlbum,
-    num id,
-    num itemCount,
-    String name,
-    num ownerUserId,
-    String passphrase,
-    bool shared,
-    String sortBy,
-    String sortDirection,
-    num startTime,
-    bool temporaryShared,
-    String type,
-    num version,
+    num? createTime,
+    num? endTime,
+    bool? freezeAlbum,
+    num? id,
+    num? itemCount,
+    String? name,
+    num? ownerUserId,
+    String? passphrase,
+    bool? shared,
+    String? sortBy,
+    String? sortDirection,
+    num? startTime,
+    bool? temporaryShared,
+    String? type,
+    num? version,
   }) =>
       AlbumModel(
         additional: additional ?? this.additional,
@@ -171,7 +171,7 @@ class AlbumModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (additional != null) {
-      map['additional'] = additional.toJson();
+      map['additional'] = additional!.toJson();
     }
     map['cant_migrate_condition'] = cantMigrateCondition;
     map['condition'] = condition;

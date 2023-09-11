@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-// import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:sp_util/sp_util.dart';
 
 import 'function.dart';
 
@@ -31,11 +31,7 @@ class Api {
       if (res != null) {
         try {
           if (res['code'] == 0) {
-            List<String> ignoredVersions = [];
-            String ignoredVersionsString = await Util.getStorage("ignoredVersions");
-            if (ignoredVersionsString.isNotBlank) {
-              ignoredVersions = ignoredVersionsString.split(",");
-            }
+            List<String> ignoredVersions = SpUtil.getStringList("ignoredVersions", defValue: [])!;
             if (int.parse(buildNumber) < int.parse(res['data']['buildVersionNo'])) {
               if (force || !ignoredVersions.contains(res['data']['buildVersionNo'])) {
                 return {
@@ -56,7 +52,7 @@ class Api {
 //    var res = await Util.post("base/update", data: {"platform": Platform.isAndroid ? "android" : "ios", "build": buildNumber});
   }
 
-  static Future<Map> api() async {
+  static Future api() async {
     var res = await Util.post("query.cgi", data: {
       "query": "all",
       "api": "SYNO.API.Info",
@@ -64,13 +60,13 @@ class Api {
       "version": 1,
     });
     if (res is String) {
-      return jsonDecode(res);
+      return jsonDecode(res) as Map;
     } else if (res is Map) {
       return res;
     }
   }
 
-  static Future<Map> login({String host, String account, String password, String otpCode = "", CancelToken cancelToken, bool rememberDevice: false, String cookie}) async {
+  static Future<Map> login({String? host, String? account, String? password, String otpCode = "", CancelToken? cancelToken, bool rememberDevice: false, String? cookie}) async {
     var data = {
       "account": account,
       "passwd": password,
@@ -86,7 +82,7 @@ class Api {
     return await Util.get("auth.cgi", host: host, data: data, cancelToken: cancelToken, cookie: cookie);
   }
 
-  static Future<Map> shareList({List<String> additional = const ["perm", "time", "size"], CancelToken cancelToken, String sid, bool checkSsl, String cookie, String host}) async {
+  static Future<Map> shareList({List<String> additional = const ["perm", "time", "size"], CancelToken? cancelToken, String? sid, bool? checkSsl, String? cookie, String? host}) async {
     return await Util.post(
       "entry.cgi",
       data: {
@@ -155,7 +151,7 @@ class Api {
     String name,
     String volPath,
     String desc, {
-    String oldName,
+    String? oldName,
     bool encryption = false,
     String password = "",
     bool recycleBin = false,
@@ -439,8 +435,8 @@ class Api {
     String level: "normal",
     String mode: "replace",
     String format: "zip",
-    String password,
-    String codepage,
+    String? password,
+    String? codepage,
   }) async {
     var data = {
       "api": '"SYNO.FileStation.Compress"',
@@ -485,9 +481,10 @@ class Api {
   static Future<Map> createShare(
     List<String> path, {
     bool fileRequest = false,
-    String requestName,
-    String requestInfo,
+    String? requestName,
+    String? requestInfo,
   }) async {
+    assert(fileRequest == true && requestName != null && requestInfo != null);
     var data = {
       "api": '"SYNO.FileStation.Sharing"',
       "method": '"create"',
@@ -497,8 +494,8 @@ class Api {
     };
     if (fileRequest) {
       data['file_request'] = true;
-      data['request_name'] = requestName;
-      data['request_info'] = requestInfo;
+      data['request_name'] = requestName!;
+      data['request_info'] = requestInfo!;
     }
     return await Util.post("entry.cgi", data: data);
   }
@@ -507,13 +504,14 @@ class Api {
     String path,
     List<String> id,
     List<String> url,
-    DateTime dateExpired,
-    DateTime dateAvailabe,
+    DateTime? dateExpired,
+    DateTime? dateAvailabe,
     String expireTimes, {
     bool fileRequest = false,
-    String requestName,
-    String requestInfo,
+    String? requestName,
+    String? requestInfo,
   }) async {
+    assert(fileRequest == true && requestName != null && requestInfo != null);
     var data = {
       "path": path,
       "url": jsonEncode(url),
@@ -607,7 +605,7 @@ class Api {
     return result;
   }
 
-  static Future<Map> extractTask(String filePath, String folderPath, {String password}) async {
+  static Future<Map> extractTask(String filePath, String folderPath, {String? password}) async {
     var data = {
       "api": '"SYNO.FileStation.Extract"',
       "overwrite": "false",
@@ -895,7 +893,7 @@ class Api {
     var params = {
       "api": "SYNO.FileStation.Upload",
       "method": "upload",
-      "version": min(apiList['SYNO.FileStation.Upload'].minVersion ?? 1, 3),
+      "version": min(apiList['SYNO.FileStation.Upload']?.minVersion ?? 1, 3),
     };
     var data = {
       "path": uploadPath,
@@ -1070,7 +1068,7 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> uninstallPackageTask(String id, {Map extra}) async {
+  static Future<Map> uninstallPackageTask(String id, {Map? extra}) async {
     var data = {
       "id": id,
       "api": "SYNO.Core.Package.Uninstallation",
@@ -1190,7 +1188,7 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> mediaConverter(String method, {int hours}) async {
+  static Future<Map> mediaConverter(String method, {int? hours}) async {
     var data = {"api": "SYNO.Core.MediaIndexing.MediaConverter", "method": method, "version": 1};
     if (hours != null) {
       data['delay_hours'] = hours;
@@ -1198,7 +1196,7 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> utilization({String sid, bool checkSsl, String cookie, String host}) async {
+  static Future<Map> utilization({String? sid, bool? checkSsl, String? cookie, String? host}) async {
     var data = {
       "api": "SYNO.Core.System.Utilization",
       "method": "get",
@@ -1311,7 +1309,7 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> dockerLog(String name, String method, {String date}) async {
+  static Future<Map> dockerLog(String name, String method, {String? date}) async {
     var data = {
       "api": 'SYNO.Docker.Container.Log',
       "method": method,
@@ -1328,7 +1326,7 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> dockerPower(String name, String action, {bool preserveProfile}) async {
+  static Future<Map> dockerPower(String name, String action, {bool? preserveProfile}) async {
     var data = {
       "api": 'SYNO.Docker.Container',
       "method": action,
@@ -1339,7 +1337,7 @@ class Api {
     if (action == "signal") {
       data['signal'] = 9;
     }
-    if (action == "delete") {
+    if (action == "delete" && preserveProfile != null) {
       data['preserve_profile'] = preserveProfile;
     }
     return await Util.post("entry.cgi", data: data);
@@ -1453,14 +1451,14 @@ class Api {
   }
 
   //delete_condition  delete
-  static Future<Map> downloadTaskCreate(String destination, String type, {String url, String filePath}) async {
+  static Future<Map> downloadTaskCreate(String destination, String type, {String? url, String? filePath}) async {
     var data = {
       "api": 'SYNO.DownloadStation2.Task',
       "method": "create",
       "version": 2,
     };
     if (type == "file") {
-      MultipartFile torrent = MultipartFile.fromFileSync(filePath, filename: filePath.split("/").last, contentType: MediaType.parse("application/octet-stream"));
+      MultipartFile torrent = MultipartFile.fromFileSync(filePath!, filename: filePath.split("/").last, contentType: MediaType.parse("application/octet-stream"));
       data['file'] = json.encode(["-1891550746"]);
       data["type"] = '"$type"';
       data["create_list"] = true;
@@ -1469,7 +1467,7 @@ class Api {
       data['-1891550746'] = torrent;
       return await Util.upload("entry.cgi", data: data);
     } else {
-      List<String> urls = url.split("\n");
+      List<String> urls = url!.split("\n");
       List<String> validUrls = [];
       for (String url in urls) {
         if (url.trim().isNotBlank) {
@@ -1585,8 +1583,8 @@ class Api {
   }
 
   //SYNO.Core.NormalUser
-  static Future<Map> normalUser(String method, {Map<String, dynamic> changedData}) async {
-    var data = {
+  static Future<Map> normalUser(String method, {Map<String, dynamic>? changedData}) async {
+    Map<String, dynamic> data = {
       "api": 'SYNO.Core.NormalUser',
       "method": method,
       "version": method == "get" ? 1 : 2,
@@ -1936,7 +1934,7 @@ class Api {
       } else {
         return response.data;
       }
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       print("请求出错");
       return {
         "success": false,
@@ -1973,7 +1971,7 @@ class Api {
       } else {
         return response.data;
       }
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       print("请求出错");
       return {
         "success": false,
@@ -2032,7 +2030,7 @@ class Api {
     return result;
   }
 
-  static Future<Map> powerSet(bool enableZram, Map powerRecovery, Map beepControl, Map fanSpeed, Map led) async {
+  static Future<Map> powerSet(bool enableZram, Map? powerRecovery, Map? beepControl, Map? fanSpeed, Map? led) async {
     List apis = [
       {"api": "SYNO.Core.Hardware.ZRAM", "method": "set", "version": "1", "enable_zram": enableZram},
 
@@ -2072,7 +2070,7 @@ class Api {
     return result;
   }
 
-  static Future<Map> powerHibernationSave({int internalHdIdletime, bool sataDeepSleep, int usbIdletime, bool enableLog, bool autoPoweroffEnable, int autoPoweroffTime}) async {
+  static Future<Map> powerHibernationSave({int? internalHdIdletime, bool? sataDeepSleep, int? usbIdletime, bool? enableLog, bool? autoPoweroffEnable, int? autoPoweroffTime}) async {
     var result = await Util.post("entry.cgi", data: {
       "internal_hd_idletime": internalHdIdletime,
       "sata_deep_sleep": sataDeepSleep,
@@ -2243,7 +2241,7 @@ class Api {
     return result;
   }
 
-  static Future<Map> ddnsUpdate({String id}) async {
+  static Future<Map> ddnsUpdate({String? id}) async {
     var data = {
       "api": 'SYNO.Core.DDNS.Record',
       "method": 'update_ip_address',
@@ -2295,7 +2293,7 @@ class Api {
       {
         "api": "SYNO.Core.Network",
         "method": "get",
-        "version": min(apiList['SYNO.Core.Network'].minVersion ?? 1, 2),
+        "version": min(apiList['SYNO.Core.Network']?.minVersion ?? 1, 2),
       },
       {"api": "SYNO.Core.Network.Ethernet", "method": "list", "version": 2},
       {"api": "SYNO.Core.Network.PPPoE", "method": "list", "version": 1},

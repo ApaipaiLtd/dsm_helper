@@ -2,10 +2,8 @@ import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ExternalDevice extends StatefulWidget {
@@ -14,7 +12,7 @@ class ExternalDevice extends StatefulWidget {
 }
 
 class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List esatas = [];
   List usbs = [];
   bool loading = true;
@@ -54,14 +52,12 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
   }
 
   Widget _buildPartitionItem(partition) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.only(top: 20),
-      bevel: 20,
       padding: EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,16 +92,14 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
           ),
           Row(
             children: [
-              NeuCard(
-                curveType: CurveType.flat,
+              Container(
                 margin: EdgeInsets.all(10),
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(80),
                   // color: Colors.red,
                 ),
                 padding: EdgeInsets.all(5),
-                bevel: 8,
                 child: CircularPercentIndicator(
                   radius: 40,
                   // progressColor: Colors.lightBlueAccent,
@@ -179,13 +173,11 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
 
   Widget _buildESataItem(esata) {
     List partitions = esata['partitions'];
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -215,7 +207,7 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                   width: 10,
                 ),
                 Spacer(),
-                NeuButton(
+                CupertinoButton(
                   onPressed: () async {
                     var res = await Api.ejectEsata(esata['dev_id']);
                     if (res['success']) {
@@ -225,12 +217,9 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                       Util.toast("设备退出失败，代码${res['error']['code']}");
                     }
                   },
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
                   padding: EdgeInsets.all(5),
-                  bevel: 5,
                   child: SizedBox(
                     width: 20,
                     height: 20,
@@ -254,20 +243,17 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("外接设备"),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
             child: TabBar(
               isScrollable: false,
               controller: _tabController,
@@ -296,14 +282,12 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
               children: [
                 loading
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),
@@ -324,7 +308,7 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                         : Center(
                             child: Text(
                               "暂无外接设备",
-                              style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                             ),
                           ),
                 Center(

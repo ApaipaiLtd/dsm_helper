@@ -29,10 +29,10 @@ class TeamSpaceSetting {
     enabled = json['enabled'];
     teamSpaceDisabledByShareFolderDisabled = json['team_space_disabled_by_share_folder_disabled'];
   }
-  bool allowRootFolderPublic;
-  bool enablePerson;
-  bool enabled;
-  bool teamSpaceDisabledByShareFolderDisabled;
+  bool? allowRootFolderPublic;
+  bool? enablePerson;
+  bool? enabled;
+  bool? teamSpaceDisabledByShareFolderDisabled;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

@@ -2,17 +2,15 @@ import 'dart:math';
 
 import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart' as ja;
-import 'package:neumorphic/neumorphic.dart';
 import 'package:provider/provider.dart';
 
 class AudioPlayer extends StatefulWidget {
-  AudioPlayer({this.name, this.url, Key key}) : super(key: key);
-  final String name;
-  final String url;
+  AudioPlayer({this.name, this.url, super.key});
+  final String? name;
+  final String? url;
   @override
   State<AudioPlayer> createState() => _AudioPlayerState();
 }
@@ -22,16 +20,19 @@ class _AudioPlayerState extends State<AudioPlayer> {
   String title = "";
   @override
   void initState() {
-    var audioPlayerProvider = context.read<AudioPlayerProvider>();
-    player = audioPlayerProvider.player;
+    AudioPlayerProvider audioPlayerProvider = context.read<AudioPlayerProvider>();
+    if (audioPlayerProvider.player != null) {
+      player = audioPlayerProvider.player!;
+    }
+
     if (widget.url != null) {
       title = widget.name ?? "";
       if (audioPlayerProvider.url != widget.url) {
-        audioPlayerProvider.setUrl(widget.url, title);
+        audioPlayerProvider.setUrl(widget.url!, title);
         setSource();
       }
     } else {
-      title = audioPlayerProvider.name;
+      title = audioPlayerProvider.name!;
     }
     setState(() {});
     super.initState();
@@ -43,7 +44,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
   }
 
   setSource() async {
-    await player.setUrl(widget.url);
+    await player.setUrl(widget.url!);
     await player.play();
   }
 
@@ -51,7 +52,6 @@ class _AudioPlayerState extends State<AudioPlayer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(title),
       ),
       body: SafeArea(
@@ -105,18 +105,18 @@ class PositionData {
 class ControlButtons extends StatelessWidget {
   final ja.AudioPlayer player;
 
-  const ControlButtons(this.player, {Key key}) : super(key: key);
+  const ControlButtons(this.player, {super.key});
   void showSliderDialog({
-    @required BuildContext context,
-    @required String title,
-    @required int divisions,
-    @required double min,
-    @required double max,
+    required BuildContext context,
+    required String title,
+    required int divisions,
+    required double min,
+    required double max,
     String valueSuffix = '',
     // TODO: Replace these two by ValueStream.
-    @required double value,
-    @required Stream<double> stream,
-    @required ValueChanged<double> onChanged,
+    required double value,
+    required Stream<double> stream,
+    required ValueChanged<double> onChanged,
   }) {
     showDialog<void>(
       context: context,
@@ -149,13 +149,9 @@ class ControlButtons extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        NeuButton(
+        CupertinoButton(
           child: const Icon(Icons.volume_up),
-          decoration: NeumorphicDecoration(
-            shape: BoxShape.circle,
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          bevel: 10,
+          color: Theme.of(context).scaffoldBackgroundColor,
           onPressed: () {
             showSliderDialog(
               context: context,
@@ -186,55 +182,39 @@ class ControlButtons extends StatelessWidget {
             final processingState = playerState?.processingState;
             final playing = playerState?.playing;
             if (processingState == ja.ProcessingState.loading || processingState == ja.ProcessingState.buffering) {
-              return NeuButton(
+              return CupertinoButton(
                 child: const CupertinoActivityIndicator(
                   radius: 32,
                 ),
-                decoration: NeumorphicDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                bevel: 10,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 onPressed: player.play,
               );
             } else if (playing != true) {
-              return NeuButton(
+              return CupertinoButton(
                 child: const Icon(
                   Icons.play_arrow,
                   size: 64,
                 ),
-                decoration: NeumorphicDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                bevel: 10,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 onPressed: player.play,
               );
             } else if (processingState != ja.ProcessingState.completed) {
-              return NeuButton(
+              return CupertinoButton(
                 child: const Icon(
                   Icons.pause,
                   size: 64,
                 ),
-                decoration: NeumorphicDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                bevel: 10,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 onPressed: player.pause,
               );
             } else {
-              return NeuButton(
+              return CupertinoButton(
                 child: const Icon(
                   Icons.play_arrow,
                   size: 64,
                 ),
-                decoration: NeumorphicDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                bevel: 10,
-                onPressed: () => player.seek(Duration.zero, index: player.effectiveIndices.first),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                onPressed: () => player.seek(Duration.zero, index: player.effectiveIndices?.first),
               );
             }
           },
@@ -251,13 +231,9 @@ class ControlButtons extends StatelessWidget {
         ),
         StreamBuilder<double>(
           stream: player.speedStream,
-          builder: (context, snapshot) => NeuButton(
+          builder: (context, snapshot) => CupertinoButton(
             child: Text("${snapshot.data?.toStringAsFixed(1)}x", style: const TextStyle(fontWeight: FontWeight.bold)),
-            decoration: NeumorphicDecoration(
-              shape: BoxShape.circle,
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ),
-            bevel: 10,
+            color: Theme.of(context).scaffoldBackgroundColor,
             onPressed: () {
               showSliderDialog(
                 context: context,
@@ -279,15 +255,15 @@ class ControlButtons extends StatelessWidget {
 
 class SeekBar extends StatefulWidget {
   final ja.AudioPlayer player;
-  final ValueChanged<Duration> onChanged;
-  final ValueChanged<Duration> onChangeEnd;
+  final ValueChanged<Duration>? onChanged;
+  final ValueChanged<Duration>? onChangeEnd;
 
   const SeekBar({
-    Key key,
-    @required this.player,
+    super.key,
+    required this.player,
     this.onChanged,
     this.onChangeEnd,
-  }) : super(key: key);
+  });
 
   @override
   SeekBarState createState() => SeekBarState();
@@ -301,22 +277,22 @@ class HiddenThumbComponentShape extends SliderComponentShape {
   void paint(
     PaintingContext context,
     Offset center, {
-    @required Animation<double> activationAnimation,
-    @required Animation<double> enableAnimation,
-    @required bool isDiscrete,
-    @required TextPainter labelPainter,
-    @required RenderBox parentBox,
-    @required SliderThemeData sliderTheme,
-    @required TextDirection textDirection,
-    @required double value,
-    @required double textScaleFactor,
-    @required Size sizeWithOverflow,
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
   }) {}
 }
 
 class SeekBarState extends State<SeekBar> {
-  double _dragValue;
-  SliderThemeData _sliderThemeData;
+  double? _dragValue;
+  late SliderThemeData _sliderThemeData;
 
   @override
   void didChangeDependencies() {
@@ -390,8 +366,8 @@ class SeekBarState extends State<SeekBar> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_position")?.group(1) ?? '$_position', style: TextStyle(color: AppTheme.of(context).placeholderColor, fontSize: 12)),
-                      Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ?? '$_remaining', style: TextStyle(color: AppTheme.of(context).placeholderColor, fontSize: 12))
+                      Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_position")?.group(1) ?? '$_position', style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12)),
+                      Text(RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ?? '$_remaining', style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12))
                     ],
                   ),
                 )

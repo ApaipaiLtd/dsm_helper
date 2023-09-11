@@ -23,7 +23,7 @@ class GeocodingModel {
     this.name,
     this.secondLevel,
   });
-  static Future<List<GeocodingModel>> fetch({List<String> additional, int limit = 5000, bool isTeam = false}) async {
+  static Future<List<GeocodingModel>> fetch({List<String>? additional, int limit = 5000, bool isTeam = false}) async {
     var res = await Util.post("entry.cgi", data: {
       // "folder_id": id,
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Geocoding',
@@ -56,23 +56,23 @@ class GeocodingModel {
     name = json['name'];
     secondLevel = json['second_level'];
   }
-  PhotoAdditional additional;
-  String country;
-  num countryId;
-  String firstLevel;
-  num id;
-  num itemCount;
-  String name;
-  String secondLevel;
+  PhotoAdditional? additional;
+  String? country;
+  num? countryId;
+  String? firstLevel;
+  num? id;
+  num? itemCount;
+  String? name;
+  String? secondLevel;
   GeocodingModel copyWith({
-    PhotoAdditional additional,
-    String country,
-    num countryId,
-    String firstLevel,
-    num id,
-    num itemCount,
-    String name,
-    String secondLevel,
+    PhotoAdditional? additional,
+    String? country,
+    num? countryId,
+    String? firstLevel,
+    num? id,
+    num? itemCount,
+    String? name,
+    String? secondLevel,
   }) =>
       GeocodingModel(
         additional: additional ?? this.additional,
@@ -87,7 +87,7 @@ class GeocodingModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (additional != null) {
-      map['additional'] = additional.toJson();
+      map['additional'] = additional!.toJson();
     }
     map['country'] = country;
     map['country_id'] = countryId;

@@ -463,14 +463,12 @@ class ApplicationList extends StatelessWidget {
                   settings: RouteSettings(name: "Container Manager"),
                 ));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [

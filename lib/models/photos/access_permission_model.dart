@@ -14,11 +14,11 @@ class AccessPermissionModel {
     upload = json['upload'];
     view = json['view'];
   }
-  bool download;
-  bool manage;
-  bool own;
-  bool upload;
-  bool view;
+  bool? download;
+  bool? manage;
+  bool? own;
+  bool? upload;
+  bool? view;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

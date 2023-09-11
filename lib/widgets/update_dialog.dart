@@ -3,12 +3,14 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
 class UpdateDialog extends StatelessWidget {
   final Map updateInfo;
   final PackageInfo packageInfo;
+
   UpdateDialog(this.updateInfo, this.packageInfo);
 
   @override
@@ -126,13 +128,9 @@ class UpdateDialog extends StatelessWidget {
                       CupertinoButton(
                         onPressed: () async {
                           Navigator.of(context).pop();
-                          List<String> ignoredVersions = [];
-                          String ignoredVersionsString = await Util.getStorage("ignoredVersions");
-                          if (ignoredVersionsString.isNotBlank) {
-                            ignoredVersions = ignoredVersionsString.split(",");
-                          }
+                          List<String> ignoredVersions = SpUtil.getStringList("ignoredVersions", defValue: [])!;
                           ignoredVersions.add(packageInfo.buildNumber);
-                          Util.setStorage("ignoredVersions", ignoredVersions.join(","));
+                          SpUtil.putStringList("ignoredVersions", ignoredVersions);
                         },
                         color: CupertinoTheme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(50),

@@ -104,35 +104,35 @@ class FolderModel {
     sortBy = json['sort_by'];
     sortDirection = json['sort_direction'];
   }
-  FolderAdditional additional;
-  num id;
-  String name;
+  FolderAdditional? additional;
+  num? id;
+  String? name;
   String get lastName {
     if (name == "/") {
       return "/";
     } else {
-      return name.split("/").last;
+      return name!.split("/").last;
     }
   }
 
-  num ownerUserId;
-  num parent;
-  String passphrase;
-  bool shared;
-  String sortBy;
-  String sortDirection;
+  num? ownerUserId;
+  num? parent;
+  String? passphrase;
+  bool? shared;
+  String? sortBy;
+  String? sortDirection;
   List<FolderModel> folders = [];
   List<PhotoModel> photos = [];
   FolderModel copyWith({
-    FolderAdditional additional,
-    num id,
-    String name,
-    num ownerUserId,
-    num parent,
-    String passphrase,
-    bool shared,
-    String sortBy,
-    String sortDirection,
+    FolderAdditional? additional,
+    num? id,
+    String? name,
+    num? ownerUserId,
+    num? parent,
+    String? passphrase,
+    bool? shared,
+    String? sortBy,
+    String? sortDirection,
   }) =>
       FolderModel(
         additional: additional ?? this.additional,
@@ -148,7 +148,7 @@ class FolderModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (additional != null) {
-      map['additional'] = additional.toJson();
+      map['additional'] = additional!.toJson();
     }
     map['id'] = id;
     map['name'] = name;
@@ -175,33 +175,33 @@ class FolderAdditional {
     if (json['thumbnail'] != null) {
       thumbnail = [];
       json['thumbnail'].forEach((v) {
-        thumbnail.add(ThumbnailModel.fromJson(v));
+        thumbnail!.add(ThumbnailModel.fromJson(v));
       });
     }
     if (json['access_permission'] != null) {
       accessPermission = AccessPermissionModel.fromJson(json['access_permission']);
     }
   }
-  SharingInfo sharingInfo;
-  List<ThumbnailModel> thumbnail;
-  AccessPermissionModel accessPermission;
+  SharingInfo? sharingInfo;
+  List<ThumbnailModel>? thumbnail;
+  AccessPermissionModel? accessPermission;
   FolderAdditional copyWith({
-    SharingInfo sharingInfo,
-    List<ThumbnailModel> thumbnail,
-    AccessPermissionModel accessPermission,
+    SharingInfo? sharingInfo,
+    List<ThumbnailModel>? thumbnail,
+    AccessPermissionModel? accessPermission,
   }) =>
       FolderAdditional(
         sharingInfo: sharingInfo ?? this.sharingInfo,
         thumbnail: thumbnail ?? this.thumbnail,
-        accessPermission: thumbnail ?? this.accessPermission,
+        accessPermission: accessPermission ?? this.accessPermission,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (sharingInfo != null) {
-      map['sharing_info'] = sharingInfo.toJson();
+      map['sharing_info'] = sharingInfo!.toJson();
     }
     if (thumbnail != null) {
-      map['thumbnail'] = thumbnail.map((v) => v.toJson()).toList();
+      map['thumbnail'] = thumbnail!.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -249,27 +249,27 @@ class SharingInfo {
     sharingLink = json['sharing_link'];
     type = json['type'];
   }
-  bool enablePassword;
-  num expiration;
-  bool isExpired;
-  num mtime;
-  Owner owner;
-  String passphrase;
-  List permission;
-  String privacyType;
-  String sharingLink;
-  String type;
+  bool? enablePassword;
+  num? expiration;
+  bool? isExpired;
+  num? mtime;
+  Owner? owner;
+  String? passphrase;
+  List? permission;
+  String? privacyType;
+  String? sharingLink;
+  String? type;
   SharingInfo copyWith({
-    bool enablePassword,
-    num expiration,
-    bool isExpired,
-    num mtime,
-    Owner owner,
-    String passphrase,
-    List permission,
-    String privacyType,
-    String sharingLink,
-    String type,
+    bool? enablePassword,
+    num? expiration,
+    bool? isExpired,
+    num? mtime,
+    Owner? owner,
+    String? passphrase,
+    List? permission,
+    String? privacyType,
+    String? sharingLink,
+    String? type,
   }) =>
       SharingInfo(
         enablePassword: enablePassword ?? this.enablePassword,
@@ -290,11 +290,11 @@ class SharingInfo {
     map['is_expired'] = isExpired;
     map['mtime'] = mtime;
     if (owner != null) {
-      map['owner'] = owner.toJson();
+      map['owner'] = owner!.toJson();
     }
     map['passphrase'] = passphrase;
     if (permission != null) {
-      map['permission'] = permission.map((v) => v.toJson()).toList();
+      map['permission'] = permission!.map((v) => v.toJson()).toList();
     }
     map['privacy_type'] = privacyType;
     map['sharing_link'] = sharingLink;
@@ -316,11 +316,11 @@ class Owner {
     id = json['id'];
     name = json['name'];
   }
-  num id;
-  String name;
+  num? id;
+  String? name;
   Owner copyWith({
-    num id,
-    String name,
+    num? id,
+    String? name,
   }) =>
       Owner(
         id: id ?? this.id,

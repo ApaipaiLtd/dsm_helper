@@ -3,11 +3,9 @@ import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class FileService extends StatefulWidget {
   @override
@@ -22,19 +20,19 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
   TextEditingController _sftpPortController = TextEditingController();
   List<String> utf8Modes = ['禁用', '自动', '强制'];
   bool loading = true;
-  TabController _tabController;
-  Map smb;
-  Map afp;
-  Map nfs;
-  Map ftp;
-  Map sftp;
-  Map bandwidth;
-  Map tftp;
-  Map backup;
-  Map serviceDiscovery;
-  Map bonjourSharing;
-  Map syslogClient;
-  bool enableWstransfer;
+  late TabController _tabController;
+  Map? smb;
+  Map? afp;
+  Map? nfs;
+  Map? ftp;
+  Map? sftp;
+  Map? bandwidth;
+  Map? tftp;
+  Map? backup;
+  Map? serviceDiscovery;
+  Map? bonjourSharing;
+  Map? syslogClient;
+  bool? enableWstransfer;
   bool saving = false;
   @override
   void initState() {
@@ -62,7 +60,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
             case "SYNO.Core.FileServ.SMB":
               setState(() {
                 smb = item['data'];
-                _workgroupController.value = TextEditingValue(text: smb['workgroup'] ?? "");
+                _workgroupController.value = TextEditingValue(text: smb?['workgroup'] ?? "");
               });
               break;
             case "SYNO.Core.FileServ.AFP":
@@ -74,20 +72,20 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
               setState(() {
                 nfs = item['data'];
               });
-              _nfsv4Controller.value = TextEditingValue(text: nfs['nfs_v4_domain'] ?? "");
+              _nfsv4Controller.value = TextEditingValue(text: nfs?['nfs_v4_domain'] ?? "");
               break;
             case "SYNO.Core.FileServ.FTP":
               setState(() {
                 ftp = item['data'];
-                _timeoutController.value = TextEditingValue(text: "${ftp['timeout']}");
-                _ftpPortController.value = TextEditingValue(text: "${ftp['portnum']}");
+                _timeoutController.value = TextEditingValue(text: "${ftp?['timeout']}");
+                _ftpPortController.value = TextEditingValue(text: "${ftp?['portnum']}");
               });
               break;
             case "SYNO.Core.FileServ.FTP.SFTP":
               setState(() {
                 sftp = item['data'];
                 print(sftp);
-                _sftpPortController.value = TextEditingValue(text: "${sftp['portnum']}");
+                _sftpPortController.value = TextEditingValue(text: "${sftp?['portnum']}");
               });
               break;
             case "SYNO.Core.BandwidthControl.Protocol":
@@ -135,19 +133,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("文件服务"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -155,15 +150,13 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -205,14 +198,12 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                       ListView(
                         padding: EdgeInsets.symmetric(vertical: 20),
                         children: [
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -228,17 +219,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        smb['enable_samba'] = !smb['enable_samba'];
+                                        smb?['enable_samba'] = !smb?['enable_samba'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       height: 60,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      curveType: smb['enable_samba'] ? CurveType.emboss : CurveType.flat,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -246,7 +236,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用SMB服务",
                                             ),
                                           ),
-                                          if (smb['enable_samba'])
+                                          if (smb != null && smb?['enable_samba'])
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -255,17 +245,15 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (smb['enable_samba']) ...[
+                                  if (smb != null && smb?['enable_samba']) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
-                                      bevel: 20,
-                                      curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _workgroupController,
@@ -282,17 +270,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          smb['disable_shadow_copy'] = !smb['disable_shadow_copy'];
+                                          smb?['disable_shadow_copy'] = !smb?['disable_shadow_copy'];
                                         });
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: smb['disable_shadow_copy'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -315,22 +302,21 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          syslogClient['cifs'] = !syslogClient['cifs'];
+                                          syslogClient?['cifs'] = !syslogClient?['cifs'];
                                         });
-                                        if (syslogClient['cifs']) {
+                                        if (syslogClient?['cifs']) {
                                           Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                             return LogSetting("cifs");
                                           }));
                                         }
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: syslogClient['cifs'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(

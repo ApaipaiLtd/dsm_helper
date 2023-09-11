@@ -1,6 +1,6 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/material.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 typedef OnPressed = Function();
 
