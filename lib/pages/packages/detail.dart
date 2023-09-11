@@ -1,21 +1,22 @@
 import 'dart:async';
 
 import 'package:android_intent_plus/android_intent.dart';
+import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/packages/uninstall.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class PackageDetail extends StatefulWidget {
   final Map package;
   final bool beta;
-  final String method;
+  final String? method;
   PackageDetail(this.package, {this.beta = false, this.method});
   @override
   _PackageDetailState createState() => _PackageDetailState();
@@ -28,7 +29,7 @@ class _PackageDetailState extends State<PackageDetail> {
   List volumes = [];
   double installProgress = 0;
   bool installing = false;
-  Timer timer;
+  Timer? timer;
   String taskId = "";
   String installButtonText = "安装";
   @override
@@ -88,11 +89,9 @@ class _PackageDetailState extends State<PackageDetail> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
-            bevel: 20,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Padding(
@@ -110,16 +109,14 @@ class _PackageDetailState extends State<PackageDetail> {
                     ...volumes.map((volume) {
                       return Padding(
                         padding: EdgeInsets.only(bottom: 20),
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             install(volume['volume_path']);
                             Navigator.of(context).pop();
                           },
-                          decoration: NeumorphicDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 20,
+
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Container(
                             padding: EdgeInsets.only(left: 20),
@@ -141,15 +138,13 @@ class _PackageDetailState extends State<PackageDetail> {
                         ),
                       );
                     }).toList(),
-                    NeuButton(
+                    CupertinoButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
                       },
-                      decoration: NeumorphicDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(25),
-                      ),
-                      bevel: 20,
+
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         "取消",
@@ -186,11 +181,10 @@ class _PackageDetailState extends State<PackageDetail> {
           builder: (context) {
             return Material(
               color: Colors.transparent,
-              child: NeuCard(
+              child: Container(
                 width: double.infinity,
-                bevel: 5,
-                curveType: CurveType.emboss,
-                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+
+                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                 child: SafeArea(
                   top: false,
                   child: Padding(
@@ -215,16 +209,13 @@ class _PackageDetailState extends State<PackageDetail> {
                         Row(
                           children: [
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   install(installPath);
                                   Navigator.of(context).pop();
                                 },
-                                decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 5,
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "继续更新",
@@ -236,15 +227,13 @@ class _PackageDetailState extends State<PackageDetail> {
                               width: 16,
                             ),
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                 },
-                                decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 5,
+
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "取消",
@@ -337,7 +326,7 @@ class _PackageDetailState extends State<PackageDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text(
           "${widget.package['dname']}",
         ),
@@ -348,10 +337,10 @@ class _PackageDetailState extends State<PackageDetail> {
             child: ListView(
               padding: EdgeInsets.all(20),
               children: [
-                NeuCard(
-                  curveType: CurveType.flat,
-                  bevel: 20,
-                  decoration: NeumorphicDecoration(
+                Container(
+                  
+
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -384,11 +373,11 @@ class _PackageDetailState extends State<PackageDetail> {
                   ),
                 ),
                 if (widget.package['snapshot'] != null && widget.package['snapshot'].length > 0)
-                  NeuCard(
+                  Container(
                     margin: EdgeInsets.only(top: 20),
-                    curveType: CurveType.flat,
-                    bevel: 20,
-                    decoration: NeumorphicDecoration(
+                    
+
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -413,11 +402,11 @@ class _PackageDetailState extends State<PackageDetail> {
                       ),
                     ),
                   ),
-                NeuCard(
+                Container(
                   margin: EdgeInsets.only(top: 20),
-                  curveType: CurveType.flat,
-                  bevel: 20,
-                  decoration: NeumorphicDecoration(
+                  
+
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -439,11 +428,11 @@ class _PackageDetailState extends State<PackageDetail> {
                   ),
                 ),
                 if (widget.package['changelog'] != "")
-                  NeuCard(
+                  Container(
                     margin: EdgeInsets.only(top: 20),
-                    curveType: CurveType.flat,
-                    bevel: 20,
-                    decoration: NeumorphicDecoration(
+                    
+
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -461,17 +450,17 @@ class _PackageDetailState extends State<PackageDetail> {
                           // ),
                           Html(
                             data: widget.package['changelog'],
-                            onLinkTap: (link, _, __, ___) {
-                              AndroidIntent intent = AndroidIntent(
-                                action: 'action_view',
-                                data: link,
-                                arguments: {},
-                              );
-                              intent.launch();
+                            onLinkTap: (link, _, __) {
+                              if(link != null){
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (context){
+                                  return Browser(url: link);
+                                }));
+                              }
+
                             },
                             style: {
                               "ol": Style(
-                                padding: EdgeInsets.zero,
+                                padding: HtmlPaddings.zero,
                                 margin: Margins.zero,
                               ),
                               "li": Style(),
@@ -481,11 +470,11 @@ class _PackageDetailState extends State<PackageDetail> {
                       ),
                     ),
                   ),
-                NeuCard(
+                Container(
                   margin: EdgeInsets.only(top: 20),
-                  curveType: CurveType.flat,
-                  bevel: 20,
-                  decoration: NeumorphicDecoration(
+                  
+
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -505,14 +494,14 @@ class _PackageDetailState extends State<PackageDetail> {
                           spacing: 20,
                           runSpacing: 20,
                           children: [
-                            NeuCard(
+                            Container(
                               width: (MediaQuery.of(context).size.width - 100) / 2,
-                              curveType: CurveType.flat,
-                              decoration: NeumorphicDecoration(
+                              
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              bevel: 20,
+
                               padding: EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -544,14 +533,14 @@ class _PackageDetailState extends State<PackageDetail> {
                               ),
                             ),
                             if (widget.package['distributor'] != null && widget.package['distributor'] != "")
-                              NeuCard(
+                              Container(
                                 width: (MediaQuery.of(context).size.width - 100) / 2,
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
+
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,14 +571,14 @@ class _PackageDetailState extends State<PackageDetail> {
                                   ],
                                 ),
                               ),
-                            NeuCard(
+                            Container(
                               width: (MediaQuery.of(context).size.width - 100) / 2,
-                              curveType: CurveType.flat,
-                              decoration: NeumorphicDecoration(
+                              
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              bevel: 20,
+
                               padding: EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -603,14 +592,14 @@ class _PackageDetailState extends State<PackageDetail> {
                               ),
                             ),
                             if (widget.package['installed'])
-                              NeuCard(
+                              Container(
                                 width: (MediaQuery.of(context).size.width - 100) / 2,
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
+
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -624,14 +613,14 @@ class _PackageDetailState extends State<PackageDetail> {
                                 ),
                               ),
                             if (widget.package['installed'])
-                              NeuCard(
+                              Container(
                                 width: (MediaQuery.of(context).size.width - 100) / 2,
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
+
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -644,14 +633,14 @@ class _PackageDetailState extends State<PackageDetail> {
                                   ],
                                 ),
                               ),
-                            NeuCard(
+                            Container(
                               width: (MediaQuery.of(context).size.width - 100) / 2,
-                              curveType: CurveType.flat,
-                              decoration: NeumorphicDecoration(
+                              
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              bevel: 20,
+
                               padding: EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -681,7 +670,7 @@ class _PackageDetailState extends State<PackageDetail> {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: NeuButton(
+                      child: CupertinoButton(
                         onPressed: () async {
                           if (widget.package['additional']['is_uninstall_pages']) {
                             Navigator.of(context).push(CupertinoPageRoute(
@@ -695,12 +684,10 @@ class _PackageDetailState extends State<PackageDetail> {
                               builder: (context) {
                                 return Material(
                                   color: Colors.transparent,
-                                  child: NeuCard(
+                                  child: Container(
                                     width: double.infinity,
                                     padding: EdgeInsets.all(22),
-                                    bevel: 5,
-                                    curveType: CurveType.emboss,
-                                    decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                    decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                     child: SafeArea(
                                       top: false,
                                       child: Column(
@@ -723,16 +710,14 @@ class _PackageDetailState extends State<PackageDetail> {
                                           Row(
                                             children: [
                                               Expanded(
-                                                child: NeuButton(
+                                                child: CupertinoButton(
                                                   onPressed: () async {
                                                     Navigator.of(context).pop();
                                                     uninstallPackage();
                                                   },
-                                                  decoration: NeumorphicDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(25),
-                                                  ),
-                                                  bevel: 5,
+
                                                   padding: EdgeInsets.symmetric(vertical: 10),
                                                   child: Text(
                                                     "卸载",
@@ -744,15 +729,12 @@ class _PackageDetailState extends State<PackageDetail> {
                                                 width: 20,
                                               ),
                                               Expanded(
-                                                child: NeuButton(
+                                                child: CupertinoButton(
                                                   onPressed: () async {
                                                     Navigator.of(context).pop();
                                                   },
-                                                  decoration: NeumorphicDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(25),
-                                                  ),
-                                                  bevel: 5,
                                                   padding: EdgeInsets.symmetric(vertical: 10),
                                                   child: Text(
                                                     "取消",
@@ -775,10 +757,8 @@ class _PackageDetailState extends State<PackageDetail> {
                           }
                         },
                         padding: EdgeInsets.symmetric(vertical: 15),
-                        decoration: NeumorphicDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(50),
-                        ),
                         child: Text(
                           "卸载",
                           style: TextStyle(color: Colors.red),
@@ -791,19 +771,17 @@ class _PackageDetailState extends State<PackageDetail> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: widget.package['launched']
-                            ? NeuButton(
+                            ? CupertinoButton(
                                 onPressed: () {
                                   showCupertinoModalPopup(
                                     context: context,
                                     builder: (context) {
                                       return Material(
                                         color: Colors.transparent,
-                                        child: NeuCard(
+                                        child: Container(
                                           width: double.infinity,
                                           padding: EdgeInsets.all(22),
-                                          bevel: 5,
-                                          curveType: CurveType.emboss,
-                                          decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                          decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                           child: SafeArea(
                                             top: false,
                                             child: Column(
@@ -826,7 +804,7 @@ class _PackageDetailState extends State<PackageDetail> {
                                                 Row(
                                                   children: [
                                                     Expanded(
-                                                      child: NeuButton(
+                                                      child: CupertinoButton(
                                                         onPressed: () async {
                                                           Navigator.of(context).pop();
                                                           var res = await Api.launchPackage(widget.package['id'], widget.package['dsm_apps'], "stop");
@@ -837,11 +815,9 @@ class _PackageDetailState extends State<PackageDetail> {
                                                             });
                                                           }
                                                         },
-                                                        decoration: NeumorphicDecoration(
                                                           color: Theme.of(context).scaffoldBackgroundColor,
                                                           borderRadius: BorderRadius.circular(25),
-                                                        ),
-                                                        bevel: 5,
+
                                                         padding: EdgeInsets.symmetric(vertical: 10),
                                                         child: Text(
                                                           "停用",
@@ -853,15 +829,13 @@ class _PackageDetailState extends State<PackageDetail> {
                                                       width: 20,
                                                     ),
                                                     Expanded(
-                                                      child: NeuButton(
+                                                      child: CupertinoButton(
                                                         onPressed: () async {
                                                           Navigator.of(context).pop();
                                                         },
-                                                        decoration: NeumorphicDecoration(
                                                           color: Theme.of(context).scaffoldBackgroundColor,
                                                           borderRadius: BorderRadius.circular(25),
-                                                        ),
-                                                        bevel: 20,
+
                                                         padding: EdgeInsets.symmetric(vertical: 10),
                                                         child: Text(
                                                           "取消",
@@ -883,13 +857,11 @@ class _PackageDetailState extends State<PackageDetail> {
                                   );
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 15),
-                                decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(50),
-                                ),
                                 child: Text("停用"),
                               )
-                            : NeuButton(
+                            : CupertinoButton(
                                 onPressed: () async {
                                   var res = await Api.launchPackage(widget.package['id'], widget.package['dsm_apps'], "start");
                                   print(res);
@@ -901,10 +873,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                   }
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 15),
-                                decoration: NeumorphicDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(50),
-                                ),
                                 child: Text("启动"),
                               ),
                       ),
@@ -913,15 +883,13 @@ class _PackageDetailState extends State<PackageDetail> {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: NeuButton(
+                      child: CupertinoButton(
                         onPressed: () {
                           selectVolume();
                         },
                         padding: EdgeInsets.symmetric(vertical: 15),
-                        decoration: NeumorphicDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(50),
-                        ),
                         child: Text("$installButtonText"),
                       ),
                     ),
@@ -930,16 +898,14 @@ class _PackageDetailState extends State<PackageDetail> {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: NeuButton(
+                      child: CupertinoButton(
                         onPressed: () async {
                           update();
                           // install(volume['volume_path']);
                         },
                         padding: EdgeInsets.symmetric(vertical: 15),
-                        decoration: NeumorphicDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(50),
-                        ),
                         child: Text("$installButtonText"),
                       ),
                     ),

@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AlbumTab extends StatefulWidget {
-  const AlbumTab(this.isTeam, {Key key}) : super(key: key);
+  const AlbumTab(this.isTeam, {super.key});
   final bool isTeam;
   @override
   State<AlbumTab> createState() => AlbumTabState();
@@ -25,7 +25,7 @@ class AlbumTabState extends State<AlbumTab> {
   List<PhotoModel> videos = [];
   List<GeocodingModel> geocodings = [];
   List<GeneralTagModel> generalTags = [];
-  double albumWidth;
+  double? albumWidth;
   @override
   void initState() {
     isTeam = widget.isTeam;
@@ -102,8 +102,8 @@ class AlbumTabState extends State<AlbumTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ThumbnailCard(
-                    geocodings.map((e) => e.additional.thumbnail).toList(),
-                    width: albumWidth,
+                    geocodings.map((e) => e.additional!.thumbnail!).toList(),
+                    width: albumWidth!,
                     isTeam: isTeam,
                   ),
                   SizedBox(
@@ -129,8 +129,8 @@ class AlbumTabState extends State<AlbumTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ThumbnailCard(
-                    generalTags.map((e) => e.additional.thumbnail).toList(),
-                    width: albumWidth,
+                    generalTags.map((e) => e.additional!.thumbnail!).toList(),
+                    width: albumWidth!,
                     isTeam: isTeam,
                   ),
                   SizedBox(
@@ -155,8 +155,8 @@ class AlbumTabState extends State<AlbumTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ThumbnailCard(
-                    videos.map((e) => e.additional.thumbnail).toList(),
-                    width: albumWidth,
+                    videos.map((e) => e.additional!.thumbnail!).toList(),
+                    width: albumWidth!,
                     isTeam: isTeam,
                   ),
                   SizedBox(
@@ -181,8 +181,8 @@ class AlbumTabState extends State<AlbumTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ThumbnailCard(
-                    recentlyAdds.map((e) => e.additional.thumbnail).toList(),
-                    width: albumWidth,
+                    recentlyAdds.map((e) => e.additional!.thumbnail!).toList(),
+                    width: albumWidth!,
                     isTeam: isTeam,
                   ),
                   SizedBox(
@@ -219,9 +219,9 @@ class AlbumTabState extends State<AlbumTab> {
                 child: Stack(
                   children: [
                     Hero(
-                      tag: e.additional.thumbnail,
+                      tag: e.additional!.thumbnail!,
                       child: CupertinoExtendedImage(
-                        e.additional.thumbnail.thumbUrl(),
+                        e.additional!.thumbnail!.thumbUrl(),
                         width: MediaQuery.of(context).size.width - 40,
                         height: 200,
                         fit: BoxFit.cover,
@@ -250,13 +250,13 @@ class AlbumTabState extends State<AlbumTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                e.name,
+                                e.name!,
                                 style: TextStyle(fontSize: 16),
                               ),
                               Row(
                                 children: [
-                                  if (e.shared) ...[
-                                    if (e.additional.sharingInfo.enablePassword)
+                                  if (e.shared!) ...[
+                                    if (e.additional!.sharingInfo!.enablePassword!)
                                       Icon(
                                         CupertinoIcons.lock,
                                         color: Colors.white,

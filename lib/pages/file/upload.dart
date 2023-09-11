@@ -8,19 +8,20 @@ import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vibrate/vibrate.dart';
+
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class Upload extends StatefulWidget {
   final String path;
-  final List<String> selectedFilesPath;
+  final List<String>? selectedFilesPath;
   Upload(this.path, {this.selectedFilesPath});
   @override
   _UploadState createState() => _UploadState();
@@ -33,8 +34,8 @@ class UploadItem {
   int fileSize;
   int uploadSize;
   UploadStatus status;
-  CancelToken cancelToken;
-  UploadItem(this.path, this.name, {this.subPath: "", this.fileSize = 0, this.uploadSize = 0, this.status = UploadStatus.wait}) {
+  late CancelToken cancelToken;
+  UploadItem(this.path, this.name, {this.subPath = "", this.fileSize = 0, this.uploadSize = 0, this.status = UploadStatus.wait}) {
     cancelToken = CancelToken();
   }
 }
@@ -48,7 +49,7 @@ class _UploadState extends State<Upload> {
       savePath = widget.path ?? "";
     });
     if (widget.selectedFilesPath != null) {
-      uploads = widget.selectedFilesPath.map((filePath) {
+      uploads = widget.selectedFilesPath!.map((filePath) {
         File file = File(filePath);
         return UploadItem(
           filePath,
@@ -112,15 +113,12 @@ class _UploadState extends State<Upload> {
     // String path = file['path'];
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20, right: 20),
-      child: NeuButton(
+      child: CupertinoButton(
         onPressed: () async {},
         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         padding: EdgeInsets.symmetric(vertical: 20),
-        decoration: NeumorphicDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        bevel: 8,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         child: Row(
           children: [
             SizedBox(
@@ -150,7 +148,7 @@ class _UploadState extends State<Upload> {
                   if (upload.subPath.isNotBlank)
                     Text(
                       upload.subPath,
-                      style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
+                      style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
                     ),
                   SizedBox(
                     height: 5,
@@ -164,19 +162,17 @@ class _UploadState extends State<Upload> {
             ),
             AnimatedSwitcher(
               duration: Duration(milliseconds: 200),
-              child: NeuButton(
+              child: CupertinoButton(
                 onPressed: () {
                   showCupertinoModalPopup(
                     context: context,
                     builder: (context) {
                       return Material(
                         color: Colors.transparent,
-                        child: NeuCard(
+                        child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.all(22),
-                          bevel: 5,
-                          curveType: CurveType.emboss,
-                          decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                          decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                           child: SafeArea(
                             top: false,
                             child: Column(
@@ -190,18 +186,15 @@ class _UploadState extends State<Upload> {
                                   SizedBox(
                                     height: 22,
                                   ),
-                                  NeuButton(
+                                  CupertinoButton(
                                     onPressed: () async {
                                       setState(() {
                                         upload.status = UploadStatus.wait;
                                       });
                                       Navigator.of(context).pop();
                                     },
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    bevel: 5,
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(25),
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
                                       "重试",
@@ -212,18 +205,15 @@ class _UploadState extends State<Upload> {
                                 SizedBox(
                                   height: 22,
                                 ),
-                                NeuButton(
+                                CupertinoButton(
                                   onPressed: () async {
                                     setState(() {
                                       uploads.remove(upload);
                                     });
                                     Navigator.of(context).pop();
                                   },
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 5,
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
                                     "取消上传",
@@ -233,15 +223,12 @@ class _UploadState extends State<Upload> {
                                 SizedBox(
                                   height: 16,
                                 ),
-                                NeuButton(
+                                CupertinoButton(
                                   onPressed: () async {
                                     Navigator.of(context).pop();
                                   },
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 5,
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
                                     "取消",
@@ -260,11 +247,8 @@ class _UploadState extends State<Upload> {
                   );
                 },
                 padding: EdgeInsets.only(left: 5, right: 3, top: 4, bottom: 4),
-                decoration: NeumorphicDecoration(
-                  color: Color(0xfff0f0f0),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                bevel: 2,
+                color: Color(0xfff0f0f0),
+                borderRadius: BorderRadius.circular(20),
                 child: Icon(
                   CupertinoIcons.right_chevron,
                   size: 18,
@@ -284,7 +268,6 @@ class _UploadState extends State<Upload> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "文件上传",
         ),
@@ -293,7 +276,7 @@ class _UploadState extends State<Upload> {
         children: [
           Padding(
             padding: EdgeInsets.all(20),
-            child: NeuButton(
+            child: CupertinoButton(
               onPressed: () {
                 showCupertinoModalPopup(
                   context: context,
@@ -310,10 +293,8 @@ class _UploadState extends State<Upload> {
                   }
                 });
               },
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               child: SizedBox(
                 width: double.infinity,
                 child: Column(
@@ -343,7 +324,7 @@ class _UploadState extends State<Upload> {
                 : Center(
                     child: Text(
                       "暂无待上传文件",
-                      style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                     ),
                   ),
           ),
@@ -353,23 +334,19 @@ class _UploadState extends State<Upload> {
               child: Row(
                 children: [
                   Expanded(
-                    child: NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+                    child: CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(50),
                       onPressed: () async {
                         showCupertinoModalPopup(
                           context: context,
                           builder: (context) {
                             return Material(
                               color: Colors.transparent,
-                              child: NeuCard(
+                              child: Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(22),
-                                bevel: 5,
-                                curveType: CurveType.emboss,
-                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                 child: SafeArea(
                                   top: false,
                                   child: Column(
@@ -382,15 +359,15 @@ class _UploadState extends State<Upload> {
                                       SizedBox(
                                         height: 12,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
-                                          final List<AssetEntity> assets = await AssetPicker.pickAssets(context, pickerConfig: AssetPickerConfig(maxAssets: 1000));
+                                          final List<AssetEntity>? assets = await AssetPicker.pickAssets(context, pickerConfig: AssetPickerConfig(maxAssets: 1000));
                                           if (assets != null && assets.length > 0) {
                                             assets.forEach((asset) {
                                               asset.file.then((file) {
                                                 setState(() {
-                                                  uploads.add(UploadItem(file.path, file.path.split("/").last));
+                                                  uploads.add(UploadItem(file!.path, file.path.split("/").last));
                                                 });
                                               });
                                             });
@@ -398,11 +375,8 @@ class _UploadState extends State<Upload> {
                                             debugPrint("未选择文件");
                                           }
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "上传图片",
@@ -412,7 +386,7 @@ class _UploadState extends State<Upload> {
                                       SizedBox(
                                         height: 20,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -472,12 +446,12 @@ class _UploadState extends State<Upload> {
                                               // }
                                             });
                                           } else {
-                                            FilePickerResult result = await FilePicker.platform.pickFiles(allowMultiple: true);
+                                            FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
                                             if (result != null) {
                                               setState(() {
                                                 uploads.addAll(result.files.map((file) {
-                                                  return UploadItem(file.path, file.name, fileSize: file.size);
+                                                  return UploadItem(file.path!, file.name, fileSize: file.size);
                                                 }).toList());
                                               });
                                             } else {
@@ -485,11 +459,8 @@ class _UploadState extends State<Upload> {
                                             }
                                           }
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "上传文件",
@@ -499,15 +470,12 @@ class _UploadState extends State<Upload> {
                                       SizedBox(
                                         height: 20,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "取消",
@@ -532,11 +500,9 @@ class _UploadState extends State<Upload> {
                     width: 20,
                   ),
                   Expanded(
-                    child: NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+                    child: CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(50),
                       onPressed: () async {
                         if (savePath.isBlank) {
                           Util.vibrate(FeedbackType.warning);

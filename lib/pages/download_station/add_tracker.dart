@@ -1,6 +1,6 @@
 import 'package:dsm_helper/util/function.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class AddTracker extends StatefulWidget {
   final String id;
@@ -18,13 +18,12 @@ class _AddTrackerState extends State<AddTracker> {
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            bevel: 20,
-            curveType: CurveType.flat,
+            
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: TextField(
               onChanged: (v) => tracker = v,
@@ -38,12 +37,10 @@ class _AddTrackerState extends State<AddTracker> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
-            ),
             onPressed: () async {
               List<String> temp = tracker.split("\n");
               List<String> trackers = [];

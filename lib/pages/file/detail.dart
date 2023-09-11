@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class FileDetail extends StatefulWidget {
   final Map file;
@@ -15,7 +15,7 @@ class FileDetail extends StatefulWidget {
 }
 
 class _FileDetailState extends State<FileDetail> {
-  Timer timer;
+  Timer? timer;
   bool loadingSize = true;
   int size = 0;
   int folderCount = 0;
@@ -55,7 +55,6 @@ class _FileDetailState extends State<FileDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           widget.file['name'],
         ),
@@ -65,15 +64,13 @@ class _FileDetailState extends State<FileDetail> {
           SizedBox(
             height: 30,
           ),
-          NeuCard(
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
             child: Row(
               children: [
                 Text("名称："),
@@ -83,14 +80,13 @@ class _FileDetailState extends State<FileDetail> {
               ],
             ),
           ),
-          NeuCard(
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
+
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Row(
@@ -101,18 +97,14 @@ class _FileDetailState extends State<FileDetail> {
                       widget.file['path'],
                     ),
                   ),
-                  NeuButton(
+                  CupertinoButton(
                     onPressed: () async {
                       ClipboardData data = new ClipboardData(text: widget.file['path']);
                       Clipboard.setData(data);
                       Util.toast("已复制到剪贴板");
                     },
-                    decoration: NeumorphicDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(5),
-                    bevel: 5,
                     child: SizedBox(
                       width: 20,
                       height: 20,
@@ -127,14 +119,12 @@ class _FileDetailState extends State<FileDetail> {
               ),
             ),
           ),
-          NeuCard(
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Row(
@@ -145,18 +135,15 @@ class _FileDetailState extends State<FileDetail> {
                       "${widget.file['additional']['real_path']}",
                     ),
                   ),
-                  NeuButton(
+                  CupertinoButton(
                     onPressed: () async {
                       ClipboardData data = new ClipboardData(text: widget.file['additional']['real_path']);
                       Clipboard.setData(data);
                       Util.toast("已复制到剪贴板");
                     },
-                    decoration: NeumorphicDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
-                    ),
                     padding: EdgeInsets.all(5),
-                    bevel: 5,
                     child: SizedBox(
                       width: 20,
                       height: 20,
@@ -171,55 +158,47 @@ class _FileDetailState extends State<FileDetail> {
               ),
             ),
           ),
-          NeuCard(
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
             child: Row(
               children: [Text("大小："), loadingSize ? CupertinoActivityIndicator() : Text(Util.formatSize(size))],
             ),
           ),
           if (widget.file['isdir'])
-            NeuCard(
+            Container(
               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               padding: EdgeInsets.all(20),
-              decoration: NeumorphicDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: CurveType.flat,
-              bevel: 20,
               child: Row(
                 children: [Text("包含："), loadingSize ? CupertinoActivityIndicator() : Text("$folderCount个文件夹，$fileCount个文件")],
               ),
             ),
-          NeuCard(
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
             child: Row(
               children: [Text("创建时间："), Text(DateTime.fromMillisecondsSinceEpoch(widget.file['additional']['time']['ctime'] * 1000).format("Y-m-d H:i:s"))],
             ),
           ),
-          NeuCard(
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
             child: Row(
               children: [Text("修改时间："), Text(DateTime.fromMillisecondsSinceEpoch(widget.file['additional']['time']['mtime'] * 1000).format("Y-m-d H:i:s"))],
             ),

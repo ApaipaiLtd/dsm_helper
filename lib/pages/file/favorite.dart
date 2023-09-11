@@ -3,8 +3,7 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class Favorite extends StatefulWidget {
   final Function callback;
@@ -40,7 +39,7 @@ class _FavoriteState extends State<Favorite> {
   Widget _buildFavoriteItem(favorite) {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
-      child: NeuButton(
+      child: CupertinoButton(
         onPressed: () {
           if (favorite['status'] == "broken") {
             Util.toast("文件或目录不存在");
@@ -63,7 +62,7 @@ class _FavoriteState extends State<Favorite> {
               SizedBox(
                 width: 10,
               ),
-              NeuButton(
+              CupertinoButton(
                 onPressed: () {
                   Util.vibrate(FeedbackType.light);
                   showCupertinoModalPopup(
@@ -71,11 +70,9 @@ class _FavoriteState extends State<Favorite> {
                     builder: (context) {
                       return Material(
                         color: Colors.transparent,
-                        child: NeuCard(
+                        child: Container(
                           width: double.infinity,
-                          bevel: 5,
-                          curveType: CurveType.emboss,
-                          decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                          decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                           child: SafeArea(
                             top: false,
                             child: Padding(
@@ -96,7 +93,7 @@ class _FavoriteState extends State<Favorite> {
                                     children: [
                                       SizedBox(
                                         width: (MediaQuery.of(context).size.width - 100) / 4,
-                                        child: NeuButton(
+                                        child: CupertinoButton(
                                           onPressed: () async {
                                             debugPrint(favorite['path']);
                                             TextEditingController nameController = TextEditingController.fromValue(TextEditingValue(text: favorite['name']));
@@ -110,12 +107,10 @@ class _FavoriteState extends State<Favorite> {
                                                   child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      NeuCard(
+                                                      Container(
                                                         width: double.infinity,
                                                         margin: EdgeInsets.symmetric(horizontal: 50),
-                                                        curveType: CurveType.emboss,
-                                                        bevel: 5,
-                                                        decoration: NeumorphicDecoration(
+                                                        decoration: BoxDecoration(
                                                           color: Theme.of(context).scaffoldBackgroundColor,
                                                           borderRadius: BorderRadius.circular(25),
                                                         ),
@@ -130,13 +125,11 @@ class _FavoriteState extends State<Favorite> {
                                                               SizedBox(
                                                                 height: 16,
                                                               ),
-                                                              NeuCard(
-                                                                decoration: NeumorphicDecoration(
+                                                              Container(
+                                                                decoration: BoxDecoration(
                                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                                   borderRadius: BorderRadius.circular(20),
                                                                 ),
-                                                                bevel: 20,
-                                                                curveType: CurveType.flat,
                                                                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                                                 child: TextField(
                                                                   onChanged: (v) => name = v,
@@ -154,7 +147,7 @@ class _FavoriteState extends State<Favorite> {
                                                               Row(
                                                                 children: [
                                                                   Expanded(
-                                                                    child: NeuButton(
+                                                                    child: CupertinoButton(
                                                                       onPressed: () async {
                                                                         if (name.trim() == "") {
                                                                           Util.toast("请输入新文件名");
@@ -173,11 +166,8 @@ class _FavoriteState extends State<Favorite> {
                                                                           }
                                                                         }
                                                                       },
-                                                                      decoration: NeumorphicDecoration(
                                                                         color: Theme.of(context).scaffoldBackgroundColor,
                                                                         borderRadius: BorderRadius.circular(25),
-                                                                      ),
-                                                                      bevel: 20,
                                                                       padding: EdgeInsets.symmetric(vertical: 10),
                                                                       child: Text(
                                                                         "确定",
@@ -189,15 +179,12 @@ class _FavoriteState extends State<Favorite> {
                                                                     width: 16,
                                                                   ),
                                                                   Expanded(
-                                                                    child: NeuButton(
+                                                                    child: CupertinoButton(
                                                                       onPressed: () async {
                                                                         Navigator.of(context).pop();
                                                                       },
-                                                                      decoration: NeumorphicDecoration(
                                                                         color: Theme.of(context).scaffoldBackgroundColor,
                                                                         borderRadius: BorderRadius.circular(25),
-                                                                      ),
-                                                                      bevel: 20,
                                                                       padding: EdgeInsets.symmetric(vertical: 10),
                                                                       child: Text(
                                                                         "取消",
@@ -217,11 +204,8 @@ class _FavoriteState extends State<Favorite> {
                                               },
                                             );
                                           },
-                                          decoration: NeumorphicDecoration(
                                             color: Theme.of(context).scaffoldBackgroundColor,
                                             borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 20,
                                           padding: EdgeInsets.symmetric(vertical: 10),
                                           child: Column(
                                             children: [
@@ -239,7 +223,7 @@ class _FavoriteState extends State<Favorite> {
                                       ),
                                       SizedBox(
                                         width: (MediaQuery.of(context).size.width - 100) / 4,
-                                        child: NeuButton(
+                                        child: CupertinoButton(
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                             Util.vibrate(FeedbackType.warning);
@@ -248,12 +232,10 @@ class _FavoriteState extends State<Favorite> {
                                               builder: (context) {
                                                 return Material(
                                                   color: Colors.transparent,
-                                                  child: NeuCard(
+                                                  child: Container(
                                                     width: double.infinity,
                                                     padding: EdgeInsets.all(22),
-                                                    bevel: 5,
-                                                    curveType: CurveType.emboss,
-                                                    decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                                    decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                                     child: Column(
                                                       mainAxisSize: MainAxisSize.min,
                                                       children: <Widget>[
@@ -274,7 +256,7 @@ class _FavoriteState extends State<Favorite> {
                                                         Row(
                                                           children: [
                                                             Expanded(
-                                                              child: NeuButton(
+                                                              child: CupertinoButton(
                                                                 onPressed: () async {
                                                                   Navigator.of(context).pop();
                                                                   var res = await Api.favoriteDelete(favorite['path']);
@@ -284,11 +266,8 @@ class _FavoriteState extends State<Favorite> {
                                                                     getData();
                                                                   }
                                                                 },
-                                                                decoration: NeumorphicDecoration(
                                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                                   borderRadius: BorderRadius.circular(25),
-                                                                ),
-                                                                bevel: 5,
                                                                 padding: EdgeInsets.symmetric(vertical: 10),
                                                                 child: Text(
                                                                   "取消收藏",
@@ -300,15 +279,12 @@ class _FavoriteState extends State<Favorite> {
                                                               width: 20,
                                                             ),
                                                             Expanded(
-                                                              child: NeuButton(
+                                                              child: CupertinoButton(
                                                                 onPressed: () async {
                                                                   Navigator.of(context).pop();
                                                                 },
-                                                                decoration: NeumorphicDecoration(
                                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                                   borderRadius: BorderRadius.circular(25),
-                                                                ),
-                                                                bevel: 5,
                                                                 padding: EdgeInsets.symmetric(vertical: 10),
                                                                 child: Text(
                                                                   "取消",
@@ -328,11 +304,8 @@ class _FavoriteState extends State<Favorite> {
                                               },
                                             );
                                           },
-                                          decoration: NeumorphicDecoration(
                                             color: Theme.of(context).scaffoldBackgroundColor,
                                             borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          bevel: 20,
                                           padding: EdgeInsets.symmetric(vertical: 10),
                                           child: Column(
                                             children: [
@@ -353,15 +326,12 @@ class _FavoriteState extends State<Favorite> {
                                   SizedBox(
                                     height: 16,
                                   ),
-                                  NeuButton(
+                                  CupertinoButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                     },
-                                    decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    bevel: 20,
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
                                       "取消",
@@ -382,12 +352,8 @@ class _FavoriteState extends State<Favorite> {
                 },
                 // padding: EdgeInsets.zero,
                 padding: EdgeInsets.only(left: 6, right: 4, top: 5, bottom: 5),
-                decoration: NeumorphicDecoration(
-                  // color: Colors.red,
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
-                ),
-                bevel: 10,
                 child: Icon(
                   CupertinoIcons.right_chevron,
                   size: 18,
@@ -397,11 +363,8 @@ class _FavoriteState extends State<Favorite> {
           ),
         ),
         padding: EdgeInsets.zero,
-        decoration: NeumorphicDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
-        ),
-        bevel: 20,
       ),
     );
   }
@@ -414,14 +377,12 @@ class _FavoriteState extends State<Favorite> {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: favoriteLoading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -442,7 +403,7 @@ class _FavoriteState extends State<Favorite> {
                   : Center(
                       child: Text(
                         "暂无收藏",
-                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                       ),
                     ),
             ),

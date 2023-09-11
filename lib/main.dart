@@ -51,9 +51,10 @@ void main() async {
   }
 
   WidgetsFlutterBinding.ensureInitialized();
-  String agreement = await SpUtil.getString("agreement") ?? '';
+  await SpUtil.getInstance();
+  bool agreement = await SpUtil.getBool("agreement", defValue: false)!;
   Log.init();
-  if (agreement == "1") {
+  if (agreement) {
     Fluwx fluwx = Fluwx();
     fluwx.registerApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
     // print("初始化穿山甲");
@@ -76,7 +77,7 @@ void main() async {
     DateTime? noAdTime;
     Util.isWechatInstalled = await fluwx.isWeChatInstalled;
     String userToken = SpUtil.getString("user_token", defValue: '')!;
-    String noAdTimeStr =SpUtil.getString("no_ad_time", defValue: '')!;
+    String noAdTimeStr = SpUtil.getString("no_ad_time", defValue: '')!;
     if (noAdTimeStr.isNotBlank) {
       noAdTime = DateTime.parse(noAdTimeStr);
     }
@@ -116,13 +117,13 @@ void main() async {
   // await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
   Util.downloadSavePath = await SpUtil.getString("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
-  Util.downloadWifiOnly =  SpUtil.getBool("download_wifi_only", defValue: true)!;
+  Util.downloadWifiOnly = SpUtil.getBool("download_wifi_only", defValue: true)!;
   //判断是否需要启动密码
   bool launchAuth = SpUtil.getBool("launch_auth", defValue: false)!;
   bool password = SpUtil.getBool("launch_auth_password", defValue: false)!;
-  bool biometrics = SpUtil.getBool("launch_auth_biometrics",defValue: false)!;
-  bool showShortcuts = SpUtil.getBool("show_shortcut",defValue: true)!;
-  bool showWallpaper =SpUtil.getBool("show_wallpaper",defValue: true)!;
+  bool biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
+  bool showShortcuts = SpUtil.getBool("show_shortcut", defValue: true)!;
+  bool showWallpaper = SpUtil.getBool("show_wallpaper", defValue: true)!;
   int refreshDuration = SpUtil.getInt("refresh_duration", defValue: 10)!;
   bool launchAccountPage = SpUtil.getBool("launch_account_page", defValue: false)!;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -135,8 +136,8 @@ void main() async {
 
   //震动开关
   Util.vibrateOn = SpUtil.getBool("vibrate_on", defValue: true)!;
-  Util.vibrateNormal = SpUtil.getBool("vibrate_normal",defValue: true)!;
-  Util.vibrateWarning =SpUtil.getBool("vibrate_warning", defValue: true)!;
+  Util.vibrateNormal = SpUtil.getBool("vibrate_normal", defValue: true)!;
+  Util.vibrateWarning = SpUtil.getBool("vibrate_warning", defValue: true)!;
 
   Util.checkSsl = SpUtil.getBool("check_ssl", defValue: true)!;
   runApp(

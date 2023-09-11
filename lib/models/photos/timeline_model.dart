@@ -11,7 +11,7 @@ class TimelineModel {
     this.days,
     this.offset,
   });
-  static Future<List<TimelineModel>> fetch({bool isTeam = false, String? type, int? geocodingId, int? generalTagId, bool recentlyAdd: false, List<int> itemTypes = const []}) async {
+  static Future<List<TimelineModel>> fetch({bool isTeam = false, String? type, num? geocodingId, num? generalTagId, bool recentlyAdd = false, List<int> itemTypes = const []}) async {
     Map<String, dynamic> data = {
       "timeline_group_unit": "day",
       "api": "SYNO.Foto${isTeam ? 'Team' : ''}.Browse.${recentlyAdd ? 'RecentlyAdded' : 'Timeline'}",
@@ -108,7 +108,7 @@ class Day {
   num? endPosition;
   List<PhotoModel> photos = [];
 
-  Future fetchPhotos({bool isTeam = false, String? type, int? geocodingId, int? generalTagId, bool recentlyAdd: false, List<int> itemTypes = const []}) async {
+  Future fetchPhotos({bool isTeam = false, String? type, num? geocodingId, num? generalTagId, bool recentlyAdd = false, List<int> itemTypes = const []}) async {
     Map<String, dynamic> data = {
       "offset": 0,
       "limit": itemCount,

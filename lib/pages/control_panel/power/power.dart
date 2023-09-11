@@ -4,11 +4,9 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class Power extends StatefulWidget {
   @override
@@ -16,15 +14,15 @@ class Power extends StatefulWidget {
 }
 
 class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   bool loading = true;
   bool enableZram = false;
-  Map powerRecovery;
-  Map beepControl;
-  Map fanSpeed;
-  Map hibernation;
-  Map ups;
-  Map led;
+  Map? powerRecovery;
+  Map? beepControl;
+  Map? fanSpeed;
+  Map? hibernation;
+  Map? ups;
+  Map? led;
   List powerTasks = [];
 
   List dataList = [
@@ -184,14 +182,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
           task['enabled'] = !task['enabled'];
         });
       },
-      child: NeuCard(
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
         margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-        bevel: 10,
-        curveType: task['enabled'] ? CurveType.emboss : CurveType.flat,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
@@ -234,18 +230,15 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
               ),
               Column(
                 children: [
-                  NeuButton(
+                  CupertinoButton(
                     onPressed: () {
                       setState(() {
                         powerTasks.remove(task);
                       });
                     },
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(5),
-                    bevel: 5,
                     child: Icon(
                       Icons.remove_circle_outline,
                       color: Colors.red,
@@ -254,7 +247,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                   SizedBox(
                     height: 10,
                   ),
-                  NeuButton(
+                  CupertinoButton(
                     onPressed: () {
                       Navigator.of(context)
                           .push(CupertinoPageRoute(
@@ -280,12 +273,9 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                         }
                       });
                     },
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(5),
-                    bevel: 5,
                     child: Icon(
                       Icons.edit_outlined,
                       color: Colors.orangeAccent,
@@ -304,19 +294,16 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("硬件和电源"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -324,15 +311,13 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -372,14 +357,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                           Expanded(
                             child: ListView(
                               children: [
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -401,14 +384,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                   enableZram = !enableZram;
                                                 });
                                               },
-                                              child: NeuCard(
-                                                decoration: NeumorphicDecoration(
+                                              child: Container(
+                                                decoration: BoxDecoration(
                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 padding: EdgeInsets.all(10),
-                                                bevel: 10,
-                                                curveType: enableZram ? CurveType.emboss : CurveType.flat,
                                                 child: Row(
                                                   children: [
                                                     Text("启用内存压缩可提高系统响应性能"),
@@ -429,14 +410,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                     ),
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -455,22 +434,20 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                             GestureDetector(
                                               onTap: () async {
                                                 setState(() {
-                                                  powerRecovery['rc_power_config'] = !powerRecovery['rc_power_config'];
+                                                  powerRecovery!['rc_power_config'] = !powerRecovery!['rc_power_config'];
                                                 });
                                               },
-                                              child: NeuCard(
-                                                decoration: NeumorphicDecoration(
+                                              child: Container(
+                                                decoration: BoxDecoration(
                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 padding: EdgeInsets.all(10),
-                                                bevel: 10,
-                                                curveType: powerRecovery['rc_power_config'] ? CurveType.emboss : CurveType.flat,
                                                 child: Row(
                                                   children: [
                                                     Text("修复电源问题后自动重新启动"),
                                                     Spacer(),
-                                                    if (powerRecovery['rc_power_config'])
+                                                    if (powerRecovery!['rc_power_config'])
                                                       Icon(
                                                         CupertinoIcons.checkmark_alt,
                                                         color: Color(0xffff9813),
@@ -480,31 +457,29 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 ),
                                               ),
                                             ),
-                                            if (powerRecovery['internal_lan_num'] != null)
-                                              for (int i = 1; i <= powerRecovery['internal_lan_num']; i++)
-                                                if (powerRecovery['wol$i'] != null) ...[
+                                            if (powerRecovery!['internal_lan_num'] != null)
+                                              for (int i = 1; i <= powerRecovery!['internal_lan_num']; i++)
+                                                if (powerRecovery!['wol$i'] != null) ...[
                                                   SizedBox(
                                                     height: 20,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () async {
                                                       setState(() {
-                                                        powerRecovery['wol$i'] = !powerRecovery['wol$i'];
+                                                        powerRecovery!['wol$i'] = !powerRecovery!['wol$i'];
                                                       });
                                                     },
-                                                    child: NeuCard(
-                                                      decoration: NeumorphicDecoration(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
                                                         color: Theme.of(context).scaffoldBackgroundColor,
                                                         borderRadius: BorderRadius.circular(10),
                                                       ),
                                                       padding: EdgeInsets.all(10),
-                                                      bevel: 10,
-                                                      curveType: powerRecovery['wol$i'] ? CurveType.emboss : CurveType.flat,
                                                       child: Row(
                                                         children: [
                                                           Text("启用局域网 $i 的局域网唤醒"),
                                                           Spacer(),
-                                                          if (powerRecovery['wol$i'])
+                                                          if (powerRecovery!['wol$i'])
                                                             Icon(
                                                               CupertinoIcons.checkmark_alt,
                                                               color: Color(0xffff9813),
@@ -521,14 +496,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                     ),
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -544,26 +517,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            if (beepControl['support_fan_fail'] != null && beepControl['support_fan_fail']) ...[
+                                            if (beepControl!['support_fan_fail'] != null && beepControl!['support_fan_fail']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['fan_fail'] = !beepControl['fan_fail'];
+                                                    beepControl!['fan_fail'] = !beepControl!['fan_fail'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['fan_fail'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("冷却风扇故障"),
                                                       Spacer(),
-                                                      if (beepControl['fan_fail'])
+                                                      if (beepControl!['fan_fail'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -577,26 +548,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_volume_crash'] != null && beepControl['support_volume_crash']) ...[
+                                            if (beepControl!['support_volume_crash'] != null && beepControl!['support_volume_crash']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['volume_crash'] = !beepControl['volume_crash'];
+                                                    beepControl!['volume_crash'] = !beepControl!['volume_crash'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['volume_crash'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("存储空间降级或毁损"),
                                                       Spacer(),
-                                                      if (beepControl['volume_crash'])
+                                                      if (beepControl!['volume_crash'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -610,26 +579,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_volume_or_cache_crash'] != null && beepControl['support_volume_or_cache_crash']) ...[
+                                            if (beepControl!['support_volume_or_cache_crash'] != null && beepControl!['support_volume_or_cache_crash']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['support_volume_or_cache_crash'] = !beepControl['support_volume_or_cache_crash'];
+                                                    beepControl!['support_volume_or_cache_crash'] = !beepControl!['support_volume_or_cache_crash'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['support_volume_or_cache_crash'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("存储空间或 SSD 缓存异常"),
                                                       Spacer(),
-                                                      if (beepControl['support_volume_or_cache_crash'])
+                                                      if (beepControl!['support_volume_or_cache_crash'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -643,26 +610,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_ssd_cache_crash'] != null && beepControl['support_ssd_cache_crash']) ...[
+                                            if (beepControl!['support_ssd_cache_crash'] != null && beepControl!['support_ssd_cache_crash']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['ssd_cache_crash'] = !beepControl['ssd_cache_crash'];
+                                                    beepControl!['ssd_cache_crash'] = !beepControl!['ssd_cache_crash'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['ssd_cache_crash'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("SSD 缓存异常"),
                                                       Spacer(),
-                                                      if (beepControl['ssd_cache_crash'])
+                                                      if (beepControl!['ssd_cache_crash'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -676,26 +641,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_poweron_beep'] != null && beepControl['support_poweron_beep']) ...[
+                                            if (beepControl!['support_poweron_beep'] != null && beepControl!['support_poweron_beep']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['poweron_beep'] = !beepControl['poweron_beep'];
+                                                    beepControl!['poweron_beep'] = !beepControl!['poweron_beep'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['poweron_beep'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("系统开机"),
                                                       Spacer(),
-                                                      if (beepControl['poweron_beep'])
+                                                      if (beepControl!['poweron_beep'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -709,26 +672,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_poweroff_beep'] != null && beepControl['support_poweroff_beep']) ...[
+                                            if (beepControl?['support_poweroff_beep'] != null && beepControl!['support_poweroff_beep']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['poweroff_beep'] = !beepControl['poweroff_beep'];
+                                                    beepControl!['poweroff_beep'] = !beepControl!['poweroff_beep'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['poweroff_beep'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("按下电源按钮后系统关机"),
                                                       Spacer(),
-                                                      if (beepControl['poweroff_beep'])
+                                                      if (beepControl!['poweroff_beep'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -742,26 +703,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_redundant_power_fail'] != null && beepControl['support_redundant_power_fail']) ...[
+                                            if (beepControl?['support_redundant_power_fail'] != null && beepControl!['support_redundant_power_fail']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['redundant_power_fail'] = !beepControl['redundant_power_fail'];
+                                                    beepControl!['redundant_power_fail'] = !beepControl!['redundant_power_fail'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['redundant_power_fail'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("冗余电源离线"),
                                                       Spacer(),
-                                                      if (beepControl['redundant_power_fail'])
+                                                      if (beepControl!['redundant_power_fail'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -775,26 +734,24 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 height: 20,
                                               ),
                                             ],
-                                            if (beepControl['support_reset_beep'] != null && beepControl['support_reset_beep']) ...[
+                                            if (beepControl?['support_reset_beep'] != null && beepControl!['support_reset_beep']) ...[
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    beepControl['reset_beep'] = !beepControl['reset_beep'];
+                                                    beepControl!['reset_beep'] = !beepControl!['reset_beep'];
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: beepControl['reset_beep'] ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Text("系统重置"),
                                                       Spacer(),
-                                                      if (beepControl['reset_beep'])
+                                                      if (beepControl!['reset_beep'])
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -815,14 +772,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                   ),
                                 ),
                                 if (fanSpeed != null)
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                    bevel: 10,
-                                    curveType: CurveType.flat,
                                     child: Padding(
                                       padding: const EdgeInsets.all(20.0),
                                       child: Column(
@@ -841,17 +796,15 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    fanSpeed['dual_fan_speed'] = "fullfan";
+                                                    fanSpeed!['dual_fan_speed'] = "fullfan";
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: fanSpeed['dual_fan_speed'] == "fullfan" ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Expanded(
@@ -871,7 +824,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                       ),
                                                       SizedBox(
                                                         width: 22,
-                                                        child: fanSpeed['dual_fan_speed'] == "fullfan"
+                                                        child: fanSpeed!['dual_fan_speed'] == "fullfan"
                                                             ? Icon(
                                                                 CupertinoIcons.checkmark_alt,
                                                                 color: Color(0xffff9813),
@@ -889,17 +842,15 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    fanSpeed['dual_fan_speed'] = "coolfan";
+                                                    fanSpeed!['dual_fan_speed'] = "coolfan";
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: fanSpeed['dual_fan_speed'] == "coolfan" ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Expanded(
@@ -919,7 +870,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                       ),
                                                       SizedBox(
                                                         width: 22,
-                                                        child: fanSpeed['dual_fan_speed'] == "coolfan"
+                                                        child: fanSpeed!['dual_fan_speed'] == "coolfan"
                                                             ? Icon(
                                                                 CupertinoIcons.checkmark_alt,
                                                                 color: Color(0xffff9813),
@@ -937,17 +888,15 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                               GestureDetector(
                                                 onTap: () async {
                                                   setState(() {
-                                                    fanSpeed['dual_fan_speed'] = 'quietfan';
+                                                    fanSpeed!['dual_fan_speed'] = 'quietfan';
                                                   });
                                                 },
-                                                child: NeuCard(
-                                                  decoration: NeumorphicDecoration(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Theme.of(context).scaffoldBackgroundColor,
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                   padding: EdgeInsets.all(10),
-                                                  bevel: 10,
-                                                  curveType: fanSpeed['dual_fan_speed'] == 'quietfan' ? CurveType.emboss : CurveType.flat,
                                                   child: Row(
                                                     children: [
                                                       Expanded(
@@ -967,7 +916,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                       ),
                                                       SizedBox(
                                                         width: 22,
-                                                        child: fanSpeed['dual_fan_speed'] == 'quietfan'
+                                                        child: fanSpeed!['dual_fan_speed'] == 'quietfan'
                                                             ? Icon(
                                                                 CupertinoIcons.checkmark_alt,
                                                                 color: Color(0xffff9813),
@@ -989,14 +938,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                   height: 20,
                                 ),
                                 if (led != null)
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                    bevel: 10,
-                                    curveType: CurveType.flat,
                                     child: Padding(
                                       padding: const EdgeInsets.all(20.0),
                                       child: Column(
@@ -1010,10 +957,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                             height: 20,
                                           ),
                                           Slider(
-                                            value: led['led_brightness'].toDouble(),
+                                            value: led!['led_brightness'].toDouble(),
                                             onChanged: (v) {
                                               setState(() {
-                                                led['led_brightness'] = v.toInt();
+                                                led!['led_brightness'] = v.toInt();
                                               });
                                             },
                                             min: 0,
@@ -1031,12 +978,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                           ),
                           Padding(
                             padding: EdgeInsets.all(20),
-                            child: NeuButton(
+                            child: CupertinoButton(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(20),
                               onPressed: () async {
                                 var res = await Api.powerSet(enableZram, powerRecovery, beepControl, fanSpeed, led);
                                 if (res['success']) {
@@ -1073,7 +1018,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                 : Center(
                                     child: Text(
                                       "暂无开关机计划，请点击下方新增按钮添加",
-                                      style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                                     ),
                                   ),
                           ),
@@ -1082,12 +1027,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: NeuButton(
+                                  child: CupertinoButton(
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20),
                                     onPressed: () async {
                                       Navigator.of(context)
                                           .push(CupertinoPageRoute(
@@ -1122,12 +1065,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                   width: 20,
                                 ),
                                 Expanded(
-                                  child: NeuButton(
+                                  child: CupertinoButton(
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20),
                                     onPressed: () async {
                                       List powerOns = powerTasks.where((task) => task['type'] == "power_on").map((e) {
                                         e.remove("type");
@@ -1161,14 +1102,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                           Expanded(
                             child: ListView(
                               children: [
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -1187,29 +1126,27 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 context: context,
                                                 builder: (context) {
                                                   return NeuPicker(
-                                                    dataList.map((e) => e['title']).toList(),
-                                                    value: dataList.indexWhere((element) => element['value'] == hibernation['internal_hd_idletime']),
+                                                    dataList.map((e) => e['title']).toList().cast<String>(),
+                                                    value: dataList.indexWhere((element) => element['value'] == hibernation!['internal_hd_idletime']),
                                                     onConfirm: (v) {
                                                       setState(() {
-                                                        hibernation['internal_hd_idletime'] = dataList[v]['value'];
+                                                        hibernation!['internal_hd_idletime'] = dataList[v]['value'];
                                                       });
                                                     },
                                                   );
                                                 });
                                           },
-                                          child: NeuCard(
-                                            decoration: NeumorphicDecoration(
+                                          child: Container(
+                                            decoration: BoxDecoration(
                                               color: Theme.of(context).scaffoldBackgroundColor,
                                               borderRadius: BorderRadius.circular(10),
                                             ),
                                             padding: EdgeInsets.all(10),
-                                            bevel: 10,
-                                            curveType: CurveType.flat,
                                             child: Row(
                                               children: [
                                                 Text("时间"),
                                                 Spacer(),
-                                                Text("${dataList.where((element) => element['value'] == hibernation['internal_hd_idletime']).first['title']}"),
+                                                Text("${dataList.where((element) => element['value'] == hibernation!['internal_hd_idletime']).first['title']}"),
                                               ],
                                             ),
                                           ),
@@ -1219,19 +1156,17 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            if (hibernation['internal_hd_idletime'] > 0)
+                                            if (hibernation!['internal_hd_idletime'] > 0)
                                               setState(() {
-                                                hibernation['sata_deep_sleep'] = hibernation['sata_deep_sleep'] == 1 ? 0 : 1;
+                                                hibernation!['sata_deep_sleep'] = hibernation!['sata_deep_sleep'] == 1 ? 0 : 1;
                                               });
                                           },
-                                          child: NeuCard(
-                                            decoration: NeumorphicDecoration(
+                                          child: Container(
+                                            decoration: BoxDecoration(
                                               color: Theme.of(context).scaffoldBackgroundColor,
                                               borderRadius: BorderRadius.circular(10),
                                             ),
                                             padding: EdgeInsets.all(10),
-                                            bevel: 10,
-                                            curveType: hibernation['internal_hd_idletime'] > 0 ? (hibernation['sata_deep_sleep'] == 1 ? CurveType.emboss : CurveType.flat) : CurveType.concave,
                                             child: Row(
                                               children: [
                                                 Expanded(
@@ -1242,7 +1177,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 ),
                                                 SizedBox(
                                                   width: 22,
-                                                  child: hibernation['sata_deep_sleep'] == 1
+                                                  child: hibernation!['sata_deep_sleep'] == 1
                                                       ? Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -1258,14 +1193,12 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                     ),
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -1284,29 +1217,27 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 context: context,
                                                 builder: (context) {
                                                   return NeuPicker(
-                                                    dataList.map((e) => e['title']).toList(),
-                                                    value: dataList.indexWhere((element) => element['value'] == hibernation['usb_idletime']),
+                                                    dataList.map((e) => e['title']).toList().cast<String>(),
+                                                    value: dataList.indexWhere((element) => element['value'] == hibernation!['usb_idletime']),
                                                     onConfirm: (v) {
                                                       setState(() {
-                                                        hibernation['usb_idletime'] = dataList[v]['value'];
+                                                        hibernation!['usb_idletime'] = dataList[v]['value'];
                                                       });
                                                     },
                                                   );
                                                 });
                                           },
-                                          child: NeuCard(
-                                            decoration: NeumorphicDecoration(
+                                          child: Container(
+                                            decoration: BoxDecoration(
                                               color: Theme.of(context).scaffoldBackgroundColor,
                                               borderRadius: BorderRadius.circular(10),
                                             ),
                                             padding: EdgeInsets.all(10),
-                                            bevel: 10,
-                                            curveType: CurveType.flat,
                                             child: Row(
                                               children: [
                                                 Text("时间"),
                                                 Spacer(),
-                                                Text("${dataList.where((element) => element['value'] == hibernation['usb_idletime']).first['title']}"),
+                                                Text("${dataList.where((element) => element['value'] == hibernation!['usb_idletime']).first['title']}"),
                                               ],
                                             ),
                                           ),
@@ -1316,19 +1247,17 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            if (hibernation['internal_hd_idletime'] > 0 || hibernation['usb_idletime'] > 0)
+                                            if (hibernation!['internal_hd_idletime'] > 0 || hibernation!['usb_idletime'] > 0)
                                               setState(() {
-                                                hibernation['enable_log'] = !hibernation['enable_log'];
+                                                hibernation!['enable_log'] = !hibernation!['enable_log'];
                                               });
                                           },
-                                          child: NeuCard(
-                                            decoration: NeumorphicDecoration(
+                                          child: Container(
+                                            decoration: BoxDecoration(
                                               color: Theme.of(context).scaffoldBackgroundColor,
                                               borderRadius: BorderRadius.circular(10),
                                             ),
                                             padding: EdgeInsets.all(10),
-                                            bevel: 10,
-                                            curveType: hibernation['internal_hd_idletime'] > 0 || hibernation['usb_idletime'] > 0 ? (hibernation['enable_log'] ? CurveType.emboss : CurveType.flat) : CurveType.convex,
                                             child: Row(
                                               children: [
                                                 Expanded(
@@ -1339,7 +1268,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                 ),
                                                 SizedBox(
                                                   width: 22,
-                                                  child: hibernation['enable_log']
+                                                  child: hibernation!['enable_log']
                                                       ? Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -1355,15 +1284,13 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                     ),
                                   ),
                                 ),
-                                if (powerRecovery['wol1'] != null)
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                if (powerRecovery?['wol1'] != null)
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                    bevel: 10,
-                                    curveType: CurveType.flat,
                                     child: Padding(
                                       padding: const EdgeInsets.all(20.0),
                                       child: Column(
@@ -1378,20 +1305,18 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                           ),
                                           GestureDetector(
                                             onTap: () async {
-                                              if (powerRecovery['wol1'] && hibernation['internal_hd_idletime'] > 0)
+                                              if (powerRecovery!['wol1'] && hibernation!['internal_hd_idletime'] > 0)
                                                 setState(() {
-                                                  hibernation['auto_poweroff_enable'] = !hibernation['auto_poweroff_enable'];
-                                                  hibernation['auto_poweroff_time'] = 10;
+                                                  hibernation!['auto_poweroff_enable'] = !hibernation!['auto_poweroff_enable'];
+                                                  hibernation!['auto_poweroff_time'] = 10;
                                                 });
                                             },
-                                            child: NeuCard(
-                                              decoration: NeumorphicDecoration(
+                                            child: Container(
+                                              decoration: BoxDecoration(
                                                 color: Theme.of(context).scaffoldBackgroundColor,
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                               padding: EdgeInsets.all(10),
-                                              bevel: 10,
-                                              curveType: powerRecovery['wol1'] && hibernation['internal_hd_idletime'] > 0 ? (hibernation['auto_poweroff_enable'] ? CurveType.emboss : CurveType.flat) : CurveType.convex,
                                               child: Row(
                                                 children: [
                                                   Expanded(
@@ -1402,7 +1327,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                                   ),
                                                   SizedBox(
                                                     width: 22,
-                                                    child: hibernation['auto_poweroff_enable']
+                                                    child: hibernation!['auto_poweroff_enable']
                                                         ? Icon(
                                                             CupertinoIcons.checkmark_alt,
                                                             color: Color(0xffff9813),
@@ -1419,34 +1344,32 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              if (hibernation['auto_poweroff_enable'])
+                                              if (hibernation!['auto_poweroff_enable'])
                                                 showCupertinoModalPopup(
                                                     context: context,
                                                     builder: (context) {
                                                       return NeuPicker(
-                                                        dataList.getRange(1, dataList.length).map((e) => e['title']).toList(),
-                                                        value: dataList.indexWhere((element) => element['value'] == hibernation['auto_poweroff_time']) - 1,
+                                                        dataList.getRange(1, dataList.length).map((e) => e['title']).toList().cast<String>(),
+                                                        value: dataList.indexWhere((element) => element['value'] == hibernation!['auto_poweroff_time']) - 1,
                                                         onConfirm: (v) {
                                                           setState(() {
-                                                            hibernation['auto_poweroff_time'] = dataList[v]['value'];
+                                                            hibernation!['auto_poweroff_time'] = dataList[v]['value'];
                                                           });
                                                         },
                                                       );
                                                     });
                                             },
-                                            child: NeuCard(
-                                              decoration: NeumorphicDecoration(
+                                            child: Container(
+                                              decoration: BoxDecoration(
                                                 color: Theme.of(context).scaffoldBackgroundColor,
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                               padding: EdgeInsets.all(10),
-                                              bevel: 10,
-                                              curveType: hibernation['auto_poweroff_enable'] ? CurveType.flat : CurveType.convex,
                                               child: Row(
                                                 children: [
                                                   Text("时间"),
                                                   Spacer(),
-                                                  Text("${hibernation['auto_poweroff_enable'] ? dataList.where((element) => element['value'] == hibernation['auto_poweroff_time']).first['title'] : ""}"),
+                                                  Text("${hibernation!['auto_poweroff_enable'] ? dataList.where((element) => element['value'] == hibernation!['auto_poweroff_time']).first['title'] : ""}"),
                                                 ],
                                               ),
                                             ),
@@ -1460,20 +1383,18 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                           ),
                           Padding(
                             padding: EdgeInsets.all(20),
-                            child: NeuButton(
+                            child: CupertinoButton(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(20),
                               onPressed: () async {
                                 var res = await Api.powerHibernationSave(
-                                  internalHdIdletime: hibernation['internal_hd_idletime'],
-                                  sataDeepSleep: hibernation['sata_deep_sleep'] == 1,
-                                  usbIdletime: hibernation['usb_idletime'],
-                                  enableLog: hibernation['enable_log'],
-                                  autoPoweroffEnable: hibernation['auto_poweroff_enable'],
-                                  autoPoweroffTime: hibernation['auto_poweroff_time'],
+                                  internalHdIdletime: hibernation!['internal_hd_idletime'],
+                                  sataDeepSleep: hibernation!['sata_deep_sleep'] == 1,
+                                  usbIdletime: hibernation!['usb_idletime'],
+                                  enableLog: hibernation!['enable_log'],
+                                  autoPoweroffEnable: hibernation!['auto_poweroff_enable'],
+                                  autoPoweroffTime: hibernation!['auto_poweroff_time'],
                                 );
                                 if (res['success']) {
                                   Util.toast("保存成功");

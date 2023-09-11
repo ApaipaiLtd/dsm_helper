@@ -2,17 +2,15 @@ import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class EditDdns extends StatefulWidget {
-  final Map ddns;
+  final Map? ddns;
   final List extIp;
   final List providers;
-  const EditDdns(this.providers, {this.extIp: const [], this.ddns, Key key}) : super(key: key);
+  const EditDdns(this.providers, {this.extIp: const [], this.ddns, super.key});
 
   @override
   _EditDdnsState createState() => _EditDdnsState();
@@ -32,7 +30,7 @@ class _EditDdnsState extends State<EditDdns> {
   void initState() {
     if (widget.ddns != null) {
       setState(() {
-        ddns.addAll(widget.ddns);
+        ddns.addAll(widget.ddns!);
       });
       _hostnameController.value = TextEditingValue(text: ddns['hostname']);
       _usernameController.value = TextEditingValue(text: ddns['username']);
@@ -59,12 +57,10 @@ class _EditDdnsState extends State<EditDdns> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
             padding: EdgeInsets.all(22),
-            bevel: 5,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Column(
@@ -87,10 +83,10 @@ class _EditDdnsState extends State<EditDdns> {
                   Row(
                     children: [
                       Expanded(
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             Navigator.of(context).pop();
-                            var res = await Api.ddnsDelete(widget.ddns['id']);
+                            var res = await Api.ddnsDelete(widget.ddns!['id']);
                             print(res);
                             if (res['success']) {
                               Util.toast("DDNS删除成功");
@@ -99,11 +95,8 @@ class _EditDdnsState extends State<EditDdns> {
                               Util.toast("删除失败，代码:${res['error']['code']}");
                             }
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             "确认删除",
@@ -115,15 +108,12 @@ class _EditDdnsState extends State<EditDdns> {
                         width: 20,
                       ),
                       Expanded(
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             "取消",
@@ -167,19 +157,15 @@ class _EditDdnsState extends State<EditDdns> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("DDNS"),
         actions: [
           if (widget.ddns != null)
             Padding(
               padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-              child: NeuButton(
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              child: CupertinoButton(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 padding: EdgeInsets.all(10),
-                bevel: 5,
                 onPressed: deleteDdns,
                 child: Image.asset(
                   "assets/icons/delete.png",
@@ -202,14 +188,12 @@ class _EditDdnsState extends State<EditDdns> {
                         ddns['enable'] = !ddns['enable'];
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       padding: EdgeInsets.all(20),
-                      bevel: 20,
-                      curveType: ddns['enable'] ? CurveType.emboss : CurveType.flat,
                       child: Row(
                         children: [
                           Text("启用支持DDNS"),
@@ -250,14 +234,12 @@ class _EditDdnsState extends State<EditDdns> {
                       },
                     );
                   },
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     padding: EdgeInsets.all(20),
-                    bevel: 20,
-                    curveType: widget.ddns == null ? CurveType.flat : CurveType.convex,
                     child: Row(
                       children: [
                         Text("服务供应商"),
@@ -270,13 +252,11 @@ class _EditDdnsState extends State<EditDdns> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
-                  curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: TextField(
                     controller: _hostnameController,
@@ -290,13 +270,11 @@ class _EditDdnsState extends State<EditDdns> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
-                  curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: TextField(
                     controller: _usernameController,
@@ -310,13 +288,11 @@ class _EditDdnsState extends State<EditDdns> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
-                  curveType: CurveType.flat,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: TextField(
                     onChanged: (v) => ddns['passwd'] = v,
@@ -329,14 +305,12 @@ class _EditDdnsState extends State<EditDdns> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: EdgeInsets.all(20),
-                  bevel: 20,
-                  curveType: CurveType.flat,
                   child: Row(
                     children: [
                       Text("外部地址(ipv4):"),
@@ -348,14 +322,12 @@ class _EditDdnsState extends State<EditDdns> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: EdgeInsets.all(20),
-                  bevel: 20,
-                  curveType: CurveType.flat,
                   child: Row(
                     children: [
                       Text("外部地址(ipv6):"),
@@ -371,14 +343,12 @@ class _EditDdnsState extends State<EditDdns> {
                 Row(
                   children: [
                     Expanded(
-                      child: NeuCard(
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding: EdgeInsets.all(20),
-                        bevel: 20,
-                        curveType: CurveType.flat,
                         child: Row(
                           children: [
                             Text("状态:"),
@@ -398,7 +368,7 @@ class _EditDdnsState extends State<EditDdns> {
                     SizedBox(
                       width: 20,
                     ),
-                    NeuButton(
+                    CupertinoButton(
                       onPressed: () async {
                         if (checkForm()) {
                           var hide = showWeuiLoadingToast(context: context, message: Text("测试中，请稍后"), backButtonClose: true, alignment: Alignment.center);
@@ -414,12 +384,9 @@ class _EditDdnsState extends State<EditDdns> {
                           }
                         }
                       },
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
                       padding: EdgeInsets.all(20),
-                      bevel: 20,
                       child: Text("测试联机"),
                     ),
                   ],
@@ -430,12 +397,10 @@ class _EditDdnsState extends State<EditDdns> {
           SafeArea(
             child: Padding(
               padding: EdgeInsets.all(20),
-              child: NeuButton(
+              child: CupertinoButton(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
                 onPressed: () async {
                   if (checkForm()) {
                     var res = await Api.ddnsSave(ddns);

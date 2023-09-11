@@ -16,30 +16,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Feedback;
 import 'package:fluwx/fluwx.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:provider/provider.dart';
+import 'package:sp_util/sp_util.dart';
 
 class SettingButton extends StatelessWidget {
   final bool loading;
   final String name;
   final String icon;
-  final OnPressed onPressed;
-  const SettingButton({this.name, this.icon, this.onPressed, this.loading: false, Key key}) : super(key: key);
+  final OnPressed? onPressed;
+  const SettingButton({required this.name, required this.icon, this.onPressed, this.loading: false, super.key});
 
   @override
   Widget build(BuildContext context) {
     double width = (MediaQuery.of(context).size.width - 81) / 3;
     return SizedBox(
       width: width,
-      child: NeuButton(
+      child: CupertinoButton(
         onPressed: onPressed,
         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         padding: EdgeInsets.symmetric(vertical: 20),
-        decoration: NeumorphicDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        bevel: 20,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
+
         child: Column(
           children: [
             loading
@@ -63,23 +62,20 @@ class SettingButton extends StatelessWidget {
 }
 
 class ThemeButton extends StatelessWidget {
-  const ThemeButton(this.image, this.type, this.text, {Key key}) : super(key: key);
+  const ThemeButton(this.image, this.type, this.text, {super.key});
   final String image;
   final int type;
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    return NeuButton(
+    return CupertinoButton(
       onPressed: () {
         Navigator.of(context).pop();
         Provider.of<DarkModeProvider>(context, listen: false).changeMode(type);
       },
-      decoration: NeumorphicDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      bevel: 5,
+      color: Theme.of(context).scaffoldBackgroundColor,
+      borderRadius: BorderRadius.circular(25),
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
@@ -110,13 +106,13 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
   bool checking = false;
-  bool ssh;
-  bool telnet;
+  bool? ssh;
+  bool? telnet;
 
   bool sshLoading = true;
   bool shutdowning = false;
   bool rebooting = false;
-  String sshPort;
+  String? sshPort;
 
   List servers = [];
 
@@ -131,13 +127,13 @@ class _SettingState extends State<Setting> {
     getData();
     getServers();
     getNormalUser();
-    Util.getStorage("account").then((value) => setState(() => account = value));
-    Util.getStorage("host").then((value) => setState(() => host = value));
+    account = SpUtil.getString("account")!;
+    host = SpUtil.getString("host")!;
     super.initState();
   }
 
   getServers() async {
-    String serverString = await Util.getStorage("servers");
+    String serverString = SpUtil.getString("servers")!;
     if (serverString.isNotBlank) {
       servers = json.decode(serverString);
     }
@@ -203,11 +199,9 @@ class _SettingState extends State<Setting> {
           builder: (context) {
             return Material(
               color: Colors.transparent,
-              child: NeuCard(
+              child: Container(
                 width: double.infinity,
-                bevel: 5,
-                curveType: CurveType.emboss,
-                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                 child: SafeArea(
                   top: false,
                   child: Padding(
@@ -232,16 +226,13 @@ class _SettingState extends State<Setting> {
                         Row(
                           children: [
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                   power(type, true);
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 5,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "强制${type == "shutdown" ? "关机" : "重启"}",
@@ -253,15 +244,12 @@ class _SettingState extends State<Setting> {
                               width: 16,
                             ),
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 5,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "取消",
@@ -297,11 +285,9 @@ class _SettingState extends State<Setting> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
-            bevel: 5,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Padding(
@@ -326,16 +312,13 @@ class _SettingState extends State<Setting> {
                     Row(
                       children: [
                         Expanded(
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () async {
                               Navigator.of(context).pop();
                               power("shutdown", false);
                             },
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 5,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "确认关机",
@@ -347,15 +330,12 @@ class _SettingState extends State<Setting> {
                           width: 16,
                         ),
                         Expanded(
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 5,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "取消",
@@ -387,11 +367,9 @@ class _SettingState extends State<Setting> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
-            bevel: 5,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Padding(
@@ -416,16 +394,13 @@ class _SettingState extends State<Setting> {
                     Row(
                       children: [
                         Expanded(
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () async {
                               Navigator.of(context).pop();
                               power("reboot", false);
                             },
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 5,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "确认重启",
@@ -437,15 +412,12 @@ class _SettingState extends State<Setting> {
                           width: 16,
                         ),
                         Expanded(
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 5,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "取消",
@@ -474,11 +446,9 @@ class _SettingState extends State<Setting> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
-            bevel: 5,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Padding(
@@ -515,15 +485,12 @@ class _SettingState extends State<Setting> {
                     SizedBox(
                       height: 20,
                     ),
-                    NeuButton(
+                    CupertinoButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
                       },
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      bevel: 5,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(25),
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         "取消",
@@ -554,13 +521,10 @@ class _SettingState extends State<Setting> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            child: CupertinoButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () {
                 Navigator.of(context)
                     .push(
@@ -604,13 +568,11 @@ class _SettingState extends State<Setting> {
                 }
               });
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
-              curveType: CurveType.flat,
               child: Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Row(
@@ -642,7 +604,7 @@ class _SettingState extends State<Setting> {
                         ],
                       ),
                     ),
-                    NeuButton(
+                    CupertinoButton(
                       onPressed: () {
                         showCupertinoModalPopup(
                           context: context,
@@ -653,11 +615,9 @@ class _SettingState extends State<Setting> {
                       },
                       // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       padding: EdgeInsets.all(10),
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      bevel: 20,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
+
                       child: Image.asset(
                         "assets/icons/exit.png",
                         width: 16,
@@ -666,7 +626,7 @@ class _SettingState extends State<Setting> {
                     SizedBox(
                       width: 10,
                     ),
-                    NeuButton(
+                    CupertinoButton(
                       onPressed: () {
                         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                           return Accounts();
@@ -674,11 +634,9 @@ class _SettingState extends State<Setting> {
                       },
                       // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       padding: EdgeInsets.all(10),
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      bevel: 20,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
+
                       child: Image.asset(
                         "assets/icons/change.png",
                         width: 16,
@@ -713,11 +671,9 @@ class _SettingState extends State<Setting> {
                         builder: (context) {
                           return Material(
                             color: Colors.transparent,
-                            child: NeuCard(
+                            child: Container(
                               width: double.infinity,
-                              bevel: 5,
-                              curveType: CurveType.emboss,
-                              decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                               child: SafeArea(
                                 top: false,
                                 child: Padding(
@@ -733,7 +689,7 @@ class _SettingState extends State<Setting> {
                                         height: 12,
                                       ),
                                       Text(
-                                        "确认${ssh ? '关闭' : '开启'}SSH吗？",
+                                        "确认${ssh! ? '关闭' : '开启'}SSH吗？",
                                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
                                       ),
                                       SizedBox(
@@ -742,27 +698,24 @@ class _SettingState extends State<Setting> {
                                       Row(
                                         children: [
                                           Expanded(
-                                            child: NeuButton(
+                                            child: CupertinoButton(
                                               onPressed: () async {
                                                 Navigator.of(context).pop();
                                                 setState(() {
                                                   sshLoading = true;
                                                 });
-                                                var res = await Api.setTerminal(!ssh, telnet, sshPort);
+                                                var res = await Api.setTerminal(!ssh!, telnet, sshPort);
                                                 print(res);
                                                 if (!res['success']) {
                                                   Util.toast("操作失败，代码：${res['error']['code']}");
                                                 }
                                                 await getData();
                                               },
-                                              decoration: NeumorphicDecoration(
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(25),
-                                              ),
-                                              bevel: 5,
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
                                               padding: EdgeInsets.symmetric(vertical: 10),
                                               child: Text(
-                                                "确认${ssh ? '关闭' : '开启'}SSH",
+                                                "确认${ssh! ? '关闭' : '开启'}SSH",
                                                 style: TextStyle(fontSize: 18, color: Colors.redAccent),
                                               ),
                                             ),
@@ -771,15 +724,12 @@ class _SettingState extends State<Setting> {
                                             width: 16,
                                           ),
                                           Expanded(
-                                            child: NeuButton(
+                                            child: CupertinoButton(
                                               onPressed: () async {
                                                 Navigator.of(context).pop();
                                               },
-                                              decoration: NeumorphicDecoration(
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(25),
-                                              ),
-                                              bevel: 5,
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
                                               padding: EdgeInsets.symmetric(vertical: 10),
                                               child: Text(
                                                 "取消",
@@ -809,19 +759,13 @@ class _SettingState extends State<Setting> {
                         },
                         settings: RouteSettings(name: "ssh_setting")));
                   },
-                  child: NeuCard(
+                  child: Container(
                     // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     padding: EdgeInsets.symmetric(vertical: 20),
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: ssh == null
-                        ? CurveType.convex
-                        : ssh
-                            ? CurveType.emboss
-                            : CurveType.flat,
-                    bevel: 20,
                     child: Column(
                       children: [
                         sshLoading
@@ -836,7 +780,7 @@ class _SettingState extends State<Setting> {
                           height: 8,
                         ),
                         Text(
-                          "SSH${ssh == null ? "开关" : ssh ? "已开启" : "已关闭"}",
+                          "SSH${ssh == null ? "开关" : ssh! ? "已开启" : "已关闭"}",
                           style: TextStyle(fontSize: 16),
                         )
                       ],
@@ -881,11 +825,9 @@ class _SettingState extends State<Setting> {
                       builder: (context) {
                         return Material(
                           color: Colors.transparent,
-                          child: NeuCard(
+                          child: Container(
                             width: double.infinity,
-                            bevel: 5,
-                            curveType: CurveType.emboss,
-                            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                             child: SafeArea(
                               top: false,
                               child: Padding(
@@ -903,16 +845,13 @@ class _SettingState extends State<Setting> {
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: NeuButton(
+                                          child: CupertinoButton(
                                             onPressed: () async {
                                               Navigator.of(context).pop();
-                                              launchWeChatMiniProgram(username: "gh_6c07712ef0fb");
+                                              Fluwx().open(target: MiniProgram(username: "gh_6c07712ef0fb"));
                                             },
-                                            decoration: NeumorphicDecoration(
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(25),
-                                            ),
-                                            bevel: 5,
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
                                             padding: EdgeInsets.symmetric(vertical: 10),
                                             child: Text(
                                               "进入小程序",
@@ -924,15 +863,12 @@ class _SettingState extends State<Setting> {
                                           width: 16,
                                         ),
                                         Expanded(
-                                          child: NeuButton(
+                                          child: CupertinoButton(
                                             onPressed: () async {
                                               Navigator.of(context).pop();
                                             },
-                                            decoration: NeumorphicDecoration(
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(25),
-                                            ),
-                                            bevel: 5,
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
                                             padding: EdgeInsets.symmetric(vertical: 10),
                                             child: Text(
                                               "取消",

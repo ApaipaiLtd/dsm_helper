@@ -3,10 +3,10 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class Packages extends StatefulWidget {
   final String version;
@@ -18,7 +18,7 @@ class Packages extends StatefulWidget {
 class _PackagesState extends State<Packages> with TickerProviderStateMixin {
   int packagesVersion = 1;
   int installedVersion = 1;
-  TabController _tabController;
+  late TabController _tabController;
   List banners = [];
   List others = [];
   List packages = [];
@@ -207,17 +207,16 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
   Widget _buildButton(package, {bool beta = false}) {
     Widget button;
     if (package['can_update'] == null || package['installed'] == null) {
-      button = NeuCard(
+      button = Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: NeumorphicDecoration(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        curveType: CurveType.convex,
         child: Text("获取中"),
       );
     } else if (package['can_update']) {
-      button = NeuButton(
+      button = CupertinoButton(
         onPressed: () {
           Navigator.of(context)
               .push(CupertinoPageRoute(
@@ -234,10 +233,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           });
         },
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: NeumorphicDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
-        ),
         child: Text("更新"),
       );
     } else if (package['installed']) {
@@ -249,7 +246,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
       } else {
         text = "已安装";
       }
-      button = NeuButton(
+      button = CupertinoButton(
         onPressed: () async {
           if (text == "启动") {
             setState(() {
@@ -270,12 +267,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
               builder: (context) {
                 return Material(
                   color: Colors.transparent,
-                  child: NeuCard(
+                  child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(22),
-                    bevel: 5,
-                    curveType: CurveType.emboss,
-                    decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                    decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                     child: SafeArea(
                       top: false,
                       child: Column(
@@ -298,7 +293,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                           Row(
                             children: [
                               Expanded(
-                                child: NeuButton(
+                                child: CupertinoButton(
                                   onPressed: () async {
                                     Navigator.of(context).pop();
                                     setState(() {
@@ -314,11 +309,9 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                                       });
                                     }
                                   },
-                                  decoration: NeumorphicDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 5,
+
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
                                     "停用",
@@ -330,15 +323,13 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                                 width: 20,
                               ),
                               Expanded(
-                                child: NeuButton(
+                                child: CupertinoButton(
                                   onPressed: () async {
                                     Navigator.of(context).pop();
                                   },
-                                  decoration: NeumorphicDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  bevel: 5,
+
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
                                     "取消",
@@ -361,10 +352,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           }
         },
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: NeumorphicDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
-        ),
         child: Text(
           "$text",
           style: text == "启动"
@@ -376,7 +365,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
         ),
       );
     } else {
-      button = NeuButton(
+      button = CupertinoButton(
         onPressed: () {
           Navigator.of(context)
               .push(CupertinoPageRoute(
@@ -393,10 +382,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           });
         },
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: NeumorphicDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
-        ),
         child: Text("安装套件"),
       );
     }
@@ -424,15 +411,15 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           });
         });
       },
-      child: NeuCard(
+      child: Container(
         width: (MediaQuery.of(context).size.width - 60) / 2,
         margin: EdgeInsets.only(bottom: 20),
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+        
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
+
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
@@ -482,7 +469,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildPackageItem(package, bool installed, {bool isBeta: false}) {
+  Widget _buildPackageItem(package, bool installed, {bool isBeta = false}) {
     String thumbnailUrl = "";
     if (package['thumbnail'].length > 0) {
       thumbnailUrl = package['thumbnail'].last;
@@ -507,14 +494,14 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           });
         });
       },
-      child: NeuCard(
+      child: Container(
         width: (MediaQuery.of(context).size.width - 60) / 2,
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+        
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -581,7 +568,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text(
           "套件中心",
         ),
@@ -590,15 +577,15 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
         children: [
           Column(
             children: [
-              NeuCard(
+              Container(
                 width: double.infinity,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                curveType: CurveType.flat,
-                bevel: 10,
+                
+
                 child: TabBar(
                   isScrollable: true,
                   controller: _tabController,
@@ -637,14 +624,14 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                     Container(
                       child: loadingInstalled
                           ? Center(
-                              child: NeuCard(
+                              child: Container(
                                 padding: EdgeInsets.all(50),
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
+
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -675,14 +662,14 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                     Container(
                       child: loadingAll
                           ? Center(
-                              child: NeuCard(
+                              child: Container(
                                 padding: EdgeInsets.all(50),
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
+
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -704,14 +691,14 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                     Container(
                       child: loadingOthers
                           ? Center(
-                              child: NeuCard(
+                              child: Container(
                                 padding: EdgeInsets.all(50),
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
+
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -754,14 +741,14 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
               height: MediaQuery.of(context).size.height,
               color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
               child: Center(
-                child: NeuCard(
+                child: Container(
                   padding: EdgeInsets.all(50),
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(
+                  
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
+
                   child: CupertinoActivityIndicator(
                     radius: 14,
                   ),

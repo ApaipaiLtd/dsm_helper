@@ -1,11 +1,9 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 class UserDetail extends StatefulWidget {
   final Map user;
@@ -15,19 +13,19 @@ class UserDetail extends StatefulWidget {
 }
 
 class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  Map user;
+  Map? user;
   List groups = [];
   List originGroups = [];
   List bandwidthControl = [];
   List volumes = [];
   List quotas = [];
   List permissions = [];
-  String password;
-  String confirmPassword;
+  String? password;
+  String? confirmPassword;
 
   bool saving = false;
   @override
@@ -50,13 +48,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
           group['is_member'] = !group['is_member'];
         });
       },
-      child: NeuCard(
-        curveType: group['is_member'] ? CurveType.emboss : CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Row(
@@ -99,13 +95,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
           // group['is_member'] = !group['is_member'];
         });
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -140,14 +134,12 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
           // group['is_member'] = !group['is_member'];
         });
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
         margin: EdgeInsets.symmetric(vertical: 10),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Row(
@@ -220,13 +212,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
           // group['is_member'] = !group['is_member'];
         });
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Row(
@@ -258,7 +248,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   }
 
   getGroup() async {
-    var res = await Api.userGroup(user['name']);
+    var res = await Api.userGroup(user!['name']);
     if (res['success']) {
       setState(() {
         groups = res['data']['groups'];
@@ -269,7 +259,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
 
   getData() async {
     getGroup();
-    var res = await Api.userDetail(user['name']);
+    var res = await Api.userDetail(user!['name']);
     if (res['success']) {
       List result = res['data']['result'];
       result.forEach((item) {
@@ -278,7 +268,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
             case "SYNO.Core.User":
               setState(() {
                 user = item['data']['users'][0];
-                user['new_name'] = item['data']['users'][0]['name'];
+                user!['new_name'] = item['data']['users'][0]['name'];
               });
               break;
             case "SYNO.Core.User.PasswordExpiry":
@@ -322,20 +312,17 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("${widget.user['name']}"),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
             child: TabBar(
               isScrollable: true,
               controller: _tabController,
@@ -381,17 +368,15 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                 ListView(
                   padding: EdgeInsets.all(20),
                   children: [
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _nameController,
-                        onChanged: (v) => user['new_name'] = v,
+                        onChanged: (v) => user!['new_name'] = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '名称',
@@ -401,17 +386,15 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 12,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _descriptionController,
-                        onChanged: (v) => user['description'] = v,
+                        onChanged: (v) => user!['description'] = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '描述',
@@ -421,17 +404,15 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 12,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _emailController,
-                        onChanged: (v) => user['email'] = v,
+                        onChanged: (v) => user!['email'] = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '电子邮件',
@@ -441,13 +422,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 12,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         onChanged: (v) => password = v,
@@ -461,13 +440,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 12,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         obscureText: true,
@@ -484,23 +461,21 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          user['cannot_chg_passwd'] = !user['cannot_chg_passwd'];
+                          user!['cannot_chg_passwd'] = !user!['cannot_chg_passwd'];
                         });
                       },
-                      child: NeuCard(
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: user['cannot_chg_passwd'] ?? false ? CurveType.emboss : CurveType.flat,
-                        bevel: 12,
                         height: 60,
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                         child: Row(
                           children: [
                             Text("不允许此用户修改密码"),
                             Spacer(),
-                            if (user['cannot_chg_passwd'] ?? false)
+                            if (user!['cannot_chg_passwd'] ?? false)
                               Icon(
                                 CupertinoIcons.checkmark_alt,
                                 color: Color(0xffff9813),
@@ -518,20 +493,18 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                           // user['passwd_never_expire'] = !user['passwd_never_expire'];
                         });
                       },
-                      child: NeuCard(
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: user['passwd_never_expire'] ?? false ? CurveType.emboss : CurveType.flat,
-                        bevel: 12,
                         height: 60,
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                         child: Row(
                           children: [
                             Text("密码始终有效"),
                             Spacer(),
-                            if (user['passwd_never_expire'] ?? false)
+                            if (user!['passwd_never_expire'] ?? false)
                               Icon(
                                 CupertinoIcons.checkmark_alt,
                                 color: Color(0xffff9813),
@@ -546,20 +519,18 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          if (user['expired'] != "normal") {
-                            user['expired'] = "normal";
+                          if (user!['expired'] != "normal") {
+                            user!['expired'] = "normal";
                           } else {
-                            user['expired'] = "now";
+                            user!['expired'] = "now";
                           }
                         });
                       },
-                      child: NeuCard(
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: user['expired'] != "normal" ? CurveType.emboss : CurveType.flat,
-                        bevel: 20,
                         child: Padding(
                           padding: EdgeInsets.all(20),
                           child: Column(
@@ -571,22 +542,20 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   Spacer(),
-                                  if (user['expired'] != "normal")
+                                  if (user!['expired'] != "normal")
                                     Icon(
                                       CupertinoIcons.checkmark_alt,
                                       color: Color(0xffff9813),
                                     ),
                                 ],
                               ),
-                              if (user['expired'] != "normal")
-                                NeuCard(
+                              if (user!['expired'] != "normal")
+                                Container(
                                   margin: EdgeInsets.only(top: 20),
-                                  decoration: NeumorphicDecoration(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  curveType: CurveType.flat,
-                                  bevel: 20,
                                   child: Padding(
                                     padding: EdgeInsets.all(20),
                                     child: Row(
@@ -596,18 +565,16 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                           child: GestureDetector(
                                             onTap: () {
                                               setState(() {
-                                                user['expired'] = "now";
+                                                user!['expired'] = "now";
                                               });
                                             },
-                                            child: NeuCard(
+                                            child: Container(
                                               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                               padding: EdgeInsets.all(15),
-                                              decoration: NeumorphicDecoration(
+                                              decoration: BoxDecoration(
                                                 color: Theme.of(context).scaffoldBackgroundColor,
                                                 borderRadius: BorderRadius.circular(15),
                                               ),
-                                              curveType: user['expired'] == "now" ? CurveType.emboss : CurveType.flat,
-                                              bevel: 20,
                                               child: Column(
                                                 children: [
                                                   Row(
@@ -617,7 +584,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                                         style: TextStyle(fontSize: 16, height: 1.6),
                                                       ),
                                                       Spacer(),
-                                                      if (user['expired'] == "now")
+                                                      if (user!['expired'] == "now")
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -638,30 +605,27 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                             onTap: () {
                                               DatePicker.showDatePicker(context, locale: LocaleType.zh, currentTime: DateTime.now(), onConfirm: (v) {
                                                 setState(() {
-                                                  user['expired'] = v.format("Y-m-d");
-                                                  print(user['expired']);
+                                                  user!['expired'] = v.format("Y-m-d");
                                                 });
                                               });
                                             },
-                                            child: NeuCard(
+                                            child: Container(
                                               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                               padding: EdgeInsets.all(15),
-                                              decoration: NeumorphicDecoration(
+                                              decoration: BoxDecoration(
                                                 color: Theme.of(context).scaffoldBackgroundColor,
                                                 borderRadius: BorderRadius.circular(15),
                                               ),
-                                              curveType: user['expired'] != "now" ? CurveType.emboss : CurveType.flat,
-                                              bevel: 20,
                                               child: Column(
                                                 children: [
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        "${user['expired'] == "now" ? "到期于：" : user['expired']}",
+                                                        "${user!['expired'] == "now" ? "到期于：" : user!['expired']}",
                                                         style: TextStyle(fontSize: 16, height: 1.6),
                                                       ),
                                                       Spacer(),
-                                                      if (user['expired'] != "now")
+                                                      if (user!['expired'] != "now")
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -731,23 +695,21 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
           SafeArea(
             child: Padding(
               padding: EdgeInsets.all(20),
-              child: NeuButton(
+              child: CupertinoButton(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
                 onPressed: () async {
-                  if (password.isNotBlank || confirmPassword.isNotBlank) {
+                  if ((password != null && password!.isNotBlank) || (confirmPassword != null && confirmPassword!.isNotBlank)) {
                     if (password != confirmPassword) {
                       Util.toast("密码输入不一致");
                       return;
                     }
-                    if (password != '' && password.length < 6) {
+                    if (password!.length < 6) {
                       Util.toast("密码最低6位");
                       return;
                     }
-                    user['password'] = password;
+                    user!['password'] = password;
                   }
 
                   //对比当前groups与原始groups
@@ -759,13 +721,13 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     saving = true;
                   });
 
-                  var res = await Api.userSave(user, addGroup, removeGroup);
+                  var res = await Api.userSave(user!, addGroup, removeGroup);
                   setState(() {
                     saving = false;
                   });
                   if (res['success']) {
-                    widget.user['name'] = user['new_name'];
-                    widget.user['email'] = user['email'];
+                    widget.user['name'] = user!['new_name'];
+                    widget.user['email'] = user!['email'];
                     Util.toast("保存成功");
                   } else {
                     Util.toast("保存失败,代码${res['error']['code']}");

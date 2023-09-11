@@ -257,7 +257,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _workgroupController,
-                                        onChanged: (v) => smb['workgroup'] = v,
+                                        onChanged: (v) => smb!['workgroup'] = v,
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           labelText: '工作群组',
@@ -287,7 +287,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "不可访问以前版本",
                                               ),
                                             ),
-                                            if (smb['disable_shadow_copy'])
+                                            if (smb!['disable_shadow_copy'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -324,7 +324,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启动传输日志",
                                               ),
                                             ),
-                                            if (syslogClient['cifs'])
+                                            if (syslogClient!['cifs'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -333,25 +333,23 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                         ),
                                       ),
                                     ),
-                                    if (syslogClient['cifs']) ...[
+                                    if (syslogClient != null && syslogClient!['cifs']) ...[
                                       SizedBox(
                                         height: 20,
                                       ),
                                       Row(
                                         children: [
                                           Expanded(
-                                            child: NeuButton(
+                                            child: CupertinoButton(
                                               onPressed: () {
-                                                if (syslogClient['cifs']) {
+                                                if (syslogClient!['cifs']) {
                                                   Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                                     return LogSetting("cifs");
                                                   }));
                                                 }
                                               },
-                                              decoration: NeumorphicDecoration(
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(20),
-                                              ),
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(20),
                                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                                               child: Text("日志设置"),
                                             ),
@@ -360,16 +358,14 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                             width: 20,
                                           ),
                                           Expanded(
-                                            child: NeuButton(
+                                            child: CupertinoButton(
                                               onPressed: () {
                                                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                                   return LogCenter();
                                                 }));
                                               },
-                                              decoration: NeumorphicDecoration(
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(20),
-                                              ),
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(20),
                                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                                               child: Text(
                                                 "查看日志",
@@ -387,14 +383,12 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
+                          Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            margin: EdgeInsets.only(left: 20, right: 20),
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            margin: EdgeInsets.only(left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -410,17 +404,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        afp['enable_afp'] = !afp['enable_afp'];
+                                        afp!['enable_afp'] = !afp!['enable_afp'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       height: 60,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      curveType: afp['enable_afp'] ? CurveType.emboss : CurveType.flat,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -428,7 +421,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用AFP服务",
                                             ),
                                           ),
-                                          if (afp['enable_afp'])
+                                          if (afp!['enable_afp'])
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -437,24 +430,23 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (afp['enable_afp']) ...[
+                                  if (afp!['enable_afp']) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          syslogClient['afp'] = !syslogClient['afp'];
+                                          syslogClient!['afp'] = !syslogClient!['afp'];
                                         });
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: syslogClient['afp'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -462,7 +454,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启动传输日志",
                                               ),
                                             ),
-                                            if (syslogClient['afp'])
+                                            if (syslogClient!['afp'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -479,14 +471,12 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -502,17 +492,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        nfs['enable_nfs'] = !nfs['enable_nfs'];
+                                        nfs!['enable_nfs'] = !nfs!['enable_nfs'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       height: 60,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      curveType: nfs['enable_nfs'] ? CurveType.emboss : CurveType.flat,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -520,7 +509,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用NFS服务",
                                             ),
                                           ),
-                                          if (nfs['enable_nfs'])
+                                          if (nfs!['enable_nfs'])
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -529,24 +518,23 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (nfs['enable_nfs']) ...[
+                                  if (nfs!['enable_nfs']) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          nfs['enable_nfs_v4'] = !nfs['enable_nfs_v4'];
+                                          nfs!['enable_nfs_v4'] = !nfs!['enable_nfs_v4'];
                                         });
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: nfs['enable_nfs_v4'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -554,7 +542,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启用 NFSv4.1 支持",
                                               ),
                                             ),
-                                            if (nfs['enable_nfs_v4'])
+                                            if (nfs!['enable_nfs_v4'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -564,21 +552,19 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ],
-                                  if (nfs['enable_nfs'] && nfs['enable_nfs_v4']) ...[
+                                  if (nfs!['enable_nfs'] && nfs!['enable_nfs_v4']) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
-                                      bevel: 20,
-                                      curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _nfsv4Controller,
-                                        onChanged: (v) => nfs['nfs_v4_domain'] = v,
+                                        onChanged: (v) => nfs!['nfs_v4_domain'] = v,
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           labelText: 'NFSv4 域',
@@ -598,14 +584,12 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                       ListView(
                         padding: EdgeInsets.symmetric(vertical: 20),
                         children: [
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -621,17 +605,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        ftp['enable_ftp'] = !ftp['enable_ftp'];
+                                        ftp!['enable_ftp'] = !ftp!['enable_ftp'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       height: 60,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      curveType: ftp['enable_ftp'] ? CurveType.emboss : CurveType.flat,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -639,7 +622,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用FTP服务",
                                             ),
                                           ),
-                                          if (ftp['enable_ftp'])
+                                          if (ftp!['enable_ftp'])
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -654,17 +637,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        ftp['enable_ftps'] = !ftp['enable_ftps'];
+                                        ftp!['enable_ftps'] = !ftp!['enable_ftps'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       height: 60,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      curveType: ftp['enable_ftps'] ? CurveType.emboss : CurveType.flat,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -672,7 +654,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用 FTP SSL/TLS 加密服务（FTPS）",
                                             ),
                                           ),
-                                          if (ftp['enable_ftps'])
+                                          if (ftp!['enable_ftps'])
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -681,23 +663,21 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (ftp['enable_ftps']) ...[
+                                  if (ftp!['enable_ftps']) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
-                                      bevel: 20,
-                                      curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _timeoutController,
                                         onChanged: (v) {
                                           try {
-                                            ftp['timeout'] = int.parse(v);
+                                            ftp!['timeout'] = int.parse(v);
                                           } catch (e) {
                                             print("error");
                                           }
@@ -715,19 +695,17 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
-                                      bevel: 20,
-                                      curveType: CurveType.flat,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _ftpPortController,
                                         onChanged: (v) {
                                           try {
-                                            ftp['portnum'] = int.parse(v);
+                                            ftp!['portnum'] = int.parse(v);
                                           } catch (e) {
                                             print("error");
                                           }
@@ -748,17 +726,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          ftp['enable_fxp'] = !ftp['enable_fxp'];
+                                          ftp!['enable_fxp'] = !ftp!['enable_fxp'];
                                         });
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: ftp['enable_fxp'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -766,7 +743,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启用 FXP",
                                               ),
                                             ),
-                                            if (ftp['enable_fxp'])
+                                            if (ftp!['enable_fxp'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -781,17 +758,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          ftp['enable_fips'] = !ftp['enable_fips'];
+                                          ftp!['enable_fips'] = !ftp!['enable_fips'];
                                         });
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: ftp['enable_fips'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -799,7 +775,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启用 FIPS 加密模块",
                                               ),
                                             ),
-                                            if (ftp['enable_fips'])
+                                            if (ftp!['enable_fips'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -814,17 +790,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          ftp['enable_ascii'] = !ftp['enable_ascii'];
+                                          ftp!['enable_ascii'] = !ftp!['enable_ascii'];
                                         });
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         height: 60,
                                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                        curveType: ftp['enable_ascii'] ? CurveType.emboss : CurveType.flat,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -832,7 +807,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "支持 ASCII 传送模式",
                                               ),
                                             ),
-                                            if (ftp['enable_ascii'])
+                                            if (ftp!['enable_ascii'])
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -852,28 +827,27 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                           builder: (context) {
                                             return NeuPicker(
                                               utf8Modes,
-                                              value: ftp['utf8_mode'],
+                                              value: ftp!['utf8_mode'],
                                               onConfirm: (v) {
                                                 setState(() {
-                                                  ftp['utf8_mode'] = v;
+                                                  ftp!['utf8_mode'] = v;
                                                 });
                                               },
                                             );
                                           },
                                         );
                                       },
-                                      child: NeuCard(
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         padding: EdgeInsets.all(20),
-                                        curveType: CurveType.flat,
                                         child: Row(
                                           children: [
                                             Text("UTF-8 编码:"),
                                             Spacer(),
-                                            Text("${utf8Modes[ftp['utf8_mode']]}"),
+                                            Text("${utf8Modes[ftp!['utf8_mode']]}"),
                                           ],
                                         ),
                                       ),
@@ -886,14 +860,12 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -909,17 +881,16 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        sftp['enable'] = !sftp['enable'];
+                                        sftp!['enable'] = !sftp!['enable'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       height: 60,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                      curveType: sftp['enable'] ? CurveType.emboss : CurveType.flat,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -927,7 +898,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用SFTP服务",
                                             ),
                                           ),
-                                          if (sftp['enable'])
+                                          if (sftp!['enable'])
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -939,19 +910,17 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    bevel: 20,
-                                    curveType: CurveType.flat,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     child: TextField(
                                       controller: _sftpPortController,
                                       onChanged: (v) {
                                         try {
-                                          sftp['portnum'] = int.parse(v);
+                                          sftp!['portnum'] = int.parse(v);
                                         } catch (e) {
                                           print("error");
                                         }
@@ -981,12 +950,10 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: NeuButton(
+                    child: CupertinoButton(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
                       onPressed: () async {
                         if (saving) {
                           return;

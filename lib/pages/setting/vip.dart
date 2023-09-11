@@ -5,41 +5,54 @@ import 'package:dsm_helper/pages/setting/vip_login.dart';
 import 'package:dsm_helper/pages/setting/vip_record.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluwx/fluwx.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:pangle_flutter/pangle_flutter.dart';
+import 'package:sp_util/sp_util.dart';
 
 class Vip extends StatefulWidget {
-  const Vip({Key key}) : super(key: key);
+  const Vip({super.key});
 
   @override
   State<Vip> createState() => _VipState();
 }
 
 class _VipState extends State<Vip> {
-  DateTime noAdTime;
-  DateTime vipExpireTime;
-  DateTime lastVideoTime;
+  Fluwx fluwx = Fluwx();
+  DateTime? noAdTime;
+  DateTime? vipExpireTime;
+  DateTime? lastVideoTime;
   bool isLogin = false;
   bool isForever = false;
   String outTradeNo = "";
   String userToken = "";
-  Timer timer;
+  Timer? timer;
+  late Function(WeChatResponse) responseListener;
   @override
   void initState() {
-    weChatResponseEventHandler.distinct((a, b) => a == b).listen(wechatListener);
+    responseListener = (response) {
+      wechatListener(response);
+    };
+    fluwx.addSubscriber(responseListener);
     initData();
 
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
+    fluwx.removeSubscriber(responseListener);
+  }
+
   void wechatListener(res) {
     if (res is WeChatAuthResponse) {
       setState(() {
-        login(res.code);
+        login(res.code!);
       });
     } else if (res is WeChatPaymentResponse) {
       setState(() {
@@ -49,7 +62,7 @@ class _VipState extends State<Vip> {
           if (res.errCode == -2) {
             Util.toast("已取消支付");
           } else {
-            Util.toast(res.errStr.isNotBlank ? res.errStr : '支付失败');
+            Util.toast(res.errStr != null ? res.errStr! : '支付失败');
           }
         }
       });
@@ -62,35 +75,29 @@ class _VipState extends State<Vip> {
       var res = await Util.post("${Util.appUrl}/payment/check", data: {"out_trade_no": outTradeNo});
       if (res['code'] == 1) {
         Util.toast("支付成功");
-        timer.cancel();
+        timer?.cancel();
         initData(tips: true);
         hide();
       }
     });
   }
 
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
   initData({bool tips = false}) async {
-    String noAdTimeStr = await Util.getStorage("no_ad_time");
+    String noAdTimeStr = SpUtil.getString("no_ad_time")!;
     if (noAdTimeStr.isNotBlank) {
       noAdTime = DateTime.parse(noAdTimeStr);
-      if (noAdTime.isBefore(DateTime.now())) {
-        Util.removeStorage("no_ad_time");
+      if (noAdTime!.isBefore(DateTime.now())) {
+        SpUtil.remove("no_ad_time");
         noAdTime = null;
       }
     }
-    String lastVideoTimeStr = await Util.getStorage("last_video_time");
+    String lastVideoTimeStr = SpUtil.getString("last_video_time")!;
     if (lastVideoTimeStr.isNotBlank) {
       setState(() {
         lastVideoTime = DateTime.parse(lastVideoTimeStr);
       });
     }
-    userToken = await Util.getStorage("user_token");
+    userToken = SpUtil.getString("user_token")!;
     if (userToken.isNotBlank) {
       var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
@@ -102,11 +109,11 @@ class _VipState extends State<Vip> {
         if (res['data']['vip_expire_time'] != null) {
           Util.vipExpireTime = vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
           if (noAdTime == null) {
-            if (vipExpireTime.isAfter(DateTime.now())) {
+            if (vipExpireTime!.isAfter(DateTime.now())) {
               noAdTime = vipExpireTime;
             }
           } else {
-            if (vipExpireTime.isAfter(noAdTime)) {
+            if (vipExpireTime!.isAfter(noAdTime!)) {
               noAdTime = vipExpireTime;
             }
           }
@@ -121,8 +128,8 @@ class _VipState extends State<Vip> {
     try {
       var res = await Util.post("${Util.appUrl}/login/app", data: {"code": code});
       if (res['code'] == 1) {
-        Util.setStorage("user_openid", res['data']['openid']);
-        Util.setStorage("user_token", res['data']['token']);
+        SpUtil.putString("user_openid", res['data']['openid']);
+        SpUtil.putString("user_token", res['data']['token']);
         setState(() {
           isLogin = true;
         });
@@ -132,7 +139,7 @@ class _VipState extends State<Vip> {
         Util.toast(res['msg']);
       }
     } catch (e) {
-      Util.toast("登录失败：${e.message}");
+      Util.toast("登录失败");
     } finally {
       hide();
     }
@@ -151,12 +158,12 @@ class _VipState extends State<Vip> {
           noAdTime = DateTime.now();
         }
         setState(() {
-          noAdTime = noAdTime.add(Duration(days: 3));
+          noAdTime = noAdTime!.add(Duration(days: 3));
         });
         lastVideoTime = DateTime.now();
         Util.toast("恭喜您成功获得3天免广告特权");
-        Util.setStorage("no_ad_time", noAdTime.format("Y-m-d H:i:s"));
-        Util.setStorage("last_video_time", lastVideoTime.format("Y-m-d H:i:s"));
+        SpUtil.putString("no_ad_time", noAdTime!.format("Y-m-d H:i:s"));
+        SpUtil.putString("last_video_time", lastVideoTime!.format("Y-m-d H:i:s"));
       }
     } catch (e) {
       Util.toast("广告播放失败");
@@ -166,7 +173,7 @@ class _VipState extends State<Vip> {
   }
 
   close3() {
-    if (lastVideoTime != null && lastVideoTime.isSameDay(DateTime.now())) {
+    if (lastVideoTime != null && lastVideoTime!.isSameDay(DateTime.now())) {
       Util.toast("今天已经领取过，明天再来吧~");
       return;
     }
@@ -178,12 +185,10 @@ class _VipState extends State<Vip> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              NeuCard(
+              Container(
                 width: double.infinity,
                 margin: EdgeInsets.symmetric(horizontal: 50),
-                curveType: CurveType.emboss,
-                bevel: 5,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(25),
                 ),
@@ -198,13 +203,11 @@ class _VipState extends State<Vip> {
                       SizedBox(
                         height: 16,
                       ),
-                      NeuCard(
-                        decoration: NeumorphicDecoration(
+                      Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        bevel: 20,
-                        curveType: CurveType.flat,
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: Text("通过观看视频广告，可关闭3天开屏广告"),
                       ),
@@ -214,13 +217,10 @@ class _VipState extends State<Vip> {
                       Row(
                         children: [
                           Expanded(
-                            child: NeuButton(
+                            child: CupertinoButton(
                               onPressed: playVideo,
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 20,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: Text(
                                 "观看广告",
@@ -232,15 +232,12 @@ class _VipState extends State<Vip> {
                             width: 16,
                           ),
                           Expanded(
-                            child: NeuButton(
+                            child: CupertinoButton(
                               onPressed: () async {
                                 Navigator.of(context).pop();
                               },
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 20,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: Text(
                                 "取消",
@@ -274,12 +271,10 @@ class _VipState extends State<Vip> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 50),
-                  curveType: CurveType.emboss,
-                  bevel: 5,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
                   ),
@@ -301,13 +296,11 @@ class _VipState extends State<Vip> {
                         SizedBox(
                           height: 16,
                         ),
-                        NeuCard(
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
-                          curveType: CurveType.flat,
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           child: TextField(
                             onChanged: (v) => code = v,
@@ -324,7 +317,7 @@ class _VipState extends State<Vip> {
                         Row(
                           children: [
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   if (code.trim() == "") {
                                     Util.toast("请输入兑换码");
@@ -339,11 +332,8 @@ class _VipState extends State<Vip> {
                                     Navigator.of(context).pop();
                                   }
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 20,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "兑换",
@@ -355,15 +345,12 @@ class _VipState extends State<Vip> {
                               width: 16,
                             ),
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 20,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "取消",
@@ -386,7 +373,7 @@ class _VipState extends State<Vip> {
   }
 
   wxLogin() {
-    sendWeChatAuth(scope: "snsapi_userinfo");
+    fluwx.authBy(which: NormalAuth(scope: "snsapi_userinfo"));
   }
 
   loginDialog({bool alert: true}) {
@@ -398,12 +385,10 @@ class _VipState extends State<Vip> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              NeuCard(
+              Container(
                 width: double.infinity,
                 margin: EdgeInsets.symmetric(horizontal: 50),
-                curveType: CurveType.emboss,
-                bevel: 5,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(25),
                 ),
@@ -428,16 +413,13 @@ class _VipState extends State<Vip> {
                       Row(
                         children: [
                           Expanded(
-                            child: NeuButton(
+                            child: CupertinoButton(
                               onPressed: () async {
                                 wxLogin();
                                 Navigator.of(context).pop();
                               },
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 20,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset(
                                 "assets/icons/wechat.png",
@@ -449,7 +431,7 @@ class _VipState extends State<Vip> {
                             width: 16,
                           ),
                           Expanded(
-                            child: NeuButton(
+                            child: CupertinoButton(
                               onPressed: () async {
                                 Navigator.of(context).pop();
                                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -460,11 +442,8 @@ class _VipState extends State<Vip> {
                                   }
                                 });
                               },
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 20,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: Text(
                                 "账号登录",
@@ -476,15 +455,12 @@ class _VipState extends State<Vip> {
                             width: 16,
                           ),
                           Expanded(
-                            child: NeuButton(
+                            child: CupertinoButton(
                               onPressed: () async {
                                 Navigator.of(context).pop();
                               },
-                              decoration: NeumorphicDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              bevel: 20,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(25),
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: Text(
                                 "取消",
@@ -526,7 +502,7 @@ class _VipState extends State<Vip> {
     if (res['code'] == 1) {
       var data = res['data'];
       outTradeNo = data['out_trade_no'];
-      payWithWeChat(appId: data['appid'], partnerId: data['partnerid'], prepayId: data['prepayid'], packageValue: data['package'], nonceStr: data['noncestr'], timeStamp: int.parse(data['timestamp']), sign: data['sign']);
+      fluwx.pay(which: Payment(appId: data['appid'], partnerId: data['partnerid'], prepayId: data['prepayid'], packageValue: data['package'], nonceStr: data['noncestr'], timestamp: int.parse(data['timestamp']), sign: data['sign']));
     } else {
       Util.toast(res['msg']);
     }
@@ -536,18 +512,14 @@ class _VipState extends State<Vip> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("关闭广告"),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            child: CupertinoButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () {
                 if (!isLogin) {
                   loginDialog(alert: false);
@@ -559,7 +531,7 @@ class _VipState extends State<Vip> {
               },
               child: Text(
                 isLogin ? "开通记录" : "恢复购买",
-                style: TextStyle(color: AppTheme.of(context).titleColor),
+                style: TextStyle(color: AppTheme.of(context)?.titleColor),
               ),
             ),
           ),
@@ -568,13 +540,11 @@ class _VipState extends State<Vip> {
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            bevel: 20,
-            curveType: CurveType.flat,
             child: Padding(
               padding: EdgeInsets.all(20.0),
               child: Row(
@@ -590,7 +560,7 @@ class _VipState extends State<Vip> {
                       TextSpan(
                         children: [
                           TextSpan(text: "关闭至"),
-                          TextSpan(text: "${noAdTime.format("Y-m-d H:i:s")}", style: TextStyle(color: Colors.red)),
+                          TextSpan(text: "${noAdTime!.format("Y-m-d H:i:s")}", style: TextStyle(color: Colors.red)),
                         ],
                       ),
                     ),
@@ -606,7 +576,7 @@ class _VipState extends State<Vip> {
               "您已开通永久免广告特权，为给您带来更清爽的体验，已为您隐藏设置页面的关闭广告入口，您可以点击设置页面右上角齿轮找到关闭广告页面。",
               style: TextStyle(color: Colors.red),
             )
-          else if (vipExpireTime != null && vipExpireTime.difference(DateTime.now()).inDays > 7)
+          else if (vipExpireTime != null && vipExpireTime!.difference(DateTime.now()).inDays > 7)
             Text(
               "您的免广告剩余时长大于7天，为给您带来更清爽的体验，已为您隐藏设置页面的关闭广告入口，您可以点击设置页面右上角齿轮找到关闭广告页面。",
               style: TextStyle(color: Colors.red),
@@ -657,20 +627,18 @@ class _VipState extends State<Vip> {
 }
 
 class NoAdButton extends StatelessWidget {
-  const NoAdButton(this.title, {this.price, this.onPressed, Key key}) : super(key: key);
+  const NoAdButton(this.title, {this.price, this.onPressed, super.key});
   final String title;
-  final String price;
-  final Function() onPressed;
+  final String? price;
+  final Function()? onPressed;
   @override
   Widget build(BuildContext context) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.only(top: 20),
-      bevel: 20,
-      curveType: CurveType.flat,
       child: Padding(
         padding: EdgeInsets.all(20.0),
         child: Row(
@@ -678,16 +646,13 @@ class NoAdButton extends StatelessWidget {
           children: [
             Text(title),
             Spacer(),
-            NeuButton(
+            CupertinoButton(
               onPressed: onPressed,
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 5,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
               child: Text(
-                price,
+                price!,
                 style: TextStyle(fontSize: 12),
               ),
             ),

@@ -12,13 +12,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluwx/fluwx.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:fluwx/fluwx.dart' hide Browser;
+
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:sp_util/sp_util.dart';
 
 class Login extends StatefulWidget {
-  final Map server;
+  final Map? server;
   final String type;
   Login({this.server, this.type = "login"});
   @override
@@ -28,7 +29,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TapGestureRecognizer _licenseRecognizer = TapGestureRecognizer();
   TapGestureRecognizer _privacyRecognizer = TapGestureRecognizer();
-  Map updateInfo;
+  Map? updateInfo;
   String host = "";
   String baseUrl = '';
   String account = "";
@@ -57,14 +58,8 @@ class _LoginState extends State<Login> {
   CancelToken cancelToken = CancelToken();
   @override
   initState() {
-    Util.getStorage("read").then((value) {
-      if (value.isNotBlank && value == "1") {
-        setState(() {
-          read = true;
-        });
-      }
-    });
-    checkAgreement();
+    read = SpUtil.getBool("read", defValue: false)!;
+    // checkAgreement();
     if (Platform.isAndroid) {
       checkUpdate();
     } else {
@@ -72,57 +67,56 @@ class _LoginState extends State<Login> {
         read = true;
       });
     }
-    Util.getStorage("servers").then((serverString) {
-      if (serverString.isNotBlank) {
-        servers = jsonDecode(serverString);
-      }
-      if (widget.server != null) {
-        setState(() {
-          https = widget.server['https'];
-          host = widget.server['host'];
-          port = widget.server['port'];
-          account = widget.server['account'];
-          note = widget.server['note'] ?? '';
-          password = widget.server['password'];
-          autoLogin = widget.server['auto_login'];
-          rememberPassword = widget.server['remember_password'];
-          checkSsl = widget.server['check_ssl'];
-          if (host.isNotBlank) {
-            _hostController.value = TextEditingValue(text: host);
-          }
-          if (port.isNotBlank) {
-            _portController.value = TextEditingValue(text: port);
-          }
-          if (account.isNotBlank) {
-            _accountController.value = TextEditingValue(text: account);
-          }
-          if (note.isNotBlank) {
-            _noteController.value = TextEditingValue(text: note);
-          }
-          if (password.isNotBlank) {
-            _passwordController.value = TextEditingValue(text: password);
-          }
-        });
-        Util.cookie = widget.server['cookie'];
-        Util.sid = widget.server['sid'];
-        if (widget.server['action'] == "login") {
-          _login();
+    String serverString = SpUtil.getString("servers", defValue: "")!;
+    if (serverString.isNotBlank) {
+      servers = jsonDecode(serverString);
+    }
+    if (widget.server != null) {
+      setState(() {
+        https = widget.server!['https'];
+        host = widget.server!['host'];
+        port = widget.server!['port'];
+        account = widget.server!['account'];
+        note = widget.server!['note'] ?? '';
+        password = widget.server!['password'];
+        autoLogin = widget.server!['auto_login'];
+        rememberPassword = widget.server!['remember_password'];
+        checkSsl = widget.server!['check_ssl'];
+        if (host.isNotBlank) {
+          _hostController.value = TextEditingValue(text: host);
         }
-      } else {
-        if (widget.type == "login") {
-          getInfo();
-        } else {
+        if (port.isNotBlank) {
           _portController.value = TextEditingValue(text: port);
         }
+        if (account.isNotBlank) {
+          _accountController.value = TextEditingValue(text: account);
+        }
+        if (note.isNotBlank) {
+          _noteController.value = TextEditingValue(text: note);
+        }
+        if (password.isNotBlank) {
+          _passwordController.value = TextEditingValue(text: password);
+        }
+      });
+      Util.cookie = widget.server!['cookie'];
+      Util.sid = widget.server!['sid'];
+      if (widget.server!['action'] == "login") {
+        _login();
       }
-    });
+    } else {
+      if (widget.type == "login") {
+        getInfo();
+      } else {
+        _portController.value = TextEditingValue(text: port);
+      }
+    }
 
     super.initState();
   }
 
   checkAgreement() async {
-    String agreement = await Util.getStorage("agreement");
-    if (agreement == null || agreement != '1') {
+    bool agreement = SpUtil.getBool("agreement", defValue: false)!;
+    if (!agreement) {
       showCupertinoDialog(
         context: context,
         builder: (context) {
@@ -131,12 +125,10 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 50),
-                  curveType: CurveType.emboss,
-                  bevel: 5,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
                   ),
@@ -144,13 +136,11 @@ class _LoginState extends State<Login> {
                     padding: EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        NeuCard(
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
-                          curveType: CurveType.flat,
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           child: Text.rich(
                             TextSpan(
@@ -221,18 +211,16 @@ class _LoginState extends State<Login> {
                         Row(
                           children: [
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
-                                  Util.setStorage("read", "1");
-                                  Util.setStorage("agreement", read ? "1" : "0");
-                                  registerWxApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
+                                  SpUtil.putBool("read", true);
+                                  SpUtil.putBool("agreement", read);
+                                  Fluwx fluwx = Fluwx();
+                                  fluwx.registerApi(appId: "wxabdf23571f34b49b", universalLink: "https://dsm.apaipai.top/app/");
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 20,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "同意并继续",
@@ -244,15 +232,12 @@ class _LoginState extends State<Login> {
                               width: 16,
                             ),
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   SystemNavigator.pop();
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 20,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "不同意",
@@ -285,9 +270,9 @@ class _LoginState extends State<Login> {
     if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       String buildNumber = packageInfo.buildNumber;
-      if (kDebugMode) {
-        buildNumber = '1';
-      }
+      // if (kDebugMode) {
+      //   buildNumber = '1';
+      // }
       var res = await Api.update(buildNumber); //packageInfo.buildNumber
       if (res['code'] == 1) {
         setState(() {
@@ -298,31 +283,19 @@ class _LoginState extends State<Login> {
   }
 
   getInfo() async {
-    sid = await Util.getStorage("sid");
-    smid = await Util.getStorage("smid");
-    String httpsString = await Util.getStorage("https");
-    host = await Util.getStorage("host") ?? "";
-    baseUrl = await Util.getStorage("base_url");
-    String portString = await Util.getStorage("port");
-    account = await Util.getStorage("account");
-    note = await Util.getStorage("note");
-    password = await Util.getStorage("password");
-    String autoLoginString = await Util.getStorage("auto_login");
-
-    String rememberPasswordString = await Util.getStorage("remember_password");
-    String checkSslString = await Util.getStorage("check_ssl");
+    sid = SpUtil.getString("sid", defValue: "")!;
+    smid = SpUtil.getString("smid", defValue: "")!;
+    https = SpUtil.getBool("https", defValue: false)!;
+    checkSsl = SpUtil.getBool("check_ssl", defValue: false)!;
+    host = SpUtil.getString("host")!;
+    baseUrl = SpUtil.getString("base_url")!;
+    String portString = SpUtil.getString("port")!;
+    account = SpUtil.getString("account")!;
+    note = SpUtil.getString("note")!;
+    password = SpUtil.getString("password")!;
+    autoLogin = SpUtil.getBool("auto_login", defValue: false)!;
+    rememberPassword = SpUtil.getBool("remember_password", defValue: false)!;
     Util.cookie = smid;
-
-    if (httpsString.isNotBlank) {
-      setState(() {
-        https = httpsString == "1";
-      });
-    }
-    if (checkSslString.isNotBlank) {
-      setState(() {
-        checkSsl = checkSslString == "1";
-      });
-    }
     if (host.isNotBlank) {
       _hostController.value = TextEditingValue(text: host);
     }
@@ -341,22 +314,12 @@ class _LoginState extends State<Login> {
     if (password.isNotBlank) {
       _passwordController.value = TextEditingValue(text: password);
     }
-    if (autoLoginString.isNotBlank) {
-      setState(() {
-        autoLogin = autoLoginString == "1";
-      });
-    }
-    if (rememberPasswordString.isNotBlank) {
-      setState(() {
-        rememberPassword = rememberPasswordString == "1";
-      });
-    }
     checkLogin();
   }
 
   checkLogin() async {
     Util.account = account;
-    if (https != null && sid.isNotBlank && host.isNotBlank) {
+    if (sid.isNotBlank && host.isNotBlank) {
       if (baseUrl.isNotBlank) {
         Util.baseUrl = baseUrl;
       } else {
@@ -481,23 +444,23 @@ class _LoginState extends State<Login> {
     if (res['success'] == true) {
       //记住登录信息
       Util.account = account;
-      Util.setStorage("https", https ? "1" : "0");
-      Util.setStorage("host", host.trim());
-      Util.setStorage("port", port);
-      Util.setStorage("base_url", baseUri);
-      Util.setStorage("account", account);
-      Util.setStorage("note", note);
-      Util.setStorage("remember_password", rememberPassword ? "1" : "0");
-      Util.setStorage("auto_login", autoLogin ? "1" : "0");
-      Util.setStorage("check_ssl", checkSsl ? "1" : "0");
+      SpUtil.putBool("https", https);
+      SpUtil.putString("host", host.trim());
+      SpUtil.putString("port", port);
+      SpUtil.putString("base_url", baseUri);
+      SpUtil.putString("account", account);
+      SpUtil.putString("note", note);
+      SpUtil.putBool("remember_password", rememberPassword);
+      SpUtil.putBool("auto_login", autoLogin);
+      SpUtil.putBool("check_ssl", checkSsl);
       Util.sid = res['data']['sid'];
       if (rememberPassword) {
-        Util.setStorage("password", password);
+        SpUtil.putString("password", password);
       } else {
-        Util.removeStorage("password");
+        SpUtil.remove("password");
       }
       if (autoLogin) {
-        Util.setStorage("sid", res['data']['sid']);
+        SpUtil.putString("sid", res['data']['sid']);
       }
 
       Util.baseUrl = baseUri;
@@ -545,7 +508,7 @@ class _LoginState extends State<Login> {
         }
         servers.add(server);
       }
-      Util.setStorage("servers", jsonEncode(servers));
+      SpUtil.putString("servers", jsonEncode(servers));
       if (widget.type == "login") {
         Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
       } else {
@@ -605,16 +568,13 @@ class _LoginState extends State<Login> {
         leading: updateInfo != null
             ? Padding(
                 padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                child: NeuButton(
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                child: CupertinoButton(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
                   padding: EdgeInsets.all(10),
-                  bevel: 5,
                   onPressed: () {
                     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                      return Update(updateInfo);
+                      return Update(updateInfo!);
                     }));
                   },
                   child: Image.asset(
@@ -632,13 +592,13 @@ class _LoginState extends State<Login> {
         actions: [
           // Padding(
           //   padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-          //   child: NeuButton(
-          //     decoration: NeumorphicDecoration(
+          //   child: CupertinoButton(
+          //     decoration: BoxDecoration(
           //       color: Theme.of(context).scaffoldBackgroundColor,
           //       borderRadius: BorderRadius.circular(10),
           //     ),
           //     padding: EdgeInsets.all(10),
-          //     bevel: 5,
+          //
           //     onPressed: wakeup,
           //     child: Image.asset(
           //       "assets/icons/history.png",
@@ -650,13 +610,10 @@ class _LoginState extends State<Login> {
           if (servers.length > 0)
             Padding(
               padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-              child: NeuButton(
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              child: CupertinoButton(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 padding: EdgeInsets.all(10),
-                bevel: 5,
                 onPressed: () {
                   Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                     return Accounts();
@@ -681,13 +638,11 @@ class _LoginState extends State<Login> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: Row(
                 children: [
@@ -769,13 +724,11 @@ class _LoginState extends State<Login> {
             Row(
               children: [
                 Expanded(
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       autocorrect: false,
@@ -797,13 +750,11 @@ class _LoginState extends State<Login> {
                   width: 20,
                 ),
                 Expanded(
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       keyboardAppearance: Brightness.light,
@@ -825,13 +776,11 @@ class _LoginState extends State<Login> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: _passwordController,
@@ -854,13 +803,11 @@ class _LoginState extends State<Login> {
               Row(
                 children: [
                   Expanded(
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 12,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _otpController,
@@ -888,13 +835,11 @@ class _LoginState extends State<Login> {
                           rememberDevice = !rememberDevice;
                         });
                       },
-                      child: NeuCard(
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: rememberDevice ? CurveType.emboss : CurveType.flat,
-                        bevel: 12,
                         height: 68,
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: Row(
@@ -929,13 +874,11 @@ class _LoginState extends State<Login> {
                         }
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: rememberPassword ? CurveType.emboss : CurveType.flat,
-                      bevel: 12,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -965,13 +908,11 @@ class _LoginState extends State<Login> {
                         }
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: autoLogin ? CurveType.emboss : CurveType.flat,
-                      bevel: 12,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -1002,13 +943,11 @@ class _LoginState extends State<Login> {
                       checkSsl = !checkSsl;
                     });
                   },
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: checkSsl ? CurveType.emboss : CurveType.flat,
-                    bevel: 12,
                     height: 60,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: Row(
@@ -1029,12 +968,10 @@ class _LoginState extends State<Login> {
             //   height: 20,
             // ),
 
-            NeuButton(
+            CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: () {
                 print(login);
                 if (!read) {
@@ -1042,7 +979,7 @@ class _LoginState extends State<Login> {
                   return;
                 }
                 if (login) {
-                  cancelToken?.cancel("取消登录");
+                  cancelToken.cancel("取消登录");
                   cancelToken = CancelToken();
                   setState(() {
                     login = false;
@@ -1081,7 +1018,7 @@ class _LoginState extends State<Login> {
                 onTap: () {
                   setState(() {
                     read = !read;
-                    Util.setStorage("read", read ? "1" : "0");
+                    SpUtil.putBool("read", read);
                   });
                 },
                 child: Row(

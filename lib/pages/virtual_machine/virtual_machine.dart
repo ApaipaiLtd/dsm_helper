@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class VirtualMachine extends StatefulWidget {
   @override
@@ -14,7 +13,7 @@ class VirtualMachine extends StatefulWidget {
 }
 
 class _VirtualMachineState extends State<VirtualMachine> {
-  Timer timer;
+  Timer? timer;
   bool loading = true;
   bool hostLoading = true;
   bool guestLoading = true;
@@ -53,12 +52,10 @@ class _VirtualMachineState extends State<VirtualMachine> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
             padding: EdgeInsets.all(22),
-            bevel: 5,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -80,7 +77,7 @@ class _VirtualMachineState extends State<VirtualMachine> {
                   Row(
                     children: [
                       Expanded(
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             Navigator.of(context).pop();
                             setState(() {
@@ -97,11 +94,8 @@ class _VirtualMachineState extends State<VirtualMachine> {
                               powerLoading[guest['id']] = false;
                             });
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             "确认",
@@ -113,15 +107,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
                         width: 16,
                       ),
                       Expanded(
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             "取消",
@@ -233,13 +224,11 @@ class _VirtualMachineState extends State<VirtualMachine> {
 
   Widget _buildHostItem(host) {
     List networks = host['nics'];
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
-      bevel: 20,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -269,10 +258,8 @@ class _VirtualMachineState extends State<VirtualMachine> {
                   child: Text("CPU："),
                 ),
                 Expanded(
-                  child: NeuCard(
-                    curveType: CurveType.flat,
-                    bevel: 10,
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -298,10 +285,8 @@ class _VirtualMachineState extends State<VirtualMachine> {
                   child: Text("RAM："),
                 ),
                 Expanded(
-                  child: NeuCard(
-                    curveType: CurveType.flat,
-                    bevel: 10,
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -331,14 +316,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
       powerLoading[guest['id']] = false;
     }
     List networks = guest['nics'];
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.only(bottom: 20),
-      curveType: CurveType.flat,
-      bevel: 20,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -369,7 +352,7 @@ class _VirtualMachineState extends State<VirtualMachine> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (powerLoading[guest['id']]) {
+                    if (powerLoading[guest['id']] == null || powerLoading[guest['id']]!) {
                       return;
                     }
                     if (guest['type'] == "healthy") {
@@ -379,12 +362,10 @@ class _VirtualMachineState extends State<VirtualMachine> {
                           builder: (context) {
                             return Material(
                               color: Colors.transparent,
-                              child: NeuCard(
+                              child: Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(22),
-                                bevel: 5,
-                                curveType: CurveType.emboss,
-                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                 child: SafeArea(
                                   top: false,
                                   child: Column(
@@ -397,16 +378,13 @@ class _VirtualMachineState extends State<VirtualMachine> {
                                       SizedBox(
                                         height: 12,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(guest, "shutdown");
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "关机",
@@ -416,16 +394,13 @@ class _VirtualMachineState extends State<VirtualMachine> {
                                       SizedBox(
                                         height: 22,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(guest, "poweroff");
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "强制关机",
@@ -435,16 +410,13 @@ class _VirtualMachineState extends State<VirtualMachine> {
                                       SizedBox(
                                         height: 22,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(guest, "reboot");
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "重新启动",
@@ -484,17 +456,15 @@ class _VirtualMachineState extends State<VirtualMachine> {
                       Util.toast("虚拟机状态未知，无法操作");
                     }
                   },
-                  child: NeuCard(
+                  child: Container(
                     padding: EdgeInsets.all(10),
                     // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     // padding: EdgeInsets.symmetric(vertical: 20),
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: guest['type'] == "healthy" ? (guest['status'] == "none" ? CurveType.emboss : CurveType.flat) : CurveType.convex,
-                    bevel: 20,
-                    child: powerLoading[guest['id']]
+                    child: powerLoading[guest['id']] == null || powerLoading[guest['id']]!
                         ? CupertinoActivityIndicator()
                         : Image.asset(
                             "assets/icons/shutdown.png",
@@ -515,10 +485,8 @@ class _VirtualMachineState extends State<VirtualMachine> {
                     child: Text("CPU："),
                   ),
                   Expanded(
-                    child: NeuCard(
-                      curveType: CurveType.flat,
-                      bevel: 10,
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -544,10 +512,8 @@ class _VirtualMachineState extends State<VirtualMachine> {
                     child: Text("RAM："),
                   ),
                   Expanded(
-                    child: NeuCard(
-                      curveType: CurveType.flat,
-                      bevel: 10,
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -574,14 +540,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
   }
 
   Widget _buildRepoItem(repo) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
       margin: EdgeInsets.only(bottom: 20),
-      bevel: 20,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -626,10 +590,8 @@ class _VirtualMachineState extends State<VirtualMachine> {
             Row(
               children: [
                 Expanded(
-                  child: NeuCard(
-                    curveType: CurveType.flat,
-                    bevel: 10,
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -655,19 +617,16 @@ class _VirtualMachineState extends State<VirtualMachine> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("Virtual Machine Manager"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -682,27 +641,23 @@ class _VirtualMachineState extends State<VirtualMachine> {
                     });
                     getHosts();
                   },
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: CurveType.flat,
                     margin: EdgeInsets.all(20),
-                    bevel: 20,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Row(
                         children: [
                           Expanded(
-                            child: NeuCard(
-                              decoration: NeumorphicDecoration(
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              curveType: _currentIndex == 0 ? CurveType.emboss : CurveType.flat,
                               padding: EdgeInsets.all(10),
-                              bevel: 20,
                               child: Column(
                                 children: [
                                   Row(
@@ -745,14 +700,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
                                 });
                                 getGuests();
                               },
-                              child: NeuCard(
-                                decoration: NeumorphicDecoration(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                curveType: _currentIndex == 1 ? CurveType.emboss : CurveType.flat,
                                 padding: EdgeInsets.all(10),
-                                bevel: 20,
                                 child: Column(
                                   children: [
                                     Row(
@@ -796,14 +749,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
                                 });
                                 getRepos();
                               },
-                              child: NeuCard(
-                                decoration: NeumorphicDecoration(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                curveType: _currentIndex == 2 ? CurveType.emboss : CurveType.flat,
                                 padding: EdgeInsets.all(10),
-                                bevel: 20,
                                 child: Column(
                                   children: [
                                     Row(
@@ -847,14 +798,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
                     children: [
                       hostLoading
                           ? Center(
-                              child: NeuCard(
+                              child: Container(
                                 padding: EdgeInsets.all(50),
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -869,14 +818,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
                             ),
                       guestLoading
                           ? Center(
-                              child: NeuCard(
+                              child: Container(
                                 padding: EdgeInsets.all(50),
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -891,14 +838,12 @@ class _VirtualMachineState extends State<VirtualMachine> {
                             ),
                       repoLoading
                           ? Center(
-                              child: NeuCard(
+                              child: Container(
                                 padding: EdgeInsets.all(50),
-                                curveType: CurveType.flat,
-                                decoration: NeumorphicDecoration(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                bevel: 20,
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),

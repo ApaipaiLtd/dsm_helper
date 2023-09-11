@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:sp_util/sp_util.dart';
 
 class AddServer extends StatefulWidget {
-  final int index;
+  final int? index;
   AddServer({this.index});
   @override
   _AddServerState createState() => _AddServerState();
@@ -32,18 +33,18 @@ class _AddServerState extends State<AddServer> {
   }
 
   getData() async {
-    String str = await Util.getStorage("terminal_servers");
+    String str = SpUtil.getString("terminal_servers")!;
     setState(() {
       if (str.isNotBlank) {
         servers = json.decode(str);
         if (widget.index != null) {
-          host = servers[widget.index]['host'];
+          host = servers[widget.index!]['host'];
           _hostController.text = host;
-          account = servers[widget.index]['account'];
+          account = servers[widget.index!]['account'];
           _accountController.text = account;
-          password = servers[widget.index]['password'];
+          password = servers[widget.index!]['password'];
           _passwordController.text = password;
-          port = servers[widget.index]['port'];
+          port = servers[widget.index!]['port'];
           _portController.text = port;
         }
       } else {
@@ -64,11 +65,11 @@ class _AddServerState extends State<AddServer> {
     if (widget.index == null) {
       servers.add(server);
     } else {
-      servers[widget.index] = server;
+      servers[widget.index!] = server;
     }
 
     // print(servers);
-    Util.setStorage("terminal_servers", jsonEncode(servers));
+    SpUtil.putString("terminal_servers", jsonEncode(servers));
     Navigator.of(context).pop();
   }
 
@@ -76,7 +77,6 @@ class _AddServerState extends State<AddServer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("添加服务器"),
       ),
       body: GestureDetector(
@@ -89,13 +89,11 @@ class _AddServerState extends State<AddServer> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: Row(
                 children: [
@@ -128,13 +126,11 @@ class _AddServerState extends State<AddServer> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: _accountController,
@@ -148,13 +144,11 @@ class _AddServerState extends State<AddServer> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: _passwordController,
@@ -172,12 +166,10 @@ class _AddServerState extends State<AddServer> {
             // SizedBox(
             //   height: 20,
             // ),
-            NeuButton(
+            CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: _save,
               child: Text(
                 ' 保存 ',

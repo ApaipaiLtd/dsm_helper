@@ -858,7 +858,7 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> setTerminal(bool ssh, bool telnet, String sshPort) async {
+  static Future<Map> setTerminal(bool? ssh, bool? telnet, String? sshPort) async {
     var data = {
       "api": '"SYNO.Core.Terminal"',
       "enable_telnet": telnet,
@@ -1801,28 +1801,28 @@ class Api {
     return await Util.post("entry.cgi", data: data);
   }
 
-  static Future<Map> fileServiceSave(Map smb, Map syslogClient, Map afp, Map nfs, Map ftp, Map sftp) async {
+  static Future<Map> fileServiceSave(Map? smb, Map? syslogClient, Map? afp, Map? nfs, Map? ftp, Map? sftp) async {
     List apis = [
-      {"api": "SYNO.Core.FileServ.SMB", "method": "set", "version": 3, "enable_samba": smb['enable_samba'], "workgroup": smb['workgroup'], "disable_shadow_copy": smb['disable_shadow_copy'], "smb_transfer_log_enable": syslogClient['cifs']},
-      {"api": "SYNO.Core.FileServ.AFP", "method": "set", "version": 1, "enable_afp": afp['enable_afp'], "afp_transfer_log_enable": syslogClient['afp']},
-      {"api": "SYNO.Core.FileServ.NFS", "method": "set", "version": 2, "enable_nfs": nfs['enable_nfs'], "enable_nfs_v4": nfs['enable_nfs_v4'], "enable_nfs_v4_1": nfs['enable_nfs_v4'], "nfs_v4_domain": nfs['nfs_v4_domain']},
-      {"api": "SYNO.Core.SyslogClient.FileTransfer", "method": "set", "version": 1, "cifs": syslogClient['cifs'], "afp": syslogClient['afp']},
+      {"api": "SYNO.Core.FileServ.SMB", "method": "set", "version": 3, "enable_samba": smb?['enable_samba'], "workgroup": smb?['workgroup'], "disable_shadow_copy": smb?['disable_shadow_copy'], "smb_transfer_log_enable": syslogClient?['cifs']},
+      {"api": "SYNO.Core.FileServ.AFP", "method": "set", "version": 1, "enable_afp": afp?['enable_afp'], "afp_transfer_log_enable": syslogClient?['afp']},
+      {"api": "SYNO.Core.FileServ.NFS", "method": "set", "version": 2, "enable_nfs": nfs?['enable_nfs'], "enable_nfs_v4": nfs?['enable_nfs_v4'], "enable_nfs_v4_1": nfs?['enable_nfs_v4'], "nfs_v4_domain": nfs?['nfs_v4_domain']},
+      {"api": "SYNO.Core.SyslogClient.FileTransfer", "method": "set", "version": 1, "cifs": syslogClient?['cifs'], "afp": syslogClient?['afp']},
       {
         "api": "SYNO.Core.FileServ.FTP",
         "method": "set",
         "version": "3",
-        "enable_ftp": ftp['enable_ftp'],
-        "enable_ftps": ftp['enable_ftps'],
-        "timeout": ftp['timeout'],
-        "portnum": ftp['portnum'],
-        "custom_port_range": ftp['custom_port_range'],
-        "use_ext_ip": ftp['use_ext_ip'],
-        "enable_fxp": ftp['enable_fxp'],
-        "enable_fips": ftp['enable_fips'],
-        "enable_ascii": ftp['enable_ascii'],
-        "utf8_mode": ftp['utf8_mode']
+        "enable_ftp": ftp?['enable_ftp'],
+        "enable_ftps": ftp?['enable_ftps'],
+        "timeout": ftp?['timeout'],
+        "portnum": ftp?['portnum'],
+        "custom_port_range": ftp?['custom_port_range'],
+        "use_ext_ip": ftp?['use_ext_ip'],
+        "enable_fxp": ftp?['enable_fxp'],
+        "enable_fips": ftp?['enable_fips'],
+        "enable_ascii": ftp?['enable_ascii'],
+        "utf8_mode": ftp?['utf8_mode']
       },
-      {"api": "SYNO.Core.FileServ.FTP.SFTP", "method": "set", "version": "1", "enable": sftp['enable'], "sftp_portnum": sftp['portnum'], "portnum": sftp['portnum']}
+      {"api": "SYNO.Core.FileServ.FTP.SFTP", "method": "set", "version": "1", "enable": sftp?['enable'], "sftp_portnum": sftp?['portnum'], "portnum": sftp?['portnum']}
     ];
     var result = await Util.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',

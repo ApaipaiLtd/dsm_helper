@@ -1,14 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:easy_app_installer/easy_app_installer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class Update extends StatefulWidget {
@@ -67,7 +63,6 @@ class _UpdateState extends State<Update> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "软件更新",
         ),
@@ -81,10 +76,8 @@ class _UpdateState extends State<Update> {
                   height: 50,
                 ),
                 Center(
-                  child: NeuCard(
-                    bevel: 20,
-                    curveType: CurveType.flat,
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(60),
                     ),
@@ -110,11 +103,10 @@ class _UpdateState extends State<Update> {
                 SizedBox(
                   height: 40,
                 ),
-                NeuCard(
+                Container(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                   margin: EdgeInsets.symmetric(horizontal: 20),
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -129,8 +121,8 @@ class _UpdateState extends State<Update> {
                         height: 10,
                       ),
                       Text(
-                        "${widget.data['buildUpdateDescription'] ?? "暂无更新日志"}",
-                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                        "${widget.data['buildUpdateDescription'] == "" ? "暂无更新日志" : widget.data['buildUpdateDescription']}",
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                       ),
                     ],
                   ),
@@ -153,17 +145,15 @@ class _UpdateState extends State<Update> {
           if (!downloading)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: NeuButton(
+              child: CupertinoButton(
                 onPressed: () {
                   download();
                 },
                 // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 padding: EdgeInsets.symmetric(vertical: 20),
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                bevel: 20,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+
                 child: Text(
                   "开始下载",
                   style: TextStyle(fontSize: 18),
@@ -173,10 +163,8 @@ class _UpdateState extends State<Update> {
           if (downloading)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: NeuCard(
-                curveType: CurveType.flat,
-                bevel: 10,
-                decoration: NeumorphicDecoration(
+              child: Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),

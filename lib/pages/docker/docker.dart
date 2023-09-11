@@ -4,11 +4,9 @@ import 'package:dsm_helper/util/log.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Docker extends StatefulWidget {
   final String title;
@@ -18,12 +16,12 @@ class Docker extends StatefulWidget {
 }
 
 class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List containers = [];
   List images = [];
   List registries = [];
   Map<String, bool> powerLoading = {};
-  Map utilization;
+  Map? utilization;
   bool containerLoading = true;
   bool imageLoading = true;
   @override
@@ -107,19 +105,17 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
     }
   }
 
-  power(container, String action, {bool preserveProfile}) async {
+  power(container, String action, {bool? preserveProfile}) async {
     if (action == "signal" || action == "delete") {
       showCupertinoModalPopup(
         context: context,
         builder: (context) {
           return Material(
             color: Colors.transparent,
-            child: NeuCard(
+            child: Container(
               width: double.infinity,
               padding: EdgeInsets.all(22),
-              bevel: 5,
-              curveType: CurveType.emboss,
-              decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
               child: SafeArea(
                 top: false,
                 child: Column(
@@ -135,7 +131,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                     Text(
                       action == "signal"
                           ? "是否确定要强制停止容器？所有未保存的数据将丢失！"
-                          : preserveProfile
+                          : preserveProfile == true
                               ? "容器 ${container['name']} 将被清除。清除后，容器中的所有数据将丢失。是否确定继续？"
                               : "容器 ${container['name']} 将被删除。删除后，容器中的所有数据将丢失。是否确定继续？",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
@@ -146,7 +142,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                     Row(
                       children: [
                         Expanded(
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () async {
                               Navigator.of(context).pop();
                               setState(() {
@@ -163,11 +159,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                 powerLoading[container['id']] = false;
                               });
                             },
-                            decoration: NeumorphicDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 5,
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "确认",
@@ -179,15 +172,12 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                           width: 16,
                         ),
                         Expanded(
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
-                            decoration: NeumorphicDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(25),
-                            ),
-                            bevel: 5,
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "取消",
@@ -236,13 +226,12 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
             },
             settings: RouteSettings(name: "docker_container_detail")));
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
         margin: EdgeInsets.only(bottom: 20),
         child: Padding(
           padding: EdgeInsets.all(20),
@@ -297,7 +286,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (powerLoading[container['id']]) {
+                      if (powerLoading[container['id']]== null || powerLoading[container['id']]!) {
                         return;
                       }
 
@@ -306,12 +295,10 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                         builder: (context) {
                           return Material(
                             color: Colors.transparent,
-                            child: NeuCard(
+                            child: Container(
                               width: double.infinity,
                               padding: EdgeInsets.all(22),
-                              bevel: 5,
-                              curveType: CurveType.emboss,
-                              decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                               child: SafeArea(
                                 top: false,
                                 child: Column(
@@ -325,16 +312,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                       height: 12,
                                     ),
                                     if (container['status'] == "stopped") ...[
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(container, "start");
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "启动",
@@ -344,16 +328,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                       SizedBox(
                                         height: 22,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(container, "delete", preserveProfile: true);
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "清除",
@@ -363,16 +344,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                       SizedBox(
                                         height: 22,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(container, "delete", preserveProfile: false);
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "删除",
@@ -380,16 +358,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                         ),
                                       ),
                                     ] else ...[
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(container, "stop");
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "停止",
@@ -399,16 +374,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                       SizedBox(
                                         height: 22,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(container, "signal");
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "强制停止",
@@ -418,16 +390,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                       SizedBox(
                                         height: 22,
                                       ),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           power(container, "restart");
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "重新启动",
@@ -446,17 +415,15 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                         },
                       );
                     },
-                    child: NeuCard(
+                    child: Container(
                       padding: EdgeInsets.all(10),
                       // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       // padding: EdgeInsets.symmetric(vertical: 20),
-                      decoration: NeumorphicDecoration(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: container['status'] == "running" ? CurveType.emboss : CurveType.flat,
-                      bevel: 20,
-                      child: powerLoading[container['id']]
+                      child: powerLoading[container['id']] == null || powerLoading[container['id']]!
                           ? CupertinoActivityIndicator()
                           : Image.asset(
                               "assets/icons/shutdown.png",
@@ -488,10 +455,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                           SizedBox(
                             height: 10,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
-                            bevel: 10,
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -527,10 +492,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                           SizedBox(
                             height: 10,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
-                            bevel: 10,
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -558,13 +521,11 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildImageItem(image) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -614,20 +575,17 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(widget.title),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
             child: TabBar(
               isScrollable: false,
               controller: _tabController,
@@ -660,14 +618,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
               children: [
                 containerLoading
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),
@@ -679,13 +636,12 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                           Row(
                             children: [
                               Expanded(
-                                child: NeuCard(
-                                  curveType: CurveType.flat,
-                                  decoration: NeumorphicDecoration(
+                                child: Container(
+                                  
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  bevel: 20,
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: Column(
@@ -709,10 +665,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        NeuCard(
-                                          curveType: CurveType.flat,
-                                          bevel: 10,
-                                          decoration: NeumorphicDecoration(
+                                        Container(
+                                          decoration: BoxDecoration(
                                             color: Theme.of(context).scaffoldBackgroundColor,
                                             borderRadius: BorderRadius.circular(8),
                                           ),
@@ -721,7 +675,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                             changeColorValue: 90,
                                             changeProgressColor: Colors.red,
                                             progressColor: Colors.blue,
-                                            currentValue: utilization['cpu']['user_load'] + utilization['cpu']['system_load'],
+                                            currentValue: utilization!['cpu']['user_load'] + utilization!['cpu']['system_load'],
                                             displayText: '%',
                                           ),
                                         ),
@@ -734,13 +688,12 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                 width: 20,
                               ),
                               Expanded(
-                                child: NeuCard(
-                                  curveType: CurveType.flat,
-                                  decoration: NeumorphicDecoration(
+                                child: Container(
+                                  
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  bevel: 20,
                                   child: Padding(
                                     padding: EdgeInsets.all(20),
                                     child: Column(
@@ -764,10 +717,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        NeuCard(
-                                          curveType: CurveType.flat,
-                                          bevel: 10,
-                                          decoration: NeumorphicDecoration(
+                                        Container(
+                                          decoration: BoxDecoration(
                                             color: Theme.of(context).scaffoldBackgroundColor,
                                             borderRadius: BorderRadius.circular(8),
                                           ),
@@ -776,7 +727,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                             changeColorValue: 90,
                                             changeProgressColor: Colors.red,
                                             progressColor: Colors.blue,
-                                            currentValue: utilization['memory']['real_usage'],
+                                            currentValue: utilization!['memory']['real_usage'],
                                             displayText: '%',
                                           ),
                                         ),
@@ -795,14 +746,13 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                       ),
                 imageLoading
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),

@@ -1,11 +1,9 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class SshSetting extends StatefulWidget {
   @override
@@ -13,13 +11,13 @@ class SshSetting extends StatefulWidget {
 }
 
 class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   TextEditingController _portController = TextEditingController();
   bool loading = true;
-  bool ssh;
-  bool telnet;
+  bool? ssh;
+  bool? telnet;
 
-  String sshPort;
+  String sshPort = "";
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
@@ -34,7 +32,7 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
         loading = false;
         ssh = res['data']['enable_ssh'];
         telnet = res['data']['enable_telnet'];
-        sshPort = res['data']['ssh_port'].toString() ?? "";
+        sshPort = res['data']['ssh_port'].toString();
         _portController.value = TextEditingValue(text: sshPort);
       });
     } else {
@@ -47,19 +45,16 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("终端机和SNMP"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -67,15 +62,13 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
                   child: TabBar(
                     isScrollable: false,
                     controller: _tabController,
@@ -108,16 +101,14 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                telnet = !telnet;
+                                telnet = !telnet!;
                               });
                             },
-                            child: NeuCard(
-                              decoration: NeumorphicDecoration(
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              curveType: telnet ? CurveType.emboss : CurveType.flat,
-                              bevel: 20,
                               child: Padding(
                                 padding: EdgeInsets.all(20),
                                 child: Row(
@@ -127,7 +118,7 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                                       style: TextStyle(fontSize: 16),
                                     ),
                                     Spacer(),
-                                    if (telnet)
+                                    if (telnet == true)
                                       Icon(
                                         CupertinoIcons.checkmark_alt,
                                         color: Color(0xffff9813),
@@ -143,16 +134,14 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                ssh = !ssh;
+                                ssh = !ssh!;
                               });
                             },
-                            child: NeuCard(
-                              decoration: NeumorphicDecoration(
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              curveType: ssh ? CurveType.emboss : CurveType.flat,
-                              bevel: 20,
                               child: Padding(
                                 padding: EdgeInsets.all(20),
                                 child: Row(
@@ -162,7 +151,7 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                                       style: TextStyle(fontSize: 16),
                                     ),
                                     Spacer(),
-                                    if (ssh)
+                                    if (ssh == true)
                                       Icon(
                                         CupertinoIcons.checkmark_alt,
                                         color: Color(0xffff9813),
@@ -175,13 +164,11 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
-                            curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             child: TextField(
                               controller: _portController,
@@ -199,14 +186,12 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                           SizedBox(
                             height: 20,
                           ),
-                          NeuButton(
+                          CupertinoButton(
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
                             onPressed: () async {
-                              var res = await Api.setTerminal(ssh, telnet, sshPort);
+                              var res = await Api.setTerminal(ssh!, telnet!, sshPort);
                               if (res['success']) {
                                 Util.vibrate(FeedbackType.light);
                                 Util.toast("应用成功");

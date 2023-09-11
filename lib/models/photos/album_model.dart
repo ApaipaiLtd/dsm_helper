@@ -109,7 +109,7 @@ class AlbumModel {
   num? endTime;
   bool? freezeAlbum;
   num? id;
-  num? itemCount;
+  int? itemCount;
   String? name;
   num? ownerUserId;
   String? passphrase;
@@ -136,7 +136,7 @@ class AlbumModel {
     num? endTime,
     bool? freezeAlbum,
     num? id,
-    num? itemCount,
+    int? itemCount,
     String? name,
     num? ownerUserId,
     String? passphrase,

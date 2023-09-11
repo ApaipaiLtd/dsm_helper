@@ -1,11 +1,12 @@
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:sp_util/sp_util.dart';
+
 
 class Logout extends StatefulWidget {
-  const Logout({Key key}) : super(key: key);
+  const Logout({super.key});
 
   @override
   _LogoutState createState() => _LogoutState();
@@ -18,7 +19,7 @@ class _LogoutState extends State<Logout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text("注销账号"),
       ),
       body: ListView(
@@ -28,7 +29,7 @@ class _LogoutState extends State<Logout> {
             onTap: () {
               setState(() {
                 read = !read;
-                Util.setStorage("read", read ? "1" : "0");
+                SpUtil.putBool("read", read);
               });
             },
             child: Row(
@@ -70,12 +71,10 @@ class _LogoutState extends State<Logout> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
-              ),
               onPressed: () {
                 Util.toast("我们已收到您的账号注销申请，将在3个工作日内处理。");
                 Navigator.of(context).pop();

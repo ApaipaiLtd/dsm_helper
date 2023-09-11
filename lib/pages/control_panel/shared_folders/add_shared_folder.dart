@@ -1,15 +1,13 @@
 import 'dart:math';
 
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class AddSharedFolders extends StatefulWidget {
   final List volumes;
-  final Map folder;
+  final Map? folder;
   AddSharedFolders(this.volumes, {this.folder});
   @override
   _AddSharedFoldersState createState() => _AddSharedFoldersState();
@@ -26,7 +24,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   int selectedUnitIndex = 1;
   TextEditingController unitController = TextEditingController();
   bool creating = false;
-  String oldName;
+  String oldName = "";
   String name = "";
   String desc = "";
   int selectedVolumeIndex = 0;
@@ -40,13 +38,13 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   String password = "";
   String confirmPassword = "";
   bool enableShareQuota = false;
-  num shareQuotaUsed;
+  num? shareQuotaUsed;
   String shareQuota = "";
   bool loading = false;
   @override
   void initState() {
     if (widget.folder != null) {
-      getFolderDetail(widget.folder['name']);
+      getFolderDetail(widget.folder!['name']);
     }
 
     volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
@@ -177,7 +175,6 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "${widget.folder != null ? '修改' : '新增'}共享文件夹",
         ),
@@ -195,13 +192,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
-                    decoration: NeumorphicDecoration(
+                  Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       controller: nameController,
@@ -215,13 +210,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
-                    decoration: NeumorphicDecoration(
+                  Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       controller: descController,
@@ -243,11 +236,9 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         builder: (context) {
                           return Material(
                             color: Colors.transparent,
-                            child: NeuCard(
+                            child: Container(
                               width: double.infinity,
-                              bevel: 20,
-                              curveType: CurveType.emboss,
-                              decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                               child: SafeArea(
                                 top: false,
                                 child: Padding(
@@ -265,7 +256,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                       ...widget.volumes.map((volume) {
                                         return Padding(
                                           padding: EdgeInsets.only(bottom: 20),
-                                          child: NeuButton(
+                                          child: CupertinoButton(
                                             onPressed: () {
                                               setState(() {
                                                 selectedVolumeIndex = widget.volumes.indexOf(volume);
@@ -273,11 +264,8 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                               volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
                                               Navigator.of(context).pop();
                                             },
-                                            decoration: NeumorphicDecoration(
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(25),
-                                            ),
-                                            bevel: 20,
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
                                             padding: EdgeInsets.symmetric(vertical: 10),
                                             child: Container(
                                               padding: EdgeInsets.only(left: 20),
@@ -299,15 +287,12 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                           ),
                                         );
                                       }).toList(),
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 20,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "取消",
@@ -326,13 +311,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         },
                       );
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
-                      curveType: CurveType.flat,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: volumeController,
@@ -354,13 +337,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         hidden = !hidden;
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: hidden ? CurveType.emboss : CurveType.flat,
-                      bevel: 20,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -386,13 +367,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         hideUnreadable = !hideUnreadable;
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: hideUnreadable ? CurveType.emboss : CurveType.flat,
-                      bevel: 20,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -422,13 +401,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                               recycleBin = !recycleBin;
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: recycleBin ? CurveType.emboss : CurveType.flat,
-                            bevel: 20,
                             height: 60,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             child: Row(
@@ -464,17 +441,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                               });
                             }
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: !recycleBin
-                                ? CurveType.convex
-                                : recycleBinAdminOnly
-                                    ? CurveType.emboss
-                                    : CurveType.flat,
-                            bevel: 20,
                             height: 60,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             child: Row(
@@ -508,13 +479,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         encryption = !encryption;
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: encryption ? CurveType.emboss : CurveType.flat,
-                      bevel: 20,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -537,13 +506,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                     Row(
                       children: [
                         Expanded(
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
-                            curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             child: TextField(
                               onChanged: (v) => password = v,
@@ -560,13 +527,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                           width: 20,
                         ),
                         Expanded(
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
-                            curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             child: TextField(
                               onChanged: (v) => confirmPassword = v,
@@ -594,17 +559,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         });
                       }
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: widget.volumes[selectedVolumeIndex]['fs_type'] != "btrfs"
-                          ? CurveType.convex
-                          : enableShareCow
-                              ? CurveType.emboss
-                              : CurveType.flat,
-                      bevel: 20,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -632,17 +591,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         });
                       }
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: widget.volumes[selectedVolumeIndex]['fs_type'] != "btrfs"
-                          ? CurveType.convex
-                          : enableShareCompress
-                              ? CurveType.emboss
-                              : CurveType.flat,
-                      bevel: 20,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -670,17 +623,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                         });
                       }
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: widget.volumes[selectedVolumeIndex]['fs_type'] != "btrfs"
-                          ? CurveType.convex
-                          : enableShareQuota
-                              ? CurveType.emboss
-                              : CurveType.flat,
-                      bevel: 20,
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -688,7 +635,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                           Text("启用共享文件夹配额"),
                           if (shareQuotaUsed != null)
                             Text(
-                              "(已使用${Util.formatSize((shareQuotaUsed * 1024 * 1024).toInt())})",
+                              "(已使用${Util.formatSize((shareQuotaUsed! * 1024 * 1024).toInt())})",
                               style: TextStyle(color: Colors.blue),
                             ),
                           Spacer(),
@@ -709,13 +656,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                       children: [
                         Expanded(
                           flex: 2,
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
-                            curveType: CurveType.flat,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                             child: TextField(
                               onChanged: (v) => shareQuota = v,
@@ -743,11 +688,9 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                 builder: (context) {
                                   return Material(
                                     color: Colors.transparent,
-                                    child: NeuCard(
+                                    child: Container(
                                       width: double.infinity,
-                                      bevel: 20,
-                                      curveType: CurveType.emboss,
-                                      decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                       child: SafeArea(
                                         top: false,
                                         child: Padding(
@@ -765,7 +708,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                               ...units.map((unit) {
                                                 return Padding(
                                                   padding: EdgeInsets.only(bottom: 20),
-                                                  child: NeuButton(
+                                                  child: CupertinoButton(
                                                     onPressed: () {
                                                       setState(() {
                                                         selectedUnitIndex = units.indexOf(unit);
@@ -773,11 +716,8 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                                       unitController.value = TextEditingValue(text: units[selectedUnitIndex]);
                                                       Navigator.of(context).pop();
                                                     },
-                                                    decoration: NeumorphicDecoration(
-                                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                                      borderRadius: BorderRadius.circular(25),
-                                                    ),
-                                                    bevel: 20,
+                                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                                    borderRadius: BorderRadius.circular(25),
                                                     padding: EdgeInsets.symmetric(vertical: 20),
                                                     child: Container(
                                                       width: double.infinity,
@@ -789,15 +729,12 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                                   ),
                                                 );
                                               }).toList(),
-                                              NeuButton(
+                                              CupertinoButton(
                                                 onPressed: () async {
                                                   Navigator.of(context).pop();
                                                 },
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 20,
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
                                                 padding: EdgeInsets.symmetric(vertical: 10),
                                                 child: Text(
                                                   "取消",
@@ -816,13 +753,11 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                 },
                               );
                             },
-                            child: NeuCard(
-                              decoration: NeumorphicDecoration(
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              bevel: 20,
-                              curveType: CurveType.flat,
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                               child: TextField(
                                 controller: unitController,
@@ -844,12 +779,10 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
             SafeArea(
               child: Padding(
                 padding: EdgeInsets.all(20),
-                child: NeuButton(
+                child: CupertinoButton(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
                   onPressed: _save,
                   child: creating
                       ? Center(

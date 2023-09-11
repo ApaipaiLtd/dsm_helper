@@ -7,14 +7,13 @@ import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Timeline extends StatefulWidget {
-  const Timeline(this.isTeam, {this.type, this.geocodingId, this.generalTagId, this.recentlyAdd: false, Key key}) : super(key: key);
+  const Timeline(this.isTeam, {this.type, this.geocodingId, this.generalTagId, this.recentlyAdd = false, super.key});
   final bool isTeam;
-  final String type;
-  final int geocodingId;
-  final int generalTagId;
+  final String? type;
+  final num? geocodingId;
+  final num? generalTagId;
   final bool recentlyAdd;
   @override
   State<Timeline> createState() => TimelineState();
@@ -23,7 +22,7 @@ class Timeline extends StatefulWidget {
 class TimelineState extends State<Timeline> {
   ScrollController _scrollController = ScrollController();
   bool loading = true;
-  double photoWidth;
+  double? photoWidth;
   List<TimelineModel> timelines = [];
   List<Day> days = [];
   List<int> itemTypes = [];
@@ -35,7 +34,7 @@ class TimelineState extends State<Timeline> {
     super.initState();
   }
 
-  Future getData({bool isTeam}) async {
+  Future getData({required bool isTeam}) async {
     setState(() {
       this.isTeam = isTeam;
       loading = true;
@@ -50,13 +49,13 @@ class TimelineState extends State<Timeline> {
       recentlyAdd: widget.recentlyAdd,
     );
     for (var timeline in timelines) {
-      days.addAll(timeline.days);
+      days.addAll(timeline.days!);
     }
     for (int i = 0; i < days.length; i++) {
-      int rowCount = (days[i].itemCount / 4).ceil();
-      double height = 40 + rowCount * photoWidth + (rowCount - 1) * 2;
+      int rowCount = (days[i].itemCount! / 4).ceil();
+      double height = 40 + rowCount * photoWidth! + (rowCount - 1) * 2;
       days[i].startPosition = i == 0 ? 0 : days[i - 1].endPosition;
-      days[i].endPosition = days[i].startPosition + height;
+      days[i].endPosition = days[i].startPosition! + height;
     }
     setState(() {
       loading = false;
@@ -70,14 +69,12 @@ class TimelineState extends State<Timeline> {
     }
     return loading
         ? Center(
-            child: NeuCard(
+            child: Container(
               padding: EdgeInsets.all(50),
-              curveType: CurveType.flat,
-              decoration: NeumorphicDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
               child: CupertinoActivityIndicator(
                 radius: 14,
               ),
@@ -86,29 +83,47 @@ class TimelineState extends State<Timeline> {
         : days.length > 0
             ? DraggableScrollbar.semicircle(
                 labelTextBuilder: (position) {
-                  var line = days.where((day) => day.startPosition <= position && day.endPosition >= position).toList();
+                  var line = days.where((day) => day.startPosition! <= position && day.endPosition! >= position).toList();
                   if (line.length > 0) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                    return Text.rich(
+                      TextSpan(
                         children: [
-                          Text(
-                            "${line[0].month}月",
+                          TextSpan(
+                            text: "${line[0].month}月",
                             style: TextStyle(fontSize: 30),
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("${line[0].day.toString().padLeft(2, "0")}日"),
-                              Text("${line[0].year}"),
-                            ],
-                          )
+                          TextSpan(
+                            text: "${line[0].day.toString().padLeft(2, "0")}日",
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          TextSpan(
+                            text: "${line[0].year}",
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ],
                       ),
                     );
+                    // return Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //       Text(
+                    //         "${line[0].month}月",
+                    //         style: TextStyle(fontSize: 30),
+                    //       ),
+                    //       Column(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         children: [
+                    //           Text("${line[0].day.toString().padLeft(2, "0")}日"),
+                    //           Text("${line[0].year}"),
+                    //         ],
+                    //       )
+                    //     ],
+                    //   ),
+                    // );
                   } else {
-                    return null;
+                    return Text("");
                   }
                 },
                 labelConstraints: BoxConstraints(minHeight: 60, maxHeight: 60, minWidth: 140, maxWidth: 140),
@@ -127,7 +142,7 @@ class TimelineState extends State<Timeline> {
   }
 
   Widget _buildTimelineItem(Day day) {
-    if (day.photos == null) {
+    if (day.photos.isEmpty) {
       day
           .fetchPhotos(
         isTeam: isTeam,
@@ -162,8 +177,8 @@ class TimelineState extends State<Timeline> {
         Wrap(
           spacing: 2,
           runSpacing: 2,
-          children: day.photos == null
-              ? List.generate(day.itemCount, (index) {
+          children: day.photos.isEmpty
+              ? List.generate(day.itemCount!, (index) {
                   return Container(
                     color: Color(0xffE9E9E9),
                     width: photoWidth,
@@ -232,7 +247,7 @@ class TimelineState extends State<Timeline> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "${photo.additional.videoMeta.hours.toString().padLeft(2, "0")}:${photo.additional.videoMeta.minutes.toString().padLeft(2, "0")}:${photo.additional.videoMeta.seconds.toString().padLeft(2, "0")}",
+                      "${photo.additional?.videoMeta?.hours.toString().padLeft(2, "0")}:${photo.additional?.videoMeta?.minutes.toString().padLeft(2, "0")}:${photo.additional?.videoMeta?.seconds.toString().padLeft(2, "0")}",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],

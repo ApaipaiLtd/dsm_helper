@@ -27,7 +27,7 @@ class PhotoModel {
     this.type,
     this.additional,
   });
-  static Future<List<PhotoModel>> fetch({List<String> additional = const [], bool isTeam = false, int? albumId, int? geocodingId, String? folderId, String? type, int? limit}) async {
+  static Future<List<PhotoModel>> fetch({List<String> additional = const [], bool isTeam = false, num? albumId, num? geocodingId, String? folderId, String? type, int? limit}) async {
     Map<String, dynamic> data = {
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Item',
       "method": 'list',
@@ -496,9 +496,9 @@ class VideoMeta {
     audioChannel = json['audio_channel'];
   }
   num? duration;
-  int? get hours => duration !=null? duration! ~/ 1000 ~/ 60 ~/ 60 : null;
-  int? get minutes => duration !=null? duration! ~/ 1000 ~/ 60 % 60 : null;
-  int? get seconds => duration !=null? duration! ~/ 1000 % 60: null;
+  int? get hours => duration != null ? duration! ~/ 1000 ~/ 60 ~/ 60 : null;
+  int? get minutes => duration != null ? duration! ~/ 1000 ~/ 60 % 60 : null;
+  int? get seconds => duration != null ? duration! ~/ 1000 % 60 : null;
   num? orientation;
   num? frameBitrate;
   num? videoBitrate;

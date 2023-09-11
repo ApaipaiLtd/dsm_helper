@@ -3,13 +3,13 @@ import 'package:dsm_helper/pages/photos/folder.dart';
 import 'package:dsm_helper/pages/photos/photo_tab.dart';
 import 'package:dsm_helper/pages/photos/share_tab.dart';
 import 'package:dsm_helper/pages/photos/timeline.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class Photos extends StatefulWidget {
-  const Photos({Key key}) : super(key: key);
+  const Photos({super.key});
 
   @override
   State<Photos> createState() => _PhotosState();
@@ -32,39 +32,36 @@ class _PhotosState extends State<Photos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
-        title: NeuSwitch(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          thumbColor: Theme.of(context).scaffoldBackgroundColor,
-          children: {
-            0: Text("图片"),
-            1: Text("相册"),
-            2: Text("共享"),
-          },
-          groupValue: currentIndex,
-          onValueChanged: (v) {
-            setState(() {
-              currentIndex = v;
-            });
-          },
-        ),
+
+        // title: NeuSwitch(
+        //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        //   thumbColor: Theme.of(context).scaffoldBackgroundColor,
+        //   children: {
+        //     0: Text("图片"),
+        //     1: Text("相册"),
+        //     2: Text("共享"),
+        //   },
+        //   groupValue: currentIndex,
+        //   onValueChanged: (v) {
+        //     setState(() {
+        //       currentIndex = v;
+        //     });
+        //   },
+        // ),
         actions: [
           if (currentIndex != 2)
             Padding(
               padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-              child: NeuButton(
+              child: CupertinoButton(
                 onPressed: () {
                   showCupertinoModalPopup(
                     context: context,
                     builder: (context) {
                       return Material(
                         color: Colors.transparent,
-                        child: NeuCard(
+                        child: Container(
                           width: double.infinity,
-                          // padding: EdgeInsets.all(22),
-                          bevel: 5,
-                          curveType: CurveType.emboss,
-                          decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                          decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                           child: SafeArea(
                             top: false,
                             child: Padding(
@@ -72,24 +69,22 @@ class _PhotosState extends State<Photos> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  NeuButton(
+                                  CupertinoButton(
                                     onPressed: () async {
                                       setState(() {
                                         isTeam = !isTeam;
                                       });
                                       if (isTimeline) {
-                                        timelineKey.currentState.getData(isTeam: isTeam);
+                                        timelineKey.currentState?.getData(isTeam: isTeam);
                                       } else {
-                                        folderKey.currentState.getData(isTeam: isTeam);
+                                        folderKey.currentState?.getData(isTeam: isTeam);
                                       }
-                                      albumTabKey.currentState.getData(isTeam: isTeam);
+                                      albumTabKey.currentState?.getData(isTeam: isTeam);
                                       Navigator.of(context).pop();
                                     },
-                                    decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    bevel: 5,
+
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
                                       "切换到${isTeam ? '个人空间' : '共享空间'}",
@@ -100,23 +95,21 @@ class _PhotosState extends State<Photos> {
                                     height: 16,
                                   ),
                                   if (currentIndex == 0) ...[
-                                    NeuButton(
+                                    CupertinoButton(
                                       onPressed: () async {
                                         Navigator.of(context).pop();
                                         setState(() {
                                           isTimeline = !isTimeline;
                                         });
                                         if (isTimeline) {
-                                          timelineKey.currentState.getData(isTeam: isTeam);
+                                          timelineKey.currentState?.getData(isTeam: isTeam);
                                         } else {
-                                          folderKey.currentState.getData(isTeam: isTeam);
+                                          folderKey.currentState?.getData(isTeam: isTeam);
                                         }
                                       },
-                                      decoration: NeumorphicDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
+
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: Text(
                                         "切换到${isTimeline ? '文件夹' : '时间线'}视图",
@@ -127,15 +120,13 @@ class _PhotosState extends State<Photos> {
                                       height: 16,
                                     ),
                                   ],
-                                  NeuButton(
+                                  CupertinoButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                     },
-                                    decoration: NeumorphicDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    bevel: 5,
+
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
                                       "取消",
@@ -155,11 +146,9 @@ class _PhotosState extends State<Photos> {
                   );
                 },
                 padding: EdgeInsets.all(10),
-                decoration: NeumorphicDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
-                ),
-                bevel: 5,
+
                 child: Image.asset(
                   "assets/icons/actions.png",
                   width: 20,

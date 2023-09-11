@@ -1,11 +1,10 @@
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:provider/provider.dart';
+import 'package:sp_util/sp_util.dart';
 
 class WidgetSetting extends StatefulWidget {
   final List widgets;
@@ -41,24 +40,8 @@ class _WidgetSettingState extends State<WidgetSetting> {
   List selectedWidgets = [];
   @override
   void initState() {
-    Util.getStorage("show_shortcut").then((showShortcutStr) {
-      setState(() {
-        if (showShortcutStr != null) {
-          showShortcut = showShortcutStr == "1";
-        } else {
-          showShortcut = true;
-        }
-      });
-    });
-    Util.getStorage("show_wallpaper").then((showWallpaperStr) {
-      setState(() {
-        if (showWallpaperStr != null) {
-          showWallpaper = showWallpaperStr == "1";
-        } else {
-          showWallpaper = true;
-        }
-      });
-    });
+    showShortcut = SpUtil.getBool("show_shortcut", defValue: true)!;
+    showWallpaper = SpUtil.getBool("show_wallpaper", defValue: true)!;
     setState(() {
       selectedWidgets.addAll(widget.widgets);
       showWidgets.addAll(widget.widgets);
@@ -77,18 +60,14 @@ class _WidgetSettingState extends State<WidgetSetting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("小组件设置"),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
+            child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-              ),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () async {
                 List saveWidgets = [];
                 showWidgets.forEach((widget) {
@@ -130,13 +109,11 @@ class _WidgetSettingState extends State<WidgetSetting> {
                   });
                 });
               },
-              child: NeuCard(
-                decoration: NeumorphicDecoration(
+              child: Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                curveType: showShortcut ? CurveType.emboss : CurveType.flat,
-                bevel: 20,
                 child: Padding(
                   padding: EdgeInsets.all(20),
                   child: Column(
@@ -179,13 +156,11 @@ class _WidgetSettingState extends State<WidgetSetting> {
                   });
                 });
               },
-              child: NeuCard(
-                decoration: NeumorphicDecoration(
+              child: Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                curveType: showWallpaper ? CurveType.emboss : CurveType.flat,
-                bevel: 20,
                 child: Padding(
                   padding: EdgeInsets.all(20),
                   child: Column(
@@ -235,14 +210,12 @@ class _WidgetSettingState extends State<WidgetSetting> {
                       print(showWidgets);
                     });
                   },
-                  child: NeuCard(
+                  child: Container(
                     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    curveType: CurveType.flat,
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
                     child: Padding(
                       padding: EdgeInsets.all(20),
                       child: Row(
@@ -253,14 +226,12 @@ class _WidgetSettingState extends State<WidgetSetting> {
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            curveType: selectedWidgets.contains(widget) ? CurveType.emboss : CurveType.flat,
                             padding: EdgeInsets.all(5),
-                            bevel: 5,
                             child: SizedBox(
                               width: 20,
                               height: 20,

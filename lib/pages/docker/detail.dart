@@ -2,10 +2,8 @@ import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class ContainerDetail extends StatefulWidget {
   final String name;
@@ -15,7 +13,7 @@ class ContainerDetail extends StatefulWidget {
 }
 
 class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   ScrollController _scrollController = ScrollController();
   bool loading = true;
   List ports = [];
@@ -29,7 +27,7 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
   int cpuPriority = 0;
   String status = "";
   int upTime = 0;
-  Map shortcut;
+  Map? shortcut;
   List logDates = [];
   List logs = [];
   String selectedDate = "";
@@ -218,15 +216,13 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
   }
 
   Widget _buildProcessItem(process) {
-    return NeuCard(
+    return Container(
       width: double.infinity,
-      decoration: NeumorphicDecoration(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.symmetric(horizontal: 20),
-      curveType: CurveType.flat,
-      bevel: 10,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -265,14 +261,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
   }
 
   Widget _buildLogItem(log) {
-    return NeuCard(
+    return Container(
       width: double.infinity,
-      decoration: NeumorphicDecoration(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
-      bevel: 10,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -307,14 +301,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
         });
         getLog();
       },
-      child: NeuCard(
+      child: Container(
         width: double.infinity,
-        decoration: NeumorphicDecoration(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        curveType: date == selectedDate ? CurveType.emboss : CurveType.flat,
-        bevel: 10,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Column(
@@ -337,19 +329,17 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(widget.name),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -357,15 +347,14 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
+
                   child: TabBar(
                     isScrollable: false,
                     controller: _tabController,
@@ -398,14 +387,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                     children: [
                       ListView(
                         children: [
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Column(
@@ -436,11 +423,11 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                                       Text("快捷方式："),
                                       Expanded(
                                         child: Text(
-                                          shortcut['enable_shortcut']
-                                              ? (shortcut['enable_status_page']
+                                          shortcut!['enable_shortcut']
+                                              ? (shortcut!['enable_status_page']
                                                   ? "状态页面"
-                                                  : shortcut['enable_web_page']
-                                                      ? shortcut['web_page_url']
+                                                  : shortcut!['enable_web_page']
+                                                      ? shortcut!['web_page_url']
                                                       : "")
                                               : "无",
                                           maxLines: 1,
@@ -498,14 +485,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Column(
@@ -545,14 +530,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Column(
@@ -594,14 +577,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Column(
@@ -635,14 +616,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Column(
@@ -676,14 +655,12 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Column(

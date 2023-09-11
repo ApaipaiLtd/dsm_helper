@@ -4,10 +4,9 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/strings.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class TaskManager extends StatefulWidget {
   @override
@@ -15,11 +14,11 @@ class TaskManager extends StatefulWidget {
 }
 
 class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List processes = [];
   List services = [];
   List slices = [];
-  Timer timer;
+  Timer? timer;
   bool loading = true;
   @override
   void initState() {
@@ -73,14 +72,13 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
       title = service['display_name'];
     }
 
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(20),
-      curveType: CurveType.flat,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -102,14 +100,13 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
     if (slice['cpu_time'] is num) {
       cpuTime = Util.timeLong(slice['cpu_time'].toInt());
     }
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(20),
-      curveType: CurveType.flat,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,14 +143,13 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
   }
 
   Widget _buildProcessItem(process) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(20),
-      curveType: CurveType.flat,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -200,19 +196,16 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("任务管理器"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),

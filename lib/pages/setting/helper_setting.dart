@@ -8,18 +8,19 @@ import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/neu_picker.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_ios/local_auth_ios.dart';
 import 'package:local_auth_android/local_auth_android.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:sp_util/sp_util.dart';
 
 class HelperSetting extends StatefulWidget {
   @override
@@ -48,34 +49,12 @@ class _HelperSettingState extends State<HelperSetting> {
   }
 
   initAuth() async {
-    String launchAuthStr = await Util.getStorage("launch_auth");
-    String launchAuthPasswordStr = await Util.getStorage("launch_auth_password");
-    String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
-    String videoPlayerStr = await Util.getStorage("video_player");
-    String launchAccountPageStr = await Util.getStorage('launch_account_page');
-    if (videoPlayerStr != null) {
-      videoPlayer = videoPlayerStr == '1';
-    }
-    if (launchAuthStr != null) {
-      launchAuth = launchAuthStr == "1";
-    } else {
-      launchAuth = false;
-    }
-    if (launchAuthPasswordStr != null) {
-      password = launchAuthPasswordStr == "1";
-    } else {
-      password = false;
-    }
-    if (launchAuthBiometricsStr != null) {
-      biometrics = launchAuthBiometricsStr == "1";
-    } else {
-      biometrics = false;
-    }
-    if (launchAccountPageStr != null) {
-      launchAccountPage = launchAccountPageStr == "1";
-    } else {
-      launchAccountPage = false;
-    }
+    videoPlayer = SpUtil.getBool("video_player", defValue: false)!;
+    launchAuth = SpUtil.getBool("launch_auth", defValue: false)!;
+    password = SpUtil.getBool("launch_auth_password", defValue: false)!;
+    biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
+    launchAccountPage = SpUtil.getBool("launch_account_page", defValue: false)!;
+
     canCheckBiometrics = await auth.canCheckBiometrics;
     setState(() {});
     if (canCheckBiometrics) {
@@ -98,7 +77,6 @@ class _HelperSettingState extends State<HelperSetting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("助手设置"),
       ),
       body: ListView(
@@ -108,19 +86,17 @@ class _HelperSettingState extends State<HelperSetting> {
             onTap: () {
               setState(() {
                 Util.vibrateOn = !Util.vibrateOn;
-                Util.setStorage("vibrate_on", Util.vibrateOn ? "1" : "0");
+                SpUtil.putBool("vibrate_on", Util.vibrateOn);
                 if (Util.vibrateOn) {
                   Util.vibrate(FeedbackType.light);
                 }
               });
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: Util.vibrateOn ? CurveType.emboss : CurveType.flat,
-              bevel: 20,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -147,14 +123,12 @@ class _HelperSettingState extends State<HelperSetting> {
                       ],
                     ),
                     if (Util.vibrateOn)
-                      NeuCard(
+                      Container(
                         margin: EdgeInsets.only(top: 20),
-                        decoration: NeumorphicDecoration(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: CurveType.flat,
-                        bevel: 20,
                         child: Padding(
                           padding: EdgeInsets.all(20),
                           child: Column(
@@ -163,21 +137,20 @@ class _HelperSettingState extends State<HelperSetting> {
                                 onTap: () {
                                   setState(() {
                                     Util.vibrateNormal = !Util.vibrateNormal;
-                                    Util.setStorage("vibrate_warning", Util.vibrateNormal ? "1" : "0");
+                                    SpUtil.putBool("vibrate_warning", Util.vibrateNormal);
                                     if (Util.vibrateNormal) {
                                       Util.vibrate(FeedbackType.light);
                                     }
                                   });
                                 },
-                                child: NeuCard(
+                                child: Container(
                                   // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                   padding: EdgeInsets.all(20),
-                                  decoration: NeumorphicDecoration(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  curveType: Util.vibrateNormal ? CurveType.emboss : CurveType.flat,
-                                  bevel: 20,
+
                                   child: Row(
                                     children: [
                                       Text(
@@ -201,21 +174,20 @@ class _HelperSettingState extends State<HelperSetting> {
                                 onTap: () {
                                   setState(() {
                                     Util.vibrateWarning = !Util.vibrateWarning;
-                                    Util.setStorage("vibrate_warning", Util.vibrateWarning ? "1" : "0");
+                                    SpUtil.putBool("vibrate_warning", Util.vibrateWarning);
                                     if (Util.vibrateWarning) {
                                       Util.vibrate(FeedbackType.warning);
                                     }
                                   });
                                 },
-                                child: NeuCard(
+                                child: Container(
                                   // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                   padding: EdgeInsets.all(20),
-                                  decoration: NeumorphicDecoration(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  curveType: Util.vibrateWarning ? CurveType.emboss : CurveType.flat,
-                                  bevel: 20,
+
                                   child: Row(
                                     children: [
                                       Text(
@@ -248,18 +220,17 @@ class _HelperSettingState extends State<HelperSetting> {
             onTap: () {
               setState(() {
                 videoPlayer = !videoPlayer;
-                Util.setStorage("video_player", videoPlayer ? "1" : "0");
+                SpUtil.putBool("video_player", videoPlayer);
               });
             },
-            child: NeuCard(
+            child: Container(
               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               padding: EdgeInsets.all(20),
-              decoration: NeumorphicDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: videoPlayer ? CurveType.emboss : CurveType.flat,
-              bevel: 20,
+
               child: Row(
                 children: [
                   Image.asset(
@@ -302,15 +273,14 @@ class _HelperSettingState extends State<HelperSetting> {
                   },
                 );
               },
-              child: NeuCard(
+              child: Container(
                 // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 padding: EdgeInsets.all(20),
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                curveType: CurveType.flat,
-                bevel: 20,
+
                 child: Row(
                   children: [
                     Image.asset(
@@ -338,18 +308,16 @@ class _HelperSettingState extends State<HelperSetting> {
             onTap: () {
               setState(() {
                 launchAccountPage = !launchAccountPage;
-                Util.setStorage("launch_account_page", launchAccountPage ? "1" : "0");
+                SpUtil.putBool("launch_account_page", launchAccountPage);
               });
             },
-            child: NeuCard(
+            child: Container(
               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               padding: EdgeInsets.all(20),
-              decoration: NeumorphicDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: launchAccountPage ? CurveType.emboss : CurveType.flat,
-              bevel: 20,
               child: Row(
                 children: [
                   Image.asset(
@@ -380,16 +348,14 @@ class _HelperSettingState extends State<HelperSetting> {
             onTap: () {
               setState(() {
                 launchAuth = !launchAuth;
-                Util.setStorage("launch_auth", launchAuth ? "1" : "0");
+                SpUtil.putBool("launch_auth", launchAuth);
               });
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: launchAuth ? CurveType.emboss : CurveType.flat,
-              bevel: 20,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -416,14 +382,12 @@ class _HelperSettingState extends State<HelperSetting> {
                       ],
                     ),
                     if (launchAuth)
-                      NeuCard(
+                      Container(
                         margin: EdgeInsets.only(top: 20),
-                        decoration: NeumorphicDecoration(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: CurveType.flat,
-                        bevel: 20,
                         child: Padding(
                           padding: EdgeInsets.all(20),
                           child: Column(
@@ -434,9 +398,9 @@ class _HelperSettingState extends State<HelperSetting> {
                                     if (password) {
                                       setState(() {
                                         password = false;
-                                        Util.setStorage("launch_auth_password", "0");
+                                        SpUtil.putBool("launch_auth_password", false);
                                         biometrics = false;
-                                        Util.setStorage("launch_auth_biometrics", "0");
+                                        SpUtil.putBool("launch_auth_biometrics", false);
                                       });
                                     } else {
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -445,7 +409,7 @@ class _HelperSettingState extends State<HelperSetting> {
                                         if (res != null && res) {
                                           setState(() {
                                             password = true;
-                                            Util.setStorage("launch_auth_password", password ? "1" : "0");
+                                            SpUtil.putBool("launch_auth_password", password);
                                           });
                                         }
                                       });
@@ -454,15 +418,14 @@ class _HelperSettingState extends State<HelperSetting> {
                                     // Util.setStorage("launch_password", password ? "1" : "0");
                                   });
                                 },
-                                child: NeuCard(
+                                child: Container(
                                   // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                   padding: EdgeInsets.all(20),
-                                  decoration: NeumorphicDecoration(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  curveType: password ? CurveType.emboss : CurveType.flat,
-                                  bevel: 20,
+
                                   child: Column(
                                     children: [
                                       Row(
@@ -524,7 +487,7 @@ class _HelperSettingState extends State<HelperSetting> {
                                         auth.stopAuthentication();
                                         setState(() {
                                           biometrics = didAuthenticate;
-                                          Util.setStorage("launch_auth_biometrics", biometrics ? "1" : "0");
+                                          SpUtil.putBool("launch_auth_biometrics", biometrics);
                                         });
                                       } on PlatformException catch (e) {
                                         if (e.code == auth_error.notAvailable) {
@@ -534,13 +497,13 @@ class _HelperSettingState extends State<HelperSetting> {
                                         } else if (e.code == auth_error.lockedOut) {
                                           Util.toast("认证失败次数过多，请稍后再试");
                                         } else {
-                                          Util.toast(e.message);
+                                          Util.toast(e.message ?? "认证失败");
                                         }
                                       }
                                     } else {
                                       setState(() {
                                         biometrics = false;
-                                        Util.setStorage("launch_auth_biometrics", biometrics ? "1" : "0");
+                                        SpUtil.putBool("launch_auth_biometrics", biometrics);
                                       });
                                     }
 
@@ -549,15 +512,14 @@ class _HelperSettingState extends State<HelperSetting> {
                                     //   Util.setStorage("launch_biometrics", biometrics ? "1" : "0");
                                     // });
                                   },
-                                  child: NeuCard(
+                                  child: Container(
                                     // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                     padding: EdgeInsets.all(20),
-                                    decoration: NeumorphicDecoration(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    curveType: biometrics ? CurveType.emboss : CurveType.flat,
-                                    bevel: 20,
+
                                     child: Column(
                                       children: [
                                         Row(
@@ -592,7 +554,7 @@ class _HelperSettingState extends State<HelperSetting> {
             SizedBox(
               height: 20,
             ),
-            NeuButton(
+            CupertinoButton(
               onPressed: () {
                 Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) {
@@ -602,11 +564,9 @@ class _HelperSettingState extends State<HelperSetting> {
               },
               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               padding: EdgeInsets.all(20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 20,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
+
               child: Row(
                 children: [
                   Image.asset(
@@ -627,7 +587,7 @@ class _HelperSettingState extends State<HelperSetting> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
             onPressed: () {
               var hide = showWeuiLoadingToast(context: context);
               clearDiskCachedImages();
@@ -636,11 +596,8 @@ class _HelperSettingState extends State<HelperSetting> {
             },
             // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            bevel: 20,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(20),
             child: Row(
               children: [
                 Image.asset(
@@ -660,7 +617,7 @@ class _HelperSettingState extends State<HelperSetting> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
             onPressed: () {
               Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) {
@@ -670,11 +627,8 @@ class _HelperSettingState extends State<HelperSetting> {
             },
             // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            bevel: 20,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(20),
             child: Row(
               children: [
                 Image.asset(
@@ -695,7 +649,7 @@ class _HelperSettingState extends State<HelperSetting> {
             height: 20,
           ),
           if (Util.notReviewAccount)
-            NeuButton(
+            CupertinoButton(
               onPressed: () {
                 Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) {
@@ -705,11 +659,9 @@ class _HelperSettingState extends State<HelperSetting> {
               },
               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               padding: EdgeInsets.all(20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 20,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
+
               child: Row(
                 children: [
                   Image.asset(

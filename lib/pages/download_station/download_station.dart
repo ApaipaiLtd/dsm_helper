@@ -6,10 +6,8 @@ import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class DownloadStation extends StatefulWidget {
   @override
@@ -18,7 +16,7 @@ class DownloadStation extends StatefulWidget {
 
 class _DownloadStationState extends State<DownloadStation> {
   bool loading = true;
-  Timer timer;
+  Timer? timer;
   List tasks = [];
   int downloadRate = 0;
   int uploadRate = 0;
@@ -90,13 +88,12 @@ class _DownloadStationState extends State<DownloadStation> {
           }
         });
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -133,17 +130,15 @@ class _DownloadStationState extends State<DownloadStation> {
                                 getData();
                               }
                             },
-                            child: NeuCard(
+                            child: Container(
                               padding: EdgeInsets.all(5),
                               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                               // padding: EdgeInsets.symmetric(vertical: 20),
-                              decoration: NeumorphicDecoration(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              curveType: download['status'] == 2 ? CurveType.emboss : CurveType.flat,
-                              bevel: 20,
-                              child: pauseLoading[download['id']]
+                              child: pauseLoading[download['id']] == null ||  pauseLoading[download['id']]!
                                   ? CupertinoActivityIndicator()
                                   : Icon(
                                       download['status'] == 2 ? Icons.pause_circle_outline_sharp : Icons.play_circle_outline_sharp,
@@ -290,7 +285,6 @@ class _DownloadStationState extends State<DownloadStation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: downloadRate > 0 || uploadRate > 0
             ? Row(
                 // mainAxisAlignment: MainAxisAlignment.center,
@@ -327,13 +321,10 @@ class _DownloadStationState extends State<DownloadStation> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
+            child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-              ),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () {
                 Navigator.of(context)
                     .push(
@@ -355,14 +346,13 @@ class _DownloadStationState extends State<DownloadStation> {
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -390,7 +380,7 @@ class _DownloadStationState extends State<DownloadStation> {
               : Center(
                   child: Text(
                     "暂无下载任务",
-                    style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                   ),
                 ),
     );

@@ -3,10 +3,9 @@ import 'package:dsm_helper/pages/photos/widgets/photo_item_widget.dart';
 import 'package:dsm_helper/pages/photos/widgets/thumbnail_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Folder extends StatefulWidget {
-  const Folder(this.isTeam, {Key key}) : super(key: key);
+  const Folder(this.isTeam, {super.key});
   final bool isTeam;
   @override
   State<Folder> createState() => FolderState();
@@ -17,7 +16,7 @@ class FolderState extends State<Folder> {
   bool loading = true;
   List<FolderModel> folders = [];
   bool isTeam = false;
-  double folderWidth;
+  double? folderWidth;
   @override
   void initState() {
     isTeam = widget.isTeam;
@@ -32,9 +31,7 @@ class FolderState extends State<Folder> {
       FolderModel root = await FolderModel.fetch(additional: ['access_permission'], isTeam: isTeam);
       folders.add(root);
       fetchFolderDetail(root);
-    } catch (e) {
-      debugPrint(e);
-    }
+    } catch (e) {}
   }
 
   Future fetchFolderDetail(FolderModel folder) async {
@@ -108,7 +105,7 @@ class FolderState extends State<Folder> {
                           return PhotoItemWidget(
                             photo,
                             folders.last.photos,
-                            width: folderWidth,
+                            width: folderWidth!,
                             isTeam: isTeam,
                           );
                         }).toList(),
@@ -121,14 +118,12 @@ class FolderState extends State<Folder> {
           ),
         if (loading)
           Center(
-            child: NeuCard(
+            child: Container(
               padding: EdgeInsets.all(50),
-              curveType: CurveType.flat,
-              decoration: NeumorphicDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
               child: CupertinoActivityIndicator(
                 radius: 14,
               ),
@@ -152,9 +147,9 @@ class FolderState extends State<Folder> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ThumbnailCard(
-              folder.additional.thumbnail,
-              width: folderWidth,
-              folderId: folder.id,
+              folder.additional!.thumbnail!,
+              width: folderWidth!,
+              folderId: folder.id!,
               isTeam: isTeam,
             ),
             SizedBox(

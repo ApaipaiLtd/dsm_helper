@@ -3,12 +3,12 @@ import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -19,7 +19,7 @@ class About extends StatefulWidget {
 
 class _AboutState extends State<About> {
   bool checking = false;
-  PackageInfo packageInfo;
+  PackageInfo? packageInfo;
   TapGestureRecognizer _licenseRecognizer = TapGestureRecognizer();
   TapGestureRecognizer _privacyRecognizer = TapGestureRecognizer();
   @override
@@ -37,7 +37,6 @@ class _AboutState extends State<About> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "关于${Util.appName}",
         ),
@@ -53,10 +52,8 @@ class _AboutState extends State<About> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    NeuCard(
-                      bevel: 20,
-                      curveType: CurveType.flat,
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(60),
                       ),
@@ -78,7 +75,7 @@ class _AboutState extends State<About> {
                         ),
                         if (packageInfo != null)
                           Text(
-                            "v${packageInfo.version} build:${packageInfo.buildNumber}",
+                            "v${packageInfo!.version} build:${packageInfo!.buildNumber}",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 18,
@@ -91,13 +88,12 @@ class _AboutState extends State<About> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
+                Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  curveType: CurveType.flat,
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Column(
@@ -161,17 +157,16 @@ class _AboutState extends State<About> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
+                  Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: CurveType.flat,
                     child: Padding(
                         padding: EdgeInsets.all(15),
                         child: Column(
-                          children: Util.groups.channel.map((e) {
+                          children: Util.groups.channel!.map((channel) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 5),
                               child: Row(
@@ -184,18 +179,16 @@ class _AboutState extends State<About> {
                                     width: 10,
                                   ),
                                   Text(
-                                    e.displayName,
+                                    channel.displayName,
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   Spacer(),
-                                  NeuButton(
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                  CupertinoButton(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20),
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     onPressed: () {
-                                      launchUrlString(e.key, mode: LaunchMode.externalApplication);
+                                      launchUrlString(channel.key!, mode: LaunchMode.externalApplication);
                                     },
                                     child: Text("加入"),
                                   ),
@@ -208,17 +201,16 @@ class _AboutState extends State<About> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
+                  Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: CurveType.flat,
                     child: Padding(
                         padding: EdgeInsets.all(15),
                         child: Column(
-                          children: Util.groups.qq.map((e) {
+                          children: Util.groups.qq!.map((qq) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 5),
                               child: Row(
@@ -231,18 +223,16 @@ class _AboutState extends State<About> {
                                     width: 10,
                                   ),
                                   Text(
-                                    e.displayName,
+                                    qq.displayName,
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   Spacer(),
-                                  NeuButton(
-                                    decoration: NeumorphicDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                  CupertinoButton(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20),
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     onPressed: () {
-                                      launchUrlString('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D${e.key}');
+                                      launchUrlString('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D${qq.key}');
                                     },
                                     child: Text("加群"),
                                   ),
@@ -255,17 +245,16 @@ class _AboutState extends State<About> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
+                  Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: CurveType.flat,
                     child: Padding(
                       padding: EdgeInsets.all(15),
                       child: Column(
-                        children: Util.groups.wechat.map((e) {
+                        children: Util.groups.wechat!.map((wechat) {
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 5),
                             child: Row(
@@ -278,18 +267,16 @@ class _AboutState extends State<About> {
                                   width: 10,
                                 ),
                                 Text(
-                                  e.displayName,
+                                  wechat.displayName,
                                   style: TextStyle(fontSize: 16),
                                 ),
                                 Spacer(),
-                                NeuButton(
-                                  decoration: NeumorphicDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
+                                CupertinoButton(
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(20),
                                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                   onPressed: () {
-                                    ClipboardData data = new ClipboardData(text: e.name);
+                                    ClipboardData data = new ClipboardData(text: wechat.name!);
                                     Clipboard.setData(data);
                                     Util.toast("已复制到剪贴板");
                                   },
@@ -306,13 +293,12 @@ class _AboutState extends State<About> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
+                Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  curveType: CurveType.flat,
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Row(
@@ -329,11 +315,9 @@ class _AboutState extends State<About> {
                           style: TextStyle(fontSize: 16),
                         ),
                         Spacer(),
-                        NeuButton(
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                        CupertinoButton(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
                             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -351,13 +335,12 @@ class _AboutState extends State<About> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
+                Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  curveType: CurveType.flat,
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Row(
@@ -373,11 +356,9 @@ class _AboutState extends State<About> {
                           style: TextStyle(fontSize: 16),
                         ),
                         Spacer(),
-                        NeuButton(
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                        CupertinoButton(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
                             Navigator.of(context).push(
@@ -398,13 +379,12 @@ class _AboutState extends State<About> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
+                Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  curveType: CurveType.flat,
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Row(
@@ -421,11 +401,9 @@ class _AboutState extends State<About> {
                           style: TextStyle(fontSize: 16),
                         ),
                         Spacer(),
-                        NeuButton(
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                        CupertinoButton(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           onPressed: () {
                             Navigator.of(context).push(
@@ -451,7 +429,7 @@ class _AboutState extends State<About> {
           if (Platform.isAndroid)
             Padding(
               padding: EdgeInsets.all(20),
-              child: NeuButton(
+              child: CupertinoButton(
                 onPressed: () async {
                   if (checking) {
                     return;
@@ -466,11 +444,9 @@ class _AboutState extends State<About> {
                 },
                 // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 padding: EdgeInsets.symmetric(vertical: 20),
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                bevel: 20,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+
                 child: checking
                     ? Center(
                         child: CupertinoActivityIndicator(

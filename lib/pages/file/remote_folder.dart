@@ -1,11 +1,12 @@
 import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+
+
 
 class RemoteFolder extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class RemoteFolder extends StatefulWidget {
 }
 
 class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   String serverIp = "";
   String mountPoint = "";
   bool autoMount = false;
@@ -29,20 +30,17 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("装载远程文件夹"),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
             child: TabBar(
               controller: _tabController,
               indicatorSize: TabBarIndicatorSize.label,
@@ -71,13 +69,12 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                 ListView(
                   padding: EdgeInsets.all(20),
                   children: [
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
-                      curveType: CurveType.flat,
+
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         onChanged: (v) => serverIp = v,
@@ -87,13 +84,12 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
-                      curveType: CurveType.flat,
+
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         onChanged: (v) => account = v,
@@ -106,13 +102,12 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
-                      curveType: CurveType.flat,
+
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         onChanged: (v) => passwd = v,
@@ -125,7 +120,7 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     SizedBox(
                       height: 20,
                     ),
-                    NeuButton(
+                    CupertinoButton(
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         showCupertinoModalPopup(
@@ -143,10 +138,8 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                           }
                         });
                       },
-                      decoration: NeumorphicDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
-                      ),
                       child: Row(
                         children: [
                           Expanded(
@@ -179,13 +172,11 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                           autoMount = !autoMount;
                         });
                       },
-                      child: NeuCard(
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        curveType: autoMount ? CurveType.emboss : CurveType.flat,
-                        bevel: 12,
                         height: 60,
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                         child: Row(
@@ -204,12 +195,10 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     SizedBox(
                       height: 20,
                     ),
-                    NeuButton(
+                    CupertinoButton(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      decoration: NeumorphicDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
-                      ),
                       onPressed: () async {
                         if (mountPoint == "") {
                           Util.toast("请选择保存位置");

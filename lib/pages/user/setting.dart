@@ -1,9 +1,9 @@
 import 'package:dsm_helper/pages/user/otp_bind.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class UserSetting extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class _UserSettingState extends State<UserSetting> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _fullnameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  Map normalUser;
+  Map? normalUser;
   bool loading = true;
   bool saving = false;
   Map<String, dynamic> changedData = {
@@ -38,9 +38,9 @@ class _UserSettingState extends State<UserSetting> {
         loading = false;
         normalUser = res['data'];
       });
-      _usernameController.value = TextEditingValue(text: normalUser['username']);
-      _fullnameController.value = TextEditingValue(text: normalUser['fullname']);
-      _emailController.value = TextEditingValue(text: normalUser['email']);
+      _usernameController.value = TextEditingValue(text: normalUser!['username']);
+      _fullnameController.value = TextEditingValue(text: normalUser!['fullname']);
+      _emailController.value = TextEditingValue(text: normalUser!['email']);
     } else {
       Util.toast("加载失败，code:${res['error']['code']}");
       Navigator.of(context).pop();
@@ -51,19 +51,17 @@ class _UserSettingState extends State<UserSetting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("个人设置"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -72,13 +70,12 @@ class _UserSettingState extends State<UserSetting> {
           : ListView(
               padding: EdgeInsets.all(20),
               children: [
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
-                  curveType: CurveType.flat,
+                  
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: TextField(
                     controller: _usernameController,
@@ -93,13 +90,12 @@ class _UserSettingState extends State<UserSetting> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
-                  curveType: CurveType.flat,
+                  
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: TextField(
                     controller: _fullnameController,
@@ -110,17 +106,16 @@ class _UserSettingState extends State<UserSetting> {
                     ),
                   ),
                 ),
-                if (!normalUser['disallowchpasswd']) ...[
+                if (!normalUser!['disallowchpasswd']) ...[
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
-                    decoration: NeumorphicDecoration(
+                  Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
+                    
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       onChanged: (v) => changedData['old_password'] = v,
@@ -133,13 +128,11 @@ class _UserSettingState extends State<UserSetting> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
-                    decoration: NeumorphicDecoration(
+                  Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       onChanged: (v) => changedData['password'] = v,
@@ -152,13 +145,12 @@ class _UserSettingState extends State<UserSetting> {
                   SizedBox(
                     height: 20,
                   ),
-                  NeuCard(
-                    decoration: NeumorphicDecoration(
+                  Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
+                    
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       onChanged: (v) => changedData['confirm_password'] = v,
@@ -172,13 +164,13 @@ class _UserSettingState extends State<UserSetting> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  decoration: NeumorphicDecoration(
+                Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
-                  curveType: CurveType.flat,
+
+                  
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: TextField(
                     controller: _emailController,
@@ -195,41 +187,39 @@ class _UserSettingState extends State<UserSetting> {
                 GestureDetector(
                   onTap: () {
                     FocusScope.of(context).unfocus();
-                    if (normalUser['OTP_enable']) {
+                    if (normalUser!['OTP_enable']) {
                       setState(() {
-                        normalUser['OTP_enable'] = false;
+                        normalUser!['OTP_enable'] = false;
                         changedData['disableOTP'] = true;
                       });
                     } else {
                       Navigator.of(context)
                           .push(CupertinoPageRoute(
                               builder: (context) {
-                                return OtpBind(normalUser['username'], normalUser['email']);
+                                return OtpBind(normalUser!['username'], normalUser!['email']);
                               },
                               settings: RouteSettings(name: "otp_bind")))
                           .then((res) {
                         if (res != null && res) {
                           setState(() {
-                            normalUser['OTP_enable'] = true;
+                            normalUser!['OTP_enable'] = true;
                           });
                         }
                       });
                     }
                   },
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    curveType: normalUser['OTP_enable'] ? CurveType.emboss : CurveType.flat,
-                    bevel: 12,
                     height: 68,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Row(
                       children: [
                         Text("两步认证"),
                         Spacer(),
-                        if (normalUser['OTP_enable'])
+                        if (normalUser!['OTP_enable'])
                           Icon(
                             CupertinoIcons.checkmark_alt,
                             color: Color(0xffff9813),
@@ -241,12 +231,10 @@ class _UserSettingState extends State<UserSetting> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuButton(
+                CupertinoButton(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: NeumorphicDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
-                  ),
                   onPressed: () async {
                     if (saving) {
                       return;

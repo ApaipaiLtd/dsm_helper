@@ -1,8 +1,7 @@
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Users extends StatefulWidget {
   @override
@@ -34,14 +33,13 @@ class _UsersState extends State<Users> {
 
   Widget _buildUserItem(user) {
     user['running'] = user['running'] ?? false;
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
-      curveType: CurveType.flat,
+
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Row(
@@ -111,7 +109,7 @@ class _UsersState extends State<Users> {
             SizedBox(
               width: 10,
             ),
-            NeuButton(
+            CupertinoButton(
               onPressed: () async {
                 if (user['running']) {
                   return;
@@ -121,11 +119,9 @@ class _UsersState extends State<Users> {
                   builder: (context) {
                     return Material(
                       color: Colors.transparent,
-                      child: NeuCard(
+                      child: Container(
                         width: double.infinity,
-                        bevel: 5,
-                        curveType: CurveType.emboss,
-                        decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                         child: SafeArea(
                           top: false,
                           child: Padding(
@@ -150,7 +146,7 @@ class _UsersState extends State<Users> {
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: NeuButton(
+                                      child: CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           setState(() {
@@ -165,11 +161,9 @@ class _UsersState extends State<Users> {
                                             Util.toast("连接已终止");
                                           }
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "终止连接",
@@ -181,15 +175,12 @@ class _UsersState extends State<Users> {
                                       width: 16,
                                     ),
                                     Expanded(
-                                      child: NeuButton(
+                                      child: CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                         },
-                                        decoration: NeumorphicDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "取消",
@@ -211,12 +202,10 @@ class _UsersState extends State<Users> {
                   },
                 );
               },
-              decoration: NeumorphicDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-              ),
               padding: EdgeInsets.all(5),
-              bevel: 5,
+
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -239,18 +228,16 @@ class _UsersState extends State<Users> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text("目前连接用户"),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
+            child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-              ),
               padding: EdgeInsets.all(10),
-              bevel: 5,
+
               onPressed: () {
                 getData();
               },
@@ -261,14 +248,13 @@ class _UsersState extends State<Users> {
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
+
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),

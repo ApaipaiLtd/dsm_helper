@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:dsm_helper/pages/control_panel/shared_folders/add_shared_folder.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class SharedFolders extends StatefulWidget {
   @override
@@ -19,7 +17,7 @@ class _SharedFoldersState extends State<SharedFolders> {
   String msg = "";
   List folders = [];
   List volumes = [];
-  Timer timer;
+  Timer? timer;
   @override
   void initState() {
     getVolumes();
@@ -88,12 +86,10 @@ class _SharedFoldersState extends State<SharedFolders> {
       builder: (context) {
         return Material(
           color: Colors.transparent,
-          child: NeuCard(
+          child: Container(
             width: double.infinity,
             padding: EdgeInsets.all(22),
-            bevel: 5,
-            curveType: CurveType.emboss,
-            decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Column(
@@ -116,7 +112,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                   Row(
                     children: [
                       Expanded(
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             Navigator.of(context).pop();
                             var res = await Api.deleteSharedFolder([folder]);
@@ -128,11 +124,8 @@ class _SharedFoldersState extends State<SharedFolders> {
                               Util.toast("共享文件夹删除出错");
                             }
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             "确认删除",
@@ -144,15 +137,12 @@ class _SharedFoldersState extends State<SharedFolders> {
                         width: 16,
                       ),
                       Expanded(
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             "取消",
@@ -179,15 +169,12 @@ class _SharedFoldersState extends State<SharedFolders> {
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
       child: Opacity(
         opacity: 1,
-        child: NeuButton(
+        child: CupertinoButton(
           onPressed: () async {},
           // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: EdgeInsets.symmetric(vertical: 20),
-          decoration: NeumorphicDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          bevel: 8,
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(20),
           child: Row(
             children: [
               SizedBox(
@@ -220,7 +207,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                     ),
                     Text(
                       "${folder['volume_name']}${folder['volume_desc'] != "" ? "(${folder['volume_desc']})" : ""}",
-                      style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                     ),
                     if (folder['unite_permission'] != null) ...[
                       SizedBox(
@@ -228,7 +215,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                       ),
                       Text(
                         "高级权限：${folder['unite_permission'] ? "已启动" : "已停用"}",
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
                     if (folder['enable_recycle_bin'] != null) ...[
@@ -237,7 +224,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                       ),
                       Text(
                         "回收站：${folder['enable_recycle_bin'] ? "已启动" : "已停用"}",
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
                     if (folder['quota_value'] != null) ...[
@@ -246,7 +233,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                       ),
                       Text(
                         "共享文件夹配额：${folder['quota_value'] > 0 ? Util.formatSize(folder['quota_value'] * 1024 * 1024) : "已停用"}",
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
                     if (folder['share_quota_used'] != null) ...[
@@ -255,7 +242,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                       ),
                       Text(
                         "共享文件夹大小：${Util.formatSize(folder['share_quota_used'] * 1024 * 1024)}",
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
                     if (folder['enable_share_compress'] != null) ...[
@@ -264,7 +251,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                       ),
                       Text(
                         "文件压缩：${folder['enable_share_compress'] ? "已启动" : "已禁用"}",
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
                     if (folder['enable_share_cow'] != null) ...[
@@ -273,7 +260,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                       ),
                       Text(
                         "数据完整性保护：${folder['enable_share_cow'] ? "已启动" : "已禁用"}",
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headline5.color),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
                   ],
@@ -284,19 +271,17 @@ class _SharedFoldersState extends State<SharedFolders> {
               ),
               folder['is_share_moving']
                   ? Text("移动中")
-                  : NeuButton(
+                  : CupertinoButton(
                       onPressed: () {
                         showCupertinoModalPopup(
                           context: context,
                           builder: (context) {
                             return Material(
                               color: Colors.transparent,
-                              child: NeuCard(
+                              child: Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(22),
-                                bevel: 5,
-                                curveType: CurveType.emboss,
-                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                 child: SafeArea(
                                   top: false,
                                   child: Column(
@@ -310,15 +295,12 @@ class _SharedFoldersState extends State<SharedFolders> {
                                         height: 12,
                                       ),
                                       if (folder['support_snapshot']) ...[
-                                        NeuButton(
+                                        CupertinoButton(
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                           },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 5,
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
                                           padding: EdgeInsets.symmetric(vertical: 10),
                                           child: Text(
                                             "克隆",
@@ -329,7 +311,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                                           height: 16,
                                         ),
                                       ],
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           Navigator.of(context)
@@ -344,11 +326,8 @@ class _SharedFoldersState extends State<SharedFolders> {
                                             }
                                           });
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "编辑",
@@ -359,7 +338,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                                         height: 16,
                                       ),
                                       if (folder['enable_recycle_bin']) ...[
-                                        NeuButton(
+                                        CupertinoButton(
                                           onPressed: () async {
                                             Navigator.of(context).pop();
                                             Api.cleanRecycleBin(folder['name']).then((res) {
@@ -368,11 +347,8 @@ class _SharedFoldersState extends State<SharedFolders> {
                                               }
                                             });
                                           },
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          bevel: 5,
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
                                           padding: EdgeInsets.symmetric(vertical: 10),
                                           child: Text(
                                             "清空回收站",
@@ -383,16 +359,13 @@ class _SharedFoldersState extends State<SharedFolders> {
                                           height: 16,
                                         ),
                                       ],
-                                      NeuButton(
+                                      CupertinoButton(
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                           deleteFolder(folder['name']);
                                         },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "删除",
@@ -411,11 +384,8 @@ class _SharedFoldersState extends State<SharedFolders> {
                         );
                       },
                       padding: EdgeInsets.only(left: 5, right: 3, top: 4, bottom: 4),
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      bevel: 2,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
                       child: Icon(
                         CupertinoIcons.right_chevron,
                         size: 18,
@@ -435,21 +405,17 @@ class _SharedFoldersState extends State<SharedFolders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "共享文件夹",
         ),
-        actions: volumes != null && volumes.length > 0
+        actions: volumes.length > 0
             ? [
                 Padding(
                   padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-                  child: NeuButton(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  child: CupertinoButton(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(10),
-                    bevel: 5,
                     onPressed: () async {
                       Navigator.of(context)
                           .push(CupertinoPageRoute(
@@ -486,14 +452,12 @@ class _SharedFoldersState extends State<SharedFolders> {
                     height: MediaQuery.of(context).size.height,
                     color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
                     child: Center(
-                      child: NeuCard(
+                      child: Container(
                         padding: EdgeInsets.all(50),
-                        curveType: CurveType.flat,
-                        decoration: NeumorphicDecoration(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        bevel: 20,
                         child: CupertinoActivityIndicator(
                           radius: 14,
                         ),
@@ -512,13 +476,10 @@ class _SharedFoldersState extends State<SharedFolders> {
                   ),
                   SizedBox(
                     width: 200,
-                    child: NeuButton(
+                    child: CupertinoButton(
                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      bevel: 5,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
                       onPressed: () {
                         getData();
                       },

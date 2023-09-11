@@ -10,26 +10,11 @@ import 'package:dsm_helper/pages/packages/packages.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
 import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
-import 'package:dsm_helper/util/badge.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 import '../photos/photos.dart';
-
-List supportedShortcuts = [
-  "SYNO.SDS.PkgManApp.Instance",
-  "SYNO.SDS.AdminCenter.Application",
-  "SYNO.SDS.StorageManager.Instance",
-  "SYNO.SDS.Docker.Application",
-  "SYNO.SDS.Docker.ContainerDetail.Instance",
-  "SYNO.SDS.LogCenter.Instance",
-  "SYNO.SDS.ResourceMonitor.Instance",
-  "SYNO.SDS.Virtualization.Application",
-  "SYNO.SDS.DownloadStation.Application",
-  "SYNO.SDS.XLPan.Application",
-];
 
 class ShortcutList extends StatelessWidget {
   final List<ShortcutItemModel> shortcutItems;
@@ -38,21 +23,19 @@ class ShortcutList extends StatelessWidget {
   final List volumes;
   final List disks;
   final Map appNotify;
-  final List validAppViewOrder;
-  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, this.context, {this.validAppViewOrder, Key key}) : super(key: key);
+  final List? validAppViewOrder;
+  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, this.context, {this.validAppViewOrder, super.key});
 
   @override
   Widget build(BuildContext ctx) {
-    return NeuCard(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      bevel: 20,
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        height: 140,
+        height: 95,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, i) {
@@ -68,8 +51,8 @@ class ShortcutList extends StatelessWidget {
     String icon = "";
     String name = "";
     int unread = 0;
-    Widget page;
-    String routerName;
+    Widget? page;
+    String routerName = "";
     switch (shortcut.className) {
       case "SYNO.SDS.PkgManApp.Instance":
         icon = "assets/applications/${Util.version}/package_center.png";
@@ -96,7 +79,7 @@ class ShortcutList extends StatelessWidget {
         routerName = "storage_manager";
         break;
       case "SYNO.SDS.Docker.Application":
-        if (validAppViewOrder.contains("SYNO.SDS.ContainerManager.Application")) {
+        if (validAppViewOrder != null && validAppViewOrder!.contains("SYNO.SDS.ContainerManager.Application")) {
           icon = "assets/applications/container_manager.png";
           name = "Container Manager";
           page = Docker(
@@ -111,15 +94,15 @@ class ShortcutList extends StatelessWidget {
         routerName = "docker";
         break;
       case "SYNO.SDS.Docker.ContainerDetail.Instance":
-        if (validAppViewOrder.contains("SYNO.SDS.ContainerManager.Application")) {
+        if (validAppViewOrder != null && validAppViewOrder!.contains("SYNO.SDS.ContainerManager.Application")) {
           icon = "assets/applications/container_manager.png";
         } else {
           icon = "assets/applications/docker.png";
         }
-        name = "${shortcut.param.data.name}";
+        name = "${shortcut.param?.data?.name}";
         if (shortcut.type == 'url') {
           page = Browser(
-            url: shortcut.url,
+            url: shortcut.url!,
             title: name,
           );
           routerName = "browser";
@@ -180,69 +163,63 @@ class ShortcutList extends StatelessWidget {
         break;
     }
     if (icon != "") {
-      return Padding(
-        padding: EdgeInsets.only(left: 10, top: 20, bottom: 20, right: 10),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(CupertinoPageRoute(
-                builder: (context) {
-                  return page;
-                },
-                settings: RouteSettings(name: routerName)));
-          },
-          child: NeuCard(
-            bevel: 20,
-            width: 100,
-            curveType: CurveType.flat,
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
+      return GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) {
+                return page!;
+              },
+              settings: RouteSettings(name: routerName),
             ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          icon,
-                          width: 50,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "$name",
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 14),
-                        ),
+          );
+        },
+        child: Container(
+          width: 100,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        icon,
+                        width: 50,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "$name",
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (unread > 0)
+                Positioned(
+                  right: 20,
+                  top: 10,
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 15,
+                    width: 15,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withOpacity(0.5), offset: Offset(1, 1)),
                       ],
                     ),
                   ),
                 ),
-                if (unread > 0)
-                  Positioned(
-                    right: 20,
-                    top: 10,
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 15,
-                      width: 15,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.5), offset: Offset(1, 1)),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       );

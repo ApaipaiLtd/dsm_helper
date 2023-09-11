@@ -1,15 +1,13 @@
 import 'package:dsm_helper/pages/download_station/select_file.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class AddDownloadTask extends StatefulWidget {
-  final String torrentPath;
+  final String? torrentPath;
   AddDownloadTask({this.torrentPath});
   @override
   _AddDownloadTaskState createState() => _AddDownloadTaskState();
@@ -23,7 +21,7 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
   void initState() {
     if (widget.torrentPath != null) {
       setState(() {
-        torrentPath = widget.torrentPath;
+        torrentPath = widget.torrentPath!;
       });
     }
     getData();
@@ -46,13 +44,12 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("创建下载任务"),
       ),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
-          NeuButton(
+          CupertinoButton(
             onPressed: () {
               FocusScope.of(context).unfocus();
               showCupertinoModalPopup(
@@ -70,10 +67,8 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
                 }
               });
             },
-            decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
-            ),
             child: Row(
               children: [
                 Expanded(
@@ -100,13 +95,12 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            bevel: 20,
-            curveType: CurveType.flat,
+            
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: TextField(
               onChanged: (v) => url = v,
@@ -119,12 +113,12 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
             onPressed: () async {
               FocusScope.of(context).unfocus();
-              FilePickerResult _pickedFile = await FilePicker.platform.pickFiles();
+              FilePickerResult? _pickedFile = await FilePicker.platform.pickFiles();
               if (_pickedFile != null && _pickedFile.count > 0) {
-                String path = _pickedFile.paths[0];
+                String path = _pickedFile.paths[0]!;
                 String ext = path.split(".").last;
                 if (["torrent", "nbz", "txt"].contains(ext)) {
                   setState(() {
@@ -135,10 +129,8 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
                 }
               }
             },
-            decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
-            ),
             child: Row(
               children: [
                 Expanded(
@@ -163,12 +155,10 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
           SizedBox(
             height: 20,
           ),
-          NeuButton(
+          CupertinoButton(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            decoration: NeumorphicDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
-            ),
             onPressed: () async {
               if (saveFolder == "") {
                 Util.toast("请选择保存位置");

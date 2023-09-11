@@ -4,11 +4,12 @@ import 'dart:convert';
 import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:sp_util/sp_util.dart';
 
 class Accounts extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class Accounts extends StatefulWidget {
 
 class _AccountsState extends State<Accounts> {
   List servers = [];
-  Timer timer;
+  Timer? timer;
   bool visible = true;
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _AccountsState extends State<Accounts> {
   }
 
   getData() async {
-    String serverString = await Util.getStorage("servers");
+    String serverString = SpUtil.getString("servers", defValue: "")!;
     if (serverString.isNotBlank) {
       setState(() {
         servers = json.decode(serverString);
@@ -103,7 +104,7 @@ class _AccountsState extends State<Accounts> {
         "sid": server['sid'],
       });
     });
-    Util.setStorage("servers", json.encode(accounts));
+    SpUtil.putString("servers", json.encode(accounts));
   }
 
   serverInfo(server) async {
@@ -153,22 +154,22 @@ class _AccountsState extends State<Accounts> {
           Util.account = "${server['account']}";
           Util.baseUrl = "${server['base_url']}";
           Util.checkSsl = server['check_ssl'];
-          Util.setStorage("base_url", Util.baseUrl);
+          SpUtil.putString("base_url", Util.baseUrl);
 
-          Util.setStorage("https", server['https'] ? "1" : "0");
-          Util.setStorage("host", server['host']);
-          Util.setStorage("port", server['port']);
-          Util.setStorage("account", server['account']);
-          Util.setStorage("note", server['note'] ?? '');
-          Util.setStorage("remember_password", server['remember_password'] ? "1" : "0");
+          SpUtil.putBool("https", server['https']);
+          SpUtil.putString("host", server['host']);
+          SpUtil.putString("port", server['port']);
+          SpUtil.putString("account", server['account']);
+          SpUtil.putString("note", server['note'] ?? '');
+          SpUtil.putBool("remember_password", server['remember_password']);
           if (server['remember_password']) {
-            Util.setStorage("password", server['password']);
+            SpUtil.putString("password", server['password']);
           } else {
-            Util.setStorage("password", "");
+            SpUtil.putString("password", "");
           }
-          Util.setStorage("auto_login", server['auto_login'] ? "1" : "0");
-          Util.setStorage("check_ssl", server['check_ssl'] ? "1" : "0");
-          Util.setStorage("sid", server['sid']);
+          SpUtil.putBool("auto_login", server['auto_login']);
+          SpUtil.putBool("check_ssl", server['check_ssl']);
+          SpUtil.putString("sid", server['sid']);
           Util.sid = server['sid'];
           Util.cookie = server['cookie'];
           Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
@@ -179,13 +180,13 @@ class _AccountsState extends State<Accounts> {
           }));
         }
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
+
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Row(
@@ -238,7 +239,7 @@ class _AccountsState extends State<Accounts> {
                         SizedBox(
                           width: 10,
                         ),
-                        NeuButton(
+                        CupertinoButton(
                           onPressed: () {
                             print(server);
                             server['action'] = "edit";
@@ -246,11 +247,9 @@ class _AccountsState extends State<Accounts> {
                               return Login(server: server);
                             }));
                           },
-                          decoration: NeumorphicDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(10),
-                          ),
-                          bevel: 20,
+
                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                           child: Image.asset(
                             "assets/icons/edit.png",
@@ -260,7 +259,7 @@ class _AccountsState extends State<Accounts> {
                         SizedBox(
                           width: 10,
                         ),
-                        NeuButton(
+                        CupertinoButton(
                           onPressed: () {
                             setState(() {
                               servers.remove(server);
@@ -269,11 +268,8 @@ class _AccountsState extends State<Accounts> {
                             saveAccounts();
                             Util.toast("删除成功");
                           },
-                          decoration: NeumorphicDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(10),
-                          ),
-                          bevel: 20,
                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                           child: Image.asset(
                             "assets/icons/delete.png",
@@ -287,16 +283,15 @@ class _AccountsState extends State<Accounts> {
                         children: [
                           Column(
                             children: [
-                              NeuCard(
-                                curveType: CurveType.flat,
+                              Container(
+                                
                                 margin: EdgeInsets.only(top: 10, right: 10),
-                                decoration: NeumorphicDecoration(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(60),
                                   // color: Colors.red,
                                 ),
                                 padding: EdgeInsets.all(5),
-                                bevel: 8,
                                 child: CircularPercentIndicator(
                                   radius: 30,
                                   // progressColor: Colors.lightBlueAccent,
@@ -333,17 +328,16 @@ class _AccountsState extends State<Accounts> {
                           ),
                           Column(
                             children: [
-                              NeuCard(
-                                curveType: CurveType.flat,
+                              Container(
+                                
                                 margin: EdgeInsets.only(top: 10, right: 10),
-                                decoration: NeumorphicDecoration(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(60),
                                   // color: Colors.red,
                                 ),
                                 // width: ,
                                 padding: EdgeInsets.all(5),
-                                bevel: 8,
                                 child: CircularPercentIndicator(
                                   radius: 30,
                                   // progressColor: Colors.lightBlueAccent,
@@ -471,7 +465,7 @@ class _AccountsState extends State<Accounts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text("选择账号"),
         actions: [
           Padding(
@@ -482,27 +476,24 @@ class _AccountsState extends State<Accounts> {
                   visible = !visible;
                 });
               },
-              child: NeuCard(
-                decoration: NeumorphicDecoration(
+              child: Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                curveType: visible ? CurveType.flat : CurveType.concave,
                 padding: EdgeInsets.all(10),
-                bevel: 5,
+
                 child: Icon(visible ? CupertinoIcons.eye_slash_fill : CupertinoIcons.eye_fill),
               ),
             ),
           ),
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
+            child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-              ),
               padding: EdgeInsets.all(10),
-              bevel: 5,
+
               onPressed: () {
                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                   return Login(

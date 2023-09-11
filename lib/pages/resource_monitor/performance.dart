@@ -5,11 +5,11 @@ import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:provider/provider.dart';
 
 class Performance extends StatefulWidget {
@@ -20,7 +20,7 @@ class Performance extends StatefulWidget {
 }
 
 class _PerformanceState extends State<Performance> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   bool loading = true;
   List cpus = [];
   List memories = [];
@@ -29,14 +29,14 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
   List spaces = [];
   List luns = [];
   List colors = [Colors.red, Colors.purpleAccent, Colors.redAccent, Colors.green, Colors.amber, Colors.orange, Colors.teal, Colors.indigoAccent, Colors.cyanAccent, Colors.yellow, Colors.black, Colors.lightGreenAccent, Colors.pinkAccent];
-  Timer timer;
-  int maxNetworkSpeed = 0;
-  int maxDiskReadSpeed = 0;
-  int maxDiskWriteSpeed = 0;
-  int maxVolumeReadSpeed = 0;
-  int maxVolumeWriteSpeed = 0;
+  Timer? timer;
+  num maxNetworkSpeed = 0;
+  num maxDiskReadSpeed = 0;
+  num maxDiskWriteSpeed = 0;
+  num maxVolumeReadSpeed = 0;
+  num maxVolumeWriteSpeed = 0;
 
-  int networkCount = 0;
+  num networkCount = 0;
   @override
   void initState() {
     final settingProvider = Provider.of<SettingProvider>(context, listen: false);
@@ -104,19 +104,16 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("性能"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -124,15 +121,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -180,11 +175,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -205,10 +198,8 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -315,11 +306,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -340,10 +329,8 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -450,11 +437,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -475,10 +460,8 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -637,11 +620,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -662,10 +643,8 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -769,11 +748,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -794,10 +771,8 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -906,10 +881,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                             aspectRatio: 1,
                             child: Padding(
                               padding: const EdgeInsets.all(20),
-                              child: NeuCard(
-                                curveType: CurveType.flat,
-                                bevel: 20,
-                                decoration: NeumorphicDecoration(
+                              child: Container(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -1027,14 +1001,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                            curveType: CurveType.flat,
-                            bevel: 10,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -1057,14 +1029,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   ),
                                   Row(
                                     children: [
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1087,14 +1057,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         ),
                                       ),
                                       Spacer(),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1117,14 +1085,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         ),
                                       ),
                                       Spacer(),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1152,14 +1118,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                            curveType: CurveType.flat,
-                            bevel: 10,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -1174,14 +1138,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   ),
                                   Row(
                                     children: [
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1202,14 +1164,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         ),
                                       ),
                                       Spacer(),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1230,14 +1190,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         ),
                                       ),
                                       Spacer(),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1271,10 +1229,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                             aspectRatio: 1,
                             child: Padding(
                               padding: const EdgeInsets.all(20),
-                              child: NeuCard(
-                                curveType: CurveType.flat,
-                                bevel: 20,
-                                decoration: NeumorphicDecoration(
+                              child: Container(
+                                
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -1358,14 +1315,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                            curveType: CurveType.flat,
-                            bevel: 10,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -1402,14 +1357,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   ),
                                   Row(
                                     children: [
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1433,14 +1386,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                       SizedBox(
                                         width: 20,
                                       ),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1464,14 +1415,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                       SizedBox(
                                         width: 20,
                                       ),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1499,14 +1448,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   ),
                                   Row(
                                     children: [
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1530,14 +1477,12 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                       SizedBox(
                                         width: 20,
                                       ),
-                                      NeuCard(
+                                      Container(
                                         width: (MediaQuery.of(context).size.width - 120) / 3,
-                                        decoration: NeumorphicDecoration(
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        curveType: CurveType.flat,
-                                        bevel: 10,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 20),
                                           child: Column(
@@ -1573,11 +1518,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                             height: 20,
                           ),
                           for (int i = 0; i < networkCount; i++)
-                            NeuCard(
-                              curveType: CurveType.flat,
+                            Container(
                               margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                              bevel: 20,
-                              decoration: NeumorphicDecoration(
+                              
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -1598,10 +1542,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                     aspectRatio: 1.70,
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                      child: NeuCard(
-                                        curveType: CurveType.flat,
-                                        bevel: 20,
-                                        decoration: NeumorphicDecoration(
+                                      child: Container(
+                                        
+                                        decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
                                         ),
@@ -1783,11 +1726,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1808,10 +1750,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -1915,11 +1856,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1940,10 +1880,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2067,11 +2006,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2092,10 +2030,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2219,11 +2156,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2244,10 +2180,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2350,11 +2285,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2375,10 +2309,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2500,11 +2433,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2525,10 +2457,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2626,11 +2557,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2651,10 +2581,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2751,11 +2680,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2776,10 +2704,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -2882,11 +2809,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -2907,10 +2833,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -3007,11 +2932,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
-                            curveType: CurveType.flat,
+                          Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -3032,10 +2956,9 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   aspectRatio: 1.70,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                                    child: NeuCard(
-                                      curveType: CurveType.flat,
-                                      bevel: 20,
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),

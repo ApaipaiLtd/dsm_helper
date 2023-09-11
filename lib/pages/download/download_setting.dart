@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sp_util/sp_util.dart';
 
 class DownloadSetting extends StatefulWidget {
   @override
@@ -30,14 +29,13 @@ class _DownloadSettingState extends State<DownloadSetting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("下载选项"),
       ),
       body: ListView(
         padding: EdgeInsets.all(20.0),
         children: [
           if (Platform.isAndroid) ...[
-            NeuButton(
+            CupertinoButton(
               onPressed: () async {
                 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
                 AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -70,15 +68,13 @@ class _DownloadSettingState extends State<DownloadSetting> {
                     setState(() {
                       downloadPath = res[0].path;
                       Util.downloadSavePath = res[0].path;
-                      Util.setStorage("download_save_path", res[0].path);
+                      SpUtil.putString("download_save_path", res[0].path);
                     });
                   }
                 });
               },
-              decoration: NeumorphicDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
-              ),
               child: Row(
                 children: [
                   Expanded(

@@ -1,15 +1,13 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class SystemInfo extends StatefulWidget {
   final int index;
-  final Map system;
+  final Map? system;
   final List volumes;
   final List disks;
   SystemInfo(this.index, this.system, this.volumes, this.disks);
@@ -18,19 +16,19 @@ class SystemInfo extends StatefulWidget {
 }
 
 class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List usbDev = [];
-  List nifs;
+  List nifs = [];
   List volumes = [];
   List disks = [];
-  Map network;
+  Map network = {};
   bool loadingDisks = false;
   @override
   void initState() {
     _tabController = TabController(initialIndex: widget.index, length: 6, vsync: this);
     if (widget.system != null) {
       setState(() {
-        usbDev = widget.system['usb_dev'];
+        usbDev = widget.system!['usb_dev'];
       });
     }
 
@@ -75,14 +73,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   }
 
   Widget _buildNifItem(nif) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
-      curveType: CurveType.flat,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -93,15 +89,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: EdgeInsets.all(10),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Row(
               children: [
                 Expanded(
@@ -120,15 +114,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
               ],
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: EdgeInsets.all(10),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Row(
               children: [
                 Expanded(
@@ -148,15 +140,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
               ],
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: EdgeInsets.all(10),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Row(
               children: [
                 Expanded(
@@ -185,15 +175,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   }
 
   Widget _buildDevItem(dev) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
-      curveType: CurveType.flat,
       child: Row(
         children: [
           Expanded(
@@ -216,27 +204,23 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
 
   Widget _buildVolumeItem(volume) {
     double percent = int.parse(volume['size']['used']) / int.parse(volume['size']['total']);
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
       child: Row(
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
+          Container(
             margin: EdgeInsets.all(10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
             padding: EdgeInsets.all(5),
-            bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
               // progressColor: Colors.lightBlueAccent,
@@ -321,25 +305,21 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   }
 
   Widget _buildDiskItem(disk) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
       child: Row(
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
+          Container(
             margin: EdgeInsets.all(10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               // color: Colors.red,
             ),
-            bevel: 8,
             child: Image.asset(
               disk['isSsd'] ? "assets/icons/ssd.png" : "assets/icons/hdd.png",
               width: 40,
@@ -393,22 +373,19 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "信息中心",
         ),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
             child: TabBar(
               isScrollable: true,
               controller: _tabController,
@@ -454,14 +431,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                 ListView(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       margin: EdgeInsets.only(left: 20, right: 20),
-                      bevel: 10,
-                      curveType: CurveType.flat,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -472,15 +447,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -492,22 +465,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['serial']}",
+                                    "${widget.system!['serial']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -519,22 +490,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['model']}",
+                                    "${widget.system!['model']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -546,22 +515,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['cpu_vendor']} ${widget.system['cpu_family']} ${widget.system['cpu_series']}",
+                                    "${widget.system!['cpu_vendor']} ${widget.system!['cpu_family']} ${widget.system!['cpu_series']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -573,22 +540,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['cpu_cores']}核 @ ${(widget.system['cpu_clock_speed'] / 1000).toStringAsFixed(2)}GHz",
+                                    "${widget.system!['cpu_cores']}核 @ ${(widget.system!['cpu_clock_speed'] / 1000).toStringAsFixed(2)}GHz",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -600,22 +565,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['ram_size']}MB",
+                                    "${widget.system!['ram_size']}MB",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -627,22 +590,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['firmware_ver']}",
+                                    "${widget.system!['firmware_ver']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -654,22 +615,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['time']}",
+                                    "${widget.system!['time']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -681,23 +640,21 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${Util.parseOpTime(widget.system['up_time'])}",
+                                    "${Util.parseOpTime(widget.system!['up_time'])}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          if (widget.system['sys_temp'] != null)
-                            NeuCard(
-                              decoration: NeumorphicDecoration(
+                          if (widget.system!['sys_temp'] != null)
+                            Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               padding: EdgeInsets.all(10),
                               margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                              bevel: 10,
-                              curveType: CurveType.flat,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -709,8 +666,8 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                   Expanded(
                                     flex: 2,
                                     child: Text(
-                                      "${widget.system['sys_temp']}℃ ${widget.system['temperature_warning'] == null ? (widget.system['sys_temp'] > 80 ? "警告" : "正常") : (widget.system['temperature_warning'] ? "警告" : "正常")}",
-                                      style: TextStyle(color: widget.system['temperature_warning'] == null ? (widget.system['sys_temp'] > 80 ? Colors.red : Colors.green) : (widget.system['temperature_warning'] ? Colors.red : Colors.green)),
+                                      "${widget.system!['sys_temp']}℃ ${widget.system!['temperature_warning'] == null ? (widget.system!['sys_temp'] > 80 ? "警告" : "正常") : (widget.system!['temperature_warning'] ? "警告" : "正常")}",
+                                      style: TextStyle(color: widget.system!['temperature_warning'] == null ? (widget.system!['sys_temp'] > 80 ? Colors.red : Colors.green) : (widget.system!['temperature_warning'] ? Colors.red : Colors.green)),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -723,14 +680,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                         ],
                       ),
                     ),
-                    NeuCard(
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      bevel: 10,
-                      curveType: CurveType.flat,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -741,15 +696,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -761,22 +714,20 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['ntp_server']} ${widget.system['enabled_ntp'] ? "" : "(暂未启用)"}",
+                                    "${widget.system!['ntp_server']} ${widget.system!['enabled_ntp'] ? "" : "(暂未启用)"}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Row(
                               children: [
                                 Expanded(
@@ -789,7 +740,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system['time_zone_desc']}",
+                                    "${widget.system!['time_zone_desc']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -803,14 +754,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                       ),
                     ),
                     if (usbDev.length > 0)
-                      NeuCard(
-                        decoration: NeumorphicDecoration(
+                      Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                        bevel: 10,
-                        curveType: CurveType.flat,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -836,14 +785,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                       )
                     : ListView(
                         children: [
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -854,15 +801,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   padding: EdgeInsets.all(10),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -881,15 +826,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                     ],
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   padding: EdgeInsets.all(10),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -909,15 +852,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                     ],
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   padding: EdgeInsets.all(10),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -937,15 +878,13 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                     ],
                                   ),
                                 ),
-                                NeuCard(
-                                  decoration: NeumorphicDecoration(
+                                Container(
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   padding: EdgeInsets.all(10),
                                   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  bevel: 10,
-                                  curveType: CurveType.flat,
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -976,14 +915,12 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                       ),
                 loadingDisks
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),
@@ -991,11 +928,9 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                       )
                     : ListView(
                         children: [
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            curveType: CurveType.flat,
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1016,11 +951,9 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            curveType: CurveType.flat,
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),

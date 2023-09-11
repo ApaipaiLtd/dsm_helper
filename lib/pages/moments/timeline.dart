@@ -3,15 +3,14 @@ import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Timeline extends StatefulWidget {
-  final String category;
-  final String type;
+  final String? category;
+  final String? type;
   final String title;
   Timeline(this.title, {this.category, this.type});
   @override
@@ -20,7 +19,7 @@ class Timeline extends StatefulWidget {
 
 class _TimelineState extends State<Timeline> {
   List timeline = [];
-  double photoWidth;
+  double? photoWidth;
   bool loadingTimeline = true;
   ScrollController _scrollController = ScrollController();
   @override
@@ -30,7 +29,7 @@ class _TimelineState extends State<Timeline> {
   }
 
   getData() async {
-    var res = await MomentsApi.timeline(category: widget.category, type: widget.type);
+    var res = await MomentsApi.timeline(category: widget.category!, type: widget.type);
     if (res['success'] && mounted) {
       setState(() {
         timeline = [];
@@ -43,7 +42,7 @@ class _TimelineState extends State<Timeline> {
         }
         for (int i = 0; i < timeline.length; i++) {
           int lines = (timeline[i]['item_count'] / 4).ceil();
-          double height = 40 + lines * photoWidth + (lines - 1) * 2;
+          double height = 40 + lines * photoWidth! + (lines - 1) * 2;
           timeline[i]['position'] = {};
           if (i == 0) {
             timeline[i]['position']['start'] = 0;
@@ -63,7 +62,7 @@ class _TimelineState extends State<Timeline> {
   getLineInfo(line) async {
     if (line['items'] == null) {
       line['items'] = [];
-      MomentsApi.photos(year: line['year'], month: line['month'], day: line['day'], type: widget.type, category: widget.category == "Timeline" ? "Item" : widget.category).then((res) {
+      MomentsApi.photos(year: line['year'], month: line['month'], day: line['day'], type: widget.type, category: widget.category == "Timeline" ? "Item" : widget.category!).then((res) {
         if (res['success'] && mounted) {
           setState(() {
             line['items'] = res['data']['list'];
@@ -85,7 +84,7 @@ class _TimelineState extends State<Timeline> {
 
   Widget _buildPhotoItem(photo) {
     int duration = 0;
-    Map timeLong;
+    Map timeLong = {};
     if (photo['type'] == "video") {
       if (photo['additional']['video_convert'].length > 0) {
         duration = photo['additional']['video_convert'][0]['metadata']['duration'] ~/ 1000;
@@ -183,7 +182,7 @@ class _TimelineState extends State<Timeline> {
           itemCount: line['item_count'],
           physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context, i) {
-            if (items == null || items.length == 0) {
+            if (items.length == 0) {
               return Container(
                 color: Colors.grey,
                 width: photoWidth,
@@ -231,19 +230,16 @@ class _TimelineState extends State<Timeline> {
     }
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(widget.title),
       ),
       body: loadingTimeline
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -254,27 +250,45 @@ class _TimelineState extends State<Timeline> {
                   labelTextBuilder: (position) {
                     var line = timeline.where((element) => element['position']['start'] <= position && element['position']['end'] >= position).toList();
                     if (line.length > 0) {
-                      return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                      return Text.rich(
+                        TextSpan(
                           children: [
-                            Text(
-                              "${line[0]['month']}月",
+                            TextSpan(
+                              text: "${line[0]['month']}月",
                               style: TextStyle(fontSize: 30),
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("${line[0]['day'].toString().padLeft(2, "0")}日"),
-                                Text("${line[0]['year']}"),
-                              ],
-                            )
+                            TextSpan(
+                              text: "${line[0]['day'].toString().padLeft(2, "0")}日",
+                              style: TextStyle(fontSize: 30),
+                            ),
+                            TextSpan(
+                              text: "${line[0]['year']}",
+                              style: TextStyle(fontSize: 30),
+                            ),
                           ],
                         ),
                       );
+                      // return Container(
+                      //   padding: EdgeInsets.symmetric(horizontal: 20),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.end,
+                      //     children: [
+                      //       Text(
+                      //         "${line[0]['month']}月",
+                      //         style: TextStyle(fontSize: 30),
+                      //       ),
+                      //       Column(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           Text("${line[0]['day'].toString().padLeft(2, "0")}日"),
+                      //           Text("${line[0]['year']}"),
+                      //         ],
+                      //       )
+                      //     ],
+                      //   ),
+                      // );
                     } else {
-                      return null;
+                      return Text("");
                     }
                   },
                   labelConstraints: BoxConstraints(minHeight: 60, maxHeight: 60, minWidth: 140, maxWidth: 140),

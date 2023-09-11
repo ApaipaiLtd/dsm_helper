@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class UninstallPackage extends StatefulWidget {
   final Map package;
@@ -44,13 +43,11 @@ class _UninstallPackageState extends State<UninstallPackage> {
           item['checked'] = !item['checked'];
         });
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Row(
@@ -58,14 +55,12 @@ class _UninstallPackageState extends State<UninstallPackage> {
               Expanded(
                 child: Text(item['desc']),
               ),
-              NeuCard(
-                decoration: NeumorphicDecoration(
+              Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                curveType: item['checked'] ? CurveType.emboss : CurveType.flat,
                 padding: EdgeInsets.all(5),
-                bevel: 5,
                 child: SizedBox(
                   width: 20,
                   height: 20,
@@ -86,13 +81,11 @@ class _UninstallPackageState extends State<UninstallPackage> {
 
   Widget _buildItem(item) {
     List subItems = item['subitems'];
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -133,21 +126,18 @@ class _UninstallPackageState extends State<UninstallPackage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "卸载${widget.package['dname']}",
         ),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -167,7 +157,7 @@ class _UninstallPackageState extends State<UninstallPackage> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: NeuButton(
+                      child: CupertinoButton(
                         onPressed: () async {
                           //获取额外参数
                           Map extra = {};
@@ -190,11 +180,9 @@ class _UninstallPackageState extends State<UninstallPackage> {
                         },
                         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        bevel: 20,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
+
                         child: Text(
                           "确认卸载",
                           style: TextStyle(fontSize: 18),
@@ -208,14 +196,12 @@ class _UninstallPackageState extends State<UninstallPackage> {
                 ),
                 if (uninstalling)
                   Center(
-                    child: NeuCard(
+                    child: Container(
                       padding: EdgeInsets.all(50),
-                      curveType: CurveType.flat,
-                      decoration: NeumorphicDecoration(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
                       child: CupertinoActivityIndicator(
                         radius: 14,
                       ),

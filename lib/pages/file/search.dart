@@ -1,7 +1,5 @@
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Search extends StatefulWidget {
   final String folder;
@@ -30,7 +28,6 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("搜索文件"),
       ),
       body: GestureDetector(
@@ -40,13 +37,11 @@ class _SearchState extends State<Search> {
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 onChanged: (v) => pattern = v,
@@ -67,13 +62,11 @@ class _SearchState extends State<Search> {
                     searchContent = !searchContent;
                   });
                 },
-                child: NeuCard(
-                  decoration: NeumorphicDecoration(
+                child: Container(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  curveType: searchContent ? CurveType.emboss : CurveType.flat,
-                  bevel: 12,
                   height: 60,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: Row(
@@ -90,13 +83,11 @@ class _SearchState extends State<Search> {
                 ),
               ),
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 20,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: folderController,
@@ -110,12 +101,10 @@ class _SearchState extends State<Search> {
             SizedBox(
               height: 20,
             ),
-            NeuButton(
+            CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: () {
                 Navigator.of(context).pop({"folders": folders, "pattern": pattern, "search_content": searchContent});
                 // Navigator.of(context).push(CupertinoPageRoute(

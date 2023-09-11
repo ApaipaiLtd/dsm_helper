@@ -16,7 +16,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sp_util/sp_util.dart';
 
-import 'dashborad/dashboard.dart';
+import 'dashboard/dashboard.dart';
 import 'download_station/add_task.dart';
 import 'file/upload.dart';
 import 'login/auth_page.dart';
@@ -143,9 +143,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   checkAuth() async {
     // print("是否需要启动密码")
-    launchAuth = SpUtil.getBool("launch_auth", defValue: true)!;
-    password = SpUtil.getBool("launch_auth_password", defValue: true)!;
-    biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: true)!;
+    launchAuth = SpUtil.getBool("launch_auth", defValue: false)!;
+    password = SpUtil.getBool("launch_auth_password", defValue: false)!;
+    biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
     authPage = launchAuth && (password || biometrics);
     if (Util.isAuthPage == false && authPage) {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -190,7 +190,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
       value = _filesStateKey.currentState?.onWillPop() ?? Future.value(true);
     } else if (_currentIndex == 2) {
-      value = Util.downloadKey.currentState?.onWillPop() ?? Future.value(true);
+      // value = Util.downloadKey.currentState?.onWillPop() ?? Future.value(true);
     }
     value.then((v) {
       if (v) {
@@ -223,13 +223,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           index: _currentIndex,
         ),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          // padding: EdgeInsets.symmetric(vertical: 5),
           onTap: (v) {
             setState(() {
               _currentIndex = v;
             });
           },
+          currentIndex: _currentIndex,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          enableFeedback: true,
+          type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
               icon: Image.asset(
@@ -237,7 +244,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 width: 30,
                 height: 30,
               ),
-              tooltip: "控制台",
+              label: "控制台",
             ),
             BottomNavigationBarItem(
               icon: Image.asset(
@@ -245,7 +252,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 width: 30,
                 height: 30,
               ),
-              tooltip: "文件",
+              label: "文件",
             ),
             BottomNavigationBarItem(
               icon: Image.asset(
@@ -253,7 +260,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 width: 30,
                 height: 30,
               ),
-              tooltip: "下载",
+              label: "下载",
             ),
             BottomNavigationBarItem(
               icon: Image.asset(
@@ -261,7 +268,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 width: 30,
                 height: 30,
               ),
-              tooltip: "设置",
+              label: "设置",
             ),
           ],
         ),

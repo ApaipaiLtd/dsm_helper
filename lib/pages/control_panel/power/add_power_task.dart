@@ -1,12 +1,10 @@
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 class AddPowerTask extends StatefulWidget {
   final String title;
-  final Map task;
+  final Map? task;
   AddPowerTask(this.title, {this.task});
   @override
   _AddPowerTaskState createState() => _AddPowerTaskState();
@@ -26,7 +24,7 @@ class _AddPowerTaskState extends State<AddPowerTask> {
   void initState() {
     if (widget.task != null) {
       setState(() {
-        task = widget.task;
+        task = widget.task!;
       });
     }
     super.initState();
@@ -36,16 +34,13 @@ class _AddPowerTaskState extends State<AddPowerTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(widget.title),
       ),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
-            bevel: 20,
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
@@ -70,13 +65,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['type'] = "power_on";
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: task['type'] == "power_on" ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             child: Row(
@@ -103,13 +96,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['type'] = "power_off";
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: task['type'] == "power_off" ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -135,10 +126,8 @@ class _AddPowerTaskState extends State<AddPowerTask> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
-            curveType: CurveType.flat,
-            bevel: 20,
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
@@ -171,13 +160,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("0") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -212,13 +199,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("1") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -253,13 +238,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("2") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -294,13 +277,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("3") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -339,13 +320,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("4") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -380,13 +359,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("5") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -421,13 +398,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               task['weekdays'] = weekdays.join(",");
                             });
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: weekdays.contains("6") ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                             child: Row(
@@ -457,10 +432,8 @@ class _AddPowerTaskState extends State<AddPowerTask> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
-            curveType: CurveType.flat,
-            bevel: 20,
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
@@ -494,13 +467,11 @@ class _AddPowerTaskState extends State<AddPowerTask> {
                               locale: LocaleType.zh,
                             );
                           },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            curveType: task['type'] == "power_on" ? CurveType.emboss : CurveType.flat,
-                            bevel: 12,
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             child: Row(
@@ -525,12 +496,10 @@ class _AddPowerTaskState extends State<AddPowerTask> {
           SizedBox(
             height: 40,
           ),
-          NeuButton(
+          CupertinoButton(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            decoration: NeumorphicDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(20),
             onPressed: () {
               Navigator.of(context).pop(task);
             },

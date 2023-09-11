@@ -1,10 +1,10 @@
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
 import 'package:dsm_helper/pages/resource_monitor/task_manager.dart';
 import 'package:dsm_helper/pages/resource_monitor/users.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class ResourceMonitor extends StatefulWidget {
   ResourceMonitor({this.tabIndex = 0});
@@ -18,14 +18,14 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text("资源监控"),
       ),
       body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-            child: NeuButton(
+            child: CupertinoButton(
               onPressed: () {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
@@ -37,11 +37,8 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
                 );
               },
               padding: EdgeInsets.zero,
-              decoration: NeumorphicDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 20,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Row(
@@ -72,7 +69,7 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-            child: NeuButton(
+            child: CupertinoButton(
               onPressed: () {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
@@ -84,11 +81,8 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
                 );
               },
               padding: EdgeInsets.zero,
-              decoration: NeumorphicDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 20,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Row(
@@ -119,7 +113,7 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-            child: NeuButton(
+            child: CupertinoButton(
               onPressed: () {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
@@ -131,11 +125,9 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
                 );
               },
               padding: EdgeInsets.zero,
-              decoration: NeumorphicDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 20,
+
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Row(
@@ -166,7 +158,7 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
           ),
           // Padding(
           //   padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-          //   child: NeuButton(
+          //   child: CupertinoButton(
           //     onPressed: () {
           //       Navigator.of(context).push(
           //         CupertinoPageRoute(
@@ -178,11 +170,11 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
           //       );
           //     },
           //     padding: EdgeInsets.zero,
-          //     decoration: NeumorphicDecoration(
+          //     decoration: BoxDecoration(
           //       color: Theme.of(context).scaffoldBackgroundColor,
           //       borderRadius: BorderRadius.circular(20),
           //     ),
-          //     bevel: 20,
+          //
           //     child: Padding(
           //       padding: EdgeInsets.symmetric(vertical: 20),
           //       child: Row(
@@ -213,7 +205,7 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
           // ),
           // Padding(
           //   padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-          //   child: NeuButton(
+          //   child: CupertinoButton(
           //     onPressed: () {
           //       Navigator.of(context).push(
           //         CupertinoPageRoute(
@@ -225,11 +217,11 @@ class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProv
           //       );
           //     },
           //     padding: EdgeInsets.zero,
-          //     decoration: NeumorphicDecoration(
+          //     decoration: BoxDecoration(
           //       color: Theme.of(context).scaffoldBackgroundColor,
           //       borderRadius: BorderRadius.circular(20),
           //     ),
-          //     bevel: 20,
+          //
           //     child: Padding(
           //       padding: EdgeInsets.symmetric(vertical: 20),
           //       child: Row(

@@ -1,7 +1,8 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:sp_util/sp_util.dart';
+
 
 class ConfirmLogout extends StatefulWidget {
   final bool otpEnable;
@@ -16,11 +17,9 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: NeuCard(
+      child: Container(
         width: double.infinity,
-        bevel: 5,
-        curveType: CurveType.emboss,
-        decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
         child: SafeArea(
           top: false,
           child: Padding(
@@ -49,13 +48,12 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
                         forget = !forget;
                       });
                     },
-                    child: NeuCard(
-                      decoration: NeumorphicDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      curveType: forget ? CurveType.emboss : CurveType.flat,
-                      bevel: 12,
+
                       height: 60,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Row(
@@ -78,20 +76,18 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
                 Row(
                   children: [
                     Expanded(
-                      child: NeuButton(
+                      child: CupertinoButton(
                         onPressed: () async {
                           if (forget) {
                             Api.trustDevice("delete");
                           }
-                          Util.removeStorage("sid");
+                          SpUtil.remove("sid");
                           // Util.removeStorage("smid");
                           Navigator.of(context).pushNamedAndRemoveUntil("/login", (route) => false);
                         },
-                        decoration: NeumorphicDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 5,
+
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: Text(
                           "退出登录",
@@ -103,15 +99,13 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
                       width: 16,
                     ),
                     Expanded(
-                      child: NeuButton(
+                      child: CupertinoButton(
                         onPressed: () async {
                           Navigator.of(context).pop();
                         },
-                        decoration: NeumorphicDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(25),
-                        ),
-                        bevel: 5,
+
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: Text(
                           "取消",

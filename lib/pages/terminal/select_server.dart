@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:sp_util/sp_util.dart';
+
 import 'add_server.dart';
 import 'ssh.dart';
 
@@ -23,7 +24,7 @@ class _SelectServerState extends State<SelectServer> {
   }
 
   getData() async {
-    String str = await Util.getStorage("terminal_servers");
+    String str = SpUtil.getString("terminal_servers")!;
     setState(() {
       loading = false;
       if (str.isNotBlank) {
@@ -39,20 +40,20 @@ class _SelectServerState extends State<SelectServer> {
     var server = servers[index];
     return Padding(
       padding: EdgeInsets.only(bottom: 20),
-      child: NeuButton(
+      child: CupertinoButton(
         onPressed: () async {
-          Navigator.of(context).push(CupertinoPageRoute(
+          Navigator.of(context).push(
+            CupertinoPageRoute(
               builder: (context) {
                 return Ssh(server['host'], server['port'], server['account'], server['password']);
               },
-              settings: RouteSettings(name: "ssh_client")));
+              settings: RouteSettings(name: "ssh_client"),
+            ),
+          );
         },
-        decoration: NeumorphicDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         padding: EdgeInsets.zero,
-        bevel: 20,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
@@ -75,7 +76,7 @@ class _SelectServerState extends State<SelectServer> {
                   ],
                 ),
               ),
-              NeuButton(
+              CupertinoButton(
                 onPressed: () {
                   Navigator.of(context)
                       .push(CupertinoPageRoute(
@@ -87,11 +88,8 @@ class _SelectServerState extends State<SelectServer> {
                     getData();
                   });
                 },
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                bevel: 20,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: Image.asset(
                   "assets/icons/edit.png",
@@ -101,20 +99,17 @@ class _SelectServerState extends State<SelectServer> {
               SizedBox(
                 width: 10,
               ),
-              NeuButton(
+              CupertinoButton(
                 onPressed: () {
                   setState(() {
                     servers.remove(server);
                   });
 
-                  Util.setStorage("terminal_servers", jsonEncode(servers));
+                  SpUtil.putString("terminal_servers", jsonEncode(servers));
                   Util.toast("删除成功");
                 },
-                decoration: NeumorphicDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                bevel: 20,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: Image.asset(
                   "assets/icons/delete.png",
@@ -132,18 +127,14 @@ class _SelectServerState extends State<SelectServer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("选择服务器"),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            child: CupertinoButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () {
                 Navigator.of(context)
                     .push(CupertinoPageRoute(
@@ -162,14 +153,12 @@ class _SelectServerState extends State<SelectServer> {
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -195,13 +184,10 @@ class _SelectServerState extends State<SelectServer> {
                       ),
                       SizedBox(
                         width: 200,
-                        child: NeuButton(
+                        child: CupertinoButton(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           onPressed: () {
                             Navigator.of(context)
                                 .push(CupertinoPageRoute(

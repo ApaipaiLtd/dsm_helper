@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PhotoItemWidget extends StatelessWidget {
-  const PhotoItemWidget(this.photo, this.photos, {this.isTeam, this.showName: true, @required this.width, Key key}) : super(key: key);
+  const PhotoItemWidget(this.photo, this.photos, {required this.isTeam, this.showName= true, required this.width, super.key});
   final PhotoModel photo;
   final List<PhotoModel> photos;
   final bool isTeam;
@@ -70,7 +70,7 @@ class PhotoItemWidget extends StatelessWidget {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "${photo.additional.videoMeta.hours.toString().padLeft(2, "0")}:${photo.additional.videoMeta.minutes.toString().padLeft(2, "0")}:${photo.additional.videoMeta.seconds.toString().padLeft(2, "0")}",
+                          "${photo.additional?.videoMeta?.hours.toString().padLeft(2, "0")}:${photo.additional?.videoMeta?.minutes.toString().padLeft(2, "0")}:${photo.additional?.videoMeta?.seconds.toString().padLeft(2, "0")}",
                           style: TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ],
@@ -80,7 +80,7 @@ class PhotoItemWidget extends StatelessWidget {
             ),
             if (showName)
               Text(
-                photo.filename,
+                photo.filename!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

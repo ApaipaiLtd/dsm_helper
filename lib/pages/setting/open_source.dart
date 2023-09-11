@@ -1,8 +1,7 @@
 import 'package:dsm_helper/pages/common/browser.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class OpenSource extends StatefulWidget {
   @override
@@ -152,7 +151,6 @@ class _OpenSourceState extends State<OpenSource> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "开源插件",
         ),
@@ -166,13 +164,12 @@ class _OpenSourceState extends State<OpenSource> {
             );
           },
           itemBuilder: (context, i) {
-            return NeuCard(
+            return Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
-              decoration: NeumorphicDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              curveType: CurveType.flat,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Row(
@@ -182,11 +179,9 @@ class _OpenSourceState extends State<OpenSource> {
                       style: TextStyle(fontSize: 16),
                     ),
                     Spacer(),
-                    NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                    CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       onPressed: () {
                         Navigator.of(context).push(

@@ -1,12 +1,10 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'add_tracker.dart';
 
 class DownloadDetail extends StatefulWidget {
@@ -17,7 +15,7 @@ class DownloadDetail extends StatefulWidget {
 }
 
 class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   bool loading = true;
   bool loadingTrackers = true;
   bool loadingPeers = true;
@@ -100,14 +98,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
   }
 
   Widget _buildFileItem(file) {
-    return NeuCard(
+    return Container(
       padding: EdgeInsets.all(20),
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+      
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Column(
         children: [
           Text(
@@ -150,14 +147,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
   }
 
   Widget _buildPeerItem(peer) {
-    return NeuCard(
+    return Container(
       padding: EdgeInsets.all(20),
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+      
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Column(
         children: [
           Row(
@@ -203,14 +199,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
   }
 
   Widget _buildTrackerItem(tracker) {
-    return NeuCard(
+    return Container(
       padding: EdgeInsets.all(20),
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+      
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -251,18 +246,14 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("任务详情"),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: NeuButton(
-              decoration: NeumorphicDecoration(
+            child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-              ),
               padding: EdgeInsets.all(10),
-              bevel: 5,
               onPressed: () {
                 Util.vibrate(FeedbackType.warning);
                 showCupertinoModalPopup(
@@ -270,12 +261,10 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                   builder: (context) {
                     return Material(
                       color: Colors.transparent,
-                      child: NeuCard(
+                      child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.all(22),
-                        bevel: 5,
-                        curveType: CurveType.emboss,
-                        decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                         child: SafeArea(
                           top: false,
                           child: Column(
@@ -298,7 +287,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               Row(
                                 children: [
                                   Expanded(
-                                    child: NeuButton(
+                                    child: CupertinoButton(
                                       onPressed: () async {
                                         Navigator.of(context).pop();
                                         var res = await Api.downloadTaskAction([task['id']], "delete");
@@ -309,11 +298,8 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                           Util.toast("任务删除失败，代码：${res['error']['code']}");
                                         }
                                       },
-                                      decoration: NeumorphicDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: Text(
                                         "确认删除",
@@ -325,15 +311,12 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                     width: 20,
                                   ),
                                   Expanded(
-                                    child: NeuButton(
+                                    child: CupertinoButton(
                                       onPressed: () async {
                                         Navigator.of(context).pop();
                                       },
-                                      decoration: NeumorphicDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      bevel: 5,
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: Text(
                                         "取消",
@@ -365,14 +348,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -380,15 +362,14 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
+
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -435,15 +416,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                     children: [
                       ListView(
                         children: [
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -454,14 +433,12 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Row(
@@ -476,14 +453,12 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Row(
@@ -498,15 +473,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("用户名："),
@@ -514,32 +487,27 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("网址："),
                                 Expanded(child: Text("${task['additional']['detail']['uri']}")),
-                                NeuButton(
+                                CupertinoButton(
                                   onPressed: () async {
                                     ClipboardData data = new ClipboardData(text: task['additional']['detail']['uri']);
                                     Clipboard.setData(data);
                                     Util.toast("已复制到剪贴板");
                                   },
-                                  decoration: NeumorphicDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(10),
-                                  ),
                                   padding: EdgeInsets.all(5),
-                                  bevel: 5,
                                   child: SizedBox(
                                     width: 20,
                                     height: 20,
@@ -553,15 +521,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("创建时间："),
@@ -569,15 +535,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("完成时间："),
@@ -585,15 +549,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("预计等待时间："),
@@ -605,15 +567,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                       ),
                       ListView(
                         children: [
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -667,14 +627,12 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Row(
@@ -689,14 +647,12 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Row(
@@ -711,14 +667,12 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Row(
@@ -733,15 +687,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ),
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("速度："),
@@ -749,15 +701,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -766,15 +716,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("分块总数："),
@@ -782,15 +730,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("已下载分块数："),
@@ -798,15 +744,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("已做种时间："),
@@ -814,15 +758,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("开始时间："),
@@ -830,15 +772,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             padding: EdgeInsets.all(20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Row(
                               children: [
                                 Text("剩余时间："),
@@ -851,14 +791,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                       if (task['type'] == "bt" && task['status'] == 2) ...[
                         loadingTrackers
                             ? Center(
-                                child: NeuCard(
+                                child: Container(
                                   padding: EdgeInsets.all(50),
-                                  curveType: CurveType.flat,
-                                  decoration: NeumorphicDecoration(
+                                  
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  bevel: 20,
                                   child: CupertinoActivityIndicator(
                                     radius: 14,
                                   ),
@@ -881,14 +820,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                     itemCount: trackers.length),
                         loadingPeers
                             ? Center(
-                                child: NeuCard(
+                                child: Container(
                                   padding: EdgeInsets.all(50),
-                                  curveType: CurveType.flat,
-                                  decoration: NeumorphicDecoration(
+                                  
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  bevel: 20,
                                   child: CupertinoActivityIndicator(
                                     radius: 14,
                                   ),
@@ -911,14 +849,13 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                     itemCount: peers.length),
                         loadingFiles
                             ? Center(
-                                child: NeuCard(
+                                child: Container(
                                   padding: EdgeInsets.all(50),
-                                  curveType: CurveType.flat,
-                                  decoration: NeumorphicDecoration(
+                                  
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  bevel: 20,
                                   child: CupertinoActivityIndicator(
                                     radius: 14,
                                   ),

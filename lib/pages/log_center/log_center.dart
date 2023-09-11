@@ -1,10 +1,10 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class LogCenter extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class LogCenter extends StatefulWidget {
 }
 
 class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   List lastLogs = [];
   List logs = [];
   List histories = [];
@@ -75,13 +75,13 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
   }
 
   Widget _buildRecentLogItem(log) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
+
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -120,13 +120,13 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
   }
 
   Widget _buildHistoryItem(log) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
+
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -165,13 +165,13 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
   }
 
   Widget _buildLogItem(log) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
+
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -231,20 +231,20 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text("日志中心"),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
+            
+
             child: TabBar(
               isScrollable: true,
               controller: _tabController,
@@ -293,14 +293,14 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
               children: [
                 loadingRecent
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
+
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),
@@ -311,16 +311,16 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
+                          Container(
                             width: double.infinity,
                             margin: EdgeInsets.symmetric(horizontal: 20),
                             padding: EdgeInsets.all(20),
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 10,
+
                             child: Text("上50个日志"),
                           ),
                           SizedBox(
@@ -344,14 +344,14 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
                       ),
                 loadingLogs
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
+
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),
@@ -362,16 +362,16 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
+                          Container(
                             width: double.infinity,
                             margin: EdgeInsets.symmetric(horizontal: 20),
                             padding: EdgeInsets.all(20),
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 10,
+
                             child: Row(
                               children: [
                                 Icon(
@@ -433,14 +433,14 @@ class _LogCenterState extends State<LogCenter> with SingleTickerProviderStateMix
                       ),
                 loadingHistory
                     ? Center(
-                        child: NeuCard(
+                        child: Container(
                           padding: EdgeInsets.all(50),
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
+
                           child: CupertinoActivityIndicator(
                             radius: 14,
                           ),

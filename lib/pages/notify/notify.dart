@@ -1,14 +1,12 @@
 import 'dart:convert';
-
-import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/strings.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Notify extends StatefulWidget {
   final List notifies;
@@ -40,7 +38,7 @@ class _NotifyState extends State<Notify> {
             if (replaceContent.contains("<a")) {
               var document = parse(replaceContent);
 
-              replaceContent = parse(document.body.text).documentElement.text;
+              replaceContent = parse(document.body?.text).documentElement?.text ?? '';
             }
 
             msgMap.forEach((key, value) {
@@ -77,7 +75,7 @@ class _NotifyState extends State<Notify> {
       if (notifyGroups[title] == null) {
         notifyGroups[title] = [notify];
       } else {
-        notifyGroups[title].add(notify);
+        notifyGroups[title]?.add(notify);
       }
     });
     setState(() {});
@@ -85,14 +83,12 @@ class _NotifyState extends State<Notify> {
   }
 
   Widget _buildNotifyGroup(groupName, List group) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-      bevel: 10,
-      curveType: CurveType.flat,
       child: ExpansionContainer(
         title: Text(
           "$groupName （${group.length}）",
@@ -107,16 +103,14 @@ class _NotifyState extends State<Notify> {
   }
 
   Widget _buildNotifyItem(notify) {
-    return NeuCard(
+    return Container(
       width: double.infinity,
-      decoration: NeumorphicDecoration(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: EdgeInsets.all(15),
-      bevel: 10,
-      curveType: CurveType.flat,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -138,7 +132,6 @@ class _NotifyState extends State<Notify> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "消息",
         ),
@@ -149,13 +142,13 @@ class _NotifyState extends State<Notify> {
             child: widget.notifies.length > 0
                 ? ListView(
                     children: notifyGroups.keys.map((key) {
-                      return _buildNotifyGroup(key, notifyGroups[key]);
+                      return _buildNotifyGroup(key, notifyGroups[key]!);
                     }).toList(),
                   )
                 : Center(
                     child: Text(
                       "暂无消息",
-                      style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                     ),
                   ),
           ),
@@ -164,11 +157,9 @@ class _NotifyState extends State<Notify> {
             child: Row(
               children: [
                 Expanded(
-                  child: NeuButton(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
+                  child: CupertinoButton(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(50),
                     onPressed: () async {
                       var res = await Api.clearNotify();
                       if (res['success']) {

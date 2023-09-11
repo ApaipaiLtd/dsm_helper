@@ -1,11 +1,9 @@
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class UpdateReset extends StatefulWidget {
   @override
@@ -14,11 +12,11 @@ class UpdateReset extends StatefulWidget {
 
 class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStateMixin {
   TapGestureRecognizer _updateNoteRecognizer = TapGestureRecognizer();
-  TabController _tabController;
+  TabController? _tabController;
   String firmwareDate = "";
   String firmwareVer = "";
   String model = "";
-  Map update;
+  Map? update;
   bool checking = true;
   @override
   void initState() {
@@ -62,20 +60,17 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("更新和还原"),
       ),
       body: Column(
         children: [
-          NeuCard(
+          Container(
             width: double.infinity,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            curveType: CurveType.flat,
-            bevel: 10,
             child: TabBar(
               isScrollable: true,
               controller: _tabController,
@@ -116,39 +111,33 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      curveType: CurveType.flat,
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
                       padding: EdgeInsets.all(20),
                       child: Text("产品型号: $model"),
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      curveType: CurveType.flat,
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
                       padding: EdgeInsets.all(20),
                       child: Text("DSM 版本: $firmwareVer"),
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    NeuCard(
-                      curveType: CurveType.flat,
-                      decoration: NeumorphicDecoration(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      bevel: 20,
                       padding: EdgeInsets.all(20),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,11 +146,11 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
                           Expanded(
                             child: checking
                                 ? CupertinoActivityIndicator()
-                                : update != null && (update['available'] ?? true)
+                                : update != null && (update!['available'] ?? true)
                                     ? Text.rich(TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: "${update['version']}版本可下载",
+                                            text: "${update!['version']}版本可下载",
                                             style: TextStyle(color: Colors.green),
                                           ),
                                           TextSpan(
@@ -169,12 +158,12 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
                                               style: TextStyle(color: Colors.blue),
                                               recognizer: _updateNoteRecognizer
                                                 ..onTap = () {
-                                                  String url = "http://update.synology.com/autoupdate/whatsnew.php?model=${Uri.encodeComponent(model)}&update_version=${update['version_details']['buildnumber']}-0";
+                                                  String url = "http://update.synology.com/autoupdate/whatsnew.php?model=${Uri.encodeComponent(model)}&update_version=${update!['version_details']['buildnumber']}-0";
                                                   Navigator.of(context).push(CupertinoPageRoute(
                                                     builder: (context) {
                                                       return Browser(
                                                         url: url,
-                                                        title: "${update['version']}版本更新说明",
+                                                        title: "${update!['version']}版本更新说明",
                                                       );
                                                     },
                                                     settings: RouteSettings(name: "browser"),

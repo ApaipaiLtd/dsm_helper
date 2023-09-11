@@ -3,10 +3,10 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/dashed_decoration.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class StorageManager extends StatefulWidget {
@@ -15,14 +15,14 @@ class StorageManager extends StatefulWidget {
 }
 
 class _StorageManagerState extends State<StorageManager> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  late TabController _tabController;
   bool loading = true;
   List ssdCaches = [];
   List volumes = [];
   List disks = [];
   List storagePools = [];
   List hotSpares = [];
-  Map env;
+  Map? env;
   @override
   void initState() {
     _tabController = TabController(length: 6, vsync: this);
@@ -58,27 +58,23 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
 
   Widget _buildSSDCacheItem(volume) {
     double percent = int.parse(volume['size']['used'] ?? volume['size']['reusable']) / int.parse(volume['size']['total']);
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
       child: Row(
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
+          Container(
             margin: EdgeInsets.all(10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
             padding: EdgeInsets.all(5),
-            bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
               // progressColor: Colors.lightBlueAccent,
@@ -149,27 +145,23 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
   }
 
   Widget _buildVolumeItem(volume) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
       child: Row(
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
+          Container(
             margin: EdgeInsets.all(10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
             padding: EdgeInsets.all(5),
-            bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
               // progressColor: Colors.lightBlueAccent,
@@ -265,7 +257,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
     );
   }
 
-  Widget _buildDiskItem(disk, {bool full: false}) {
+  Widget _buildDiskItem(disk, {bool full = false}) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(
@@ -274,27 +266,23 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
             },
             settings: RouteSettings(name: "disk_smart")));
       },
-      child: NeuCard(
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        curveType: CurveType.flat,
         padding: EdgeInsets.all(10),
         margin: EdgeInsets.only(top: 10),
-        bevel: 10,
         child: Column(
           children: [
             Row(
               children: [
-                NeuCard(
-                  curveType: CurveType.flat,
+                Container(
                   margin: EdgeInsets.all(10),
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     // color: Colors.red,
                   ),
-                  bevel: 8,
                   child: Image.asset(
                     disk['isSsd'] ? "assets/icons/ssd.png" : "assets/icons/hdd.png",
                     width: 40,
@@ -389,9 +377,9 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
-                        if (storagePools != null && storagePools.where((pool) => pool['id'] == disk['used_by']).toList().length > 0)
+                        if (storagePools.where((pool) => pool['id'] == disk['used_by']).toList().length > 0)
                           Text("存储池 ${storagePools.where((pool) => pool['id'] == disk['used_by']).toList()[0]['num_id']}")
-                        else if (ssdCaches != null && ssdCaches.where((ssd) => ssd['id'] == disk['used_by']).toList().length > 0)
+                        else if (ssdCaches.where((ssd) => ssd['id'] == disk['used_by']).toList().length > 0)
                           Text("${ssdCaches.where((ssd) => ssd['id'] == disk['used_by']).toList()[0]['id'].toString().replaceFirst("ssd_", "SSD 缓存 ")}")
                         else
                           Text("-"),
@@ -545,10 +533,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
   }
 
   Widget _buildPoolDetail(pool) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      bevel: 20,
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
@@ -642,10 +628,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              curveType: CurveType.flat,
-              bevel: 20,
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -666,10 +650,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              curveType: CurveType.flat,
-              bevel: 20,
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -697,10 +679,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              curveType: CurveType.flat,
-              bevel: 20,
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -728,16 +708,14 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
   }
 
   Widget _buildPoolItem(pool) {
-    return NeuCard(
-      curveType: CurveType.flat,
+    return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      decoration: NeumorphicDecoration(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
         // color: Colors.red,
       ),
       padding: EdgeInsets.symmetric(horizontal: 5),
-      bevel: 8,
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Column(
@@ -806,19 +784,16 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("存储空间管理员"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -826,15 +801,13 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -879,11 +852,9 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                     children: [
                       ListView(
                         children: [
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            curveType: CurveType.flat,
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -907,11 +878,9 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            curveType: CurveType.flat,
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -935,11 +904,9 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               ],
                             ),
                           ),
-                          NeuCard(
+                          Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            curveType: CurveType.flat,
-                            bevel: 20,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -959,7 +926,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                                     runSpacing: 5,
                                     spacing: 5,
                                     children: [
-                                      for (int i = 0; i < int.parse(env['bay_number']); i++)
+                                      for (int i = 0; i < int.parse(env!['bay_number']); i++)
                                         Container(
                                           height: 20,
                                           width: 40,
@@ -977,7 +944,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                           ),
                         ],
                       ),
-                      volumes != null && volumes.length > 0
+                      volumes.length > 0
                           ? ListView.separated(
                               itemBuilder: (context, i) {
                                 return _buildVolumeItem(volumes.reversed.toList()[i]);
@@ -992,7 +959,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                           : Center(
                               child: Text("无存储空间"),
                             ),
-                      storagePools != null && storagePools.length > 0
+                      storagePools.length > 0
                           ? ListView.separated(
                               padding: EdgeInsets.all(20),
                               itemBuilder: (context, i) {
@@ -1008,7 +975,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                           : Center(
                               child: Text("无存储池"),
                             ),
-                      disks != null && disks.length > 0
+                      disks.length > 0
                           ? ListView.separated(
                               padding: EdgeInsets.all(20),
                               itemBuilder: (context, i) {
@@ -1025,9 +992,9 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               child: Text("无HDD/SSD"),
                             ),
                       Center(
-                        child: Text("${hotSpares != null && hotSpares.length > 0 ? "暂不支持显示，共${hotSpares.length}个" : "无备援装置"}"),
+                        child: Text("${hotSpares.length > 0 ? "暂不支持显示，共${hotSpares.length}个" : "无备援装置"}"),
                       ),
-                      ssdCaches != null && ssdCaches.length > 0
+                      ssdCaches.length > 0
                           ? ListView.separated(
                               itemBuilder: (context, i) {
                                 return _buildSSDCacheItem(ssdCaches[i]);

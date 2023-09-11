@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:dsm_helper/widgets/virtual_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,10 +81,8 @@ class _SshState extends State<Ssh> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(
-          context,
-          color: Colors.black,
-          iconColor: Colors.white.withOpacity(0.5),
+        leading: BackButton(
+          color: Colors.white.withOpacity(0.5),
         ),
         title: Text(
           title,

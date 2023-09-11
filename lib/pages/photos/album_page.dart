@@ -2,11 +2,11 @@ import 'package:dsm_helper/models/photos/album_model.dart';
 import 'package:dsm_helper/models/photos/photo_model.dart';
 import 'package:dsm_helper/pages/photos/widgets/photo_item_widget.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/material.dart';
 
 class AlbumPage extends StatefulWidget {
-  const AlbumPage(this.album, {this.isTeam: false, Key key}) : super(key: key);
+  const AlbumPage(this.album, {this.isTeam: false, super.key});
   final AlbumModel album;
   final bool isTeam;
   @override
@@ -14,7 +14,7 @@ class AlbumPage extends StatefulWidget {
 }
 
 class _AlbumPageState extends State<AlbumPage> {
-  double photoWidth;
+  double? photoWidth;
   List<PhotoModel> photos = [];
   @override
   void initState() {
@@ -40,26 +40,22 @@ class _AlbumPageState extends State<AlbumPage> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              leading: AppBackButton(
-                context,
-                bevel: 0,
-              ),
               pinned: true,
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   "${widget.album.name}",
-                  style: TextStyle(color: Theme.of(context).appBarTheme.titleTextStyle.color, shadows: [BoxShadow(color: Colors.white, offset: Offset(1, 1), blurRadius: 5, spreadRadius: 5)]),
+                  style: TextStyle(color: Theme.of(context).appBarTheme.titleTextStyle?.color, shadows: [BoxShadow(color: Colors.white, offset: Offset(1, 1), blurRadius: 5, spreadRadius: 5)]),
                 ),
                 centerTitle: true,
                 background: Hero(
-                  tag: widget.album.additional.thumbnail,
+                  tag: widget.album.additional!.thumbnail!,
                   child: CupertinoExtendedImage(
-                    widget.album.additional.thumbnail.thumbUrl(size: 'lg'),
+                    widget.album.additional!.thumbnail!.thumbUrl(size: 'lg'),
                     fit: BoxFit.cover,
                     height: 200,
                     placeholder: CupertinoExtendedImage(
-                      widget.album.additional.thumbnail.thumbUrl(size: 'sm'),
+                      widget.album.additional!.thumbnail!.thumbUrl(size: 'sm'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -78,7 +74,7 @@ class _AlbumPageState extends State<AlbumPage> {
                 photos[i],
                 photos,
                 showName: false,
-                width: photoWidth,
+                width: photoWidth!,
                 isTeam: widget.isTeam,
               );
             } else {

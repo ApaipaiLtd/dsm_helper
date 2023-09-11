@@ -6,11 +6,10 @@ import 'package:dsm_helper/pages/moments/timeline.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Moments extends StatefulWidget {
   @override
@@ -28,8 +27,8 @@ class _MomentsState extends State<Moments> {
   List shares = [];
   List geocoding = [];
   List general = [];
-  double photoWidth;
-  double albumWidth;
+  double? photoWidth;
+  double? albumWidth;
   bool loadingTimeline = true;
   bool loadingAlbum = true;
   bool loadingShares = true;
@@ -65,7 +64,7 @@ class _MomentsState extends State<Moments> {
 
         for (int i = 0; i < timeline.length; i++) {
           int lines = (timeline[i]['item_count'] / 4).ceil();
-          double height = 40 + lines * photoWidth + (lines - 1) * 2;
+          double height = 40 + lines * photoWidth! + (lines - 1) * 2;
           timeline[i]['position'] = {};
           if (i == 0) {
             timeline[i]['position']['start'] = 0;
@@ -172,7 +171,7 @@ class _MomentsState extends State<Moments> {
 
   Widget _buildPhotoItem(photo, List photos) {
     int duration = 0;
-    Map timeLong;
+    Map timeLong = {};
     if (photo['type'] == "video") {
       if (photo['additional']['video_convert'].length > 0) {
         duration = photo['additional']['video_convert'][0]['metadata']['duration'] ~/ 1000;
@@ -268,7 +267,7 @@ class _MomentsState extends State<Moments> {
         Wrap(
           spacing: 2,
           runSpacing: 2,
-          children: items == null || items.length == 0
+          children: items.length == 0
               ? List.generate(line['item_count'], (index) {
                   return Container(
                     color: Colors.grey,
@@ -336,7 +335,7 @@ class _MomentsState extends State<Moments> {
   }
 
   Widget _buildCategoryItem(List photos, int index) {
-    double itemWidth = (albumWidth - 2) / 2;
+    double itemWidth = (albumWidth! - 2) / 2;
     if (index < photos.length) {
       Map photo = photos[index];
       String thumbUrl = '${Util.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
@@ -377,36 +376,34 @@ class _MomentsState extends State<Moments> {
     }
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
-        title: NeuSwitch(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          thumbColor: Theme.of(context).scaffoldBackgroundColor,
-          children: {
-            0: Text("图片"),
-            1: Text("相册"),
-            2: Text("共享"),
-          },
-          groupValue: currentIndex,
-          onValueChanged: (v) {
-            setState(() {
-              currentIndex = v;
-            });
-          },
-        ),
-      ),
+
+          // title: NeuSwitch(
+          //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          //   thumbColor: Theme.of(context).scaffoldBackgroundColor,
+          //   children: {
+          //     0: Text("图片"),
+          //     1: Text("相册"),
+          //     2: Text("共享"),
+          //   },
+          //   groupValue: currentIndex,
+          //   onValueChanged: (v) {
+          //     setState(() {
+          //       currentIndex = v;
+          //     });
+          //   },
+          // ),
+          ),
       body: IndexedStack(
         index: currentIndex,
         children: [
           loadingTimeline
               ? Center(
-                  child: NeuCard(
+                  child: Container(
                     padding: EdgeInsets.all(50),
-                    curveType: CurveType.flat,
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
                     child: CupertinoActivityIndicator(
                       radius: 14,
                     ),
@@ -417,27 +414,45 @@ class _MomentsState extends State<Moments> {
                       labelTextBuilder: (position) {
                         var line = timeline.where((element) => element['position']['start'] <= position && element['position']['end'] >= position).toList();
                         if (line.length > 0) {
-                          return Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                          return Text.rich(
+                            TextSpan(
                               children: [
-                                Text(
-                                  "${line[0]['month']}月",
+                                TextSpan(
+                                  text: "${line[0]['month']}月",
                                   style: TextStyle(fontSize: 30),
                                 ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("${line[0]['day'].toString().padLeft(2, "0")}日"),
-                                    Text("${line[0]['year']}"),
-                                  ],
-                                )
+                                TextSpan(
+                                  text: "${line[0]['day'].toString().padLeft(2, "0")}日",
+                                  style: TextStyle(fontSize: 30),
+                                ),
+                                TextSpan(
+                                  text: "${line[0]['year']}",
+                                  style: TextStyle(fontSize: 30),
+                                ),
                               ],
                             ),
                           );
+                          // return Container(
+                          //   padding: EdgeInsets.symmetric(horizontal: 20),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.end,
+                          //     children: [
+                          //       Text(
+                          //         "${line[0]['month']}月",
+                          //         style: TextStyle(fontSize: 30),
+                          //       ),
+                          //       Column(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           Text("${line[0]['day'].toString().padLeft(2, "0")}日"),
+                          //           Text("${line[0]['year']}"),
+                          //         ],
+                          //       )
+                          //     ],
+                          //   ),
+                          // );
                         } else {
-                          return null;
+                          return Text("");
                         }
                       },
                       labelConstraints: BoxConstraints(minHeight: 60, maxHeight: 60, minWidth: 140, maxWidth: 140),
@@ -455,14 +470,12 @@ class _MomentsState extends State<Moments> {
                     ),
           loadingAlbum
               ? Center(
-                  child: NeuCard(
+                  child: Container(
                     padding: EdgeInsets.all(50),
-                    curveType: CurveType.flat,
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
                     child: CupertinoActivityIndicator(
                       radius: 14,
                     ),
@@ -727,14 +740,12 @@ class _MomentsState extends State<Moments> {
                 ),
           loadingShares
               ? Center(
-                  child: NeuCard(
+                  child: Container(
                     padding: EdgeInsets.all(50),
-                    curveType: CurveType.flat,
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
                     child: CupertinoActivityIndicator(
                       radius: 14,
                     ),

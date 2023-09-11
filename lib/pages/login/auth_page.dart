@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gesture_password/gesture_password.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:gesture_password_widget/gesture_password_widget.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_ios/local_auth_ios.dart';
 import 'package:local_auth_android/local_auth_android.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:sp_util/sp_util.dart';
 
 class AuthPage extends StatefulWidget {
   final bool launch;
@@ -21,7 +22,7 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends State<AuthPage> {
   final LocalAuthentication auth = LocalAuthentication();
   bool canCheckBiometrics = false;
-  DateTime lastPopTime;
+  DateTime? lastPopTime;
   BiometricType biometricsType = BiometricType.fingerprint;
   int errorCount = 0;
   String password = "";
@@ -45,10 +46,9 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   getData() async {
-    String pass = await Util.getStorage("gesture_password");
-    password = pass ?? "";
-    String launchAuthBiometricsStr = await Util.getStorage("launch_auth_biometrics");
-    if (launchAuthBiometricsStr == "1") {
+    password = SpUtil.getString("gesture_password", defValue: "")!;
+    bool launchAuthBiometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
+    if (launchAuthBiometrics) {
       canCheckBiometrics = await auth.canCheckBiometrics;
       setState(() {});
       if (canCheckBiometrics) {
@@ -116,7 +116,7 @@ class _AuthPageState extends State<AuthPage> {
         } else if (e.code == auth_error.lockedOut) {
           Util.toast("认证失败次数过多，请使用图形密码登录");
         } else {
-          Util.toast(e.message);
+          Util.toast(e.message ?? "认证失败");
         }
       }
     }
@@ -124,7 +124,7 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<bool> onWillPop() {
     Util.vibrate(FeedbackType.light);
-    if (lastPopTime == null || DateTime.now().difference(lastPopTime) > Duration(seconds: 2)) {
+    if (lastPopTime == null || DateTime.now().difference(lastPopTime!) > Duration(seconds: 2)) {
       lastPopTime = DateTime.now();
       Util.toast('再按一次退出${Util.appName}');
     } else {
@@ -159,51 +159,47 @@ class _AuthPageState extends State<AuthPage> {
                 height: 80,
               ),
               Center(
-                child: GesturePassword(
+                child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   height: MediaQuery.of(context).size.width * 0.9,
-                  attribute: ItemAttribute(normalColor: Colors.grey, selectedColor: Colors.blue, lineStrokeWidth: 4),
-                  successCallback: (s) {
-                    if (s == password) {
-                      //密码验证通过
-                      if (widget.launch) {
-                        if (widget.launchAccountPage) {
-                          Navigator.of(context).pushReplacementNamed("/accounts");
+                  child: GesturePasswordWidget(
+                    onComplete: (s) {
+                      if (s.join(",") == password) {
+                        //密码验证通过
+                        if (widget.launch) {
+                          if (widget.launchAccountPage) {
+                            Navigator.of(context).pushReplacementNamed("/accounts");
+                          } else {
+                            Navigator.of(context).pushReplacementNamed("/login");
+                          }
                         } else {
-                          Navigator.of(context).pushReplacementNamed("/login");
+                          Navigator.of(context).pop();
                         }
                       } else {
-                        Navigator.of(context).pop();
+                        //密码验证不通过
+                        if (errorCount < 2) {
+                          Util.toast("密码错误");
+                          Util.vibrate(FeedbackType.warning);
+                        } else if (errorCount < 5) {
+                          errorCount++;
+                          Util.toast("密码错误，连续错误5次将清空登录历史");
+                          Util.vibrate(FeedbackType.warning);
+                        } else {
+                          Util.toast("密码错误已达5次");
+                          Util.vibrate(FeedbackType.warning);
+                          SpUtil.remove("servers");
+                          SpUtil.remove("https");
+                          SpUtil.remove("host");
+                          SpUtil.remove("port");
+                          SpUtil.remove("account");
+                          SpUtil.remove("remember_password");
+                          SpUtil.remove("auto_login");
+                          SpUtil.remove("check_ssl");
+                          Navigator.of(context).pushReplacementNamed("/login");
+                        }
                       }
-                    } else {
-                      //密码验证不通过
-                      if (errorCount < 2) {
-                        Util.toast("密码错误");
-                        Util.vibrate(FeedbackType.warning);
-                      } else if (errorCount < 5) {
-                        errorCount++;
-                        Util.toast("密码错误，连续错误5次将清空登录历史");
-                        Util.vibrate(FeedbackType.warning);
-                      } else {
-                        Util.toast("密码错误已达5次");
-                        Util.vibrate(FeedbackType.warning);
-                        Util.removeStorage("servers");
-                        Util.removeStorage("https");
-                        Util.removeStorage("host");
-                        Util.removeStorage("port");
-                        Util.removeStorage("account");
-                        Util.removeStorage("remember_password");
-                        Util.removeStorage("auto_login");
-                        Util.removeStorage("check_ssl");
-                        Navigator.of(context).pushReplacementNamed("/login");
-                      }
-                    }
-                  },
-                  failCallback: () {
-                    Util.toast("至少连接4个点");
-                    Util.vibrate(FeedbackType.warning);
-                  },
-                  selectedCallback: (str) {},
+                    },
+                  ),
                 ),
               ),
             ],

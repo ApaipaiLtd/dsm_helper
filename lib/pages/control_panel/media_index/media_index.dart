@@ -1,8 +1,6 @@
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'dart:async';
 
 class MediaIndex extends StatefulWidget {
@@ -11,11 +9,11 @@ class MediaIndex extends StatefulWidget {
 }
 
 class _MediaIndexState extends State<MediaIndex> {
-  bool mediaIndexing;
+  bool? mediaIndexing;
   String thumbnailQuality = "";
-  bool mobileEnabled;
+  bool? mobileEnabled;
   List packages = [];
-  Timer timer;
+  Timer? timer;
   @override
   void initState() {
     getData();
@@ -66,19 +64,18 @@ class _MediaIndexState extends State<MediaIndex> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("索引服务"),
       ),
       body: ListView(
         children: [
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
+            
+            
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -92,11 +89,11 @@ class _MediaIndexState extends State<MediaIndex> {
                       ),
                       Spacer(),
                       Text(
-                        "${mediaIndexing == null ? "加载中" : mediaIndexing ? "索引中" : "已完成"}",
+                        "${mediaIndexing == null ? "加载中" : mediaIndexing! ? "索引中" : "已完成"}",
                         style: TextStyle(
                             color: mediaIndexing == null
                                 ? null
-                                : mediaIndexing
+                                : mediaIndexing!
                                     ? Colors.blue
                                     : Colors.green),
                       ),
@@ -124,14 +121,11 @@ class _MediaIndexState extends State<MediaIndex> {
                       SizedBox(
                         height: 10,
                       ),
-                      NeuButton(
-                        decoration: NeumorphicDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        bevel: 10,
+                      CupertinoButton(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
                         onPressed: () async {
-                          if (mediaIndexing) {
+                          if (mediaIndexing == true) {
                             return;
                           }
                           var res = await Api.mediaReindex();
@@ -150,14 +144,14 @@ class _MediaIndexState extends State<MediaIndex> {
               ),
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
+            
+            
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -190,17 +184,15 @@ class _MediaIndexState extends State<MediaIndex> {
                                 setState(() {
                                   thumbnailQuality = "normal";
                                 });
-                                await Api.mediaIndexSet(thumbnailQuality, mobileEnabled);
+                                await Api.mediaIndexSet(thumbnailQuality, mobileEnabled!);
                                 getData();
                               },
-                              child: NeuCard(
-                                decoration: NeumorphicDecoration(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 padding: EdgeInsets.all(10),
-                                bevel: 10,
-                                curveType: thumbnailQuality == "normal" ? CurveType.emboss : CurveType.flat,
                                 child: Row(
                                   children: [
                                     Text("一般品质"),
@@ -224,17 +216,15 @@ class _MediaIndexState extends State<MediaIndex> {
                                 setState(() {
                                   thumbnailQuality = "high";
                                 });
-                                await Api.mediaIndexSet(thumbnailQuality, mobileEnabled);
+                                await Api.mediaIndexSet(thumbnailQuality, mobileEnabled!);
                                 getData();
                               },
-                              child: NeuCard(
-                                decoration: NeumorphicDecoration(
+                              child: Container(
+                                decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 padding: EdgeInsets.all(10),
-                                bevel: 10,
-                                curveType: thumbnailQuality == "high" ? CurveType.emboss : CurveType.flat,
                                 child: Row(
                                   children: [
                                     Text("高品质"),
@@ -258,14 +248,14 @@ class _MediaIndexState extends State<MediaIndex> {
             ),
           ),
           if (mobileEnabled != null)
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-              bevel: 10,
-              curveType: CurveType.flat,
+              
+              
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -290,26 +280,24 @@ class _MediaIndexState extends State<MediaIndex> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap: () async {
+                          onTap:mobileEnabled!=null ? () async {
                             setState(() {
-                              mobileEnabled = !mobileEnabled;
+                              mobileEnabled = !mobileEnabled!;
                             });
-                            await Api.mediaIndexSet(thumbnailQuality, mobileEnabled);
+                            await Api.mediaIndexSet(thumbnailQuality, mobileEnabled!);
                             getData();
-                          },
-                          child: NeuCard(
-                            decoration: NeumorphicDecoration(
+                          }:null,
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: EdgeInsets.all(10),
-                            bevel: 10,
-                            curveType: mobileEnabled ? CurveType.emboss : CurveType.flat,
                             child: Row(
                               children: [
                                 Text("启用移动设备视频转换"),
                                 Spacer(),
-                                if (mobileEnabled)
+                                if (mobileEnabled == true)
                                   Icon(
                                     CupertinoIcons.checkmark_alt,
                                     color: Color(0xffff9813),

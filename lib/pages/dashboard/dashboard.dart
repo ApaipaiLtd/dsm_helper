@@ -8,10 +8,10 @@ import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
-import 'package:dsm_helper/pages/dashborad/applications.dart';
-import 'package:dsm_helper/pages/dashborad/media_converter.dart';
-import 'package:dsm_helper/pages/dashborad/shortcut_list.dart';
-import 'package:dsm_helper/pages/dashborad/widget_setting.dart';
+import 'package:dsm_helper/pages/dashboard/applications.dart';
+import 'package:dsm_helper/pages/dashboard/media_converter.dart';
+import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
+import 'package:dsm_helper/pages/dashboard/widget_setting.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
@@ -28,9 +28,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class Dashboard extends StatefulWidget {
@@ -40,8 +40,21 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard> {
+  List<String> supportedShortcuts = [
+    "SYNO.SDS.PkgManApp.Instance",
+    "SYNO.SDS.AdminCenter.Application",
+    "SYNO.SDS.StorageManager.Instance",
+    "SYNO.SDS.Docker.Application",
+    "SYNO.SDS.Docker.ContainerDetail.Instance",
+    "SYNO.SDS.LogCenter.Instance",
+    "SYNO.SDS.ResourceMonitor.Instance",
+    "SYNO.SDS.Virtualization.Application",
+    "SYNO.SDS.DownloadStation.Application",
+    "SYNO.SDS.XLPan.Application",
+  ];
+
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Map utilization;
+  Map? utilization;
   List volumes = [];
   List disks = [];
   List connectedUsers = [];
@@ -56,13 +69,14 @@ class DashboardState extends State<Dashboard> {
   List fileLogs = [];
   List<ShortcutItemModel> shortcutItems = [];
   List validAppViewOrder = [];
-  WallpaperModel wallpaperModel;
+  WallpaperModel? wallpaperModel;
   List esatas = [];
   List usbs = [];
-  Map appNotify;
-  Map system;
-  Map restoreSizePos;
-  Map converter;
+  Map? appNotify;
+  Map? system;
+  Map? restoreSizePos;
+  Map? converter;
+  Map? volWarnings;
   bool loading = true;
   bool success = true;
   int refreshDuration = 10;
@@ -78,7 +92,6 @@ class DashboardState extends State<Dashboard> {
     return maxSpeed;
   }
 
-  Map volWarnings;
   String msg = "";
   @override
   void initState() {
@@ -95,7 +108,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   bool get isDrawerOpen {
-    return _scaffoldKey.currentState.isDrawerOpen;
+    return _scaffoldKey.currentState!.isDrawerOpen;
   }
 
   getGroups() async {
@@ -106,13 +119,13 @@ class DashboardState extends State<Dashboard> {
   }
 
   closeDrawer() {
-    if (_scaffoldKey.currentState.isDrawerOpen) {
+    if (_scaffoldKey.currentState!.isDrawerOpen) {
       Navigator.of(context).pop();
     }
   }
 
   showFirstLaunchDialog() async {
-    bool firstLaunch = await Util.getStorage("first_launch_channel") == null;
+    bool firstLaunch = SpUtil.getBool("first_launch_channel", defValue: true)!;
     if (firstLaunch) {
       showCupertinoDialog(
         context: context,
@@ -122,12 +135,10 @@ class DashboardState extends State<Dashboard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 50),
-                  curveType: CurveType.emboss,
-                  bevel: 5,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
                   ),
@@ -142,29 +153,26 @@ class DashboardState extends State<Dashboard> {
                         SizedBox(
                           height: 16,
                         ),
-                        NeuCard(
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
-                          curveType: CurveType.flat,
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           child: Text("前往'设置-关闭广告'页面，即可关闭开屏广告。"),
                         ),
                         SizedBox(
                           height: 20,
                         ),
-                        NeuCard(
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          curveType: CurveType.flat,
                           child: Padding(
                               padding: EdgeInsets.all(15),
                               child: Column(
-                                children: Util.groups.channel.map((e) {
+                                children: Util.groups.channel!.map((channel) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Row(
@@ -177,18 +185,16 @@ class DashboardState extends State<Dashboard> {
                                           width: 10,
                                         ),
                                         Text(
-                                          "${e.displayName}",
+                                          "${channel.displayName}",
                                           style: TextStyle(fontSize: 16),
                                         ),
                                         Spacer(),
-                                        NeuButton(
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
+                                        CupertinoButton(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(20),
                                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                           onPressed: () {
-                                            launchUrlString(e.key, mode: LaunchMode.externalApplication);
+                                            launchUrlString(channel.key!, mode: LaunchMode.externalApplication);
                                           },
                                           child: Text("加入"),
                                         ),
@@ -201,16 +207,15 @@ class DashboardState extends State<Dashboard> {
                         SizedBox(
                           height: 20,
                         ),
-                        NeuCard(
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          curveType: CurveType.flat,
                           child: Padding(
                               padding: EdgeInsets.all(15),
                               child: Column(
-                                children: Util.groups.wechat.map((e) {
+                                children: Util.groups.wechat!.map((wechat) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Row(
@@ -223,18 +228,16 @@ class DashboardState extends State<Dashboard> {
                                           width: 10,
                                         ),
                                         Text(
-                                          "${e.displayName}",
+                                          "${wechat.displayName}",
                                           style: TextStyle(fontSize: 16),
                                         ),
                                         Spacer(),
-                                        NeuButton(
-                                          decoration: NeumorphicDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
+                                        CupertinoButton(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(20),
                                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                           onPressed: () {
-                                            ClipboardData data = new ClipboardData(text: e.name);
+                                            ClipboardData data = new ClipboardData(text: wechat.name!);
                                             Clipboard.setData(data);
                                             Util.toast("已复制到剪贴板");
                                           },
@@ -252,16 +255,13 @@ class DashboardState extends State<Dashboard> {
                         Row(
                           children: [
                             Expanded(
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 onPressed: () async {
                                   Navigator.of(context).pop();
-                                  Util.setStorage("first_launch_channel", "0");
+                                  SpUtil.putBool("first_launch_channel", false);
                                 },
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                bevel: 20,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "我知道了",
@@ -321,7 +321,7 @@ class DashboardState extends State<Dashboard> {
     if (res['success']) {
       setState(() {
         converter = res['data'];
-        if (converter != null && (converter['photo_remain'] + converter['thumb_remain'] + converter['video_remain'] > 0)) {
+        if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0)) {
           Future.delayed(Duration(seconds: 5)).then((value) => getMediaConverter());
         }
       });
@@ -356,7 +356,7 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
-  getData({bool init: false}) async {
+  getData({bool init = false}) async {
     getExternalDevice();
     getMediaConverter();
     var res = await Api.systemInfo(widgets);
@@ -386,8 +386,9 @@ class DashboardState extends State<Dashboard> {
               break;
             case "SYNO.Core.System":
               setState(() {
+                print(item['data']);
                 system = item['data'];
-                Util.systemVersion(system['firmware_ver']);
+                Util.systemVersion(system!['firmware_ver']);
               });
               break;
             case "SYNO.Core.CurrentConnection":
@@ -461,14 +462,12 @@ class DashboardState extends State<Dashboard> {
         onTap: () {
           if (Util.notReviewAccount)
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return SystemInfo(0, system, volumes, disks);
+              return SystemInfo(0, system!, volumes, disks);
             }));
         },
-        child: NeuCard(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          bevel: 20,
-          curveType: CurveType.flat,
-          decoration: NeumorphicDecoration(
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
           ),
@@ -478,7 +477,7 @@ class DashboardState extends State<Dashboard> {
                 builder: (context, wallpaperProvider, _) {
                   return Stack(
                     children: [
-                      if (wallpaperProvider.showWallpaper && wallpaperModel != null && (wallpaperModel.customizeWallpaper || wallpaperModel.customizeBackground))
+                      if (wallpaperProvider.showWallpaper && wallpaperModel != null && (wallpaperModel!.customizeWallpaper! || wallpaperModel!.customizeBackground!))
                         ExtendedImage.network(
                           Util.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}",
                           height: 170,
@@ -501,7 +500,7 @@ class DashboardState extends State<Dashboard> {
                           padding: EdgeInsets.all(20),
                           child: DefaultTextStyle(
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyText1.color,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                             child: Column(
                               children: [
@@ -524,13 +523,13 @@ class DashboardState extends State<Dashboard> {
                                 SizedBox(
                                   height: 5,
                                 ),
-                                if (system != null && system['model'] != null)
+                                if (system != null && system!['model'] != null)
                                   Padding(
                                     padding: EdgeInsets.only(top: 5),
                                     child: Row(
                                       children: [
                                         Text("产品型号："),
-                                        Text("${system['model']}"),
+                                        Text("${system!['model']}"),
                                       ],
                                     ),
                                   ),
@@ -543,27 +542,27 @@ class DashboardState extends State<Dashboard> {
                                     Text("$hostname"),
                                   ],
                                 ),
-                                if (system != null && system['sys_temp'] != null)
+                                if (system != null && system!['sys_temp'] != null)
                                   Padding(
                                     padding: EdgeInsets.only(top: 5),
                                     child: Row(
                                       children: [
                                         Text("散热状态："),
                                         Text(
-                                          "${system['sys_temp']}℃ ${system['temperature_warning'] == null ? (system['sys_temp'] > 80 ? "警告" : "正常") : (system['temperature_warning'] ? "警告" : "正常")}",
-                                          style: TextStyle(color: system['temperature_warning'] == null ? (system['sys_temp'] > 80 ? Colors.red : Colors.green) : (system['temperature_warning'] ? Colors.red : Colors.green)),
+                                          "${system!['sys_temp']}℃ ${system!['temperature_warning'] == null ? (system!['sys_temp'] > 80 ? "警告" : "正常") : (system!['temperature_warning'] ? "警告" : "正常")}",
+                                          style: TextStyle(color: system!['temperature_warning'] == null ? (system!['sys_temp'] > 80 ? Colors.red : Colors.green) : (system!['temperature_warning'] ? Colors.red : Colors.green)),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
                                   ),
-                                if (system != null && system['up_time'] != null && system['up_time'] != "")
+                                if (system != null && system!['up_time'] != null && system!['up_time'] != "")
                                   Padding(
                                     padding: EdgeInsets.only(top: 5),
                                     child: Row(
                                       children: [
                                         Text("运行时间："),
-                                        Text("${Util.parseOpTime(system['up_time'])}"),
+                                        Text("${Util.parseOpTime(system!['up_time'])}"),
                                       ],
                                     ),
                                   ),
@@ -581,12 +580,10 @@ class DashboardState extends State<Dashboard> {
         ),
       );
     } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget" && connectedUsers.length > 0) {
-      return NeuCard(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        bevel: 20,
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -614,9 +611,6 @@ class DashboardState extends State<Dashboard> {
               ),
             ),
             ...connectedUsers.map(_buildUserItem).toList(),
-            SizedBox(
-              height: 20,
-            ),
           ],
         ),
       );
@@ -627,12 +621,10 @@ class DashboardState extends State<Dashboard> {
             return TaskScheduler();
           }));
         },
-        child: NeuCard(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          bevel: 20,
-          curveType: CurveType.flat,
-          decoration: NeumorphicDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -670,18 +662,19 @@ class DashboardState extends State<Dashboard> {
     } else if (widget == "SYNO.SDS.SystemInfoApp.RecentLogWidget") {
       return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(CupertinoPageRoute(
+          Navigator.of(context).push(
+            CupertinoPageRoute(
               builder: (context) {
                 return LogCenter();
               },
-              settings: RouteSettings(name: "log_center")));
+              settings: RouteSettings(name: "log_center"),
+            ),
+          );
         },
-        child: NeuCard(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          bevel: 20,
-          curveType: CurveType.flat,
-          decoration: NeumorphicDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -725,7 +718,7 @@ class DashboardState extends State<Dashboard> {
                     : Center(
                         child: Text(
                           "暂无日志",
-                          style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                          style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                         ),
                       ),
               ),
@@ -743,12 +736,10 @@ class DashboardState extends State<Dashboard> {
             return ResourceMonitor();
           }));
         },
-        child: NeuCard(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          bevel: 20,
-          curveType: CurveType.flat,
-          decoration: NeumorphicDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -798,10 +789,8 @@ class DashboardState extends State<Dashboard> {
                           child: Text("CPU："),
                         ),
                         Expanded(
-                          child: NeuCard(
-                            curveType: CurveType.flat,
-                            bevel: 10,
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -810,8 +799,8 @@ class DashboardState extends State<Dashboard> {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.blue,
-                              displayTextStyle: TextStyle(color: AppTheme.of(context).progressColor, fontSize: 12),
-                              currentValue: utilization['cpu']['user_load'] + utilization['cpu']['system_load'],
+                              displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
+                              currentValue: utilization!['cpu']['user_load'] + utilization!['cpu']['system_load'],
                               displayText: '%',
                             ),
                           ),
@@ -839,10 +828,8 @@ class DashboardState extends State<Dashboard> {
                       children: [
                         SizedBox(width: 60, child: Text("RAM：")),
                         Expanded(
-                          child: NeuCard(
-                            curveType: CurveType.flat,
-                            bevel: 10,
-                            decoration: NeumorphicDecoration(
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -851,8 +838,8 @@ class DashboardState extends State<Dashboard> {
                               changeColorValue: 90,
                               changeProgressColor: Colors.red,
                               progressColor: Colors.blue,
-                              displayTextStyle: TextStyle(color: AppTheme.of(context).progressColor, fontSize: 12),
-                              currentValue: utilization['memory']['real_usage'],
+                              displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
+                              currentValue: utilization!['memory']['real_usage'],
                               displayText: '%',
                             ),
                           ),
@@ -884,7 +871,7 @@ class DashboardState extends State<Dashboard> {
                           color: Colors.blue,
                         ),
                         Text(
-                          Util.formatSize(utilization['network'][0]['tx']) + "/S",
+                          Util.formatSize(utilization!['network'][0]['tx']) + "/S",
                           style: TextStyle(color: Colors.blue),
                         ),
                         SizedBox(
@@ -895,7 +882,7 @@ class DashboardState extends State<Dashboard> {
                           color: Colors.green,
                         ),
                         Text(
-                          Util.formatSize(utilization['network'][0]['rx']) + "/S",
+                          Util.formatSize(utilization!['network'][0]['rx']) + "/S",
                           style: TextStyle(color: Colors.green),
                         ),
                       ],
@@ -919,10 +906,8 @@ class DashboardState extends State<Dashboard> {
                     aspectRatio: 1.70,
                     child: Padding(
                       padding: const EdgeInsets.all(20),
-                      child: NeuCard(
-                        curveType: CurveType.flat,
-                        bevel: 20,
-                        decoration: NeumorphicDecoration(
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -1046,15 +1031,13 @@ class DashboardState extends State<Dashboard> {
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                return SystemInfo(2, system, volumes, disks);
+                return SystemInfo(2, system!, volumes, disks);
               }));
             },
-            child: NeuCard(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              curveType: CurveType.flat,
-              bevel: 20,
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -1089,12 +1072,10 @@ class DashboardState extends State<Dashboard> {
               ),
             ),
           ),
-          if (ssdCaches != null && ssdCaches.length > 0)
-            NeuCard(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              curveType: CurveType.flat,
-              bevel: 20,
-              decoration: NeumorphicDecoration(
+          if (ssdCaches.length > 0)
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -1132,12 +1113,10 @@ class DashboardState extends State<Dashboard> {
         ],
       );
     } else if (widget == "SYNO.SDS.SystemInfoApp.FileChangeLogWidget") {
-      return NeuCard(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        bevel: 20,
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -1181,7 +1160,7 @@ class DashboardState extends State<Dashboard> {
                   : Center(
                       child: Text(
                         "暂无日志",
-                        style: TextStyle(color: AppTheme.of(context).placeholderColor),
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                       ),
                     ),
             ),
@@ -1201,174 +1180,150 @@ class DashboardState extends State<Dashboard> {
     DateTime loginTime = DateTime.parse(user['time'].toString().replaceAll("/", "-"));
     DateTime currentTime = DateTime.now();
     Map timeLong = Util.timeLong(currentTime.difference(loginTime).inSeconds);
-    return NeuCard(
-      decoration: NeumorphicDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
-      curveType: CurveType.flat,
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                "${user['who']}",
-                overflow: TextOverflow.ellipsis,
-              ),
+    return Container(
+      margin: EdgeInsets.only(left: 20, right: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "${user['who']}",
+              overflow: TextOverflow.ellipsis,
             ),
-            Expanded(
-              child: Text(
-                "${user['type']}",
-                overflow: TextOverflow.ellipsis,
-              ),
+          ),
+          Expanded(
+            child: Text(
+              "${user['type']}",
+              overflow: TextOverflow.ellipsis,
             ),
-            Expanded(
-              child: Text(
-                "${timeLong['hours'].toString().padLeft(2, "0")}:${timeLong['minutes'].toString().padLeft(2, "0")}:${timeLong['seconds'].toString().padLeft(2, "0")}",
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.right,
-              ),
+          ),
+          Expanded(
+            child: Text(
+              "${timeLong['hours'].toString().padLeft(2, "0")}:${timeLong['minutes'].toString().padLeft(2, "0")}:${timeLong['seconds'].toString().padLeft(2, "0")}",
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.right,
             ),
-            SizedBox(
-              width: 5,
-            ),
-            NeuButton(
-              onPressed: () async {
-                if (user['running']) {
-                  return;
-                }
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) {
-                    return Material(
-                      color: Colors.transparent,
-                      child: NeuCard(
-                        width: double.infinity,
-                        bevel: 5,
-                        curveType: CurveType.emboss,
-                        decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                        child: SafeArea(
-                          top: false,
-                          child: Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "终止连接",
-                                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Text(
-                                  "确认要终止此连接？",
-                                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
-                                ),
-                                SizedBox(
-                                  height: 22,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: NeuButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            user['running'] = true;
-                                          });
-                                          var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
-                                          setState(() {
-                                            user['running'] = false;
-                                          });
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          CupertinoButton(
+            onPressed: () async {
+              if (user['running']) {
+                return;
+              }
+              showCupertinoModalPopup(
+                context: context,
+                builder: (context) {
+                  return Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                      child: SafeArea(
+                        top: false,
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                "终止连接",
+                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                "确认要终止此连接？",
+                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                height: 22,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CupertinoButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          user['running'] = true;
+                                        });
+                                        var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
+                                        setState(() {
+                                          user['running'] = false;
+                                        });
 
-                                          if (res['success']) {
-                                            Util.toast("连接已终止");
-                                          }
-                                        },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "终止连接",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
+                                        if (res['success']) {
+                                          Util.toast("连接已终止");
+                                        }
+                                      },
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(25),
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "终止连接",
+                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Expanded(
-                                      child: NeuButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                        },
-                                        decoration: NeumorphicDecoration(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        bevel: 5,
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "取消",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
+                                  ),
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  Expanded(
+                                    child: CupertinoButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                      },
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(25),
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "取消",
+                                        style: TextStyle(fontSize: 18),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    );
-                  },
-                );
-              },
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.all(5),
-              bevel: 5,
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: user['running']
-                    ? CupertinoActivityIndicator()
-                    : Icon(
-                        Icons.remove_circle_outline,
-                        color: Colors.red,
-                        size: 18,
-                      ),
-              ),
+                    ),
+                  );
+                },
+              );
+            },
+            padding: EdgeInsets.all(5),
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: user['running']
+                  ? CupertinoActivityIndicator()
+                  : Icon(
+                      Icons.remove_circle_outline,
+                      color: Colors.red,
+                      size: 18,
+                    ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildTaskItem(task) {
     task['running'] = task['running'] ?? false;
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
-      curveType: CurveType.flat,
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Row(
@@ -1391,7 +1346,7 @@ class DashboardState extends State<Dashboard> {
             SizedBox(
               width: 5,
             ),
-            NeuButton(
+            CupertinoButton(
               onPressed: () async {
                 if (task['running']) {
                   return;
@@ -1409,12 +1364,9 @@ class DashboardState extends State<Dashboard> {
                   Util.toast("任务计划执行失败，code：${res['error']['code']}");
                 }
               },
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(5),
-              bevel: 5,
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -1434,21 +1386,20 @@ class DashboardState extends State<Dashboard> {
   }
 
   Widget _buildLogItem(log) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(15),
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      bevel: 10,
-      curveType: CurveType.flat,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              "${log['msg']}",
-            ),
+          Text("${log['ldate']} ${log['ltime']}"),
+          Text(
+            "${log['msg']}",
+            style: TextStyle(fontSize: 12),
           ),
         ],
       ),
@@ -1456,15 +1407,13 @@ class DashboardState extends State<Dashboard> {
   }
 
   Widget _buildFileLogItem(log) {
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(15),
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      bevel: 10,
-      curveType: CurveType.flat,
+      margin: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           Icon(log['cmd'] == "delete"
@@ -1481,10 +1430,27 @@ class DashboardState extends State<Dashboard> {
                                   ? Icons.upload_outlined
                                   : log['cmd'] == "rename"
                                       ? Icons.drive_file_rename_outline
-                                      : Icons.code),
+                                      : log['cmd'] == "write"
+                                          ? Icons.edit
+                                          : log['cmd'] == 'create'
+                                              ? Icons.add
+                                              : Icons.device_unknown),
+          SizedBox(
+            width: 10,
+          ),
           Expanded(
-            child: Text(
-              "${log['descr']}",
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${log['time']}",
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  "${log['descr']}",
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
             ),
           ),
         ],
@@ -1494,27 +1460,22 @@ class DashboardState extends State<Dashboard> {
 
   Widget _buildVolumeItem(volume) {
     double used = int.parse(volume['size']['used']) / int.parse(volume['size']['total']);
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
-      padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
       child: Row(
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
+          Container(
             margin: EdgeInsets.all(10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
             padding: EdgeInsets.all(5),
-            bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
               animation: true,
@@ -1603,27 +1564,23 @@ class DashboardState extends State<Dashboard> {
 
   Widget _buildSSDCacheItem(volume) {
     double percent = int.parse(volume['size']['used'] ?? volume['size']['reusable']) / int.parse(volume['size']['total']);
-    return NeuCard(
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      curveType: CurveType.flat,
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      bevel: 10,
       child: Row(
         children: [
-          NeuCard(
-            curveType: CurveType.flat,
+          Container(
             margin: EdgeInsets.all(10),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(80),
               // color: Colors.red,
             ),
             padding: EdgeInsets.all(5),
-            bevel: 8,
             child: CircularPercentIndicator(
               radius: 40,
               animation: true,
@@ -1711,14 +1668,12 @@ class DashboardState extends State<Dashboard> {
   }
 
   Widget _buildESataItem(esata) {
-    return NeuCard(
+    return Container(
       margin: EdgeInsets.only(bottom: 20),
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      bevel: 20,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -1747,7 +1702,7 @@ class DashboardState extends State<Dashboard> {
                   width: 10,
                 ),
                 Spacer(),
-                NeuButton(
+                CupertinoButton(
                   onPressed: () async {
                     var res = await Api.ejectEsata(esata['dev_id']);
                     if (res['success']) {
@@ -1757,12 +1712,9 @@ class DashboardState extends State<Dashboard> {
                       Util.toast("设备退出失败，代码${res['error']['code']}");
                     }
                   },
-                  decoration: NeumorphicDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
                   padding: EdgeInsets.all(5),
-                  bevel: 5,
                   child: SizedBox(
                     width: 20,
                     height: 20,
@@ -1796,15 +1748,12 @@ class DashboardState extends State<Dashboard> {
                 if (Util.notReviewAccount)
                   Padding(
                     padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                    child: NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                    child: CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(10),
-                      bevel: 5,
                       onPressed: () {
-                        _scaffoldKey.currentState.openDrawer();
+                        _scaffoldKey.currentState?.openDrawer();
                       },
                       child: Image.asset(
                         "assets/icons/application.png",
@@ -1815,24 +1764,19 @@ class DashboardState extends State<Dashboard> {
                 if ((esatas + usbs).length > 0)
                   Padding(
                     padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                    child: NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                    child: CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(10),
-                      bevel: 5,
                       onPressed: () {
                         showCupertinoModalPopup(
                           context: context,
                           builder: (context) {
                             return Material(
                               color: Colors.transparent,
-                              child: NeuCard(
+                              child: Container(
                                 width: double.infinity,
-                                bevel: 5,
-                                curveType: CurveType.emboss,
-                                decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                 child: SafeArea(
                                   top: false,
                                   child: Padding(
@@ -1851,7 +1795,7 @@ class DashboardState extends State<Dashboard> {
                                         Row(
                                           children: [
                                             Expanded(
-                                              child: NeuButton(
+                                              child: CupertinoButton(
                                                 onPressed: () async {
                                                   Navigator.of(context).push(CupertinoPageRoute(
                                                       builder: (context) {
@@ -1859,11 +1803,8 @@ class DashboardState extends State<Dashboard> {
                                                       },
                                                       settings: RouteSettings(name: "external_device")));
                                                 },
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 5,
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
                                                 padding: EdgeInsets.symmetric(vertical: 10),
                                                 child: Text(
                                                   "查看详情",
@@ -1875,15 +1816,12 @@ class DashboardState extends State<Dashboard> {
                                               width: 16,
                                             ),
                                             Expanded(
-                                              child: NeuButton(
+                                              child: CupertinoButton(
                                                 onPressed: () async {
                                                   Navigator.of(context).pop();
                                                 },
-                                                decoration: NeumorphicDecoration(
-                                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                bevel: 5,
+                                                color: Theme.of(context).scaffoldBackgroundColor,
+                                                borderRadius: BorderRadius.circular(25),
                                                 padding: EdgeInsets.symmetric(vertical: 10),
                                                 child: Text(
                                                   "取消",
@@ -1911,21 +1849,18 @@ class DashboardState extends State<Dashboard> {
                       ),
                     ),
                   ),
-                if (converter != null && (converter['photo_remain'] + converter['thumb_remain'] + converter['video_remain'] > 0))
+                if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0))
                   Padding(
                     padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                    child: NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                    child: CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(10),
-                      bevel: 5,
                       onPressed: () {
                         showCupertinoModalPopup(
                             context: context,
                             builder: (context) {
-                              return MediaConverter(converter);
+                              return MediaConverter(converter!);
                             });
                       },
                       child: Image.asset(
@@ -1938,16 +1873,13 @@ class DashboardState extends State<Dashboard> {
                 if (Util.notReviewAccount)
                   Padding(
                     padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-                    child: NeuButton(
-                      decoration: NeumorphicDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                    child: CupertinoButton(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(10),
-                      bevel: 5,
                       onPressed: () {
                         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                          return WidgetSetting(widgets, restoreSizePos);
+                          return WidgetSetting(widgets, restoreSizePos!);
                         })).then((res) {
                           if (res != null) {
                             setState(() {
@@ -1966,13 +1898,10 @@ class DashboardState extends State<Dashboard> {
                   ),
                 Padding(
                   padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-                  child: NeuButton(
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  child: CupertinoButton(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(10),
-                    bevel: 5,
                     onPressed: () {
                       Navigator.of(context)
                           .push(CupertinoPageRoute(
@@ -2018,14 +1947,12 @@ class DashboardState extends State<Dashboard> {
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -2038,14 +1965,14 @@ class DashboardState extends State<Dashboard> {
                     if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount && shortcutProvider.showShortcut)
                       ShortcutList(
                         shortcutItems,
-                        system,
+                        system!,
                         volumes,
                         disks,
-                        appNotify,
+                        appNotify!,
                         context,
                         validAppViewOrder: validAppViewOrder,
                       ),
-                    if (widgets != null && widgets.length > 0)
+                    if (widgets.length > 0)
                       ...widgets.map((widget) {
                         return _buildWidgetItem(widget);
                         // return Text(widget);
@@ -2063,16 +1990,13 @@ class DashboardState extends State<Dashboard> {
                             ),
                             SizedBox(
                               width: 200,
-                              child: NeuButton(
+                              child: CupertinoButton(
                                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                decoration: NeumorphicDecoration(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                bevel: 5,
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(20),
                                 onPressed: () {
                                   Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                    return WidgetSetting(widgets, restoreSizePos);
+                                    return WidgetSetting(widgets, restoreSizePos!);
                                   })).then((res) {
                                     if (res != null) {
                                       setState(() {
@@ -2103,13 +2027,10 @@ class DashboardState extends State<Dashboard> {
                       ),
                       SizedBox(
                         width: 200,
-                        child: NeuButton(
+                        child: CupertinoButton(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          decoration: NeumorphicDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          bevel: 5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           onPressed: () {
                             getData();
                           },
@@ -2122,7 +2043,7 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-      drawer: applications != null && applications.length > 0 ? ApplicationList(applications, system, volumes, disks, appNotify) : null,
+      drawer: applications.length > 0 ? ApplicationList(applications, system, volumes, disks, appNotify) : null,
     );
   }
 }

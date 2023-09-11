@@ -3,7 +3,7 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 
 class SelectFolder extends StatefulWidget {
   final bool multi;
@@ -107,23 +107,20 @@ class _SelectFolderState extends State<SelectFolder> {
     return Container(
       margin: index == 0 ? EdgeInsets.only(left: 20) : null,
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: NeuButton(
+      child: CupertinoButton(
         onPressed: () {
           String path = "";
           List<String> items = [];
           if (index == 0) {
             path = "/";
           } else {
-            items = paths.getRange(1, index + 1).toList();
+            items = paths.getRange(1, index + 1).toList().cast<String>();
             path = "/" + items.join("/");
           }
           goPath(path);
         },
-        decoration: NeumorphicDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
-        ),
-        bevel: 5,
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: index == 0
             ? Icon(
@@ -145,7 +142,7 @@ class _SelectFolderState extends State<SelectFolder> {
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
       child: Opacity(
         opacity: 1,
-        child: NeuButton(
+        child: CupertinoButton(
           onPressed: () async {
             if (widget.multi) {
             } else {
@@ -156,11 +153,8 @@ class _SelectFolderState extends State<SelectFolder> {
           },
           // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: EdgeInsets.symmetric(vertical: 10),
-          decoration: NeumorphicDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
-          ),
-          bevel: 8,
           child: Row(
             children: [
               SizedBox(
@@ -191,7 +185,7 @@ class _SelectFolderState extends State<SelectFolder> {
                     ),
                     Text(
                       (file['isdir'] ? "" : "${Util.formatSize(file['additional']['size'])}" + " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['crtime'] * 1000).format("Y/m/d H:i:s"),
-                      style: TextStyle(fontSize: 12, color: AppTheme.of(context).placeholderColor),
+                      style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
                     ),
                   ],
                 ),
@@ -199,11 +193,9 @@ class _SelectFolderState extends State<SelectFolder> {
               SizedBox(
                 width: 10,
               ),
-              NeuButton(
-                decoration: NeumorphicDecoration(
+              CupertinoButton(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
-                ),
                 onPressed: () {
                   setState(() {
                     if (widget.multi) {
@@ -218,7 +210,6 @@ class _SelectFolderState extends State<SelectFolder> {
                   });
                 },
                 padding: EdgeInsets.all(5),
-                bevel: 5,
                 child: SizedBox(
                   width: 20,
                   height: 20,
@@ -299,7 +290,7 @@ class _SelectFolderState extends State<SelectFolder> {
                       if (paths.length > 1)
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: NeuButton(
+                          child: CupertinoButton(
                             onPressed: () {
                               String name = "";
                               showCupertinoDialog(
@@ -310,12 +301,10 @@ class _SelectFolderState extends State<SelectFolder> {
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          NeuCard(
+                                          Container(
                                             width: double.infinity,
                                             margin: EdgeInsets.symmetric(horizontal: 50),
-                                            curveType: CurveType.emboss,
-                                            bevel: 5,
-                                            decoration: NeumorphicDecoration(
+                                            decoration: BoxDecoration(
                                               color: Theme.of(context).scaffoldBackgroundColor,
                                               borderRadius: BorderRadius.circular(25),
                                             ),
@@ -330,13 +319,11 @@ class _SelectFolderState extends State<SelectFolder> {
                                                   SizedBox(
                                                     height: 16,
                                                   ),
-                                                  NeuCard(
-                                                    decoration: NeumorphicDecoration(
+                                                  Container(
+                                                    decoration: BoxDecoration(
                                                       color: Theme.of(context).scaffoldBackgroundColor,
                                                       borderRadius: BorderRadius.circular(20),
                                                     ),
-                                                    bevel: 20,
-                                                    curveType: CurveType.flat,
                                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                                     child: TextField(
                                                       onChanged: (v) => name = v,
@@ -353,7 +340,7 @@ class _SelectFolderState extends State<SelectFolder> {
                                                   Row(
                                                     children: [
                                                       Expanded(
-                                                        child: NeuButton(
+                                                        child: CupertinoButton(
                                                           onPressed: () async {
                                                             if (name.trim() == "") {
                                                               Util.toast("请输入文件夹名");
@@ -373,11 +360,9 @@ class _SelectFolderState extends State<SelectFolder> {
                                                               }
                                                             }
                                                           },
-                                                          decoration: NeumorphicDecoration(
                                                             color: Theme.of(context).scaffoldBackgroundColor,
                                                             borderRadius: BorderRadius.circular(25),
-                                                          ),
-                                                          bevel: 20,
+
                                                           padding: EdgeInsets.symmetric(vertical: 10),
                                                           child: Text(
                                                             "确定",
@@ -389,15 +374,12 @@ class _SelectFolderState extends State<SelectFolder> {
                                                         width: 16,
                                                       ),
                                                       Expanded(
-                                                        child: NeuButton(
+                                                        child: CupertinoButton(
                                                           onPressed: () async {
                                                             Navigator.of(context).pop();
                                                           },
-                                                          decoration: NeumorphicDecoration(
                                                             color: Theme.of(context).scaffoldBackgroundColor,
                                                             borderRadius: BorderRadius.circular(25),
-                                                          ),
-                                                          bevel: 20,
                                                           padding: EdgeInsets.symmetric(vertical: 10),
                                                           child: Text(
                                                             "取消",
@@ -416,11 +398,8 @@ class _SelectFolderState extends State<SelectFolder> {
                                     );
                                   });
                             },
-                            decoration: NeumorphicDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
-                            ),
-                            bevel: 5,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             child: Text(
                               "新建",
@@ -433,7 +412,7 @@ class _SelectFolderState extends State<SelectFolder> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: NeuButton(
+                        child: CupertinoButton(
                           onPressed: () {
                             if (selectedFiles.length > 0) {
                               Navigator.of(context).pop(selectedFiles);
@@ -445,11 +424,8 @@ class _SelectFolderState extends State<SelectFolder> {
                               }
                             }
                           },
-                          decoration: NeumorphicDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
-                          ),
-                          bevel: 5,
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           child: Text(
                             "选择",
@@ -466,14 +442,14 @@ class _SelectFolderState extends State<SelectFolder> {
                 Expanded(
                   child: loading
                       ? Center(
-                          child: NeuCard(
+                          child: Container(
                             padding: EdgeInsets.all(50),
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
+
                             child: CupertinoActivityIndicator(
                               radius: 14,
                             ),
@@ -494,13 +470,10 @@ class _SelectFolderState extends State<SelectFolder> {
                                   ),
                                   SizedBox(
                                     width: 200,
-                                    child: NeuButton(
+                                    child: CupertinoButton(
                                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                      decoration: NeumorphicDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      bevel: 5,
                                       onPressed: () {
                                         String path = paths.join("/").substring(1);
                                         goPath(path);

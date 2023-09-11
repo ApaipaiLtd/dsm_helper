@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:sp_util/sp_util.dart';
 
 class Share extends StatefulWidget {
-  final List<String> paths;
-  final Map link;
+  final List<String>? paths;
+  final Map? link;
   final bool fileRequest;
   Share({this.paths, this.link, this.fileRequest = false});
   @override
@@ -19,17 +19,17 @@ class Share extends StatefulWidget {
 
 class _ShareState extends State<Share> {
   bool loading = true;
-  Map link;
-  DateTime startTime;
-  DateTime endTime;
+  Map link = {};
+  DateTime? startTime;
+  DateTime? endTime;
   String times = "0";
   String requestName = "";
   String requestInfo = "";
-  TextEditingController timesController;
-  TextEditingController endTimeController;
-  TextEditingController startTimeController;
-  TextEditingController requestNameController;
-  TextEditingController requestInfoController;
+  TextEditingController timesController = TextEditingController();
+  TextEditingController endTimeController = TextEditingController();
+  TextEditingController startTimeController = TextEditingController();
+  TextEditingController requestNameController = TextEditingController();
+  TextEditingController requestInfoController = TextEditingController();
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _ShareState extends State<Share> {
     } else {
       setState(() {
         loading = false;
-        link = widget.link;
+        link = widget.link!;
         times = link['expire_times'] == 0 ? "" : link['expire_times'].toString();
         if (link['date_expired'] != "") {
           endTime = DateTime.parse(link['date_expired']);
@@ -46,8 +46,8 @@ class _ShareState extends State<Share> {
         if (link['date_available'] != "") {
           startTime = DateTime.parse(link['date_available']);
         }
-        String endTimeStr = endTime == null ? "" : endTime.format("Y-m-d H:i");
-        String startTimeStr = startTime == null ? "" : startTime.format("Y-m-d H:i");
+        String endTimeStr = endTime == null ? "" : endTime!.format("Y-m-d H:i");
+        String startTimeStr = startTime == null ? "" : startTime!.format("Y-m-d H:i");
         timesController = TextEditingController.fromValue(TextEditingValue(text: times));
         endTimeController = TextEditingController.fromValue(TextEditingValue(text: endTimeStr));
         startTimeController = TextEditingController.fromValue(TextEditingValue(text: startTimeStr));
@@ -73,10 +73,10 @@ class _ShareState extends State<Share> {
 
   getData() async {
     if (widget.fileRequest) {
-      requestName = await Util.getStorage("account");
+      requestName = SpUtil.getString("account", defValue: "")!;
       requestInfo = "嗨，我的朋友！请将文件上传到此处。";
     }
-    var res = await Api.createShare(widget.paths, fileRequest: widget.fileRequest, requestName: requestName, requestInfo: requestInfo);
+    var res = await Api.createShare(widget.paths!, fileRequest: widget.fileRequest, requestName: requestName, requestInfo: requestInfo);
     if (res['success']) {
       setState(() {
         loading = false;
@@ -111,14 +111,12 @@ class _ShareState extends State<Share> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
+          Container(
             padding: EdgeInsets.all(20),
-            curveType: CurveType.flat,
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            bevel: 20,
             child: Image.memory(
               Base64Decoder().convert(link['qrcode'].split(",")[1]),
               height: 150,
@@ -137,13 +135,11 @@ class _ShareState extends State<Share> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            curveType: CurveType.flat,
-            bevel: 20,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Row(
@@ -156,18 +152,15 @@ class _ShareState extends State<Share> {
                   SizedBox(
                     width: 10,
                   ),
-                  NeuButton(
+                  CupertinoButton(
                     onPressed: () async {
                       ClipboardData data = new ClipboardData(text: link['url']);
                       Clipboard.setData(data);
                       Util.toast("已复制到剪贴板");
                     },
-                    decoration: NeumorphicDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(5),
-                    bevel: 5,
                     child: SizedBox(
                       width: 20,
                       height: 20,
@@ -195,19 +188,17 @@ class _ShareState extends State<Share> {
                   setState(() {
                     endTime = date;
                   });
-                  endTimeController.text = endTime.format("Y-m-d H:i");
+                  endTimeController.text = endTime!.format("Y-m-d H:i");
                 },
                 currentTime: endTime ?? DateTime.now(),
                 locale: LocaleType.zh,
               );
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: endTimeController,
@@ -232,19 +223,17 @@ class _ShareState extends State<Share> {
                   setState(() {
                     startTime = date;
                   });
-                  startTimeController.text = startTime.format("Y-m-d H:i");
+                  startTimeController.text = startTime!.format("Y-m-d H:i");
                 },
                 currentTime: startTime ?? DateTime.now(),
                 locale: LocaleType.zh,
               );
             },
-            child: NeuCard(
-              decoration: NeumorphicDecoration(
+            child: Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: startTimeController,
@@ -259,13 +248,11 @@ class _ShareState extends State<Share> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            bevel: 12,
-            curveType: CurveType.flat,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: TextField(
               controller: timesController,
@@ -281,13 +268,11 @@ class _ShareState extends State<Share> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: requestNameController,
@@ -301,13 +286,11 @@ class _ShareState extends State<Share> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 controller: requestInfoController,
@@ -328,7 +311,6 @@ class _ShareState extends State<Share> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "共享文件",
         ),
@@ -339,14 +321,12 @@ class _ShareState extends State<Share> {
         },
         child: loading
             ? Center(
-                child: NeuCard(
+                child: Container(
                   padding: EdgeInsets.all(50),
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
                   child: CupertinoActivityIndicator(
                     radius: 14,
                   ),
@@ -366,11 +346,9 @@ class _ShareState extends State<Share> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: NeuButton(
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                          child: CupertinoButton(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(50),
                             onPressed: () async {
                               List<String> id = [];
                               List<String> url = [];
@@ -388,23 +366,19 @@ class _ShareState extends State<Share> {
                           width: 20,
                         ),
                         Expanded(
-                          child: NeuButton(
-                            decoration: NeumorphicDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                          child: CupertinoButton(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(50),
                             onPressed: () async {
                               showCupertinoModalPopup(
                                 context: context,
                                 builder: (context) {
                                   return Material(
                                     color: Colors.transparent,
-                                    child: NeuCard(
+                                    child: Container(
                                       width: double.infinity,
                                       padding: EdgeInsets.all(22),
-                                      bevel: 5,
-                                      curveType: CurveType.emboss,
-                                      decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                                       child: SafeArea(
                                         top: false,
                                         child: Column(
@@ -427,16 +401,13 @@ class _ShareState extends State<Share> {
                                             Row(
                                               children: [
                                                 Expanded(
-                                                  child: NeuButton(
+                                                  child: CupertinoButton(
                                                     onPressed: () async {
                                                       Navigator.of(context).pop();
                                                       deleteShare();
                                                     },
-                                                    decoration: NeumorphicDecoration(
-                                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                                      borderRadius: BorderRadius.circular(25),
-                                                    ),
-                                                    bevel: 5,
+                                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                                    borderRadius: BorderRadius.circular(25),
                                                     padding: EdgeInsets.symmetric(vertical: 10),
                                                     child: Text(
                                                       "取消共享",
@@ -448,15 +419,12 @@ class _ShareState extends State<Share> {
                                                   width: 16,
                                                 ),
                                                 Expanded(
-                                                  child: NeuButton(
+                                                  child: CupertinoButton(
                                                     onPressed: () async {
                                                       Navigator.of(context).pop();
                                                     },
-                                                    decoration: NeumorphicDecoration(
-                                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                                      borderRadius: BorderRadius.circular(25),
-                                                    ),
-                                                    bevel: 5,
+                                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                                    borderRadius: BorderRadius.circular(25),
                                                     padding: EdgeInsets.symmetric(vertical: 10),
                                                     child: Text(
                                                       "取消",

@@ -2,20 +2,20 @@ import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:flutter/material.dart';
 
 class Photos extends StatefulWidget {
   final Map album;
   final Object tag;
-  Photos(this.album, {this.tag});
+  Photos(this.album, {required this.tag});
   @override
   _PhotosState createState() => _PhotosState();
 }
 
 class _PhotosState extends State<Photos> {
-  double photoWidth;
+  double? photoWidth;
   List photos = [];
   @override
   void initState() {
@@ -104,16 +104,12 @@ class _PhotosState extends State<Photos> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              leading: AppBackButton(
-                context,
-                bevel: 0,
-              ),
               pinned: true,
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   "${widget.album['name']}",
-                  style: TextStyle(color: Theme.of(context).textTheme.headline6.color, shadows: [BoxShadow(color: Colors.white, offset: Offset(1, 1), blurRadius: 5, spreadRadius: 5)]),
+                  style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color, shadows: [BoxShadow(color: Colors.white, offset: Offset(1, 1), blurRadius: 5, spreadRadius: 5)]),
                 ),
                 centerTitle: true,
                 background: Hero(

@@ -1,9 +1,8 @@
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class SelectFile extends StatefulWidget {
   final List listId;
@@ -54,10 +53,8 @@ class _SelectFileState extends State<SelectFile> {
           });
         }
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        bevel: 20,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(25),
         ),
@@ -97,14 +94,12 @@ class _SelectFileState extends State<SelectFile> {
               SizedBox(
                 width: 10,
               ),
-              NeuCard(
-                decoration: NeumorphicDecoration(
+              Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                curveType: selectedFiles.contains(file['index']) ? CurveType.emboss : CurveType.flat,
                 padding: EdgeInsets.all(5),
-                bevel: 5,
                 child: SizedBox(
                   width: 20,
                   height: 20,
@@ -130,7 +125,6 @@ class _SelectFileState extends State<SelectFile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("选择下载文件"),
       ),
       body: Column(
@@ -138,11 +132,9 @@ class _SelectFileState extends State<SelectFile> {
           SizedBox(
             height: 20,
           ),
-          NeuCard(
-            curveType: CurveType.flat,
-            bevel: 20,
+          Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
-            decoration: NeumorphicDecoration(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(25),
             ),
@@ -164,11 +156,11 @@ class _SelectFileState extends State<SelectFile> {
           SizedBox(
             height: 20,
           ),
-          // NeuCard(
-          //   curveType: CurveType.flat,
-          //   bevel: 20,
+          // Container(
+          //
+          //
           //   margin: EdgeInsets.symmetric(horizontal: 20),
-          //   decoration: NeumorphicDecoration(
+          //   decoration: BoxDecoration(
           //     color: Theme.of(context).scaffoldBackgroundColor,
           //     borderRadius: BorderRadius.circular(20),
           //   ),
@@ -176,33 +168,33 @@ class _SelectFileState extends State<SelectFile> {
           //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           //     child: Row(
           //       children: [
-          //         NeuCard(
-          //           curveType: CurveType.flat,
-          //           bevel: 5,
+          //         Container(
+          //
+          //
           //           margin: EdgeInsets.only(right: 20),
-          //           decoration: NeumorphicDecoration(
+          //           decoration: BoxDecoration(
           //             color: Theme.of(context).scaffoldBackgroundColor,
           //             borderRadius: BorderRadius.circular(10),
           //           ),
           //           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           //           child: Text("全部"),
           //         ),
-          //         NeuCard(
-          //           curveType: CurveType.flat,
-          //           bevel: 5,
+          //         Container(
+          //
+          //
           //           margin: EdgeInsets.only(right: 20),
-          //           decoration: NeumorphicDecoration(
+          //           decoration: BoxDecoration(
           //             color: Theme.of(context).scaffoldBackgroundColor,
           //             borderRadius: BorderRadius.circular(10),
           //           ),
           //           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           //           child: Text("视频"),
           //         ),
-          //         NeuCard(
-          //           curveType: CurveType.flat,
-          //           bevel: 5,
+          //         Container(
+          //
+          //
           //           margin: EdgeInsets.only(right: 20),
-          //           decoration: NeumorphicDecoration(
+          //           decoration: BoxDecoration(
           //             color: Theme.of(context).scaffoldBackgroundColor,
           //             borderRadius: BorderRadius.circular(10),
           //           ),
@@ -229,7 +221,7 @@ class _SelectFileState extends State<SelectFile> {
           ),
           Padding(
             padding: EdgeInsets.all(20),
-            child: NeuButton(
+            child: CupertinoButton(
               onPressed: () async {
                 if (selectedFiles.length > 0) {
                   var res = await Api.downloadCreate(widget.listId[0], widget.destination, selectedFiles);
@@ -244,11 +236,8 @@ class _SelectFileState extends State<SelectFile> {
               },
               // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               padding: EdgeInsets.symmetric(vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              bevel: 20,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               child: Text(
                 "开始下载",
                 style: TextStyle(fontSize: 18),

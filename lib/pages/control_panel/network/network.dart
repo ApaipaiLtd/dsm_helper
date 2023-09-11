@@ -2,13 +2,11 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Network extends StatefulWidget {
-  const Network({Key key}) : super(key: key);
+  const Network({super.key});
 
   @override
   _NetworkState createState() => _NetworkState();
@@ -20,7 +18,7 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
   TextEditingController _dnsSecondaryController = TextEditingController();
   TextEditingController _proxyHttpHostController = TextEditingController();
   TextEditingController _proxyHttpPortController = TextEditingController();
-  TabController _tabController;
+  late TabController _tabController;
   Map network = {};
   Map proxy = {};
   Map gateway = {};
@@ -93,19 +91,16 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("网络"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -113,15 +108,13 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -162,14 +155,12 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                     children: [
                       ListView(
                         children: [
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -186,13 +177,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    bevel: 20,
-                                    curveType: CurveType.flat,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     child: TextField(
                                       controller: _serverNameController,
@@ -221,13 +210,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                         network['dns_manual'] = !network['dns_manual'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      curveType: network['dns_manual'] ? CurveType.emboss : CurveType.flat,
-                                      bevel: 12,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                       child: Row(
                                         children: [
@@ -246,13 +233,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    bevel: 20,
-                                    curveType: network['dns_manual'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     child: TextField(
                                       controller: _dnsPrimaryController,
@@ -267,13 +252,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    bevel: 20,
-                                    curveType: network['dns_manual'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     child: TextField(
                                       controller: _dnsSecondaryController,
@@ -292,14 +275,12 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                           SizedBox(
                             height: 20,
                           ),
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            bevel: 10,
-                            curveType: CurveType.flat,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -319,13 +300,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                         proxy['enable'] = !proxy['enable'];
                                       });
                                     },
-                                    child: NeuCard(
-                                      decoration: NeumorphicDecoration(
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      curveType: proxy['enable'] ? CurveType.emboss : CurveType.flat,
-                                      bevel: 12,
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                       child: Row(
                                         children: [
@@ -344,13 +323,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    bevel: 20,
-                                    curveType: proxy['enable'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     child: TextField(
                                       controller: _proxyHttpHostController,
@@ -365,13 +342,11 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  NeuCard(
-                                    decoration: NeumorphicDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    bevel: 20,
-                                    curveType: proxy['enable'] ? CurveType.flat : CurveType.concave,
                                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                     child: TextField(
                                       controller: _proxyHttpPortController,
@@ -395,14 +370,13 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                       ListView(
                         children: [
                           ...ethernets.map((ethernet) {
-                            return NeuCard(
-                              decoration: NeumorphicDecoration(
+                            return Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-                              bevel: 10,
-                              curveType: CurveType.flat,
+
                               // padding: EdgeInsets.symmetric(horizontal: 20),
                               child: ExpansionContainer(
                                 title: Column(
@@ -493,14 +467,13 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
                             );
                           }).toList(),
                           ...pppoes.map((pppoe) {
-                            return NeuCard(
-                              decoration: NeumorphicDecoration(
+                            return Container(
+                              decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-                              bevel: 10,
-                              curveType: CurveType.flat,
+
                               // padding: EdgeInsets.symmetric(horizontal: 20),
                               child: ExpansionContainer(
                                 title: Column(

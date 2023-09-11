@@ -17,7 +17,7 @@ class VideoPlayer extends StatefulWidget {
   final String? cover;
   final String? nfo;
   final bool network;
-  VideoPlayer({required this.url, this.name, this.cover, this.nfo, this.network: true});
+  VideoPlayer({required this.url, this.name, this.cover, this.nfo, this.network = true});
 
   @override
   _VideoPlayerState createState() => _VideoPlayerState();

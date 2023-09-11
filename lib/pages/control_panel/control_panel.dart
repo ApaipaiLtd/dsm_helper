@@ -11,16 +11,13 @@ import 'package:dsm_helper/pages/control_panel/user_groups/user_group.dart';
 import 'package:dsm_helper/pages/control_panel/users/users.dart';
 import 'package:dsm_helper/util/badge.dart';
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
-
 import 'shared_folders/shared_folders.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Badge;
-import 'package:neumorphic/neumorphic.dart';
 
 class ControlPanel extends StatefulWidget {
-  final Map system;
+  final Map? system;
   final List volumes;
   final List disks;
   final Map notify;
@@ -34,21 +31,18 @@ class _ControlPanelState extends State<ControlPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(
           "控制面板",
         ),
       ),
       body: ListView(
         children: [
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,15 +67,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "share_folders")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -110,15 +102,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "file_service")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -147,15 +137,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "users")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -185,15 +173,13 @@ class _ControlPanelState extends State<ControlPanel> {
                                 },
                                 settings: RouteSettings(name: "user_groups")));
                           },
-                          child: NeuCard(
+                          child: Container(
                             width: (MediaQuery.of(context).size.width - 120) / 3,
                             height: (MediaQuery.of(context).size.width - 120) / 3,
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -214,15 +200,15 @@ class _ControlPanelState extends State<ControlPanel> {
                             ),
                           ),
                         ),
-                      // NeuCard(
+                      // Container(
                       //   width: (MediaQuery.of(context).size.width - 120) / 3,
                       //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   curveType: CurveType.flat,
-                      //   decoration: NeumorphicDecoration(
+                      //
+                      //   decoration: BoxDecoration(
                       //     color: Theme.of(context).scaffoldBackgroundColor,
                       //     borderRadius: BorderRadius.circular(20),
                       //   ),
-                      //   bevel: 20,
+                      //
                       //   child: Column(
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
@@ -251,14 +237,12 @@ class _ControlPanelState extends State<ControlPanel> {
               ],
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -276,15 +260,15 @@ class _ControlPanelState extends State<ControlPanel> {
                     runSpacing: 20,
                     children: [
                       // if (Util.version < 7)
-                      //   NeuCard(
+                      //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
                       //     curveType: CurveType.convex,
-                      //     decoration: NeumorphicDecoration(
+                      //     decoration: BoxDecoration(
                       //       color: Theme.of(context).scaffoldBackgroundColor,
                       //       borderRadius: BorderRadius.circular(20),
                       //     ),
-                      //     bevel: 20,
+                      //
                       //     child: Column(
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
@@ -312,15 +296,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "public_access")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -349,15 +331,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "network")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -379,15 +359,15 @@ class _ControlPanelState extends State<ControlPanel> {
                         ),
                       ),
                       // if (Util.version < 7)
-                      //   NeuCard(
+                      //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
                       //     curveType: CurveType.convex,
-                      //     decoration: NeumorphicDecoration(
+                      //     decoration: BoxDecoration(
                       //       color: Theme.of(context).scaffoldBackgroundColor,
                       //       borderRadius: BorderRadius.circular(20),
                       //     ),
-                      //     bevel: 20,
+                      //
                       //     child: Column(
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
@@ -408,15 +388,15 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     ),
                       //   ),
                       // if (Util.version < 7)
-                      //   NeuCard(
+                      //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
                       //     curveType: CurveType.convex,
-                      //     decoration: NeumorphicDecoration(
+                      //     decoration: BoxDecoration(
                       //       color: Theme.of(context).scaffoldBackgroundColor,
                       //       borderRadius: BorderRadius.circular(20),
                       //     ),
-                      //     bevel: 20,
+                      //
                       //     child: Column(
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
@@ -436,15 +416,15 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       ],
                       //     ),
                       //   ),
-                      // NeuCard(
+                      // Container(
                       //   width: (MediaQuery.of(context).size.width - 120) / 3,
                       //   height: (MediaQuery.of(context).size.width - 120) / 3,
                       //   curveType: CurveType.convex,
-                      //   decoration: NeumorphicDecoration(
+                      //   decoration: BoxDecoration(
                       //     color: Theme.of(context).scaffoldBackgroundColor,
                       //     borderRadius: BorderRadius.circular(20),
                       //   ),
-                      //   bevel: 20,
+                      //
                       //   child: Column(
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
@@ -473,15 +453,13 @@ class _ControlPanelState extends State<ControlPanel> {
                                 },
                                 settings: RouteSettings(name: "ssh_setting")));
                           },
-                          child: NeuCard(
+                          child: Container(
                             width: (MediaQuery.of(context).size.width - 120) / 3,
                             height: (MediaQuery.of(context).size.width - 120) / 3,
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -513,14 +491,12 @@ class _ControlPanelState extends State<ControlPanel> {
               ],
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -545,15 +521,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "system_info_all")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -574,15 +548,15 @@ class _ControlPanelState extends State<ControlPanel> {
                           ),
                         ),
                       ),
-                      // NeuCard(
+                      // Container(
                       //   width: (MediaQuery.of(context).size.width - 120) / 3,
                       //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   curveType: CurveType.flat,
-                      //   decoration: NeumorphicDecoration(
+                      //
+                      //   decoration: BoxDecoration(
                       //     color: Theme.of(context).scaffoldBackgroundColor,
                       //     borderRadius: BorderRadius.circular(20),
                       //   ),
-                      //   bevel: 20,
+                      //
                       //   child: Column(
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
@@ -602,15 +576,15 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     ],
                       //   ),
                       // ),
-                      // NeuCard(
+                      // Container(
                       //   width: (MediaQuery.of(context).size.width - 120) / 3,
                       //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   curveType: CurveType.flat,
-                      //   decoration: NeumorphicDecoration(
+                      //
+                      //   decoration: BoxDecoration(
                       //     color: Theme.of(context).scaffoldBackgroundColor,
                       //     borderRadius: BorderRadius.circular(20),
                       //   ),
-                      //   bevel: 20,
+                      //
                       //   child: Column(
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
@@ -630,15 +604,15 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     ],
                       //   ),
                       // ),
-                      // NeuCard(
+                      // Container(
                       //   width: (MediaQuery.of(context).size.width - 120) / 3,
                       //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   curveType: CurveType.flat,
-                      //   decoration: NeumorphicDecoration(
+                      //
+                      //   decoration: BoxDecoration(
                       //     color: Theme.of(context).scaffoldBackgroundColor,
                       //     borderRadius: BorderRadius.circular(20),
                       //   ),
-                      //   bevel: 20,
+                      //
                       //   child: Column(
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
@@ -667,15 +641,13 @@ class _ControlPanelState extends State<ControlPanel> {
                                 },
                                 settings: RouteSettings(name: "task_scheduler")));
                           },
-                          child: NeuCard(
+                          child: Container(
                             width: (MediaQuery.of(context).size.width - 120) / 3,
                             height: (MediaQuery.of(context).size.width - 120) / 3,
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -704,15 +676,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "power")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -743,15 +713,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "external_device")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -778,15 +746,13 @@ class _ControlPanelState extends State<ControlPanel> {
                             return UpdateReset();
                           }));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Stack(
                             children: [
                               Center(
@@ -833,14 +799,12 @@ class _ControlPanelState extends State<ControlPanel> {
               ],
             ),
           ),
-          NeuCard(
-            decoration: NeumorphicDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            bevel: 10,
-            curveType: CurveType.flat,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -858,15 +822,15 @@ class _ControlPanelState extends State<ControlPanel> {
                     runSpacing: 20,
                     children: [
                       // if (Util.version >= 7)
-                      //   NeuCard(
+                      //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     curveType: CurveType.flat,
-                      //     decoration: NeumorphicDecoration(
+                      //
+                      //     decoration: BoxDecoration(
                       //       color: Theme.of(context).scaffoldBackgroundColor,
                       //       borderRadius: BorderRadius.circular(20),
                       //     ),
-                      //     bevel: 20,
+                      //
                       //     child: Column(
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
@@ -888,15 +852,15 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       ],
                       //     ),
                       //   ),
-                      // NeuCard(
+                      // Container(
                       //   width: (MediaQuery.of(context).size.width - 120) / 3,
                       //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   curveType: CurveType.flat,
-                      //   decoration: NeumorphicDecoration(
+                      //
+                      //   decoration: BoxDecoration(
                       //     color: Theme.of(context).scaffoldBackgroundColor,
                       //     borderRadius: BorderRadius.circular(20),
                       //   ),
-                      //   bevel: 20,
+                      //
                       //   child: Column(
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
@@ -917,15 +881,15 @@ class _ControlPanelState extends State<ControlPanel> {
                       //   ),
                       // ),
                       // if (Util.version < 7)
-                      //   NeuCard(
+                      //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     curveType: CurveType.flat,
-                      //     decoration: NeumorphicDecoration(
+                      //
+                      //     decoration: BoxDecoration(
                       //       color: Theme.of(context).scaffoldBackgroundColor,
                       //       borderRadius: BorderRadius.circular(20),
                       //     ),
-                      //     bevel: 20,
+                      //
                       //     child: Column(
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
@@ -955,15 +919,13 @@ class _ControlPanelState extends State<ControlPanel> {
                               },
                               settings: RouteSettings(name: "media_index")));
                         },
-                        child: NeuCard(
+                        child: Container(
                           width: (MediaQuery.of(context).size.width - 120) / 3,
                           height: (MediaQuery.of(context).size.width - 120) / 3,
-                          curveType: CurveType.flat,
-                          decoration: NeumorphicDecoration(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          bevel: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -985,15 +947,15 @@ class _ControlPanelState extends State<ControlPanel> {
                         ),
                       ),
                       // if (Util.version < 7)
-                      //   NeuCard(
+                      //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     curveType: CurveType.flat,
-                      //     decoration: NeumorphicDecoration(
+                      //
+                      //     decoration: BoxDecoration(
                       //       color: Theme.of(context).scaffoldBackgroundColor,
                       //       borderRadius: BorderRadius.circular(20),
                       //     ),
-                      //     bevel: 20,
+                      //
                       //     child: Column(
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
@@ -1024,15 +986,13 @@ class _ControlPanelState extends State<ControlPanel> {
                                 },
                                 settings: RouteSettings(name: "ssh_setting")));
                           },
-                          child: NeuCard(
+                          child: Container(
                             width: (MediaQuery.of(context).size.width - 120) / 3,
                             height: (MediaQuery.of(context).size.width - 120) / 3,
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -1064,15 +1024,13 @@ class _ControlPanelState extends State<ControlPanel> {
                                 },
                                 settings: RouteSettings(name: "task_scheduler")));
                           },
-                          child: NeuCard(
+                          child: Container(
                             width: (MediaQuery.of(context).size.width - 120) / 3,
                             height: (MediaQuery.of(context).size.width - 120) / 3,
-                            curveType: CurveType.flat,
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            bevel: 20,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

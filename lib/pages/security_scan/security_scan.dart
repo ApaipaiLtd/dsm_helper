@@ -2,10 +2,10 @@ import 'package:dsm_helper/pages/security_scan/result_card.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/util/strings.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class SecurityScan extends StatefulWidget {
@@ -50,7 +50,7 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
     "fail": 1,
     "pass": 2,
   };
-  TabController _tabController;
+  late TabController _tabController;
   Map ruleItems = {};
   List rules = [];
   bool ruleUpdating = true;
@@ -132,14 +132,14 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
 
     rules.forEach((value) {
       value['strId'] = value['strId'].replaceAll("_v2", "");
-      list.add(NeuCard(
+      list.add(Container(
         margin: EdgeInsets.only(bottom: 20),
-        decoration: NeumorphicDecoration(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        curveType: CurveType.flat,
-        bevel: 20,
+        
+
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Row(
@@ -170,19 +170,19 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
+
         title: Text("安全顾问"),
       ),
       body: loading
           ? Center(
-              child: NeuCard(
+              child: Container(
                 padding: EdgeInsets.all(50),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
+
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -190,15 +190,15 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
             )
           : Column(
               children: [
-                NeuCard(
+                Container(
                   width: double.infinity,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  curveType: CurveType.flat,
-                  bevel: 10,
+                  
+
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -236,13 +236,13 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
                       ListView(
                         padding: EdgeInsets.all(20),
                         children: [
-                          NeuCard(
-                            decoration: NeumorphicDecoration(
+                          Container(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
+                            
+
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Row(

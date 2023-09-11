@@ -1,11 +1,11 @@
 import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
+import 'package:sp_util/sp_util.dart';
 
 class VipLogin extends StatefulWidget {
-  const VipLogin({Key key}) : super(key: key);
+  const VipLogin({super.key});
 
   @override
   State<VipLogin> createState() => _VipLoginState();
@@ -34,7 +34,7 @@ class _VipLoginState extends State<VipLogin> {
       });
       if (res['code'] == 1) {
         Util.toast("登录成功");
-        Util.setStorage("user_token", res['data']['token']);
+        SpUtil.putString("user_token", res['data']['token']);
         Navigator.of(context).pop(true);
       } else {
         Util.toast(res['msg'] ?? '登录失败，请检查网络');
@@ -64,7 +64,7 @@ class _VipLoginState extends State<VipLogin> {
       });
       if (res['code'] == 1) {
         Util.toast("注册成功");
-        Util.setStorage("user_token", res['data']['token']);
+        SpUtil.putString("user_token", res['data']['token']);
         Navigator.of(context).pop(true);
       } else {
         Util.toast(res['msg'] ?? '注册失败，请检查网络');
@@ -78,7 +78,6 @@ class _VipLoginState extends State<VipLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text("账号登录"),
       ),
       body: GestureDetector(
@@ -94,13 +93,11 @@ class _VipLoginState extends State<VipLogin> {
             Row(
               children: [
                 Expanded(
-                  child: NeuCard(
-                    decoration: NeumorphicDecoration(
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    bevel: 20,
-                    curveType: CurveType.flat,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TextField(
                       autocorrect: false,
@@ -122,13 +119,11 @@ class _VipLoginState extends State<VipLogin> {
             SizedBox(
               height: 20,
             ),
-            NeuCard(
-              decoration: NeumorphicDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              bevel: 12,
-              curveType: CurveType.flat,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 onChanged: (v) => password = v,
@@ -147,13 +142,11 @@ class _VipLoginState extends State<VipLogin> {
               height: 20,
             ),
             if (isRegister) ...[
-              NeuCard(
-                decoration: NeumorphicDecoration(
+              Container(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 12,
-                curveType: CurveType.flat,
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: TextField(
                   onChanged: (v) => confirmPassword = v,
@@ -172,12 +165,10 @@ class _VipLoginState extends State<VipLogin> {
                 height: 20,
               ),
             ],
-            NeuButton(
+            CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: NeumorphicDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: () {
                 if (isRegister) {
                   _register();

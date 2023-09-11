@@ -5,7 +5,6 @@ import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class MediaConverter extends StatefulWidget {
   final Map converter;
@@ -15,8 +14,8 @@ class MediaConverter extends StatefulWidget {
 }
 
 class _MediaConverterState extends State<MediaConverter> {
-  Timer timer;
-  Map converter;
+  Timer? timer;
+  late Map converter;
   @override
   void initState() {
     setState(() {
@@ -52,11 +51,9 @@ class _MediaConverterState extends State<MediaConverter> {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: NeuCard(
+      child: Container(
         width: double.infinity,
-        bevel: 5,
-        curveType: CurveType.emboss,
-        decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
         child: SafeArea(
           top: false,
           child: Padding(
@@ -71,10 +68,8 @@ class _MediaConverterState extends State<MediaConverter> {
                 SizedBox(
                   height: 12,
                 ),
-                NeuCard(
-                  bevel: 20,
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(22)),
+                Container(
+                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(22)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -88,10 +83,8 @@ class _MediaConverterState extends State<MediaConverter> {
                         SizedBox(
                           height: 10,
                         ),
-                        NeuCard(
-                          curveType: CurveType.flat,
-                          bevel: 10,
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -110,10 +103,8 @@ class _MediaConverterState extends State<MediaConverter> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  bevel: 20,
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(22)),
+                Container(
+                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(22)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -127,10 +118,8 @@ class _MediaConverterState extends State<MediaConverter> {
                         SizedBox(
                           height: 10,
                         ),
-                        NeuCard(
-                          curveType: CurveType.flat,
-                          bevel: 10,
-                          decoration: NeumorphicDecoration(
+                        Container(
+                          decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -148,11 +137,9 @@ class _MediaConverterState extends State<MediaConverter> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuCard(
-                  bevel: 20,
+                Container(
                   width: double.infinity,
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(22)),
+                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(22)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Row(
@@ -199,15 +186,13 @@ class _MediaConverterState extends State<MediaConverter> {
                                               onTap: () {
                                                 Navigator.of(context).pop(1);
                                               },
-                                              child: NeuCard(
+                                              child: Container(
                                                 margin: EdgeInsets.only(bottom: 20),
                                                 width: double.infinity,
-                                                curveType: CurveType.flat,
-                                                decoration: NeumorphicDecoration(
+                                                decoration: BoxDecoration(
                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                   borderRadius: BorderRadius.circular(20),
                                                 ),
-                                                bevel: 20,
                                                 child: Padding(
                                                   padding: EdgeInsets.all(20),
                                                   child: Text(
@@ -220,15 +205,13 @@ class _MediaConverterState extends State<MediaConverter> {
                                               onTap: () {
                                                 Navigator.of(context).pop(3);
                                               },
-                                              child: NeuCard(
+                                              child: Container(
                                                 margin: EdgeInsets.only(bottom: 20),
                                                 width: double.infinity,
-                                                curveType: CurveType.flat,
-                                                decoration: NeumorphicDecoration(
+                                                decoration: BoxDecoration(
                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                   borderRadius: BorderRadius.circular(20),
                                                 ),
-                                                bevel: 20,
                                                 child: Padding(
                                                   padding: EdgeInsets.all(20),
                                                   child: Text(
@@ -241,15 +224,13 @@ class _MediaConverterState extends State<MediaConverter> {
                                               onTap: () {
                                                 Navigator.of(context).pop(6);
                                               },
-                                              child: NeuCard(
+                                              child: Container(
                                                 margin: EdgeInsets.only(bottom: 20),
                                                 width: double.infinity,
-                                                curveType: CurveType.flat,
-                                                decoration: NeumorphicDecoration(
+                                                decoration: BoxDecoration(
                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                   borderRadius: BorderRadius.circular(20),
                                                 ),
-                                                bevel: 20,
                                                 child: Padding(
                                                   padding: EdgeInsets.all(20),
                                                   child: Text(
@@ -262,15 +243,13 @@ class _MediaConverterState extends State<MediaConverter> {
                                               onTap: () {
                                                 Navigator.of(context).pop(-1);
                                               },
-                                              child: NeuCard(
+                                              child: Container(
                                                 margin: EdgeInsets.only(bottom: 20),
                                                 width: double.infinity,
-                                                curveType: CurveType.flat,
-                                                decoration: NeumorphicDecoration(
+                                                decoration: BoxDecoration(
                                                   color: Theme.of(context).scaffoldBackgroundColor,
                                                   borderRadius: BorderRadius.circular(20),
                                                 ),
-                                                bevel: 20,
                                                 child: Padding(
                                                   padding: EdgeInsets.all(20),
                                                   child: Text(
@@ -279,15 +258,12 @@ class _MediaConverterState extends State<MediaConverter> {
                                                 ),
                                               ),
                                             ),
-                                            NeuButton(
+                                            CupertinoButton(
                                               onPressed: () async {
                                                 Navigator.of(context).pop();
                                               },
-                                              decoration: NeumorphicDecoration(
                                                 color: Theme.of(context).scaffoldBackgroundColor,
                                                 borderRadius: BorderRadius.circular(25),
-                                              ),
-                                              bevel: 5,
                                               padding: EdgeInsets.symmetric(vertical: 10),
                                               child: Text(
                                                 "取消",
@@ -308,16 +284,14 @@ class _MediaConverterState extends State<MediaConverter> {
                               });
                             }
                           },
-                          child: NeuCard(
+                          child: Container(
                             padding: EdgeInsets.all(10),
                             // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             // padding: EdgeInsets.symmetric(vertical: 20),
-                            decoration: NeumorphicDecoration(
+                            decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            curveType: CurveType.flat,
-                            bevel: 20,
                             child: Icon(
                               converter['status'] == "paused" ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause_fill,
                               color: Color(0xffff9813),
@@ -332,15 +306,12 @@ class _MediaConverterState extends State<MediaConverter> {
                 SizedBox(
                   height: 20,
                 ),
-                NeuButton(
+                CupertinoButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
-                  decoration: NeumorphicDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
-                  ),
-                  bevel: 5,
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text(
                     "确定",

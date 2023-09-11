@@ -14,15 +14,14 @@ import 'package:dsm_helper/util/badge.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Badge;
-import 'package:neumorphic/neumorphic.dart';
 
 class ApplicationList extends StatelessWidget {
   final List applications;
-  final Map system;
+  final Map? system;
   final List volumes;
   final List disks;
-  final Map appNotify;
-  const ApplicationList(this.applications, this.system, this.volumes, this.disks, this.appNotify, {Key key}) : super(key: key);
+  final Map? appNotify;
+  const ApplicationList(this.applications, this.system, this.volumes, this.disks, this.appNotify, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +54,17 @@ class ApplicationList extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) {
-                      return ControlPanel(system, volumes, disks, appNotify['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify['SYNO.SDS.AdminCenter.Application']['fn']);
+                      return ControlPanel(system, volumes, disks, appNotify?['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify!['SYNO.SDS.AdminCenter.Application']['fn']);
                     },
                     settings: RouteSettings(name: "control_panel")));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
                 padding: EdgeInsets.symmetric(vertical: 20),
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 child: Stack(
                   children: [
                     Align(
@@ -87,11 +84,11 @@ class ApplicationList extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null)
+                    if (appNotify != null && appNotify!['SYNO.SDS.AdminCenter.Application'] != null)
                       Positioned(
                         right: 30,
                         child: Badge(
-                          appNotify['SYNO.SDS.AdminCenter.Application']['unread'],
+                          appNotify!['SYNO.SDS.AdminCenter.Application']['unread'],
                           size: 20,
                         ),
                       ),
@@ -108,18 +105,16 @@ class ApplicationList extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) {
-                      return Packages(system['firmware_ver']);
+                      return Packages(system!['firmware_ver']);
                     },
                     settings: RouteSettings(name: "packages")));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Stack(
                   children: [
@@ -140,11 +135,11 @@ class ApplicationList extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null)
+                    if (appNotify != null && appNotify!['SYNO.SDS.PkgManApp.Instance'] != null)
                       Positioned(
                         right: 30,
                         child: Badge(
-                          appNotify['SYNO.SDS.PkgManApp.Instance']['unread'],
+                          appNotify!['SYNO.SDS.PkgManApp.Instance']['unread'],
                           size: 20,
                         ),
                       ),
@@ -165,14 +160,12 @@ class ApplicationList extends StatelessWidget {
                     },
                     settings: RouteSettings(name: "resource_monitor")));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -203,14 +196,12 @@ class ApplicationList extends StatelessWidget {
                     },
                     settings: RouteSettings(name: "storage_manager")));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -241,14 +232,12 @@ class ApplicationList extends StatelessWidget {
                     },
                     settings: RouteSettings(name: "log_center")));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -281,14 +270,12 @@ class ApplicationList extends StatelessWidget {
                       settings: RouteSettings(name: "security_scan")),
                 );
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Stack(
                   children: [
@@ -309,11 +296,11 @@ class ApplicationList extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (appNotify != null && appNotify['SYNO.SDS.SecurityScan.Instance'] != null)
+                    if (appNotify != null && appNotify!['SYNO.SDS.SecurityScan.Instance'] != null)
                       Positioned(
                         right: 30,
                         child: Badge(
-                          appNotify['SYNO.SDS.SecurityScan.Instance']['unread'],
+                          appNotify!['SYNO.SDS.SecurityScan.Instance']['unread'],
                           size: 20,
                         ),
                       ),
@@ -336,14 +323,12 @@ class ApplicationList extends StatelessWidget {
                   }),
                 );
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -375,14 +360,12 @@ class ApplicationList extends StatelessWidget {
                   settings: RouteSettings(name: "virtual_machine_manager"),
                 ));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -419,14 +402,12 @@ class ApplicationList extends StatelessWidget {
                   settings: RouteSettings(name: "docker"),
                 ));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -505,14 +486,12 @@ class ApplicationList extends StatelessWidget {
                   settings: RouteSettings(name: "download_station"),
                 ));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -549,14 +528,12 @@ class ApplicationList extends StatelessWidget {
                   settings: RouteSettings(name: "moments"),
                 ));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -593,14 +570,12 @@ class ApplicationList extends StatelessWidget {
                   settings: RouteSettings(name: "photos"),
                 ));
               },
-              child: NeuCard(
+              child: Container(
                 width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-                curveType: CurveType.flat,
-                decoration: NeumorphicDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                bevel: 20,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -629,16 +604,16 @@ class ApplicationList extends StatelessWidget {
     });
     // if (applications.contains("SYNO.SDS.EzInternet.Instance")) {
     //   apps.add(
-    //     NeuCard(
+    //     Container(
     //       width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
     //       height: 110,
     //       padding: EdgeInsets.symmetric(vertical: 20),
-    //       curveType: CurveType.flat,
-    //       decoration: NeumorphicDecoration(
+    //
+    //       decoration: BoxDecoration(
     //         color: Theme.of(context).scaffoldBackgroundColor,
     //         borderRadius: BorderRadius.circular(20),
     //       ),
-    //       bevel: 20,
+    //
     //       child: Column(
     //         children: [
     //           Image.asset(
@@ -658,14 +633,14 @@ class ApplicationList extends StatelessWidget {
     // }
     // if (applications.contains("SYNO.SDS.SupportForm.Application")) {
     //   apps.add(
-    //     NeuCard(
+    //     Container(
     //       width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-    //       curveType: CurveType.flat,
-    //       decoration: NeumorphicDecoration(
+    //
+    //       decoration: BoxDecoration(
     //         color: Theme.of(context).scaffoldBackgroundColor,
     //         borderRadius: BorderRadius.circular(20),
     //       ),
-    //       bevel: 20,
+    //
     //       padding: EdgeInsets.symmetric(vertical: 20),
     //       child: Column(
     //         children: [
@@ -696,14 +671,14 @@ class ApplicationList extends StatelessWidget {
     //             },
     //             settings: RouteSettings(name: "iSCSI_manager")));
     //       },
-    //       child: NeuCard(
+    //       child: Container(
     //         width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-    //         curveType: CurveType.flat,
-    //         decoration: NeumorphicDecoration(
+    //
+    //         decoration: BoxDecoration(
     //           color: Theme.of(context).scaffoldBackgroundColor,
     //           borderRadius: BorderRadius.circular(20),
     //         ),
-    //         bevel: 20,
+    //
     //         padding: EdgeInsets.symmetric(vertical: 20),
     //         child: Column(
     //           children: [
@@ -726,14 +701,14 @@ class ApplicationList extends StatelessWidget {
 
     // if (applications.contains("SYNO.SDS.App.FileStation3.Instance")) {
     //   apps.add(
-    //     NeuCard(
+    //     Container(
     //       width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-    //       curveType: CurveType.flat,
-    //       decoration: NeumorphicDecoration(
+    //
+    //       decoration: BoxDecoration(
     //         color: Theme.of(context).scaffoldBackgroundColor,
     //         borderRadius: BorderRadius.circular(20),
     //       ),
-    //       bevel: 20,
+    //
     //       padding: EdgeInsets.symmetric(vertical: 20),
     //       child: Column(
     //         children: [
@@ -764,14 +739,14 @@ class ApplicationList extends StatelessWidget {
     //             },
     //             settings: RouteSettings(name: "universal_search")));
     //       },
-    //       child: NeuCard(
+    //       child: Container(
     //         width: (MediaQuery.of(context).size.width * 0.8 - 60) / 2,
-    //         curveType: CurveType.flat,
-    //         decoration: NeumorphicDecoration(
+    //
+    //         decoration: BoxDecoration(
     //           color: Theme.of(context).scaffoldBackgroundColor,
     //           borderRadius: BorderRadius.circular(20),
     //         ),
-    //         bevel: 20,
+    //
     //         padding: EdgeInsets.symmetric(vertical: 20),
     //         child: Column(
     //           children: [

@@ -2,10 +2,8 @@ import 'package:dsm_helper/pages/control_panel/users/user_detail.dart';
 import 'package:dsm_helper/util/function.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
-import 'package:dsm_helper/widgets/neu_back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neumorphic/neumorphic.dart';
 
 class Users extends StatefulWidget {
   @override
@@ -13,7 +11,7 @@ class Users extends StatefulWidget {
 }
 
 class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   List users = [];
   List groups = [];
   bool loading = true;
@@ -47,14 +45,12 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildGroupItem(group) {
-    return NeuCard(
-      curveType: CurveType.flat,
-      decoration: NeumorphicDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.symmetric(vertical: 10),
-      bevel: 20,
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Row(
@@ -97,14 +93,12 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
           setState(() {});
         });
       },
-      child: NeuCard(
-        curveType: CurveType.flat,
-        decoration: NeumorphicDecoration(
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
         margin: EdgeInsets.symmetric(vertical: 10),
-        bevel: 20,
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Row(
@@ -154,7 +148,6 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AppBackButton(context),
         title: Text(Util.version < 7 ? "用户账户" : "用户与群组"),
       ),
       body: loading
@@ -163,14 +156,12 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
               height: MediaQuery.of(context).size.height,
               color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
               child: Center(
-                child: NeuCard(
+                child: Container(
                   padding: EdgeInsets.all(50),
-                  curveType: CurveType.flat,
-                  decoration: NeumorphicDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  bevel: 20,
                   child: CupertinoActivityIndicator(
                     radius: 14,
                   ),
@@ -180,15 +171,13 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
           : Column(
               children: [
                 if (Util.version >= 7)
-                  NeuCard(
+                  Container(
                     width: double.infinity,
-                    decoration: NeumorphicDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    curveType: CurveType.flat,
-                    bevel: 10,
                     child: TabBar(
                       isScrollable: false,
                       controller: _tabController,
