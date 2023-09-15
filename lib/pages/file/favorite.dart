@@ -1,5 +1,5 @@
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +42,7 @@ class _FavoriteState extends State<Favorite> {
       child: CupertinoButton(
         onPressed: () {
           if (favorite['status'] == "broken") {
-            Util.toast("文件或目录不存在");
+            Utils.toast("文件或目录不存在");
           } else {
             Navigator.of(context).pop(favorite['path']);
             widget.callback(favorite['path']);
@@ -64,7 +64,7 @@ class _FavoriteState extends State<Favorite> {
               ),
               CupertinoButton(
                 onPressed: () {
-                  Util.vibrate(FeedbackType.light);
+                  Utils.vibrate(FeedbackType.light);
                   showCupertinoModalPopup(
                     context: context,
                     builder: (context) {
@@ -150,19 +150,19 @@ class _FavoriteState extends State<Favorite> {
                                                                     child: CupertinoButton(
                                                                       onPressed: () async {
                                                                         if (name.trim() == "") {
-                                                                          Util.toast("请输入新文件名");
+                                                                          Utils.toast("请输入新文件名");
                                                                           return;
                                                                         }
                                                                         Navigator.of(context).pop();
                                                                         var res = await Api.favoriteRename(favorite['path'], name);
                                                                         if (res['success']) {
-                                                                          Util.toast("重命名成功");
+                                                                          Utils.toast("重命名成功");
                                                                           getData();
                                                                         } else {
                                                                           if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
-                                                                            Util.toast("重命名失败：指定的名称已存在");
+                                                                            Utils.toast("重命名失败：指定的名称已存在");
                                                                           } else {
-                                                                            Util.toast("重命名失败");
+                                                                            Utils.toast("重命名失败");
                                                                           }
                                                                         }
                                                                       },
@@ -226,7 +226,7 @@ class _FavoriteState extends State<Favorite> {
                                         child: CupertinoButton(
                                           onPressed: () async {
                                             Navigator.of(context).pop();
-                                            Util.vibrate(FeedbackType.warning);
+                                            Utils.vibrate(FeedbackType.warning);
                                             showCupertinoModalPopup(
                                               context: context,
                                               builder: (context) {
@@ -261,8 +261,8 @@ class _FavoriteState extends State<Favorite> {
                                                                   Navigator.of(context).pop();
                                                                   var res = await Api.favoriteDelete(favorite['path']);
                                                                   if (res['success']) {
-                                                                    Util.vibrate(FeedbackType.light);
-                                                                    Util.toast("取消收藏成功");
+                                                                    Utils.vibrate(FeedbackType.light);
+                                                                    Utils.toast("取消收藏成功");
                                                                     getData();
                                                                   }
                                                                 },

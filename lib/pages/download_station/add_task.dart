@@ -1,6 +1,6 @@
 import 'package:dsm_helper/pages/download_station/select_file.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +35,8 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
         saveFolder = res['data']['default_destination'];
       });
     } else {
-      Util.vibrate(FeedbackType.warning);
-      Util.toast("获取默认保存位置失败");
+      Utils.vibrate(FeedbackType.warning);
+      Utils.toast("获取默认保存位置失败");
     }
   }
 
@@ -125,7 +125,7 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
                     torrentPath = path;
                   });
                 } else {
-                  Util.toast("无效的种子文件");
+                  Utils.toast("无效的种子文件");
                 }
               }
             },
@@ -161,12 +161,12 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
               borderRadius: BorderRadius.circular(20),
             onPressed: () async {
               if (saveFolder == "") {
-                Util.toast("请选择保存位置");
-                Util.vibrate(FeedbackType.impact);
+                Utils.toast("请选择保存位置");
+                Utils.vibrate(FeedbackType.impact);
                 return;
               }
               if (url.trim() == "" && torrentPath == "") {
-                Util.toast("请输入下载链接或选择种子文件");
+                Utils.toast("请输入下载链接或选择种子文件");
                 return;
               }
               var res;
@@ -177,20 +177,20 @@ class _AddDownloadTaskState extends State<AddDownloadTask> {
                     return SelectFile(res['data']['list_id'], saveFolder);
                   }));
                 } else {
-                  Util.toast("创建任务失败，code：${res['error']['code']}");
+                  Utils.toast("创建任务失败，code：${res['error']['code']}");
                 }
               } else {
                 if (url.trim() == "") {
-                  Util.toast("请输入下载链接");
-                  Util.vibrate(FeedbackType.light);
+                  Utils.toast("请输入下载链接");
+                  Utils.vibrate(FeedbackType.light);
                   return;
                 }
                 res = await Api.downloadTaskCreate(saveFolder, "url", url: url);
                 if (res['success']) {
-                  Util.toast("创建任务成功");
+                  Utils.toast("创建任务成功");
                   Navigator.of(context).pop(true);
                 } else {
-                  Util.toast("创建任务失败，code：${res['error']['code']}");
+                  Utils.toast("创建任务失败，code：${res['error']['code']}");
                 }
               }
             },

@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -295,7 +295,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                 SizedBox(
                   height: 5,
                 ),
-                Text("${Util.formatSize(int.parse(volume['size']['used']))} / ${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text("${Utils.formatSize(int.parse(volume['size']['used']))} / ${Utils.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -357,7 +357,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                 ),
                 Row(
                   children: [
-                    Text("${Util.formatSize(int.parse(disk['size_total']))}"),
+                    Text("${Utils.formatSize(int.parse(disk['size_total']))}"),
                     Text("  ${disk['temp']}℃"),
                   ],
                 ),
@@ -394,7 +394,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
               unselectedLabelColor: Colors.grey,
               indicator: BubbleTabIndicator(
                 indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
               ),
               tabs: [
                 Padding(
@@ -640,7 +640,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${Util.parseOpTime(widget.system!['up_time'])}",
+                                    "${Utils.parseOpTime(widget.system!['up_time'])}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),

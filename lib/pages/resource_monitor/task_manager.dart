@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/strings.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/strings.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -38,7 +38,7 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
         loading = false;
         try {
           processes = process['data']['process'];
-          if (Util.version == 7) {
+          if (Utils.version == 7) {
             slices = group['data']['slices'];
           } else {
             services = group['data']['services'];
@@ -63,10 +63,10 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
         if (webManagerStrings[titles[0]][titles[1]] != null) {
           title = webManagerStrings[titles[0]][titles[1]];
         }
-      } else if (Util.strings[service['display_name']][titles[0]] != null && Util.strings[service['display_name']][titles[0]][titles[1]] != null) {
-        title = Util.strings[service['display_name']][titles[0]][titles[1]];
-      } else if (Util.strings[service['display_name']] != null && Util.strings[service['display_name']]['common'] != null && Util.strings[service['display_name']]['common']['displayname'] != null) {
-        title = Util.strings[service['display_name']]['common']['displayname'];
+      } else if (Utils.strings[service['display_name']][titles[0]] != null && Utils.strings[service['display_name']][titles[0]][titles[1]] != null) {
+        title = Utils.strings[service['display_name']][titles[0]][titles[1]];
+      } else if (Utils.strings[service['display_name']] != null && Utils.strings[service['display_name']]['common'] != null && Utils.strings[service['display_name']]['common']['displayname'] != null) {
+        title = Utils.strings[service['display_name']]['common']['displayname'];
       }
     } else {
       title = service['display_name'];
@@ -98,7 +98,7 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
   Widget _buildSliceItem(slice) {
     var cpuTime;
     if (slice['cpu_time'] is num) {
-      cpuTime = Util.timeLong(slice['cpu_time'].toInt());
+      cpuTime = Utils.timeLong(slice['cpu_time'].toInt());
     }
     return Container(
       decoration: BoxDecoration(
@@ -119,7 +119,7 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-              Text("内存：${slice['memory'] is num ? Util.formatSize(slice['memory'], fixed: 1) : slice['memory']}")
+              Text("内存：${slice['memory'] is num ? Utils.formatSize(slice['memory'], fixed: 1) : slice['memory']}")
             ],
           ),
           SizedBox(
@@ -133,8 +133,8 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
           ),
           Row(
             children: [
-              Expanded(child: Text("读取(秒)：${slice['byte_read_per_sec'] is num ? Util.formatSize(slice['byte_read_per_sec'], fixed: 1, showByte: true) : slice['byte_read_per_sec']}")),
-              Expanded(child: Text("写入(秒)：${slice['byte_write_per_sec'] is num ? Util.formatSize(slice['byte_write_per_sec'], fixed: 1, showByte: true) : slice['byte_write_per_sec']}")),
+              Expanded(child: Text("读取(秒)：${slice['byte_read_per_sec'] is num ? Utils.formatSize(slice['byte_read_per_sec'], fixed: 1, showByte: true) : slice['byte_read_per_sec']}")),
+              Expanded(child: Text("写入(秒)：${slice['byte_write_per_sec'] is num ? Utils.formatSize(slice['byte_write_per_sec'], fixed: 1, showByte: true) : slice['byte_write_per_sec']}")),
             ],
           ),
         ],
@@ -183,8 +183,8 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
           ),
           Row(
             children: [
-              Expanded(child: Text("私有内存：${Util.formatSize(process['mem'] * 97, fixed: 1)}")),
-              Expanded(child: Text("共享内存：${Util.formatSize(process['mem_shared'] * 1024, fixed: 2)}")),
+              Expanded(child: Text("私有内存：${Utils.formatSize(process['mem'] * 97, fixed: 1)}")),
+              Expanded(child: Text("共享内存：${Utils.formatSize(process['mem_shared'] * 1024, fixed: 2)}")),
             ],
           ),
         ],
@@ -223,7 +223,7 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -241,7 +241,7 @@ class _TaskManagerState extends State<TaskManager> with SingleTickerProviderStat
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      if (Util.version == 7)
+                      if (Utils.version == 7)
                         ListView.builder(
                           padding: EdgeInsets.all(20),
                           itemBuilder: (context, i) {

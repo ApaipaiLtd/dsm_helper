@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,7 +17,7 @@ class _DownloadSettingState extends State<DownloadSetting> {
   String downloadPath = '';
   @override
   void initState() {
-    Util.getDownloadPath().then((value) {
+    Utils.getDownloadPath().then((value) {
       setState(() {
         downloadPath = value;
       });
@@ -43,14 +43,14 @@ class _DownloadSettingState extends State<DownloadSetting> {
                   bool permission = false;
                   permission = await Permission.manageExternalStorage.request().isGranted;
                   if (!permission) {
-                    Util.toast("安卓11以上需授权文件管理权限");
+                    Utils.toast("安卓11以上需授权文件管理权限");
                     return;
                   }
                 } else {
                   bool permission = false;
                   permission = await Permission.storage.request().isGranted;
                   if (!permission) {
-                    Util.toast("请先授权APP访问存储权限");
+                    Utils.toast("请先授权APP访问存储权限");
                     return;
                   }
                 }
@@ -67,7 +67,7 @@ class _DownloadSettingState extends State<DownloadSetting> {
                   if (res != null && res.length == 1) {
                     setState(() {
                       downloadPath = res[0].path;
-                      Util.downloadSavePath = res[0].path;
+                      Utils.downloadSavePath = res[0].path;
                       SpUtil.putString("download_save_path", res[0].path);
                     });
                   }

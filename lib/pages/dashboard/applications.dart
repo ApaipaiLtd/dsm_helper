@@ -10,8 +10,8 @@ import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/pages/security_scan/security_scan.dart';
 import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
 import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
-import 'package:dsm_helper/util/badge.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/badge.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Badge;
 
@@ -72,7 +72,7 @@ class ApplicationList extends StatelessWidget {
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/applications/${Util.version}/control_panel.png",
+                            "assets/applications/${Utils.version}/control_panel.png",
                             height: 45,
                             width: 45,
                             fit: BoxFit.contain,
@@ -123,7 +123,7 @@ class ApplicationList extends StatelessWidget {
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/applications/${Util.version}/package_center.png",
+                            "assets/applications/${Utils.version}/package_center.png",
                             height: 45,
                             width: 45,
                             fit: BoxFit.contain,
@@ -170,7 +170,7 @@ class ApplicationList extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(
-                      "assets/applications/${Util.version}/resource_monitor.png",
+                      "assets/applications/${Utils.version}/resource_monitor.png",
                       height: 45,
                       width: 45,
                       fit: BoxFit.contain,
@@ -206,7 +206,7 @@ class ApplicationList extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(
-                      "assets/applications/${Util.version}/storage_manager.png",
+                      "assets/applications/${Utils.version}/storage_manager.png",
                       height: 45,
                       width: 45,
                       fit: BoxFit.contain,
@@ -242,7 +242,7 @@ class ApplicationList extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(
-                      "assets/applications/${Util.version}/log_center.png",
+                      "assets/applications/${Utils.version}/log_center.png",
                       height: 45,
                       width: 45,
                       fit: BoxFit.contain,
@@ -284,7 +284,7 @@ class ApplicationList extends StatelessWidget {
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/applications/${Util.version}/security_scan.png",
+                            "assets/applications/${Utils.version}/security_scan.png",
                             height: 45,
                             width: 45,
                             fit: BoxFit.contain,
@@ -370,7 +370,7 @@ class ApplicationList extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(
-                      "assets/applications/${Util.version}/virtual_machine.png",
+                      "assets/applications/${Utils.version}/virtual_machine.png",
                       height: 45,
                       width: 45,
                       fit: BoxFit.contain,
@@ -751,7 +751,7 @@ class ApplicationList extends StatelessWidget {
     //         child: Column(
     //           children: [
     //             Image.asset(
-    //               "assets/applications/${Util.version}/universal_search.png",
+    //               "assets/applications/${Utils.version}/universal_search.png",
     //               height: 45,
     //               width: 45,
     //               fit: BoxFit.contain,

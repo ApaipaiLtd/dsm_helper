@@ -9,8 +9,8 @@ import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dar
 import 'package:dsm_helper/pages/control_panel/update_reset/update_reset.dart';
 import 'package:dsm_helper/pages/control_panel/user_groups/user_group.dart';
 import 'package:dsm_helper/pages/control_panel/users/users.dart';
-import 'package:dsm_helper/util/badge.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/badge.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'shared_folders/shared_folders.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:flutter/cupertino.dart';
@@ -78,7 +78,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/shared_folders.png",
+                                "assets/control_panel/${Utils.version}/shared_folders.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -113,7 +113,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/file_services.png",
+                                "assets/control_panel/${Utils.version}/file_services.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -148,7 +148,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/users.png",
+                                "assets/control_panel/${Utils.version}/users.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -157,14 +157,14 @@ class _ControlPanelState extends State<ControlPanel> {
                                 height: 5,
                               ),
                               Text(
-                                Util.version < 7 ? "用户账户" : "用户与群组",
+                                Utils.version < 7 ? "用户账户" : "用户与群组",
                                 style: TextStyle(fontSize: 12),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      if (Util.version < 7)
+                      if (Utils.version < 7)
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
@@ -184,7 +184,7 @@ class _ControlPanelState extends State<ControlPanel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/control_panel/${Util.version}/groups.png",
+                                  "assets/control_panel/${Utils.version}/groups.png",
                                   height: 30,
                                   width: 30,
                                   fit: BoxFit.contain,
@@ -213,7 +213,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
                       //       Image.asset(
-                      //         "assets/control_panel/${Util.version}/ldap.png",
+                      //         "assets/control_panel/${Utils.version}/ldap.png",
                       //         height: 30,
                       //         width: 30,
                       //         fit: BoxFit.contain,
@@ -259,7 +259,7 @@ class _ControlPanelState extends State<ControlPanel> {
                     spacing: 20,
                     runSpacing: 20,
                     children: [
-                      // if (Util.version < 7)
+                      // if (Utils.version < 7)
                       //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
@@ -273,7 +273,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
                       //         Image.asset(
-                      //           "assets/control_panel/${Util.version}/quickconnect.png",
+                      //           "assets/control_panel/${Utils.version}/quickconnect.png",
                       //           height: 30,
                       //           width: 30,
                       //           fit: BoxFit.contain,
@@ -307,7 +307,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/public_access.png",
+                                "assets/control_panel/${Utils.version}/public_access.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -342,7 +342,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/network.png",
+                                "assets/control_panel/${Utils.version}/network.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -358,7 +358,7 @@ class _ControlPanelState extends State<ControlPanel> {
                           ),
                         ),
                       ),
-                      // if (Util.version < 7)
+                      // if (Utils.version < 7)
                       //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
@@ -372,7 +372,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
                       //         Image.asset(
-                      //           "assets/control_panel/${Util.version}/dhcp_server.png",
+                      //           "assets/control_panel/${Utils.version}/dhcp_server.png",
                       //           height: 30,
                       //           width: 30,
                       //           fit: BoxFit.contain,
@@ -387,7 +387,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       ],
                       //     ),
                       //   ),
-                      // if (Util.version < 7)
+                      // if (Utils.version < 7)
                       //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
@@ -429,7 +429,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
                       //       Image.asset(
-                      //         "assets/control_panel/${Util.version}/security.png",
+                      //         "assets/control_panel/${Utils.version}/security.png",
                       //         height: 30,
                       //         width: 30,
                       //         fit: BoxFit.contain,
@@ -444,7 +444,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     ],
                       //   ),
                       // ),
-                      if (Util.version >= 7)
+                      if (Utils.version >= 7)
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
@@ -464,7 +464,7 @@ class _ControlPanelState extends State<ControlPanel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/control_panel/${Util.version}/terminal_and_SNMP.png",
+                                  "assets/control_panel/${Utils.version}/terminal_and_SNMP.png",
                                   height: 30,
                                   width: 30,
                                   fit: BoxFit.contain,
@@ -532,7 +532,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/info_center.png",
+                                "assets/control_panel/${Utils.version}/info_center.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -561,7 +561,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
                       //       Image.asset(
-                      //         "assets/control_panel/${Util.version}/login_style.png",
+                      //         "assets/control_panel/${Utils.version}/login_style.png",
                       //         height: 30,
                       //         width: 30,
                       //         fit: BoxFit.contain,
@@ -570,7 +570,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //         height: 5,
                       //       ),
                       //       Text(
-                      //         Util.version < 7 ? "主题样式" : "登录门户",
+                      //         Utils.version < 7 ? "主题样式" : "登录门户",
                       //         style: TextStyle(fontSize: 12),
                       //       ),
                       //     ],
@@ -589,7 +589,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
                       //       Image.asset(
-                      //         "assets/control_panel/${Util.version}/region.png",
+                      //         "assets/control_panel/${Utils.version}/region.png",
                       //         height: 30,
                       //         width: 30,
                       //         fit: BoxFit.contain,
@@ -617,7 +617,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
                       //       Image.asset(
-                      //         "assets/control_panel/${Util.version}/notifications.png",
+                      //         "assets/control_panel/${Utils.version}/notifications.png",
                       //         height: 30,
                       //         width: 30,
                       //         fit: BoxFit.contain,
@@ -632,7 +632,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     ],
                       //   ),
                       // ),
-                      if (Util.version < 7)
+                      if (Utils.version < 7)
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
@@ -652,7 +652,7 @@ class _ControlPanelState extends State<ControlPanel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/control_panel/${Util.version}/task_scheduler.png",
+                                  "assets/control_panel/${Utils.version}/task_scheduler.png",
                                   height: 30,
                                   width: 30,
                                   fit: BoxFit.contain,
@@ -687,7 +687,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/hardware_and_power.png",
+                                "assets/control_panel/${Utils.version}/hardware_and_power.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -724,7 +724,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/external_devices.png",
+                                "assets/control_panel/${Utils.version}/external_devices.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -760,7 +760,7 @@ class _ControlPanelState extends State<ControlPanel> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      "assets/control_panel/${Util.version}/update_and_reset.png",
+                                      "assets/control_panel/${Utils.version}/update_and_reset.png",
                                       height: 30,
                                       width: 30,
                                       fit: BoxFit.contain,
@@ -821,7 +821,7 @@ class _ControlPanelState extends State<ControlPanel> {
                     spacing: 20,
                     runSpacing: 20,
                     children: [
-                      // if (Util.version >= 7)
+                      // if (Utils.version >= 7)
                       //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
@@ -835,7 +835,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
                       //         Image.asset(
-                      //           "assets/control_panel/${Util.version}/synology_account.png",
+                      //           "assets/control_panel/${Utils.version}/synology_account.png",
                       //           height: 30,
                       //           width: 30,
                       //           fit: BoxFit.contain,
@@ -865,7 +865,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //     mainAxisAlignment: MainAxisAlignment.center,
                       //     children: [
                       //       Image.asset(
-                      //         "assets/control_panel/${Util.version}/privilege.png",
+                      //         "assets/control_panel/${Utils.version}/privilege.png",
                       //         height: 30,
                       //         width: 30,
                       //         fit: BoxFit.contain,
@@ -874,13 +874,13 @@ class _ControlPanelState extends State<ControlPanel> {
                       //         height: 5,
                       //       ),
                       //       Text(
-                      //         Util.version < 7 ? "权限" : "应用程序权限",
+                      //         Utils.version < 7 ? "权限" : "应用程序权限",
                       //         style: TextStyle(fontSize: 12),
                       //       ),
                       //     ],
                       //   ),
                       // ),
-                      // if (Util.version < 7)
+                      // if (Utils.version < 7)
                       //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
@@ -894,7 +894,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
                       //         Image.asset(
-                      //           "assets/control_panel/${Util.version}/portal.png",
+                      //           "assets/control_panel/${Utils.version}/portal.png",
                       //           height: 30,
                       //           width: 30,
                       //           fit: BoxFit.contain,
@@ -930,7 +930,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                "assets/control_panel/${Util.version}/file_index.png",
+                                "assets/control_panel/${Utils.version}/file_index.png",
                                 height: 30,
                                 width: 30,
                                 fit: BoxFit.contain,
@@ -946,7 +946,7 @@ class _ControlPanelState extends State<ControlPanel> {
                           ),
                         ),
                       ),
-                      // if (Util.version < 7)
+                      // if (Utils.version < 7)
                       //   Container(
                       //     width: (MediaQuery.of(context).size.width - 120) / 3,
                       //     height: (MediaQuery.of(context).size.width - 120) / 3,
@@ -960,7 +960,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       mainAxisAlignment: MainAxisAlignment.center,
                       //       children: [
                       //         Image.asset(
-                      //           "assets/control_panel/${Util.version}/share_folder_sync.png",
+                      //           "assets/control_panel/${Utils.version}/share_folder_sync.png",
                       //           height: 30,
                       //           width: 30,
                       //           fit: BoxFit.contain,
@@ -977,7 +977,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       //       ],
                       //     ),
                       //   ),
-                      if (Util.version < 7)
+                      if (Utils.version < 7)
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
@@ -997,7 +997,7 @@ class _ControlPanelState extends State<ControlPanel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/control_panel/${Util.version}/terminal_and_SNMP.png",
+                                  "assets/control_panel/${Utils.version}/terminal_and_SNMP.png",
                                   height: 30,
                                   width: 30,
                                   fit: BoxFit.contain,
@@ -1015,7 +1015,7 @@ class _ControlPanelState extends State<ControlPanel> {
                             ),
                           ),
                         ),
-                      if (Util.version >= 7)
+                      if (Utils.version >= 7)
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
@@ -1035,7 +1035,7 @@ class _ControlPanelState extends State<ControlPanel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/control_panel/${Util.version}/task_scheduler.png",
+                                  "assets/control_panel/${Utils.version}/task_scheduler.png",
                                   height: 30,
                                   width: 30,
                                   fit: BoxFit.contain,

@@ -1,5 +1,5 @@
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,7 +47,7 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
         }
       });
     } else {
-      Util.toast("获取外接设备失败，code${res['error']['code']}");
+      Utils.toast("获取外接设备失败，code${res['error']['code']}");
     }
   }
 
@@ -152,15 +152,15 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                     SizedBox(
                       height: 5,
                     ),
-                    Text("已用：${Util.formatSize(partition['used_size_mb'] * 1024 * 1024)}"),
+                    Text("已用：${Utils.formatSize(partition['used_size_mb'] * 1024 * 1024)}"),
                     SizedBox(
                       height: 5,
                     ),
-                    Text("可用：${Util.formatSize(partition['total_size_mb'] * 1024 * 1024 - partition['used_size_mb'] * 1024 * 1024)}"),
+                    Text("可用：${Utils.formatSize(partition['total_size_mb'] * 1024 * 1024 - partition['used_size_mb'] * 1024 * 1024)}"),
                     SizedBox(
                       height: 5,
                     ),
-                    Text("容量：${Util.formatSize(partition['total_size_mb'] * 1024 * 1024)}"),
+                    Text("容量：${Utils.formatSize(partition['total_size_mb'] * 1024 * 1024)}"),
                   ],
                 ),
               )
@@ -211,10 +211,10 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                   onPressed: () async {
                     var res = await Api.ejectEsata(esata['dev_id']);
                     if (res['success']) {
-                      Util.toast("设备已退出");
+                      Utils.toast("设备已退出");
                       getData();
                     } else {
-                      Util.toast("设备退出失败，代码${res['error']['code']}");
+                      Utils.toast("设备退出失败，代码${res['error']['code']}");
                     }
                   },
                   color: Theme.of(context).scaffoldBackgroundColor,
@@ -262,7 +262,7 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
               unselectedLabelColor: Colors.grey,
               indicator: BubbleTabIndicator(
                 indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
               ),
               tabs: [
                 Padding(

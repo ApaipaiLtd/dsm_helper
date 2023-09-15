@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/strings.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/strings.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -24,14 +24,14 @@ class _NotifyState extends State<Notify> {
       List msgContent = [];
       String title = "";
       List<String> titles = notify['title'].split(":");
-      if (Util.version == 7) {
-        if (Util.notifyStrings[notify['title']] != null) {
-          // print(Util.notifyStrings[notify['title']]);
-          title = Util.notifyStrings[notify['title']]['title'];
+      if (Utils.version == 7) {
+        if (Utils.notifyStrings[notify['title']] != null) {
+          // print(Utils.notifyStrings[notify['title']]);
+          title = Utils.notifyStrings[notify['title']]['title'];
 
           for (String content in msgs) {
             Map msgMap = json.decode(content);
-            String replaceContent = Util.notifyStrings[notify['title']]['msg'];
+            String replaceContent = Utils.notifyStrings[notify['title']]['msg'];
 
             replaceContent = replaceContent.replaceAll("%LINK_BEGIN%", "").replaceAll("%LINK_END%", "").replaceAll("%PRE_APP_LINK%", "").replaceAll("%POST_APP_LINK%", "");
 
@@ -58,11 +58,11 @@ class _NotifyState extends State<Notify> {
             title = webManagerStrings[titles[0]][titles[1]];
           }
           msgContent = msgs;
-        } else if (Util.strings[notify['className']] != null) {
-          if (Util.strings[notify['className']][titles[0]] != null && Util.strings[notify['className']][titles[0]][titles[1]] != null) {
-            title = Util.strings[notify['className']][titles[0]][titles[1]];
-          } else if (Util.strings[notify['className']] != null && Util.strings[notify['className']]['common'] != null && Util.strings[notify['className']]['common']['displayname'] != null) {
-            title = Util.strings[notify['className']]['common']['displayname'];
+        } else if (Utils.strings[notify['className']] != null) {
+          if (Utils.strings[notify['className']][titles[0]] != null && Utils.strings[notify['className']][titles[0]][titles[1]] != null) {
+            title = Utils.strings[notify['className']][titles[0]][titles[1]];
+          } else if (Utils.strings[notify['className']] != null && Utils.strings[notify['className']]['common'] != null && Utils.strings[notify['className']]['common']['displayname'] != null) {
+            title = Utils.strings[notify['className']]['common']['displayname'];
           }
           msgContent = msgs;
         } else {
@@ -163,7 +163,7 @@ class _NotifyState extends State<Notify> {
                     onPressed: () async {
                       var res = await Api.clearNotify();
                       if (res['success']) {
-                        Util.toast("清除成功");
+                        Utils.toast("清除成功");
                         Navigator.of(context).pop(true);
                       }
                     },

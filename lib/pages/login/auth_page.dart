@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -28,7 +28,7 @@ class _AuthPageState extends State<AuthPage> {
   String password = "";
   @override
   void initState() {
-    Util.isAuthPage = true;
+    Utils.isAuthPage = true;
     getData();
     super.initState();
   }
@@ -40,7 +40,7 @@ class _AuthPageState extends State<AuthPage> {
   };
   @override
   void dispose() {
-    Util.isAuthPage = false;
+    Utils.isAuthPage = false;
     auth.stopAuthentication();
     super.dispose();
   }
@@ -97,36 +97,36 @@ class _AuthPageState extends State<AuthPage> {
         auth.stopAuthentication();
         if (didAuthenticate) {
           //验证成功
-          Util.vibrate(FeedbackType.light);
+          Utils.vibrate(FeedbackType.light);
           if (widget.launch) {
             Navigator.of(context).pushReplacementNamed("/login");
           } else {
             Navigator.of(context).pop();
           }
         } else {
-          Util.vibrate(FeedbackType.warning);
-          Util.toast("${biometricTypeName[biometricsType]}验证失败，请使用图形密码登录");
+          Utils.vibrate(FeedbackType.warning);
+          Utils.toast("${biometricTypeName[biometricsType]}验证失败，请使用图形密码登录");
         }
       } on PlatformException catch (e) {
-        Util.vibrate(FeedbackType.warning);
+        Utils.vibrate(FeedbackType.warning);
         if (e.code == auth_error.notAvailable) {
-          Util.toast("${biometricTypeName[biometricsType]}验证不可用，请使用图形密码登录");
+          Utils.toast("${biometricTypeName[biometricsType]}验证不可用，请使用图形密码登录");
         } else if (e.code == auth_error.passcodeNotSet) {
-          Util.toast("系统未设置密码");
+          Utils.toast("系统未设置密码");
         } else if (e.code == auth_error.lockedOut) {
-          Util.toast("认证失败次数过多，请使用图形密码登录");
+          Utils.toast("认证失败次数过多，请使用图形密码登录");
         } else {
-          Util.toast(e.message ?? "认证失败");
+          Utils.toast(e.message ?? "认证失败");
         }
       }
     }
   }
 
   Future<bool> onWillPop() {
-    Util.vibrate(FeedbackType.light);
+    Utils.vibrate(FeedbackType.light);
     if (lastPopTime == null || DateTime.now().difference(lastPopTime!) > Duration(seconds: 2)) {
       lastPopTime = DateTime.now();
-      Util.toast('再按一次退出${Util.appName}');
+      Utils.toast('再按一次退出${Utils.appName}');
     } else {
       lastPopTime = DateTime.now();
       // 退出app
@@ -178,15 +178,15 @@ class _AuthPageState extends State<AuthPage> {
                       } else {
                         //密码验证不通过
                         if (errorCount < 2) {
-                          Util.toast("密码错误");
-                          Util.vibrate(FeedbackType.warning);
+                          Utils.toast("密码错误");
+                          Utils.vibrate(FeedbackType.warning);
                         } else if (errorCount < 5) {
                           errorCount++;
-                          Util.toast("密码错误，连续错误5次将清空登录历史");
-                          Util.vibrate(FeedbackType.warning);
+                          Utils.toast("密码错误，连续错误5次将清空登录历史");
+                          Utils.vibrate(FeedbackType.warning);
                         } else {
-                          Util.toast("密码错误已达5次");
-                          Util.vibrate(FeedbackType.warning);
+                          Utils.toast("密码错误已达5次");
+                          Utils.vibrate(FeedbackType.warning);
                           SpUtil.remove("servers");
                           SpUtil.remove("https");
                           SpUtil.remove("host");

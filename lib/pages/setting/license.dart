@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/material.dart';
 
@@ -19,21 +19,21 @@ class _LicenseState extends State<License> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${Util.appName}用户协议"),
+        title: Text("${Utils.appName}用户协议"),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20),
         children: [
           Center(
             child: Text(
-              "《${Util.appName}用户协议》",
+              "《${Utils.appName}用户协议》",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           Text('''
 概述
 
-本用户协议（以下简称“本协议”）适用于青岛阿派派软件有限公司运营和管理（以下简称“我们”，“本公司”）旗下的《${Util.appName}软件》（以下简称“本产品”）。本协议是您（个人或单一实体）与本公司之间就使用本产品达成的具有法律约束力的法律协议。该法律协议包括但不限于本页面的全部条款与《隐私政策》。
+本用户协议（以下简称“本协议”）适用于青岛阿派派软件有限公司运营和管理（以下简称“我们”，“本公司”）旗下的《${Utils.appName}软件》（以下简称“本产品”）。本协议是您（个人或单一实体）与本公司之间就使用本产品达成的具有法律约束力的法律协议。该法律协议包括但不限于本页面的全部条款与《隐私政策》。
 
 请您在使用本产品之前仔细阅读下列条款。您下载、安装或使用产本品或者单击“ 我同意”表明您已经阅读本协议并充分理解、遵守本协议所有条款，包括涉及免除或者限制本公司责任的免责条款、用户权利限制条款、约定争议解决方式等，这些条款均用粗体字标注。如果您不同意本协议的全部或部分内容，请不要下载、安装和使用本产品。
 

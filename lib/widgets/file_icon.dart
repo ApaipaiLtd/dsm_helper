@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class FileIcon extends StatelessWidget {
   final double width;
   final double height;
   final BoxFit fit;
-  FileIcon(this.fileType, {this.thumb, this.network = true, this.width: 40, this.height: 40, this.fit: BoxFit.contain});
+  FileIcon(this.fileType, {this.thumb, this.network = true, this.width = 40, this.height = 40, this.fit = BoxFit.contain});
   @override
   Widget build(BuildContext context) {
     if (fileType == FileTypeEnum.folder) {
@@ -36,7 +36,7 @@ class FileIcon extends StatelessWidget {
             )
           : network
               ? CupertinoExtendedImage(
-                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                  Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                   width: width,
                   height: height,
                   fit: fit,
@@ -66,7 +66,7 @@ class FileIcon extends StatelessWidget {
             )
           : network
               ? CupertinoExtendedImage(
-                  Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                  Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                   width: width,
                   height: height,
                   fit: fit,

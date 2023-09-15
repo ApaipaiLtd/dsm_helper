@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 /// cache_key : "611690_1665630858"
 /// m : "ready"
@@ -36,9 +36,9 @@ class ThumbnailModel {
   num? folderCoverSeq;
   String thumbUrl({String size = 'sm', num? folderId, bool isTeam: false}) {
     if (unitId != null) {
-      return '${Util.baseUrl}/webapi/entry.cgi?id=$unitId&cache_key="$cacheKey"&type="unit"&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
+      return '${Utils.baseUrl}/webapi/entry.cgi?id=$unitId&cache_key="$cacheKey"&type="unit"&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
     } else {
-      return '${Util.baseUrl}/webapi/entry.cgi?id=$folderId&cache_key="$cacheKey"&type="folder"&folder_cover_seq=$folderCoverSeq&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=2&_sid=${Util.sid}';
+      return '${Utils.baseUrl}/webapi/entry.cgi?id=$folderId&cache_key="$cacheKey"&type="folder"&folder_cover_seq=$folderCoverSeq&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=2&_sid=${Utils.sid}';
     }
   }
 

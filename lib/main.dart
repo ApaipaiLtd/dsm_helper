@@ -6,14 +6,15 @@ import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
+import 'package:dsm_helper/pages/splash/splash.dart';
 import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
-import 'package:dsm_helper/themes/light.dart';
+import 'package:dsm_helper/themes/light_theme.dart';
 import 'package:dsm_helper/themes/dark.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/log.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
@@ -21,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluwx/fluwx.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pangle_flutter/pangle_flutter.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +38,7 @@ void main() async {
     final completer = Completer<String>();
     for (String domain in domains) {
       try {
-        Util.get(domain).then((res) {
+        Utils.get(domain).then((res) {
           if (res != null && res['code'] == 1) {
             if (!completer.isCompleted) {
               completer.complete("http://${res['data']}");
@@ -70,24 +70,24 @@ void main() async {
       ),
     );
     // 域名优选
-    Util.appUrl = await getBestDomain(['http://dsm.apaipai.top/index/check', 'http://dsm.flutter.fit/index/check']);
+    Utils.appUrl = await getBestDomain(['http://dsm.apaipai.top/index/check', 'http://dsm.flutter.fit/index/check']);
     // 是否关闭广告
     // 判断是否登录
     bool isForever = false;
     DateTime? noAdTime;
-    Util.isWechatInstalled = await fluwx.isWeChatInstalled;
+    Utils.isWechatInstalled = await fluwx.isWeChatInstalled;
     String userToken = SpUtil.getString("user_token", defValue: '')!;
     String noAdTimeStr = SpUtil.getString("no_ad_time", defValue: '')!;
     if (noAdTimeStr.isNotBlank) {
       noAdTime = DateTime.parse(noAdTimeStr);
     }
     if (userToken.isNotBlank) {
-      var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
+      var res = await Utils.post("${Utils.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
-        isForever = Util.vipForever = res['data']['is_forever'] == 1;
+        isForever = Utils.vipForever = res['data']['is_forever'] == 1;
         if (res['data']['vip_expire_time'] != null) {
           DateTime vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
-          Util.vipExpireTime = vipExpireTime;
+          Utils.vipExpireTime = vipExpireTime;
           if (noAdTime == null) {
             if (vipExpireTime.isAfter(DateTime.now())) {
               noAdTime = vipExpireTime;
@@ -108,16 +108,16 @@ void main() async {
       }
     } else {
       SpUtil.remove("no_ad_time");
-      pangle.loadSplashAd(
-        iOS: IOSSplashConfig(slotId: '887561543'),
-        android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
-      );
+      // pangle.loadSplashAd(
+      //   iOS: IOSSplashConfig(slotId: '887561543'),
+      //   android: AndroidSplashConfig(slotId: '887561531', isExpress: false),
+      // );
     }
   }
   // await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
-  Util.downloadSavePath = await SpUtil.getString("download_save_path") ?? "/storage/emulated/0/dsm_helper/Download";
-  Util.downloadWifiOnly = SpUtil.getBool("download_wifi_only", defValue: true)!;
+  Utils.downloadSavePath = SpUtil.getString("download_save_path", defValue: "/storage/emulated/0/dsm_helper/Download")!;
+  Utils.downloadWifiOnly = SpUtil.getBool("download_wifi_only", defValue: true)!;
   //判断是否需要启动密码
   bool launchAuth = SpUtil.getBool("launch_auth", defValue: false)!;
   bool password = SpUtil.getBool("launch_auth_password", defValue: false)!;
@@ -127,7 +127,7 @@ void main() async {
   int refreshDuration = SpUtil.getInt("refresh_duration", defValue: 10)!;
   bool launchAccountPage = SpUtil.getBool("launch_account_page", defValue: false)!;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  Util.appName = packageInfo.appName;
+  Utils.appName = packageInfo.appName;
 
   bool authPage = launchAuth && (password || biometrics);
 
@@ -135,11 +135,11 @@ void main() async {
   int darkMode = SpUtil.getInt("dark_mode", defValue: 2)!;
 
   //震动开关
-  Util.vibrateOn = SpUtil.getBool("vibrate_on", defValue: true)!;
-  Util.vibrateNormal = SpUtil.getBool("vibrate_normal", defValue: true)!;
-  Util.vibrateWarning = SpUtil.getBool("vibrate_warning", defValue: true)!;
+  Utils.vibrateOn = SpUtil.getBool("vibrate_on", defValue: true)!;
+  Utils.vibrateNormal = SpUtil.getBool("vibrate_normal", defValue: true)!;
+  Utils.vibrateWarning = SpUtil.getBool("vibrate_warning", defValue: true)!;
 
-  Util.checkSsl = SpUtil.getBool("check_ssl", defValue: true)!;
+  Utils.checkSsl = SpUtil.getBool("check_ssl", defValue: true)!;
   runApp(
     MultiProvider(
       providers: [
@@ -149,7 +149,7 @@ void main() async {
         ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
         ChangeNotifierProvider.value(value: AudioPlayerProvider()),
       ],
-      child: MyApp(authPage, launchAccountPage),
+      child: DsmHelper(authPage, launchAccountPage),
     ),
   );
 
@@ -161,16 +161,16 @@ void main() async {
   }
 }
 
-class MyApp extends StatefulWidget {
+class DsmHelper extends StatefulWidget {
   final bool authPage;
   final bool launchAccountPage;
-  MyApp(this.authPage, this.launchAccountPage);
+  DsmHelper(this.authPage, this.launchAccountPage);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _DsmHelperState createState() => _DsmHelperState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _DsmHelperState extends State<DsmHelper> {
   @override
   void initState() {
     super.initState();
@@ -180,40 +180,40 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Consumer<DarkModeProvider>(
       builder: (context, darkModeProvider, _) {
-        return OKToast(
-          child: KeyboardDismisser(
-            child: WeuiToastConfig(
-              data: WeuiToastConfigData(
-                toastAlignment: Alignment.center,
-                loadingText: "请稍后",
-                loadingBackButtonClose: true,
-              ),
-              child: MaterialApp(
-                title: '${Util.appName}',
-                debugShowCheckedModeBanner: false,
-                theme: darkModeProvider.darkMode == 2 ? lightTheme : (darkModeProvider.darkMode == 0 ? lightTheme : darkTheme),
-                darkTheme: darkModeProvider.darkMode == 2 ? darkTheme : null,
-                localizationsDelegates: [
-                  GlobalCupertinoLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                ],
-                supportedLocales: [
-                  const Locale('zh', 'CN'),
-                ],
-                home: widget.authPage
-                    ? AuthPage(
-                        launchAccountPage: widget.launchAccountPage,
-                      )
-                    : widget.launchAccountPage
-                        ? Accounts()
-                        : Login(),
-                routes: {
-                  "/login": (BuildContext context) => Login(),
-                  "/home": (BuildContext context) => Home(),
-                  "/accounts": (BuildContext context) => Accounts(),
-                },
-              ),
+        return KeyboardDismisser(
+          child: WeuiToastConfig(
+            data: WeuiToastConfigData(
+              toastAlignment: Alignment.center,
+              loadingText: "请稍后",
+              loadingBackButtonClose: true,
+            ),
+            child: MaterialApp(
+              title: '${Utils.appName}',
+              debugShowCheckedModeBanner: false,
+              // theme: darkModeProvider.darkMode == 2 ? lightTheme : (darkModeProvider.darkMode == 0 ? lightTheme : darkTheme),
+              // darkTheme: darkModeProvider.darkMode == 2 ? darkTheme : null,
+              localizationsDelegates: [
+                GlobalCupertinoLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: [
+                const Locale('zh', 'CN'),
+              ],
+              home: Splash(),
+              theme: lightTheme,
+              // home: widget.authPage
+              //     ? AuthPage(
+              //         launchAccountPage: widget.launchAccountPage,
+              //       )
+              //     : widget.launchAccountPage
+              //         ? Accounts()
+              //         : Login(),
+              routes: {
+                "/login": (BuildContext context) => Login(),
+                "/home": (BuildContext context) => Home(),
+                "/accounts": (BuildContext context) => Accounts(),
+              },
             ),
           ),
         );

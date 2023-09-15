@@ -12,18 +12,17 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
       progressColor: Color(0xffd3d3d3),
     ),
   ],
-  backgroundColor: Color(0xff121212),
   scaffoldBackgroundColor: Color(0xff121212),
   textTheme: TextTheme(
-    bodyText1: TextStyle(
+    bodyLarge: TextStyle(
       fontSize: 12.0,
       color: Color(0xffa6a6a6),
     ),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
       fontSize: 15.0,
       color: Color(0xffa6a6a6),
     ),
-    subtitle1: TextStyle(
+    titleMedium: TextStyle(
       fontSize: 18.0,
       color: Color(0xffa6a6a6),
     ),
@@ -54,5 +53,6 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   colorScheme: ColorScheme.dark(
     secondary: Color(0xff888888),
+    background: Color(0xff121212),
   ),
 );

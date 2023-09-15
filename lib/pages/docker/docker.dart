@@ -1,6 +1,6 @@
 import 'package:dsm_helper/pages/docker/detail.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/log.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -150,10 +150,10 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               });
                               var res = await Api.dockerPower(container['name'], action, preserveProfile: preserveProfile);
                               if (res['success']) {
-                                Util.toast("请求发送成功");
+                                Utils.toast("请求发送成功");
                                 getContainer();
                               } else {
-                                Util.toast("请求发送失败，代码：${res['error']['code']}");
+                                Utils.toast("请求发送失败，代码：${res['error']['code']}");
                               }
                               setState(() {
                                 powerLoading[container['id']] = false;
@@ -203,10 +203,10 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
       });
       var res = await Api.dockerPower(container['name'], action);
       if (res['success']) {
-        Util.toast("请求发送成功");
+        Utils.toast("请求发送成功");
         getContainer();
       } else {
-        Util.toast("请求发送失败，代码：${res['error']['code']}");
+        Utils.toast("请求发送失败，代码：${res['error']['code']}");
       }
       setState(() {
         powerLoading[container['id']] = false;
@@ -484,7 +484,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               Text("内存"),
                               Spacer(),
                               Text(
-                                "${Util.formatSize(container['memory'], fixed: 0)}",
+                                "${Utils.formatSize(container['memory'], fixed: 0)}",
                                 style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600),
                               ),
                             ],
@@ -551,7 +551,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                 SizedBox(
                   width: 10,
                 ),
-                Label(Util.formatSize(image['size'], fixed: 0, format: 1000), Theme.of(context).primaryColor),
+                Label(Utils.formatSize(image['size'], fixed: 0, format: 1000), Theme.of(context).primaryColor),
               ],
             ),
             if (image['description'] != null || image['description'] != '') ...[
@@ -594,7 +594,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
               unselectedLabelColor: Colors.grey,
               indicator: BubbleTabIndicator(
                 indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
               ),
               tabs: [
                 Padding(

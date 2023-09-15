@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dsm_helper/pages/download_station/add_task.dart';
 import 'package:dsm_helper/pages/download_station/detail.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,7 +70,7 @@ class _DownloadStationState extends State<DownloadStation> {
 
   Widget _buildDownloadItem(download) {
     pauseLoading[download['id']] = pauseLoading[download['id']] ?? false;
-    FileTypeEnum fileType = Util.fileType(download['title']);
+    FileTypeEnum fileType = Utils.fileType(download['title']);
     return GestureDetector(
       onTap: () {
         Navigator.of(context)
@@ -164,11 +164,11 @@ class _DownloadStationState extends State<DownloadStation> {
                         children: [
                           if (download['status'] != 5)
                             TextSpan(
-                              text: "${Util.formatSize(download['additional']['transfer']['size_downloaded'])} / ",
+                              text: "${Utils.formatSize(download['additional']['transfer']['size_downloaded'])} / ",
                               style: TextStyle(fontSize: 12, color: Colors.lightBlueAccent),
                             ),
                           TextSpan(
-                            text: "${Util.formatSize(download['size'])}",
+                            text: "${Utils.formatSize(download['size'])}",
                             style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                         ],
@@ -178,7 +178,7 @@ class _DownloadStationState extends State<DownloadStation> {
                   if (download['status'] == 2)
                     Expanded(
                       child: Text(
-                        "${download['additional']['transfer']['speed_download'] > 0 ? Util.timeRemaining(((download['size'] - download['additional']['transfer']['size_downloaded']) / download['additional']['transfer']['speed_download']).ceil()) : "--:--:--"}",
+                        "${download['additional']['transfer']['speed_download'] > 0 ? Utils.timeRemaining(((download['size'] - download['additional']['transfer']['size_downloaded']) / download['additional']['transfer']['speed_download']).ceil()) : "--:--:--"}",
                         style: TextStyle(fontSize: 12, color: Colors.grey),
                         textAlign: TextAlign.start,
                       ),
@@ -192,7 +192,7 @@ class _DownloadStationState extends State<DownloadStation> {
                           )
                         : download['status'] == 2
                             ? Text(
-                                "${Util.formatSize(download['additional']['transfer']['speed_download'])}/s",
+                                "${Utils.formatSize(download['additional']['transfer']['speed_download'])}/s",
                                 style: TextStyle(fontSize: 12, color: Colors.lightBlueAccent),
                                 textAlign: TextAlign.right,
                               )
@@ -296,7 +296,7 @@ class _DownloadStationState extends State<DownloadStation> {
                     color: Colors.lightBlueAccent,
                   ),
                   Text(
-                    Util.formatSize(downloadRate),
+                    Utils.formatSize(downloadRate),
                     style: TextStyle(
                       color: Colors.lightBlueAccent,
                     ),
@@ -310,7 +310,7 @@ class _DownloadStationState extends State<DownloadStation> {
                     color: Colors.orange,
                   ),
                   Text(
-                    Util.formatSize(uploadRate),
+                    Utils.formatSize(uploadRate),
                     style: TextStyle(
                       color: Colors.orange,
                     ),

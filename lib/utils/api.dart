@@ -8,7 +8,7 @@ import 'package:dsm_helper/models/api_model.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:sp_util/sp_util.dart';
 
-import 'function.dart';
+import 'utils.dart';
 
 class Api {
   static Map<String, ApiModel> apiList = {};
@@ -23,7 +23,7 @@ class Api {
       //   };
       // }
       String urlBase64 = "aHR0cHM6Ly93d3cucGd5ZXIuY29tL2FwaXYyL2FwcC9jaGVjaw==";
-      var res = await Util.post(Util.base64ToString(urlBase64), data: {
+      var res = await Utils.post(Utils.base64ToString(urlBase64), data: {
         "_api_key": "f4621000de0337cc74a156cea513e828",
         "appKey": "ed1169bc9b9d290ef91c7e21d4ffb008",
         "buildVersion": buildNumber,
@@ -49,11 +49,11 @@ class Api {
       "code": 0,
       "msg": "已是最新版本",
     };
-//    var res = await Util.post("base/update", data: {"platform": Platform.isAndroid ? "android" : "ios", "build": buildNumber});
+//    var res = await Utils.post("base/update", data: {"platform": Platform.isAndroid ? "android" : "ios", "build": buildNumber});
   }
 
   static Future api() async {
-    var res = await Util.post("query.cgi", data: {
+    var res = await Utils.post("query.cgi", data: {
       "query": "all",
       "api": "SYNO.API.Info",
       "method": "query",
@@ -66,7 +66,7 @@ class Api {
     }
   }
 
-  static Future<Map> login({String? host, String? account, String? password, String otpCode = "", CancelToken? cancelToken, bool rememberDevice: false, String? cookie}) async {
+  static Future<Map> login({String? host, String? account, String? password, String otpCode = "", CancelToken? cancelToken, bool rememberDevice = false, String? cookie}) async {
     var data = {
       "account": account,
       "passwd": password,
@@ -79,17 +79,17 @@ class Api {
       "enable_sync_token": "yes",
       "isIframeLogin": "yes",
     };
-    return await Util.get("auth.cgi", host: host, data: data, cancelToken: cancelToken, cookie: cookie);
+    return await Utils.get("auth.cgi", host: host, data: data, cancelToken: cancelToken, cookie: cookie);
   }
 
   static Future<Map> shareList({List<String> additional = const ["perm", "time", "size"], CancelToken? cancelToken, String? sid, bool? checkSsl, String? cookie, String? host}) async {
-    return await Util.post(
+    return await Utils.post(
       "entry.cgi",
       data: {
         "api": '"SYNO.FileStation.List"',
         "method": '"list_share"',
         "version": 2,
-        "_sid": sid ?? Util.sid,
+        "_sid": sid ?? Utils.sid,
         "offset": 0,
         "limit": 1000,
         "sort_by": '"name"',
@@ -104,11 +104,11 @@ class Api {
   }
 
   static Future<Map> shareCore({List<String> additional = const []}) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.Core.Share"',
       "method": '"list"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "shareType": '"all"',
       "additional": jsonEncode(additional),
     });
@@ -129,7 +129,7 @@ class Api {
       "api": '"SYNO.Core.Share"',
       "method": '"get"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "name": '"$name"',
       "additional": jsonEncode([
         "hidden",
@@ -144,7 +144,7 @@ class Api {
         "enable_share_compress",
       ]),
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> addSharedFolder(
@@ -156,13 +156,13 @@ class Api {
     String password = "",
     bool recycleBin = false,
     bool recycleBinAdminOnly = false,
-    bool hidden: false,
-    bool hideUnreadable: false,
-    bool enableShareCow: false,
-    bool enableShareCompress: false,
-    bool enableShareQuota: false,
-    String shareQuota: "",
-    String method: "create",
+    bool hidden = false,
+    bool hideUnreadable = false,
+    bool enableShareCow = false,
+    bool enableShareCompress = false,
+    bool enableShareQuota = false,
+    String shareQuota = "",
+    String method = "create",
   }) async {
     //"{"name":"test","vol_path":"/volume3","desc":"test","hidden":true,"enable_recycle_bin":true,"recycle_bin_admin_only":true,"hide_unreadable":true,"enable_share_cow":true,"enable_share_compress":true,"share_quota":1024,"name_org":""}"
     Map shareInfo = {
@@ -191,11 +191,11 @@ class Api {
       "api": '"SYNO.Core.Share"',
       "method": '"$method"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "name": oldName ?? name,
       "shareinfo": jsonEncode(shareInfo),
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   // api: SYNO.Core.User.PasswordConfirm
@@ -207,10 +207,10 @@ class Api {
       "api": '"SYNO.Core.Share"',
       "method": '"delete"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "name": json.encode(name),
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> cleanRecycleBin(String id) async {
@@ -219,27 +219,27 @@ class Api {
       "api": '"SYNO.Core.RecycleBin"',
       "method": 'start',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   // static Future<Map> fileStationInfo(String taskId) async {
-  //   return await Util.post("entry.cgi", data: {
+  //   return await Utils.post("entry.cgi", data: {
   //     "taskid": taskId,
   //     "api": '"SYNO.FileStation.Delete"',
   //     "method": '"status"',
   //     "version": 2,
-  //     "_sid": Util.sid,
+  //     "_sid": Utils.sid,
   //   });
   // }
 
   static Future<Map> fileList(String path, {String sortBy = "name", String sortDirection = "asc"}) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.List"',
       "method": '"list"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "offset": 0,
       "folder_path": path,
       "filetype": '"all"',
@@ -251,11 +251,11 @@ class Api {
   }
 
   static Future<Map> smbFolder() async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.VirtualFolder"',
       "method": '"list"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "node": "fm_rf_root",
       "type": '["cifs","nfs"]',
       "additional": '["real_path","owner","time","perm","mount_point_type","volume_status"]',
@@ -267,21 +267,21 @@ class Api {
       "api": 'SYNO.FileStation.VirtualFolder',
       "method": 'list',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "node": '"$type"',
       "type": '"$type"',
       "sort_by": '"name"',
       "additional": '["real_path","owner","time","perm","mount_point_type","volume_status"]',
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> remoteUnConnect(String id) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.VFS.Connection"',
       "method": '"delete"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "id": '"$id"',
     });
   }
@@ -299,17 +299,17 @@ class Api {
       "api": "SYNO.FileStation.Mount",
       "method": "mount_remote",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> unMountFolder(String path) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.Mount"',
       "method": '"unmount"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "mount_point": '"$path"',
       "is_mount_point": true,
       // "status_filter": '"all"',
@@ -318,11 +318,11 @@ class Api {
   }
 
   static Future<Map> favoriteList() async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.Favorite"',
       "method": '"list"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "offset": 0,
       "limit": 1000,
       // "status_filter": '"all"',
@@ -331,11 +331,11 @@ class Api {
   }
 
   static Future<Map> favoriteAdd(String name, String path) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.Favorite"',
       "method": '"add"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "name": name,
       "path": path,
       "index": -1,
@@ -350,18 +350,18 @@ class Api {
       "path": path,
       "name": name,
       "index": -1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    var result = await Util.get("entry.cgi", data: data);
+    var result = await Utils.get("entry.cgi", data: data);
     return result;
   }
 
   static Future<Map> favoriteDelete(String path) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.Favorite"',
       "method": '"delete"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "path": path,
     });
   }
@@ -374,19 +374,19 @@ class Api {
       "accurate_progress": "true",
       // "recursive": "true",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "path": json.encode(path),
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> deleteResult(String taskId) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "taskid": taskId,
       "api": '"SYNO.FileStation.Delete"',
       "method": '"status"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
   }
 
@@ -399,7 +399,7 @@ class Api {
   //exe,
   //iso:bin,img,mds,nrg,daa,iso,
   //zip:7z,bz2,gz,zip,tgz,tbz,rar,tar
-  static Future<Map> searchTask(List<String> paths, String pattern, {bool recursive: true, bool searchContent: false, String searchType: "simple"}) async {
+  static Future<Map> searchTask(List<String> paths, String pattern, {bool recursive = true, bool searchContent = false, String searchType = "simple"}) async {
     var data = {
       "folder_path": json.encode(paths),
       "api": "SYNO.FileStation.Search",
@@ -409,9 +409,9 @@ class Api {
       "search_content": searchContent,
       "search_type": '"$searchType"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> searchResult(String taskId) async {
@@ -424,17 +424,17 @@ class Api {
       "api": '"SYNO.FileStation.Search"',
       "method": '"list"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> compressTask(
     List<String> path,
     String destPath, {
-    String level: "normal",
-    String mode: "replace",
-    String format: "zip",
+    String level = "normal",
+    String mode = "replace",
+    String format = "zip",
     String? password,
     String? codepage,
   }) async {
@@ -442,7 +442,7 @@ class Api {
       "api": '"SYNO.FileStation.Compress"',
       "method": '"start"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "path": json.encode(path),
       "dest_file_path": "$destPath",
       "level": "$level",
@@ -451,21 +451,21 @@ class Api {
       "password": password,
       "codepage": codepage,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> compressResult(String taskId) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "taskid": taskId,
       "api": '"SYNO.FileStation.Compress"',
       "method": '"status"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
   }
 
   static Future<Map> copyMoveTask(List path, String destFolderPath, bool remove) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "overwrite": "true",
       "dest_folder_path": destFolderPath,
       "api": '"SYNO.FileStation.CopyMove"',
@@ -473,7 +473,7 @@ class Api {
       "accurate_progress": "true",
       "method": '"start"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "path": jsonEncode(path),
     });
   }
@@ -489,7 +489,7 @@ class Api {
       "api": '"SYNO.FileStation.Sharing"',
       "method": '"create"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "path": jsonEncode(path),
     };
     if (fileRequest) {
@@ -497,7 +497,7 @@ class Api {
       data['request_name'] = requestName!;
       data['request_info'] = requestInfo!;
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> editShare(
@@ -525,14 +525,14 @@ class Api {
       "api": '"SYNO.FileStation.Sharing"',
       "method": '"edit"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (fileRequest) {
       data['file_request'] = true;
       data['request_name'] = requestName;
       data['request_info'] = requestInfo;
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> listShare() async {
@@ -543,9 +543,9 @@ class Api {
       "api": '"SYNO.FileStation.Sharing"',
       "method": '"list"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> deleteShare(
@@ -556,50 +556,50 @@ class Api {
       "api": '"SYNO.FileStation.Sharing"',
       "method": '"delete"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> backgroundTask() async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "is_list_sharemove": true,
       "is_vfs": true,
       "bkg_info": true,
       "api": 'SYNO.FileStation.BackgroundTask',
       "method": 'list',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
   }
 
   static Future<Map> copyMoveResult(String taskId) async {
-    return await Util.post("entry.cgi", data: {
+    return await Utils.post("entry.cgi", data: {
       "taskid": taskId,
       "api": '"SYNO.FileStation.CopyMove"',
       "method": '"status"',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
   }
 
   static Future<Map> dirSizeTask(String path) async {
-    var task = await Util.post("entry.cgi", data: {
+    var task = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.DirSize"',
       "method": '"start"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "path": path,
     });
     return task;
   }
 
   static Future<Map> dirSizeResult(String taskId) async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.DirSize"',
       "method": '"status"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "taskid": taskId,
     });
     return result;
@@ -611,7 +611,7 @@ class Api {
       "overwrite": "false",
       "method": '"start"',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "file_path": filePath,
       "dest_folder_path": folderPath,
       "keep_dir": "true",
@@ -620,16 +620,16 @@ class Api {
     if (password != null) {
       data['password'] = '"$password"';
     }
-    var task = await Util.post("entry.cgi", data: data);
+    var task = await Utils.post("entry.cgi", data: data);
     return task;
   }
 
   static Future<Map> extractResult(String taskId) async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.FileStation.Extract"',
       "method": '"status"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "taskid": taskId,
     });
     return result;
@@ -714,19 +714,19 @@ class Api {
       "method": "get",
       "version": 1,
     });
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"parallel"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
   static Future<Map> notifyStrings() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "pkgName": '""',
       "lang": '"chs"',
       "api": "SYNO.Core.DSMNotify.Strings",
@@ -737,7 +737,7 @@ class Api {
   }
 
   static Future<Map> notify() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "action": "load",
       "lastRead": DateTime.now().secondsSinceEpoch,
       "lastSeen": DateTime.now().secondsSinceEpoch,
@@ -749,7 +749,7 @@ class Api {
   }
 
   static Future<Map> storage() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": "SYNO.Storage.CGI.Storage",
       "method": "load_info",
       "version": 1,
@@ -758,11 +758,11 @@ class Api {
   }
 
   static Future<Map> kickConnection(Map connection) async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.Core.CurrentConnection"',
       "method": '"kick_connection"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "http_conn": jsonEncode(connection),
       "service_conn": "[]",
     });
@@ -770,11 +770,11 @@ class Api {
   }
 
   static Future<Map> clearNotify() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.Core.DSMNotify"',
       "method": '"notify"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "action": '"apply"',
       "clean": '"all"',
     });
@@ -782,23 +782,23 @@ class Api {
   }
 
   static Future<Map> initData() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "launch_app": "null",
       "api": '"SYNO.Core.Desktop.Initdata"',
       "method": '"get"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
   static Future<Map> networkInfo() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.Core.System"',
       "method": '"info"',
       "version": 1,
       "type": "network",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -813,9 +813,9 @@ class Api {
       "filename": filePath.split("/").last,
       "path": uploadPath,
       "size": await file.length(),
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    var result = await Util.post("entry.cgi", data: data);
+    var result = await Utils.post("entry.cgi", data: data);
     return result;
   }
 
@@ -827,9 +827,9 @@ class Api {
       "force_parent": "false",
       "folder_path": '"$path"',
       "name": '"$name"',
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    var result = await Util.get("entry.cgi", data: data);
+    var result = await Utils.get("entry.cgi", data: data);
     return result;
   }
 
@@ -840,9 +840,9 @@ class Api {
       "version": 2,
       "path": '"$path"',
       "name": '"$name"',
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    var result = await Util.get("entry.cgi", data: data);
+    var result = await Utils.get("entry.cgi", data: data);
     return result;
   }
 
@@ -853,9 +853,9 @@ class Api {
       "local": true,
       "version": 1,
       "method": method,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> setTerminal(bool? ssh, bool? telnet, String? sshPort) async {
@@ -866,10 +866,10 @@ class Api {
       "ssh_port": sshPort,
       "version": 3,
       "method": "set",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     print(data);
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> terminalInfo() async {
@@ -877,9 +877,9 @@ class Api {
       "api": "SYNO.Core.Terminal",
       "version": 3,
       "method": "get",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> upload(String uploadPath, String filePath, CancelToken cancelToken, Function(int, int) onSendProgress) async {
@@ -904,7 +904,7 @@ class Api {
       "file": multipartFile,
     };
 
-    var result = await Util.upload(url, params: params, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
+    var result = await Utils.upload(url, params: params, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
     return result;
   }
 
@@ -919,7 +919,7 @@ class Api {
       "size": file.lengthSync(),
       "file": multipartFile,
     };
-    var result = await Util.upload(url, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
+    var result = await Utils.upload(url, data: data, cancelToken: cancelToken, onSendProgress: onSendProgress);
     return result;
   }
 
@@ -931,12 +931,12 @@ class Api {
       "api": "SYNO.Core.Storage.Volume",
       "version": 1,
       "method": "list",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
-  static Future<Map> packages({bool others = false, int version: 1}) async {
+  static Future<Map> packages({bool others = false, int version = 1}) async {
     var data = {
       "updateSprite": true,
       "blforcereload": false,
@@ -944,12 +944,12 @@ class Api {
       "api": "SYNO.Core.Package.Server",
       "version": version,
       "method": "list",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
-  static Future<Map> installedPackages({int version: 1}) async {
+  static Future<Map> installedPackages({int version = 1}) async {
     List<String> additional = [
       "description",
       "description_enu",
@@ -983,9 +983,9 @@ class Api {
       "api": "SYNO.Core.Package",
       "version": version,
       "method": "list",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> launchedPackages() async {
@@ -995,9 +995,9 @@ class Api {
       "api": "SYNO.Core.Polling.Data",
       "version": 1,
       "method": "get",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> launchPackage(String id, String app, String method) async {
@@ -1006,12 +1006,12 @@ class Api {
       "api": "SYNO.Core.Package.Control",
       "version": 1,
       "method": method,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (method == "start") {
       data["dsm_apps"] = jsonEncode([app]);
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> installPackageTask(String name, String path) async {
@@ -1025,9 +1025,9 @@ class Api {
       "api": "SYNO.Core.Package.Installation",
       "version": 1,
       "method": "install",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> installPackageStatus(String taskId) async {
@@ -1036,9 +1036,9 @@ class Api {
       "api": "SYNO.Core.Package.Installation",
       "version": 1,
       "method": "status",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   //pkgs: [{"pkg":"SynoFinder","beta":false}]
@@ -1051,9 +1051,9 @@ class Api {
       "api": "SYNO.Core.Package.Installation",
       "version": 1,
       "method": "get_queue",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> uninstallPackageInfo(String id) async {
@@ -1063,9 +1063,9 @@ class Api {
       "api": "SYNO.Core.Package",
       "version": 1,
       "method": "get",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> uninstallPackageTask(String id, {Map? extra}) async {
@@ -1074,14 +1074,14 @@ class Api {
       "api": "SYNO.Core.Package.Uninstallation",
       "version": 1,
       "method": "uninstall",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (extra != null) {
       String extraStr = jsonEncode(jsonEncode(extra));
       data['extra_values'] = extraStr;
     }
 
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> taskScheduler() async {
@@ -1093,9 +1093,9 @@ class Api {
       "sort_direction": "DESC",
       "version": 1,
       "method": "list",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> taskRun(List<int> task) async {
@@ -1104,9 +1104,9 @@ class Api {
       "version": 1,
       "method": "run",
       "task": jsonEncode(task),
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> eventRun(taskName) async {
@@ -1115,9 +1115,9 @@ class Api {
       "version": 1,
       "method": "run",
       "task_name": taskName,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> taskRecord(int task) async {
@@ -1128,9 +1128,9 @@ class Api {
       "limit": 2,
       "method": "view",
       "id": task,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> taskEnable(int task, bool enable) async {
@@ -1145,9 +1145,9 @@ class Api {
       "version": 1,
       "method": "set_enable",
       "status": jsonEncode(status),
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> users() async {
@@ -1158,9 +1158,9 @@ class Api {
       "additional": jsonEncode(["email", "description", "expired"]),
       "version": 1,
       "method": "list",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> userGroups() async {
@@ -1171,9 +1171,9 @@ class Api {
       "name_only": false,
       "version": 1,
       "method": "list",
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> userSetting(Map save) async {
@@ -1183,9 +1183,9 @@ class Api {
       "data": dataStr, //r'"{\"SYNO.SDS._Widget.Instance\":{\"modulelist\":[\"SYNO.SDS.SystemInfoApp.SystemHealthWidget\",\"SYNO.SDS.SystemInfoApp.ConnectionLogWidget\",\"SYNO.SDS.ResourceMonitor.Widget\"]}}"',
       "method": "apply",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> mediaConverter(String method, {int? hours}) async {
@@ -1193,7 +1193,7 @@ class Api {
     if (hours != null) {
       data['delay_hours'] = hours;
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> utilization({String? sid, bool? checkSsl, String? cookie, String? host}) async {
@@ -1203,9 +1203,9 @@ class Api {
       "version": 1,
       "type": "current",
       "resource": ["cpu", "memory", "network", "lun", "disk", "space"],
-      "_sid": sid ?? Util.sid,
+      "_sid": sid ?? Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data, checkSsl: checkSsl, cookie: cookie, host: host);
+    return await Utils.post("entry.cgi", data: data, checkSsl: checkSsl, cookie: cookie, host: host);
   }
 
   //SYNO.Core.System.Process
@@ -1214,22 +1214,22 @@ class Api {
       "api": "SYNO.Core.System.Process",
       "method": "list",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> processGroup() async {
     var data = {
       "api": "SYNO.Core.System.ProcessGroup",
-      "method": Util.version == 7 ? 'list' : "service_info",
+      "method": Utils.version == 7 ? 'list' : "service_info",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    if (Util.version == 7) {
+    if (Utils.version == 7) {
       data['node'] = 'xnode-2572';
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> cluster(String method) async {
@@ -1237,9 +1237,9 @@ class Api {
       "api": "SYNO.Virtualization.Cluster",
       "method": method,
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> checkPowerOn(String guestId) async {
@@ -1248,9 +1248,9 @@ class Api {
       "method": '"check_poweron"',
       "guest_id": '"$guestId"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> vmmPower(String guestId, String action) async {
@@ -1260,9 +1260,9 @@ class Api {
       "guest_id": '"$guestId"',
       "action": action,
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> dockerContainerInfo() async {
@@ -1271,13 +1271,13 @@ class Api {
       {"api": "SYNO.Docker.Container.Resource", "method": "get", "version": 1},
       {"api": "SYNO.Core.System.Utilization", "method": "get", "version": 1},
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"parallel"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1287,13 +1287,13 @@ class Api {
       {"api": "SYNO.Docker.Image", "method": "list", "version": 1, "limit": -1, "offset": 0, "show_dsm": false},
       {"api": "SYNO.Docker.Registry", "method": "get", "version": 1, "limit": -1, "offset": 0}
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"parallel"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1304,9 +1304,9 @@ class Api {
       "method": method,
       "name": '"$name"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> dockerLog(String name, String method, {String? date}) async {
@@ -1315,7 +1315,7 @@ class Api {
       "method": method,
       "name": '"$name"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (method == "get") {
       data['sort_dir'] = '"ASC"';
@@ -1323,7 +1323,7 @@ class Api {
       data['limit'] = 1000;
       data['offset'] = 0;
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> dockerPower(String name, String action, {bool? preserveProfile}) async {
@@ -1332,7 +1332,7 @@ class Api {
       "method": action,
       "name": '"$name"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (action == "signal") {
       data['signal'] = 9;
@@ -1340,7 +1340,7 @@ class Api {
     if (action == "delete" && preserveProfile != null) {
       data['preserve_profile'] = preserveProfile;
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> lastLog(int start, int limit) async {
@@ -1350,20 +1350,20 @@ class Api {
       "limit": limit,
       "method": "latestlog_get",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> log(
     int start,
     int limit, {
-    String target: "LOCAL",
-    String logType: "system,netbackup",
-    int dateFrom: 0,
-    int dateTo: 0,
-    String keyword: "",
-    String level: "",
+    String target = "LOCAL",
+    String logType = "system,netbackup",
+    int dateFrom = 0,
+    int dateTo = 0,
+    String keyword = "",
+    String level = "",
   }) async {
     var data = {
       "api": 'SYNO.Core.SyslogClient.Log',
@@ -1371,9 +1371,9 @@ class Api {
       "limit": limit,
       "method": "list",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> logHistory() async {
@@ -1383,13 +1383,13 @@ class Api {
       "limit": 50,
       "method": "list",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> reward() async {
-    return await Util.get("${Util.appUrl}/reward");
+    return await Utils.get("${Utils.appUrl}/reward");
   }
 
   static Future<Map> downloadStationInfo() async {
@@ -1414,13 +1414,13 @@ class Api {
         "type_inverse": true,
       },
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"parallel"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1435,9 +1435,9 @@ class Api {
       "api": 'SYNO.DownloadStation2.Task',
       "method": action,
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadLocation() async {
@@ -1445,9 +1445,9 @@ class Api {
       "api": 'SYNO.DownloadStation2.Settings.Location',
       "method": "get",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   //delete_condition  delete
@@ -1465,7 +1465,7 @@ class Api {
 
       data['destination'] = '"$destination"';
       data['-1891550746'] = torrent;
-      return await Util.upload("entry.cgi", data: data);
+      return await Utils.upload("entry.cgi", data: data);
     } else {
       List<String> urls = url!.split("\n");
       List<String> validUrls = [];
@@ -1478,8 +1478,8 @@ class Api {
       data["create_list"] = true;
       data["url"] = json.encode(validUrls);
       data['destination'] = '"$destination"';
-      data['_sid'] = Util.sid;
-      return await Util.post("entry.cgi", data: data);
+      data['_sid'] = Utils.sid;
+      return await Utils.post("entry.cgi", data: data);
     }
   }
 
@@ -1490,9 +1490,9 @@ class Api {
       "list_id": listId,
       "method": "get",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadCreate(String listId, String destination, List selectedFile) async {
@@ -1505,9 +1505,9 @@ class Api {
       "method": "download",
       "create_subfolder": true,
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadDetail(String id) async {
@@ -1517,9 +1517,9 @@ class Api {
       "additional": json.encode(["detail", "transfer"]),
       "method": "get",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadTracker(String id) async {
@@ -1528,9 +1528,9 @@ class Api {
       "task_id": '"$id"',
       "method": "list",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadTrackerAdd(String id, List<String> trackers) async {
@@ -1540,9 +1540,9 @@ class Api {
       "method": "add",
       "tracker": json.encode(trackers),
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadPeer(String id) async {
@@ -1551,9 +1551,9 @@ class Api {
       "task_id": '"$id"',
       "method": "list",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> downloadFile(String id) async {
@@ -1567,9 +1567,9 @@ class Api {
       "task_id": '"$id"',
       "method": "list",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> trustDevice(String method) async {
@@ -1577,9 +1577,9 @@ class Api {
       "api": 'SYNO.Core.TrustDevice',
       "method": method,
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   //SYNO.Core.NormalUser
@@ -1588,12 +1588,12 @@ class Api {
       "api": 'SYNO.Core.NormalUser',
       "method": method,
       "version": method == "get" ? 1 : 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (changedData != null) {
       data.addAll(changedData);
     }
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> externalDevice() async {
@@ -1612,13 +1612,13 @@ class Api {
       },
       // {"api": "SYNO.Core.ExternalDevice.Storage.EUnit", "method": "list", "version": 1},
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1629,9 +1629,9 @@ class Api {
       "api": 'SYNO.Core.ExternalDevice.Storage.eSATA',
       "method": "eject",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> smart(String device) async {
@@ -1640,9 +1640,9 @@ class Api {
       "api": 'SYNO.Storage.CGI.Smart',
       "method": "get_health_info",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> diskTestLog(String device) async {
@@ -1656,9 +1656,9 @@ class Api {
       "api": 'SYNO.Core.Storage.Disk',
       "method": "disk_test_log_get",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> smartTestLog(String device) async {
@@ -1667,9 +1667,9 @@ class Api {
       "api": 'SYNO.Core.Storage.Disk',
       "method": "get_smart_test_log",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> doSmartTest(String device, String type) async {
@@ -1679,9 +1679,9 @@ class Api {
       "api": 'SYNO.Core.Storage.Disk',
       "method": "do_smart_test",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> saveMail(String mail) async {
@@ -1690,9 +1690,9 @@ class Api {
       "api": 'SYNO.Core.OTP',
       "method": "save_mail",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> getQrCode(String account) async {
@@ -1701,9 +1701,9 @@ class Api {
       "api": 'SYNO.Core.OTP',
       "method": "get_qrcode",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> authOtpCode(String code) async {
@@ -1712,9 +1712,9 @@ class Api {
       "api": 'SYNO.Core.OTP',
       "method": "auth_tmp_code",
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> currentConnect() async {
@@ -1729,7 +1729,7 @@ class Api {
       "method": "get",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> userQuota() async {
@@ -1738,7 +1738,7 @@ class Api {
       "method": "quota",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> fileService() async {
@@ -1769,13 +1769,13 @@ class Api {
       // {"api": "SYNO.Core.FileServ.ServiceDiscovery", "method": "get", "version": 1},
       // {"api": "SYNO.Core.FileServ.ServiceDiscovery.WSTransfer", "method": "get", "version": 1}
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1787,7 +1787,7 @@ class Api {
       "method": "get_level",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> fileServiceLogSave(String protocol, Map logLevel) async {
@@ -1798,7 +1798,7 @@ class Api {
       "method": "set_level",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> fileServiceSave(Map? smb, Map? syslogClient, Map? afp, Map? nfs, Map? ftp, Map? sftp) async {
@@ -1824,13 +1824,13 @@ class Api {
       },
       {"api": "SYNO.Core.FileServ.FTP.SFTP", "method": "set", "version": "1", "enable": sftp?['enable'], "sftp_portnum": sftp?['portnum'], "portnum": sftp?['portnum']}
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1842,7 +1842,7 @@ class Api {
       "method": "rule_get",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> securitySystem() async {
@@ -1851,7 +1851,7 @@ class Api {
       "method": "system_get",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> mediaReindex() async {
@@ -1860,7 +1860,7 @@ class Api {
       "method": "reindex",
       "version": 1,
     };
-    return await Util.post("entry.cgi", data: data);
+    return await Utils.post("entry.cgi", data: data);
   }
 
   static Future<Map> mediaIndexStatus() async {
@@ -1868,18 +1868,18 @@ class Api {
       {"api": "SYNO.Core.MediaIndexing.ThumbnailQuality", "method": "get", "version": 1},
       {"api": "SYNO.Core.MediaIndexing", "method": "status", "version": 1}
     ];
-    if (Util.version == 6) {
+    if (Utils.version == 6) {
       apis.add(
         {"api": "SYNO.Core.MediaIndexing.MobileEnabled", "method": "get", "version": 1},
       );
     }
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -1888,21 +1888,21 @@ class Api {
     List apis = [
       {"api": "SYNO.Core.MediaIndexing.ThumbnailQuality", "method": "set", "version": "1", "thumbnail_quality": '$thumbQuality'},
     ];
-    if (Util.version == 6) {
+    if (Utils.version == 6) {
       apis.add({"api": "SYNO.Core.MediaIndexing.MobileEnabled", "method": "set", "version": "1", "mobile_profile_enabled": mobileEnabled});
     }
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
-  static Future<Map> quickConnect(String connectConnectID, {String baseUrl: "global.quickconnect.cn"}) async {
+  static Future<Map> quickConnect(String connectConnectID, {String baseUrl = "global.quickconnect.cn"}) async {
     Dio dio = new Dio(
       new BaseOptions(
         baseUrl: "https://$baseUrl/",
@@ -1944,7 +1944,7 @@ class Api {
     }
   }
 
-  static Future<Map> quickConnectCn(String connectConnectID, {String baseUrl: "cnc.quickconnect.cn"}) async {
+  static Future<Map> quickConnectCn(String connectConnectID, {String baseUrl = "cnc.quickconnect.cn"}) async {
     print("connectCN:" + baseUrl);
     Dio dio = new Dio(
       new BaseOptions(
@@ -1982,7 +1982,7 @@ class Api {
   }
 
   static Future<void> pingpong(String host, Function callback) async {
-    var res = await Util.get("${host}webman/pingpong.cgi");
+    var res = await Utils.get("${host}webman/pingpong.cgi");
     if (res['success']) {
       callback(host);
     } else {
@@ -2001,14 +2001,14 @@ class Api {
       {"api": "SYNO.Core.ExternalDevice.UPS", "method": "get", "version": 1},
       {"api": "SYNO.Core.Hardware.PowerSchedule", "method": "load", "version": 1}
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "stop_when_error": false,
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -2019,13 +2019,13 @@ class Api {
   // method: save
   // version: 1
   static Future<Map> powerScheduleSave(List powerOns, List powerOffs) async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "poweron_tasks": json.encode(powerOns),
       "poweroff_tasks": json.encode(powerOffs),
       "api": 'SYNO.Core.Hardware.PowerSchedule',
       "method": 'save',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -2058,20 +2058,20 @@ class Api {
     if (led != null) {
       apis.add({"api": "SYNO.Core.Hardware.Led.Brightness", "method": "set", "version": "1", "led_brightness": led['led_brightness'], "schedule": led['schedule']});
     }
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "stop_when_error": false,
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
   static Future<Map> powerHibernationSave({int? internalHdIdletime, bool? sataDeepSleep, int? usbIdletime, bool? enableLog, bool? autoPoweroffEnable, int? autoPoweroffTime}) async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "internal_hd_idletime": internalHdIdletime,
       "sata_deep_sleep": sataDeepSleep,
       "ignore_netbios_broadcast": false,
@@ -2082,7 +2082,7 @@ class Api {
       "api": 'SYNO.Core.Hardware.Hibernation',
       "method": 'set',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -2112,13 +2112,13 @@ class Api {
       {"api": "SYNO.Core.FileServ.SMB", "method": "get", "version": 1},
       {"api": "SYNO.Core.Quota", "method": "get", "version": 1, "name": name, "support_share_quota": true}
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -2150,51 +2150,51 @@ class Api {
     for (int i = 0; i < removeGroup.length; i++) {
       apis.add({"api": "SYNO.Core.Group.Member", "method": "remove", "version": 1, "group": removeGroup[i], "name": userInfo['name']});
     }
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "stop_when_error": false,
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
   static Future<Map> userGroup(String name) async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "name_only": false,
       "user": '"$name"',
       "type": '"local"',
       "api": 'SYNO.Core.Group',
       "method": 'list',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
   static Future<Map> firmwareVersion() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "type": '"firmware"',
       "api": 'SYNO.Core.System',
       "method": 'info',
       "version": 3,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
 
   static Future<Map> firmwareUpgrade() async {
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Core.Upgrade.Server',
       "method": 'check',
       "version": 2,
       "user_reading": true,
       "need_auto_smallupdate": true,
       "need_promotion": true,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -2206,13 +2206,13 @@ class Api {
       {"api": "SYNO.Core.DDNS.ExtIP", "version": 2, "method": "list", "retry": true},
       {"api": "SYNO.Core.DDNS.Synology", "version": 1, "method": "get_myds_account"},
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"parallel"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }
@@ -2231,13 +2231,13 @@ class Api {
       "ip": '"${ddns['ip']}"',
       "ipv6": '"${ddns['ipv6']}"',
       "heartbeat": ddns['heartbeat'],
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (ddns['passwd'] != null) {
       data['passwd'] = '"${ddns['passwd']}"';
     }
     print(data);
-    var result = await Util.post("entry.cgi", data: data);
+    var result = await Utils.post("entry.cgi", data: data);
     return result;
   }
 
@@ -2250,7 +2250,7 @@ class Api {
     if (id != null) {
       data['id'] = '"$id"';
     }
-    var result = await Util.post("entry.cgi", data: data);
+    var result = await Utils.post("entry.cgi", data: data);
     return result;
   }
 
@@ -2262,7 +2262,7 @@ class Api {
       "version": 1,
     };
     print(data);
-    var result = await Util.post("entry.cgi", data: data);
+    var result = await Utils.post("entry.cgi", data: data);
     return result;
   }
 
@@ -2279,12 +2279,12 @@ class Api {
       "net": '"${ddns['net']}"',
       "ip": '"${ddns['ip']}"',
       "ipv6": '"${ddns['ipv6']}"',
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (ddns['passwd'] != null) {
       data['passwd'] = '"${ddns['passwd']}"';
     }
-    var result = await Util.post("entry.cgi", data: data);
+    var result = await Utils.post("entry.cgi", data: data);
     return result;
   }
 
@@ -2301,14 +2301,14 @@ class Api {
       {"api": "SYNO.Core.Network.Router.Gateway.List", "method": "get", "version": 1, "iptype": "ipv4", "type": "wan"},
       {"api": "SYNO.Core.Web.DSM", "method": "get", "version": 2}
     ];
-    var result = await Util.post("entry.cgi", data: {
+    var result = await Utils.post("entry.cgi", data: {
       "stop_when_error": false,
       "api": 'SYNO.Entry.Request',
       "method": 'request',
       "mode": '"sequential"',
       "compound": jsonEncode(apis),
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     });
     return result;
   }

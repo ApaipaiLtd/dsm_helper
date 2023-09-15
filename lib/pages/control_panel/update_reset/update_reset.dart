@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/common/browser.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -79,7 +79,7 @@ class _UpdateResetState extends State<UpdateReset> with SingleTickerProviderStat
               unselectedLabelColor: Colors.grey,
               indicator: BubbleTabIndicator(
                 indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
               ),
               tabs: [
                 Padding(

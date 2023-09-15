@@ -8,7 +8,7 @@ import 'package:dsm_helper/pages/download/download_setting.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +51,7 @@ class DownloadState extends State<Download> {
   // ReceivePort _receiverPort = ReceivePort();
   // @override
   // void initState() {
-  //   Util.getDownloadPath().then((value) {
+  //   Utils.getDownloadPath().then((value) {
   //     setState(() {
   //       downloadPath = value;
   //     });
@@ -226,13 +226,13 @@ class DownloadState extends State<Download> {
   // }
   //
   // Widget _buildTaskItem(DownloadInfo task) {
-  //   FileTypeEnum fileType = Util.fileType(task.filename);
+  //   FileTypeEnum fileType = Utils.fileType(task.filename);
   //   // String path = file['path'];
   //   return Padding(
   //     padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20, right: 20),
   //     child: CupertinoButton(
   //       onLongPress: () {
-  //         Util.vibrate(FeedbackType.light);
+  //         Utils.vibrate(FeedbackType.light);
   //         setState(() {
   //           multiSelect = true;
   //           selectedTasks.add(task);
@@ -255,7 +255,7 @@ class DownloadState extends State<Download> {
   //             List<String> images = [];
   //             int index = 0;
   //             for (int i = 0; i < tasks.length; i++) {
-  //               if (task.status == DownloadTaskStatus.complete && Util.fileType(task.filename) == FileTypeEnum.image) {
+  //               if (task.status == DownloadTaskStatus.complete && Utils.fileType(task.filename) == FileTypeEnum.image) {
   //                 images.add(tasks[i].savedDir + "/" + tasks[i].filename);
   //                 if (tasks[i] == task) {
   //                   index = images.length - 1;
@@ -272,7 +272,7 @@ class DownloadState extends State<Download> {
   //                 },
   //                 settings: RouteSettings(name: "preview_image")));
   //           } else if (fileType == FileTypeEnum.movie) {
-  //             String videoPlayer = await Util.getStorage("video_player");
+  //             String videoPlayer = await Utils.getStorage("video_player");
   //             debugPrint(videoPlayer);
   //             if (videoPlayer != null && videoPlayer == '1') {
   //               AndroidIntent intent = AndroidIntent(
@@ -297,7 +297,7 @@ class DownloadState extends State<Download> {
   //           } else {
   //             var result = await FlutterDownloader.open(taskId: task.taskId);
   //             if (!result) {
-  //               Util.toast("不支持打开此文件");
+  //               Utils.toast("不支持打开此文件");
   //             }
   //           }
   //         }
@@ -460,7 +460,7 @@ class DownloadState extends State<Download> {
   //                                   CupertinoButton(
   //                                     onPressed: () async {
   //                                       Navigator.of(context).pop();
-  //                                       Util.vibrate(FeedbackType.warning);
+  //                                       Utils.vibrate(FeedbackType.warning);
   //                                       showCupertinoModalPopup(
   //                                         context: context,
   //                                         builder: (context) {
@@ -746,7 +746,7 @@ class DownloadState extends State<Download> {
   //                         children: [
   //                           GestureDetector(
   //                             onTap: () async {
-  //                               Util.vibrate(FeedbackType.warning);
+  //                               Utils.vibrate(FeedbackType.warning);
   //                               showCupertinoModalPopup(
   //                                 context: context,
   //                                 builder: (context) {

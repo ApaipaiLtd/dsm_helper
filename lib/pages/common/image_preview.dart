@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/hero_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,7 +57,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
   }
 
   deleteFile(int index) {
-    Util.vibrate(FeedbackType.warning);
+    Utils.vibrate(FeedbackType.warning);
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -94,7 +94,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                             Navigator.of(context).pop();
                             var res = await Api.deleteTask([widget.paths![index]]);
                             if (res['success']) {
-                              Util.toast("文件删除成功");
+                              Utils.toast("文件删除成功");
                               if (widget.thumbs != null && widget.thumbs!.length > index) {
                                 widget.thumbs?.removeAt(index);
                               }
@@ -368,7 +368,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
 
               return Column(
                 children: [
-                  if (Util.isWechatInstalled)
+                  if (Utils.isWechatInstalled)
                     SafeArea(
                       child: Container(
                         height: 56,
@@ -388,7 +388,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                                 } else if (widget.images[currentIndex].startsWith("/")) {
                                   wechatImage = WeChatImage.file(File(widget.images[currentIndex]));
                                 } else {
-                                  Util.toast("暂不支持分享此图片");
+                                  Utils.toast("暂不支持分享此图片");
                                   return;
                                 }
                                 fluwx.share(
@@ -489,11 +489,11 @@ class MySwiperPlugin extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   onPressed: () {
-                    Util.saveImage(pics[data.data!], context: context).then((res) {
+                    Utils.saveImage(pics[data.data!], context: context).then((res) {
                       if (res['code'] == 1) {
-                        Util.toast("已保存到相册");
+                        Utils.toast("已保存到相册");
                       } else {
-                        Util.toast("图片下载失败");
+                        Utils.toast("图片下载失败");
                       }
                     });
                   },

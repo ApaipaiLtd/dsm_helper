@@ -1,6 +1,6 @@
 import 'package:dsm_helper/models/setting/vip_record_model.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class _VipRecordState extends State<VipRecord> {
         loading = false;
       });
     } catch (e) {
-      Util.toast("加载失败");
+      Utils.toast("加载失败");
       Navigator.of(context).pop(false);
     }
   }

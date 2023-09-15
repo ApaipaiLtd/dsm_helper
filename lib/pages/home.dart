@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/file/file.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -67,7 +67,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // });
     // // For sharing or opening urls/text coming from outside the app while the app is in the memory
     // ReceiveSharingIntent.getTextStream().listen((String value) {
-    //   // Util.toast("getTextStream:$value");
+    //   // Utils.toast("getTextStream:$value");
     //   if (value != null) {
     //     handleTorrent(value);
     //   }
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     password = SpUtil.getBool("launch_auth_password", defValue: false)!;
     biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
     authPage = launchAuth && (password || biometrics);
-    if (Util.isAuthPage == false && authPage) {
+    if (Utils.isAuthPage == false && authPage) {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
         return AuthPage(
           launch: false,
@@ -176,7 +176,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Future<bool> onWillPop() {
-    Util.vibrate(FeedbackType.light);
+    Utils.vibrate(FeedbackType.light);
     Future<bool> value = Future.value(true);
     if (_currentIndex == 0) {
       if (_dashboardStateKey.currentState?.isDrawerOpen ?? false) {
@@ -190,13 +190,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
       value = _filesStateKey.currentState?.onWillPop() ?? Future.value(true);
     } else if (_currentIndex == 2) {
-      // value = Util.downloadKey.currentState?.onWillPop() ?? Future.value(true);
+      // value = Utils.downloadKey.currentState?.onWillPop() ?? Future.value(true);
     }
     value.then((v) {
       if (v) {
         if (lastPopTime == null || DateTime.now().difference(lastPopTime!) > Duration(seconds: 2)) {
           lastPopTime = DateTime.now();
-          Util.toast('再按一次退出${Util.appName}');
+          Utils.toast('再按一次退出${Utils.appName}');
         } else {
           lastPopTime = DateTime.now();
           // 退出app
@@ -217,7 +217,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           children: [
             Dashboard(key: _dashboardStateKey),
             Files(key: _filesStateKey),
-            Download(key: Util.downloadKey),
+            Download(key: Utils.downloadKey),
             Setting(),
           ],
           index: _currentIndex,

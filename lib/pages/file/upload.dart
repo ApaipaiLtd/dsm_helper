@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -109,7 +109,7 @@ class _UploadState extends State<Upload> {
   }
 
   Widget _buildUploadItem(UploadItem upload) {
-    FileTypeEnum fileType = Util.fileType(upload.path);
+    FileTypeEnum fileType = Utils.fileType(upload.path);
     // String path = file['path'];
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20, right: 20),
@@ -396,14 +396,14 @@ class _UploadState extends State<Upload> {
                                               bool permission = false;
                                               permission = await Permission.manageExternalStorage.request().isGranted;
                                               if (!permission) {
-                                                Util.toast("安卓11需授权文件管理权限");
+                                                Utils.toast("安卓11需授权文件管理权限");
                                                 return;
                                               }
                                             } else {
                                               bool permission = false;
                                               permission = await Permission.storage.request().isGranted;
                                               if (!permission) {
-                                                Util.toast("请先授权APP访问存储权限");
+                                                Utils.toast("请先授权APP访问存储权限");
                                                 return;
                                               }
                                             }
@@ -440,8 +440,8 @@ class _UploadState extends State<Upload> {
                                               // if (res != null && res.length == 1) {
                                               //   setState(() {
                                               //     downloadPath = res[0];
-                                              //     Util.downloadSavePath = res[0];
-                                              //     Util.setStorage("download_save_path", res[0]);
+                                              //     Utils.downloadSavePath = res[0];
+                                              //     Utils.setStorage("download_save_path", res[0]);
                                               //   });
                                               // }
                                             });
@@ -505,8 +505,8 @@ class _UploadState extends State<Upload> {
                       borderRadius: BorderRadius.circular(50),
                       onPressed: () async {
                         if (savePath.isBlank) {
-                          Util.vibrate(FeedbackType.warning);
-                          Util.toast("请选择上传位置");
+                          Utils.vibrate(FeedbackType.warning);
+                          Utils.toast("请选择上传位置");
                           return;
                         }
                         // return;

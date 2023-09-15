@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 /// id : 1
 /// type : 1
@@ -13,7 +13,7 @@ class GroupsModel {
   List<GroupModel>? wechat;
   List<GroupModel>? channel;
   static Future<GroupsModel> fetch() async {
-    var res = await Util.post("${Util.appUrl}/app/groups");
+    var res = await Utils.post("${Utils.appUrl}/app/groups");
     if (res['code'] == 1) {
       List<GroupModel> qq = [];
       List<GroupModel> wechat = [];

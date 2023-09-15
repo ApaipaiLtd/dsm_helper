@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/control_panel/users/user_detail.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,7 +29,7 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
         users = res['data']['users'];
       });
     } else {
-      Util.toast("加载失败");
+      Utils.toast("加载失败");
       Navigator.of(context).pop();
     }
     var group = await Api.userGroups();
@@ -39,7 +39,7 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
         groups = group['data']['groups'];
       });
     } else {
-      Util.toast("加载失败");
+      Utils.toast("加载失败");
       Navigator.of(context).pop();
     }
   }
@@ -148,7 +148,7 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Util.version < 7 ? "用户账户" : "用户与群组"),
+        title: Text(Utils.version < 7 ? "用户账户" : "用户与群组"),
       ),
       body: loading
           ? Container(
@@ -170,7 +170,7 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
             )
           : Column(
               children: [
-                if (Util.version >= 7)
+                if (Utils.version >= 7)
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -186,7 +186,7 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
                       unselectedLabelColor: Colors.grey,
                       indicator: BubbleTabIndicator(
                         indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                        shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                        shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                       ),
                       tabs: [
                         Padding(
@@ -201,7 +201,7 @@ class _UsersState extends State<Users> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 Expanded(
-                  child: Util.version < 7
+                  child: Utils.version < 7
                       ? ListView.builder(
                           padding: EdgeInsets.all(20),
                           itemBuilder: (context, i) {

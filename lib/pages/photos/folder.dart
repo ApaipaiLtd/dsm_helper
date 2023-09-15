@@ -24,7 +24,7 @@ class FolderState extends State<Folder> {
     super.initState();
   }
 
-  Future getData({bool isTeam: false}) async {
+  Future getData({bool isTeam = false}) async {
     this.isTeam = isTeam;
     try {
       folders = [];

@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_util/sp_util.dart';
@@ -82,7 +82,7 @@ class _ConfirmLogoutState extends State<ConfirmLogout> {
                             Api.trustDevice("delete");
                           }
                           SpUtil.remove("sid");
-                          // Util.removeStorage("smid");
+                          // Utils.removeStorage("smid");
                           Navigator.of(context).pushNamedAndRemoveUntil("/login", (route) => false);
                         },
                           color: Theme.of(context).scaffoldBackgroundColor,

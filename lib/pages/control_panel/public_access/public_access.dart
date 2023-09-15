@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dsm_helper/pages/control_panel/public_access/edit_ddns.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -203,7 +203,7 @@ class _PublicAccessState extends State<PublicAccess> with SingleTickerProviderSt
           //     unselectedLabelColor: Colors.grey,
           //     indicator: BubbleTabIndicator(
           //       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-          //       shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+          //       shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
           //     ),
           //     tabs: [
           //       Padding(

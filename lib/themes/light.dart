@@ -12,15 +12,15 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     ),
   ],
   textTheme: TextTheme(
-    bodyText1: TextStyle(
+    bodyLarge: TextStyle(
       fontSize: 12.0,
       color: Color(0xff121212),
     ),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
       fontSize: 15.0,
       color: Color(0xff121212),
     ),
-    subtitle1: TextStyle(
+    titleMedium: TextStyle(
       fontSize: 18.0,
       color: Color(0xff121212),
     ),
@@ -44,6 +44,8 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     titleTextStyle: TextStyle(fontSize: 20.0, color: Color(0xff121212)),
     systemOverlayStyle: SystemUiOverlayStyle.dark,
   ),
-  backgroundColor: Color(0xFFF4F4F4),
+  colorScheme: ColorScheme.light(
+    background: Color(0xFFF4F4F4),
+  ),
   scaffoldBackgroundColor: Color(0xFFF4F4F4),
 );

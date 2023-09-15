@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -104,7 +104,7 @@ class _SelectLocalFolderState extends State<SelectLocalFolder> {
   }
 
   Widget _buildFileItem(FileSystemEntity file) {
-    FileTypeEnum fileType = Util.fileType(file.path);
+    FileTypeEnum fileType = Utils.fileType(file.path);
     bool isFile = FileSystemEntity.isFileSync(file.path);
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),

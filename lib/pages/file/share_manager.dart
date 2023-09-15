@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/file/share.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -33,7 +33,7 @@ class _ShareManagerState extends State<ShareManager> {
   }
 
   Widget _buildLinkItem(link) {
-    FileTypeEnum fileType = Util.fileType(link['path']);
+    FileTypeEnum fileType = Utils.fileType(link['path']);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: CupertinoButton(

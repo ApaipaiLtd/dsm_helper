@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -85,10 +85,10 @@ class _VirtualMachineState extends State<VirtualMachine> {
                             });
                             var res = await Api.vmmPower(guest['id'], action);
                             if (res['success']) {
-                              Util.toast("请求发送成功");
+                              Utils.toast("请求发送成功");
                               getGuests();
                             } else {
-                              Util.toast("请求发送失败，代码：${res['error']['code']}");
+                              Utils.toast("请求发送失败，代码：${res['error']['code']}");
                             }
                             setState(() {
                               powerLoading[guest['id']] = false;
@@ -205,7 +205,7 @@ class _VirtualMachineState extends State<VirtualMachine> {
             color: Colors.blue,
           ),
           Text(
-            Util.formatSize(network['tx']) + "/S",
+            Utils.formatSize(network['tx']) + "/S",
             style: TextStyle(color: Colors.blue),
           ),
           Spacer(),
@@ -214,7 +214,7 @@ class _VirtualMachineState extends State<VirtualMachine> {
             color: Colors.green,
           ),
           Text(
-            Util.formatSize(network['rx']) + "/S",
+            Utils.formatSize(network['rx']) + "/S",
             style: TextStyle(color: Colors.green),
           ),
         ],
@@ -443,17 +443,17 @@ class _VirtualMachineState extends State<VirtualMachine> {
                         if (check['success']) {
                           var res = await Api.vmmPower(guest['id'], "poweron");
                           if (res['success']) {
-                            Util.toast("开机请求发送成功");
+                            Utils.toast("开机请求发送成功");
                             getGuests();
                           } else {
-                            Util.toast("开机请求发送失败，代码：${res['error']['code']}");
+                            Utils.toast("开机请求发送失败，代码：${res['error']['code']}");
                           }
                         } else {
-                          Util.toast("无法开机");
+                          Utils.toast("无法开机");
                         }
                       }
                     } else {
-                      Util.toast("虚拟机状态未知，无法操作");
+                      Utils.toast("虚拟机状态未知，无法操作");
                     }
                   },
                   child: Container(
@@ -570,7 +570,7 @@ class _VirtualMachineState extends State<VirtualMachine> {
               child: Row(
                 children: [
                   Text(
-                    Util.formatSize(int.parse(repo['used'])),
+                    Utils.formatSize(int.parse(repo['used'])),
                     style: TextStyle(color: Colors.blue),
                   ),
                   Text(
@@ -578,7 +578,7 @@ class _VirtualMachineState extends State<VirtualMachine> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   Text(
-                    Util.formatSize(int.parse(repo['size'])),
+                    Utils.formatSize(int.parse(repo['size'])),
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],

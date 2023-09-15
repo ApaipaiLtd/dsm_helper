@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 class TeamSpaceSetting {
   TeamSpaceSetting({
@@ -10,12 +10,12 @@ class TeamSpaceSetting {
 
   static Future<TeamSpaceSetting> fetch() async {
     Map<String, dynamic> data = {
-      "api": '"SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Setting.TeamSpace',
+      "api": '"SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Setting.TeamSpace',
       "method": "get",
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    var res = await Util.post("entry.cgi", data: data);
+    var res = await Utils.post("entry.cgi", data: data);
     if (res['success']) {
       return TeamSpaceSetting.fromJson(res['data']);
     } else {

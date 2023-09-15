@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -38,7 +38,7 @@ class _AboutState extends State<About> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "关于${Util.appName}",
+          "关于${Utils.appName}",
         ),
       ),
       body: Column(
@@ -70,7 +70,7 @@ class _AboutState extends State<About> {
                     Column(
                       children: [
                         Text(
-                          "${Util.appName}",
+                          "${Utils.appName}",
                           style: TextStyle(fontSize: 32),
                         ),
                         if (packageInfo != null)
@@ -139,7 +139,7 @@ class _AboutState extends State<About> {
                                     FocusScope.of(context).unfocus();
                                     Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                       return Browser(
-                                        url: '${Util.appUrl}/privacy',
+                                        url: '${Utils.appUrl}/privacy',
                                         title: "隐私政策",
                                       );
                                     }));
@@ -153,7 +153,7 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ),
-                if (Util.notReviewAccount) ...[
+                if (Utils.notReviewAccount) ...[
                   SizedBox(
                     height: 20,
                   ),
@@ -166,7 +166,7 @@ class _AboutState extends State<About> {
                     child: Padding(
                         padding: EdgeInsets.all(15),
                         child: Column(
-                          children: Util.groups.channel!.map((channel) {
+                          children: Utils.groups.channel!.map((channel) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 5),
                               child: Row(
@@ -210,7 +210,7 @@ class _AboutState extends State<About> {
                     child: Padding(
                         padding: EdgeInsets.all(15),
                         child: Column(
-                          children: Util.groups.qq!.map((qq) {
+                          children: Utils.groups.qq!.map((qq) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 5),
                               child: Row(
@@ -254,7 +254,7 @@ class _AboutState extends State<About> {
                     child: Padding(
                       padding: EdgeInsets.all(15),
                       child: Column(
-                        children: Util.groups.wechat!.map((wechat) {
+                        children: Utils.groups.wechat!.map((wechat) {
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 5),
                             child: Row(
@@ -278,7 +278,7 @@ class _AboutState extends State<About> {
                                   onPressed: () {
                                     ClipboardData data = new ClipboardData(text: wechat.name!);
                                     Clipboard.setData(data);
-                                    Util.toast("已复制到剪贴板");
+                                    Utils.toast("已复制到剪贴板");
                                   },
                                   child: Text("复制"),
                                 ),
@@ -311,7 +311,7 @@ class _AboutState extends State<About> {
                           width: 10,
                         ),
                         Text(
-                          "${Util.appName}开源地址",
+                          "${Utils.appName}开源地址",
                           style: TextStyle(fontSize: 16),
                         ),
                         Spacer(),
@@ -437,7 +437,7 @@ class _AboutState extends State<About> {
                   setState(() {
                     checking = true;
                   });
-                  await Util.checkUpdate(true, context, force: true);
+                  await Utils.checkUpdate(true, context, force: true);
                   setState(() {
                     checking = false;
                   });

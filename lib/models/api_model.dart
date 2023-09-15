@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/api.dart';
+import 'package:dsm_helper/apis/api.dart';
 
 /// maxVersion : 6
 /// minVersion : 1
@@ -10,14 +10,20 @@ class ApiModel {
     this.minVersion,
     this.path,
   });
-  static Future<Map<String, ApiModel>> fetch() async {
+  static Map<String, ApiModel> apiInfo = {};
+  static Future<Map<String, ApiModel>> info() async {
     Map<String, ApiModel> apis = {};
-    Map res = await Api.api();
+    Map res = await Api.dsm.post("/webapi/query.cgi", data: {
+      "query": "all",
+      "api": "SYNO.API.Info",
+      "method": "query",
+      "version": 1,
+    });
     if (res['success']) {
       res['data'].forEach((key, value) {
         apis[key] = ApiModel.fromJson(value);
       });
-    }
+    } else {}
 
     return apis;
   }
@@ -29,6 +35,7 @@ class ApiModel {
   }
   num? maxVersion;
   num? minVersion;
+  num get version => maxVersion ?? minVersion ?? 1;
   String? path;
 
   Map<String, dynamic> toJson() {

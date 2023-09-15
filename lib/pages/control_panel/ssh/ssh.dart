@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
         _portController.value = TextEditingValue(text: sshPort);
       });
     } else {
-      Util.toast("获取失败，code：${res['error']['code']}");
+      Utils.toast("获取失败，code：${res['error']['code']}");
       Navigator.of(context).pop();
     }
   }
@@ -77,7 +77,7 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -193,11 +193,11 @@ class _SshSettingState extends State<SshSetting> with SingleTickerProviderStateM
                             onPressed: () async {
                               var res = await Api.setTerminal(ssh!, telnet!, sshPort);
                               if (res['success']) {
-                                Util.vibrate(FeedbackType.light);
-                                Util.toast("应用成功");
+                                Utils.vibrate(FeedbackType.light);
+                                Utils.toast("应用成功");
                               } else {
-                                Util.vibrate(FeedbackType.warning);
-                                Util.toast("应用失败，code：${res['error']['code']}");
+                                Utils.vibrate(FeedbackType.warning);
+                                Utils.toast("应用失败，code：${res['error']['code']}");
                               }
                             },
                             child: Text(

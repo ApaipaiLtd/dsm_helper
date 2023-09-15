@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/packages/uninstall.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -11,7 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
-
 
 class PackageDetail extends StatefulWidget {
   final Map package;
@@ -52,7 +51,7 @@ class _PackageDetailState extends State<PackageDetail> {
     }
     thumbnailUrl = widget.package['thumbnail'].last;
     if (!thumbnailUrl.startsWith("http")) {
-      thumbnailUrl = Util.baseUrl + thumbnailUrl;
+      thumbnailUrl = Utils.baseUrl + thumbnailUrl;
     }
     getVolumes();
     super.initState();
@@ -74,7 +73,7 @@ class _PackageDetailState extends State<PackageDetail> {
 
   Widget _buildSwiperItem(String url) {
     if (!url.startsWith("http")) {
-      url = Util.baseUrl + url;
+      url = Utils.baseUrl + url;
     }
     return CupertinoExtendedImage(
       url,
@@ -114,9 +113,8 @@ class _PackageDetailState extends State<PackageDetail> {
                             install(volume['volume_path']);
                             Navigator.of(context).pop();
                           },
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(25),
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Container(
                             padding: EdgeInsets.only(left: 20),
@@ -124,7 +122,7 @@ class _PackageDetailState extends State<PackageDetail> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("${volume['display_name']}(可用容量：${Util.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
+                                Text("${volume['display_name']}(可用容量：${Utils.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
                                 SizedBox(
                                   height: 5,
                                 ),
@@ -142,9 +140,8 @@ class _PackageDetailState extends State<PackageDetail> {
                       onPressed: () async {
                         Navigator.of(context).pop();
                       },
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(25),
-
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(25),
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         "取消",
@@ -183,7 +180,6 @@ class _PackageDetailState extends State<PackageDetail> {
               color: Colors.transparent,
               child: Container(
                 width: double.infinity,
-
                 decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
                 child: SafeArea(
                   top: false,
@@ -214,8 +210,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                   install(installPath);
                                   Navigator.of(context).pop();
                                 },
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "继续更新",
@@ -231,9 +227,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                 onPressed: () async {
                                   Navigator.of(context).pop();
                                 },
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(25),
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "取消",
@@ -267,10 +262,10 @@ class _PackageDetailState extends State<PackageDetail> {
   uninstallPackage() async {
     var res = await Api.uninstallPackageTask(widget.package['id']);
     if (res['success']) {
-      Util.toast("卸载成功");
+      Utils.toast("卸载成功");
       Navigator.of(context).pop();
     } else {
-      Util.toast("套件卸载失败，错误代码：${res['error']['code']}");
+      Utils.toast("套件卸载失败，错误代码：${res['error']['code']}");
     }
   }
 
@@ -278,7 +273,7 @@ class _PackageDetailState extends State<PackageDetail> {
     var res = await Api.installPackageTask(widget.package['id'], path);
     print(res);
     if (res['success']) {
-      Util.toast("已开始安装");
+      Utils.toast("已开始安装");
       setState(() {
         installing = true;
         installButtonText = "准备安装…";
@@ -310,9 +305,9 @@ class _PackageDetailState extends State<PackageDetail> {
         });
       });
     } else if (res['error']['code'] == 4501) {
-      Util.toast("此套件需配置信息，当前暂不支持，请在WEB端安装");
+      Utils.toast("此套件需配置信息，当前暂不支持，请在WEB端安装");
     } else {
-      Util.toast("安装套件失败，代码${res['error']['code']}");
+      Utils.toast("安装套件失败，代码${res['error']['code']}");
     }
   }
 
@@ -326,7 +321,6 @@ class _PackageDetailState extends State<PackageDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Text(
           "${widget.package['dname']}",
         ),
@@ -338,8 +332,6 @@ class _PackageDetailState extends State<PackageDetail> {
               padding: EdgeInsets.all(20),
               children: [
                 Container(
-                  
-
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
@@ -375,8 +367,6 @@ class _PackageDetailState extends State<PackageDetail> {
                 if (widget.package['snapshot'] != null && widget.package['snapshot'].length > 0)
                   Container(
                     margin: EdgeInsets.only(top: 20),
-                    
-
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
@@ -404,8 +394,6 @@ class _PackageDetailState extends State<PackageDetail> {
                   ),
                 Container(
                   margin: EdgeInsets.only(top: 20),
-                  
-
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
@@ -430,8 +418,6 @@ class _PackageDetailState extends State<PackageDetail> {
                 if (widget.package['changelog'] != "")
                   Container(
                     margin: EdgeInsets.only(top: 20),
-                    
-
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(20),
@@ -451,12 +437,11 @@ class _PackageDetailState extends State<PackageDetail> {
                           Html(
                             data: widget.package['changelog'],
                             onLinkTap: (link, _, __) {
-                              if(link != null){
-                                Navigator.of(context).push(CupertinoPageRoute(builder: (context){
+                              if (link != null) {
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                   return Browser(url: link);
                                 }));
                               }
-
                             },
                             style: {
                               "ol": Style(
@@ -472,8 +457,6 @@ class _PackageDetailState extends State<PackageDetail> {
                   ),
                 Container(
                   margin: EdgeInsets.only(top: 20),
-                  
-
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
@@ -496,12 +479,10 @@ class _PackageDetailState extends State<PackageDetail> {
                           children: [
                             Container(
                               width: (MediaQuery.of(context).size.width - 100) / 2,
-                              
                               decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-
                               padding: EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -535,12 +516,10 @@ class _PackageDetailState extends State<PackageDetail> {
                             if (widget.package['distributor'] != null && widget.package['distributor'] != "")
                               Container(
                                 width: (MediaQuery.of(context).size.width - 100) / 2,
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -573,12 +552,10 @@ class _PackageDetailState extends State<PackageDetail> {
                               ),
                             Container(
                               width: (MediaQuery.of(context).size.width - 100) / 2,
-                              
                               decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-
                               padding: EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,12 +571,10 @@ class _PackageDetailState extends State<PackageDetail> {
                             if (widget.package['installed'])
                               Container(
                                 width: (MediaQuery.of(context).size.width - 100) / 2,
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -615,12 +590,10 @@ class _PackageDetailState extends State<PackageDetail> {
                             if (widget.package['installed'])
                               Container(
                                 width: (MediaQuery.of(context).size.width - 100) / 2,
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -635,12 +608,10 @@ class _PackageDetailState extends State<PackageDetail> {
                               ),
                             Container(
                               width: (MediaQuery.of(context).size.width - 100) / 2,
-                              
                               decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-
                               padding: EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -715,9 +686,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                                     Navigator.of(context).pop();
                                                     uninstallPackage();
                                                   },
-                                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                                    borderRadius: BorderRadius.circular(25),
-
+                                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                                  borderRadius: BorderRadius.circular(25),
                                                   padding: EdgeInsets.symmetric(vertical: 10),
                                                   child: Text(
                                                     "卸载",
@@ -733,8 +703,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                                   onPressed: () async {
                                                     Navigator.of(context).pop();
                                                   },
-                                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                                    borderRadius: BorderRadius.circular(25),
+                                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                                  borderRadius: BorderRadius.circular(25),
                                                   padding: EdgeInsets.symmetric(vertical: 10),
                                                   child: Text(
                                                     "取消",
@@ -757,8 +727,8 @@ class _PackageDetailState extends State<PackageDetail> {
                           }
                         },
                         padding: EdgeInsets.symmetric(vertical: 15),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(50),
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(50),
                         child: Text(
                           "卸载",
                           style: TextStyle(color: Colors.red),
@@ -809,15 +779,14 @@ class _PackageDetailState extends State<PackageDetail> {
                                                           Navigator.of(context).pop();
                                                           var res = await Api.launchPackage(widget.package['id'], widget.package['dsm_apps'], "stop");
                                                           if (res['success']) {
-                                                            Util.toast("已停用");
+                                                            Utils.toast("已停用");
                                                             setState(() {
                                                               widget.package['launched'] = false;
                                                             });
                                                           }
                                                         },
-                                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                                          borderRadius: BorderRadius.circular(25),
-
+                                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                                        borderRadius: BorderRadius.circular(25),
                                                         padding: EdgeInsets.symmetric(vertical: 10),
                                                         child: Text(
                                                           "停用",
@@ -833,9 +802,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                                         onPressed: () async {
                                                           Navigator.of(context).pop();
                                                         },
-                                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                                          borderRadius: BorderRadius.circular(25),
-
+                                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                                        borderRadius: BorderRadius.circular(25),
                                                         padding: EdgeInsets.symmetric(vertical: 10),
                                                         child: Text(
                                                           "取消",
@@ -857,8 +825,8 @@ class _PackageDetailState extends State<PackageDetail> {
                                   );
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 15),
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(50),
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(50),
                                 child: Text("停用"),
                               )
                             : CupertinoButton(
@@ -866,15 +834,15 @@ class _PackageDetailState extends State<PackageDetail> {
                                   var res = await Api.launchPackage(widget.package['id'], widget.package['dsm_apps'], "start");
                                   print(res);
                                   if (res['success']) {
-                                    Util.toast("已启动");
+                                    Utils.toast("已启动");
                                     setState(() {
                                       widget.package['launched'] = true;
                                     });
                                   }
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 15),
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(50),
+                                color: Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(50),
                                 child: Text("启动"),
                               ),
                       ),
@@ -888,8 +856,8 @@ class _PackageDetailState extends State<PackageDetail> {
                           selectVolume();
                         },
                         padding: EdgeInsets.symmetric(vertical: 15),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(50),
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(50),
                         child: Text("$installButtonText"),
                       ),
                     ),
@@ -904,8 +872,8 @@ class _PackageDetailState extends State<PackageDetail> {
                           // install(volume['volume_path']);
                         },
                         padding: EdgeInsets.symmetric(vertical: 15),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(50),
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(50),
                         child: Text("$installButtonText"),
                       ),
                     ),

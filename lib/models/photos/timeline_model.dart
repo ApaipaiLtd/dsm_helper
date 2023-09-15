@@ -1,5 +1,5 @@
 import 'package:dsm_helper/models/photos/photo_model.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 /// limit : 102
 /// list : [{"day":22,"item_count":2,"month":10,"year":2022},{"day":21,"item_count":6,"month":10,"year":2022},{"day":23,"item_count":43,"month":9,"year":2022},{"day":7,"item_count":4,"month":8,"year":2022},{"day":28,"item_count":2,"month":6,"year":2022},{"day":22,"item_count":1,"month":5,"year":2022},{"day":20,"item_count":5,"month":5,"year":2022},{"day":10,"item_count":1,"month":5,"year":2022},{"day":25,"item_count":12,"month":4,"year":2022},{"day":27,"item_count":26,"month":3,"year":2022}]
@@ -17,7 +17,7 @@ class TimelineModel {
       "api": "SYNO.Foto${isTeam ? 'Team' : ''}.Browse.${recentlyAdd ? 'RecentlyAdded' : 'Timeline'}",
       "method": recentlyAdd ? "get_timeline" : 'get',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (type != null) {
       data['type'] = type;
@@ -33,7 +33,7 @@ class TimelineModel {
     //   data['method'] = "get_with_filter";
     // }
     print(data);
-    var res = await Util.post("entry.cgi", data: data);
+    var res = await Utils.post("entry.cgi", data: data);
     print(res);
     if (res['success']) {
       List data = res['data']['section'];
@@ -116,7 +116,7 @@ class Day {
       "api": "SYNO.Foto${isTeam ? 'Team' : ''}.Browse.${recentlyAdd ? 'RecentlyAdded' : 'Item'}",
       "method": 'list',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "timeline_group_unit": "day",
     };
     if (type != null) {
@@ -143,7 +143,7 @@ class Day {
       //   ]);
       // }
     }
-    var res = await Util.post("entry.cgi", data: data);
+    var res = await Utils.post("entry.cgi", data: data);
     // print(res);
     if (res['success']) {
       photos = [];
@@ -161,12 +161,12 @@ class Day {
     Map<String, dynamic> data = {
       "start_time": start,
       "end_time": end,
-      "api": '"SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Browse.Timeline"',
+      "api": '"SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Browse.Timeline"',
       "method": '"get_geocoding"',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
-    var res = await Util.post("entry.cgi", data: data);
+    var res = await Utils.post("entry.cgi", data: data);
     return res;
   }
 

@@ -1,7 +1,7 @@
 import 'package:dsm_helper/pages/control_panel/power/add_power_task.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/neu_picker.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/neu_picker.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -262,8 +262,8 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                         if (value != null) {
                           for (var item in powerTasks) {
                             if (item != task && item['hour'] == value['hour'] && item['min'] == value['min']) {
-                              Util.toast("无效或重复规则");
-                              Util.vibrate(FeedbackType.warning);
+                              Utils.toast("无效或重复规则");
+                              Utils.vibrate(FeedbackType.warning);
                               return;
                             }
                           }
@@ -326,7 +326,7 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -986,15 +986,15 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                 var res = await Api.powerSet(enableZram, powerRecovery, beepControl, fanSpeed, led);
                                 if (res['success']) {
                                   if (res['data']['has_fail'] == false) {
-                                    Util.vibrate(FeedbackType.light);
-                                    Util.toast("保存成功");
+                                    Utils.vibrate(FeedbackType.light);
+                                    Utils.toast("保存成功");
                                   } else {
-                                    Util.vibrate(FeedbackType.warning);
-                                    Util.toast("设置未完全保存成功");
+                                    Utils.vibrate(FeedbackType.warning);
+                                    Utils.toast("设置未完全保存成功");
                                   }
                                   getData();
                                 } else {
-                                  Util.toast("保存失败,代码${res['error']['code']}");
+                                  Utils.toast("保存失败,代码${res['error']['code']}");
                                 }
                               },
                               child: Text(
@@ -1044,8 +1044,8 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                         if (value != null) {
                                           for (var item in powerTasks) {
                                             if (item['hour'] == value['hour'] && item['min'] == value['min']) {
-                                              Util.toast("无效或重复规则");
-                                              Util.vibrate(FeedbackType.warning);
+                                              Utils.toast("无效或重复规则");
+                                              Utils.vibrate(FeedbackType.warning);
                                               return;
                                             }
                                           }
@@ -1080,10 +1080,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                       }).toList();
                                       var res = await Api.powerScheduleSave(powerOns, powerOffs);
                                       if (res['success']) {
-                                        Util.toast("保存成功");
+                                        Utils.toast("保存成功");
                                         getData();
                                       } else {
-                                        Util.toast("保存失败,代码${res['error']['code']}");
+                                        Utils.toast("保存失败,代码${res['error']['code']}");
                                       }
                                     },
                                     child: Text(
@@ -1397,10 +1397,10 @@ class _PowerState extends State<Power> with SingleTickerProviderStateMixin {
                                   autoPoweroffTime: hibernation!['auto_poweroff_time'],
                                 );
                                 if (res['success']) {
-                                  Util.toast("保存成功");
+                                  Utils.toast("保存成功");
                                   getData();
                                 } else {
-                                  Util.toast("保存失败,代码${res['error']['code']}");
+                                  Utils.toast("保存失败,代码${res['error']['code']}");
                                 }
                               },
                               child: Text(

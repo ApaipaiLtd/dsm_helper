@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -116,8 +116,8 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
           ),
           Row(
             children: [
-              Text("${Util.formatSize(file['size_downloaded'])} / "),
-              Text("${Util.formatSize(file['size'])}"),
+              Text("${Utils.formatSize(file['size_downloaded'])} / "),
+              Text("${Utils.formatSize(file['size'])}"),
               SizedBox(
                 width: 10,
               ),
@@ -176,7 +176,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                 size: 16,
               ),
               Text(
-                "${Util.formatSize(peer['speed_download'])}",
+                "${Utils.formatSize(peer['speed_download'])}",
                 style: TextStyle(color: Colors.green),
               ),
               SizedBox(
@@ -188,7 +188,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                 size: 16,
               ),
               Text(
-                "${Util.formatSize(peer['speed_upload'])}",
+                "${Utils.formatSize(peer['speed_upload'])}",
                 style: TextStyle(color: Colors.blue),
               ),
             ],
@@ -255,7 +255,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                 borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
               onPressed: () {
-                Util.vibrate(FeedbackType.warning);
+                Utils.vibrate(FeedbackType.warning);
                 showCupertinoModalPopup(
                   context: context,
                   builder: (context) {
@@ -292,10 +292,10 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                         Navigator.of(context).pop();
                                         var res = await Api.downloadTaskAction([task['id']], "delete");
                                         if (res['success']) {
-                                          Util.toast("任务删除成功");
+                                          Utils.toast("任务删除成功");
                                           Navigator.of(context).pop(true);
                                         } else {
-                                          Util.toast("任务删除失败，代码：${res['error']['code']}");
+                                          Utils.toast("任务删除失败，代码：${res['error']['code']}");
                                         }
                                       },
                                         color: Theme.of(context).scaffoldBackgroundColor,
@@ -378,7 +378,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -466,7 +466,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                   Text("文件大小："),
                                   Expanded(
                                     child: Text(
-                                      "${task['size'] > 0 ? Util.formatSize(task['size']) : "未取得"}",
+                                      "${task['size'] > 0 ? Utils.formatSize(task['size']) : "未取得"}",
                                     ),
                                   ),
                                 ],
@@ -503,7 +503,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                   onPressed: () async {
                                     ClipboardData data = new ClipboardData(text: task['additional']['detail']['uri']);
                                     Clipboard.setData(data);
-                                    Util.toast("已复制到剪贴板");
+                                    Utils.toast("已复制到剪贴板");
                                   },
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(10),
@@ -559,7 +559,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                             child: Row(
                               children: [
                                 Text("预计等待时间："),
-                                Text(task['additional']['detail']['waiting_seconds'] > 0 ? Util.timeRemaining(task['additional']['detail']['waiting_seconds']) : "无法取得"),
+                                Text(task['additional']['detail']['waiting_seconds'] > 0 ? Utils.timeRemaining(task['additional']['detail']['waiting_seconds']) : "无法取得"),
                               ],
                             ),
                           ),
@@ -586,7 +586,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                         )
                                       : task['status'] == 2
                                           ? Text(
-                                              "${Util.formatSize(task['additional']['transfer']['speed_download'])}/s",
+                                              "${Utils.formatSize(task['additional']['transfer']['speed_download'])}/s",
                                               style: TextStyle(color: Colors.lightBlueAccent),
                                             )
                                           : task['status'] == 3
@@ -640,7 +640,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                   Text("已下载："),
                                   Expanded(
                                     child: Text(
-                                      Util.formatSize(task['additional']['transfer']['size_downloaded']),
+                                      Utils.formatSize(task['additional']['transfer']['size_downloaded']),
                                     ),
                                   ),
                                 ],
@@ -660,7 +660,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                                   Text("已上传："),
                                   Expanded(
                                     child: Text(
-                                      "${Util.formatSize(task['additional']['transfer']['size_uploaded'])} （${task['additional']['transfer']['size_downloaded'] > 0 ? (task['additional']['transfer']['size_uploaded'] / task['additional']['transfer']['size_downloaded'] * 100).toStringAsFixed(2) : "0"}%)",
+                                      "${Utils.formatSize(task['additional']['transfer']['size_uploaded'])} （${task['additional']['transfer']['size_downloaded'] > 0 ? (task['additional']['transfer']['size_uploaded'] / task['additional']['transfer']['size_downloaded'] * 100).toStringAsFixed(2) : "0"}%)",
                                     ),
                                   ),
                                 ],
@@ -697,7 +697,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                             child: Row(
                               children: [
                                 Text("速度："),
-                                Text("${task['additional']['transfer']['speed_download'] > 0 ? Util.formatSize(task['additional']['transfer']['speed_download']) : "无法取得"}"),
+                                Text("${task['additional']['transfer']['speed_download'] > 0 ? Utils.formatSize(task['additional']['transfer']['speed_download']) : "无法取得"}"),
                               ],
                             ),
                           ),
@@ -754,7 +754,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                             child: Row(
                               children: [
                                 Text("已做种时间："),
-                                Text("${Util.timeRemaining(task['additional']['detail']['seed_elapsed'])}"),
+                                Text("${Utils.timeRemaining(task['additional']['detail']['seed_elapsed'])}"),
                               ],
                             ),
                           ),
@@ -782,7 +782,7 @@ class _DownloadDetailState extends State<DownloadDetail> with TickerProviderStat
                             child: Row(
                               children: [
                                 Text("剩余时间："),
-                                Text("${task['additional']['transfer']['speed_download'] > 0 ? Util.timeRemaining(((task['size'] - task['additional']['transfer']['size_downloaded']) / task['additional']['transfer']['speed_download']).ceil()) : "无法取得"}"),
+                                Text("${task['additional']['transfer']['speed_download'] > 0 ? Utils.timeRemaining(((task['size'] - task['additional']['transfer']['size_downloaded']) / task['additional']['transfer']['speed_download']).ceil()) : "无法取得"}"),
                               ],
                             ),
                           ),

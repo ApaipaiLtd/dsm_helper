@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dsm_helper/pages/login/login.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -151,10 +151,10 @@ class _AccountsState extends State<Accounts> {
       onTap: () {
         print(server);
         if (server['is_login']) {
-          Util.account = "${server['account']}";
-          Util.baseUrl = "${server['base_url']}";
-          Util.checkSsl = server['check_ssl'];
-          SpUtil.putString("base_url", Util.baseUrl);
+          Utils.account = "${server['account']}";
+          Utils.baseUrl = "${server['base_url']}";
+          Utils.checkSsl = server['check_ssl'];
+          SpUtil.putString("base_url", Utils.baseUrl);
 
           SpUtil.putBool("https", server['https']);
           SpUtil.putString("host", server['host']);
@@ -170,8 +170,8 @@ class _AccountsState extends State<Accounts> {
           SpUtil.putBool("auto_login", server['auto_login']);
           SpUtil.putBool("check_ssl", server['check_ssl']);
           SpUtil.putString("sid", server['sid']);
-          Util.sid = server['sid'];
-          Util.cookie = server['cookie'];
+          Utils.sid = server['sid'];
+          Utils.cookie = server['cookie'];
           Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
         } else {
           server['action'] = "login";
@@ -266,7 +266,7 @@ class _AccountsState extends State<Accounts> {
                             });
 
                             saveAccounts();
-                            Util.toast("删除成功");
+                            Utils.toast("删除成功");
                           },
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(10),
@@ -389,7 +389,7 @@ class _AccountsState extends State<Accounts> {
                                             size: 16,
                                           ),
                                           Text(
-                                            "${server['loading'] ? "-" : "${Util.formatSize(server['tx'], fixed: 0)}/S"}",
+                                            "${server['loading'] ? "-" : "${Utils.formatSize(server['tx'], fixed: 0)}/S"}",
                                             style: TextStyle(color: Colors.blue, fontSize: 12),
                                           ),
                                         ],
@@ -406,7 +406,7 @@ class _AccountsState extends State<Accounts> {
                                             size: 16,
                                           ),
                                           Text(
-                                            "${server['loading'] ? "-" : "${Util.formatSize(server['rx'], fixed: 0)}/S"}",
+                                            "${server['loading'] ? "-" : "${Utils.formatSize(server['rx'], fixed: 0)}/S"}",
                                             style: TextStyle(color: Colors.green, fontSize: 12),
                                           ),
                                         ],
@@ -427,14 +427,14 @@ class _AccountsState extends State<Accounts> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "R:${server['loading'] ? "-" : "${Util.formatSize(server['read'], fixed: 0)}/S"}",
+                                        "R:${server['loading'] ? "-" : "${Utils.formatSize(server['read'], fixed: 0)}/S"}",
                                         style: TextStyle(color: Colors.blue, fontSize: 12),
                                       ),
                                       SizedBox(
                                         height: 10,
                                       ),
                                       Text(
-                                        "W:${server['loading'] ? "-" : "${Util.formatSize(server['write'], fixed: 0)}/S"}",
+                                        "W:${server['loading'] ? "-" : "${Utils.formatSize(server['write'], fixed: 0)}/S"}",
                                         style: TextStyle(color: Colors.green, fontSize: 12),
                                       )
                                     ],

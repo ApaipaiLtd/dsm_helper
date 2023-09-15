@@ -6,8 +6,8 @@ import 'package:dsm_helper/pages/setting/about.dart';
 import 'package:dsm_helper/pages/setting/vip.dart';
 import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/providers/setting.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/neu_picker.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/neu_picker.dart';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -85,10 +85,10 @@ class _HelperSettingState extends State<HelperSetting> {
           GestureDetector(
             onTap: () {
               setState(() {
-                Util.vibrateOn = !Util.vibrateOn;
-                SpUtil.putBool("vibrate_on", Util.vibrateOn);
-                if (Util.vibrateOn) {
-                  Util.vibrate(FeedbackType.light);
+                Utils.vibrateOn = !Utils.vibrateOn;
+                SpUtil.putBool("vibrate_on", Utils.vibrateOn);
+                if (Utils.vibrateOn) {
+                  Utils.vibrate(FeedbackType.light);
                 }
               });
             },
@@ -115,14 +115,14 @@ class _HelperSettingState extends State<HelperSetting> {
                           style: TextStyle(fontSize: 16),
                         ),
                         Spacer(),
-                        if (Util.vibrateOn)
+                        if (Utils.vibrateOn)
                           Icon(
                             CupertinoIcons.checkmark_alt,
                             color: Color(0xffff9813),
                           ),
                       ],
                     ),
-                    if (Util.vibrateOn)
+                    if (Utils.vibrateOn)
                       Container(
                         margin: EdgeInsets.only(top: 20),
                         decoration: BoxDecoration(
@@ -136,10 +136,10 @@ class _HelperSettingState extends State<HelperSetting> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Util.vibrateNormal = !Util.vibrateNormal;
-                                    SpUtil.putBool("vibrate_warning", Util.vibrateNormal);
-                                    if (Util.vibrateNormal) {
-                                      Util.vibrate(FeedbackType.light);
+                                    Utils.vibrateNormal = !Utils.vibrateNormal;
+                                    SpUtil.putBool("vibrate_warning", Utils.vibrateNormal);
+                                    if (Utils.vibrateNormal) {
+                                      Utils.vibrate(FeedbackType.light);
                                     }
                                   });
                                 },
@@ -158,7 +158,7 @@ class _HelperSettingState extends State<HelperSetting> {
                                         style: TextStyle(fontSize: 16, height: 1.6),
                                       ),
                                       Spacer(),
-                                      if (Util.vibrateNormal)
+                                      if (Utils.vibrateNormal)
                                         Icon(
                                           CupertinoIcons.checkmark_alt,
                                           color: Color(0xffff9813),
@@ -173,10 +173,10 @@ class _HelperSettingState extends State<HelperSetting> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Util.vibrateWarning = !Util.vibrateWarning;
-                                    SpUtil.putBool("vibrate_warning", Util.vibrateWarning);
-                                    if (Util.vibrateWarning) {
-                                      Util.vibrate(FeedbackType.warning);
+                                    Utils.vibrateWarning = !Utils.vibrateWarning;
+                                    SpUtil.putBool("vibrate_warning", Utils.vibrateWarning);
+                                    if (Utils.vibrateWarning) {
+                                      Utils.vibrate(FeedbackType.warning);
                                     }
                                   });
                                 },
@@ -195,7 +195,7 @@ class _HelperSettingState extends State<HelperSetting> {
                                         style: TextStyle(fontSize: 16, height: 1.6),
                                       ),
                                       Spacer(),
-                                      if (Util.vibrateWarning)
+                                      if (Utils.vibrateWarning)
                                         Icon(
                                           CupertinoIcons.checkmark_alt,
                                           color: Color(0xffff9813),
@@ -415,7 +415,7 @@ class _HelperSettingState extends State<HelperSetting> {
                                       });
                                     }
                                     // password = !password;
-                                    // Util.setStorage("launch_password", password ? "1" : "0");
+                                    // Utils.setStorage("launch_password", password ? "1" : "0");
                                   });
                                 },
                                 child: Container(
@@ -454,8 +454,8 @@ class _HelperSettingState extends State<HelperSetting> {
                                   onTap: () async {
                                     if (biometrics == false) {
                                       if (password == false) {
-                                        Util.vibrate(FeedbackType.warning);
-                                        Util.toast("请先开启图形密码后再开启指纹");
+                                        Utils.vibrate(FeedbackType.warning);
+                                        Utils.toast("请先开启图形密码后再开启指纹");
                                         return;
                                       }
                                       try {
@@ -491,13 +491,13 @@ class _HelperSettingState extends State<HelperSetting> {
                                         });
                                       } on PlatformException catch (e) {
                                         if (e.code == auth_error.notAvailable) {
-                                          Util.toast("生物验证不可用");
+                                          Utils.toast("生物验证不可用");
                                         } else if (e.code == auth_error.passcodeNotSet) {
-                                          Util.toast("系统未设置密码");
+                                          Utils.toast("系统未设置密码");
                                         } else if (e.code == auth_error.lockedOut) {
-                                          Util.toast("认证失败次数过多，请稍后再试");
+                                          Utils.toast("认证失败次数过多，请稍后再试");
                                         } else {
-                                          Util.toast(e.message ?? "认证失败");
+                                          Utils.toast(e.message ?? "认证失败");
                                         }
                                       }
                                     } else {
@@ -509,7 +509,7 @@ class _HelperSettingState extends State<HelperSetting> {
 
                                     // setState(() {
                                     //   biometrics = !biometrics;
-                                    //   Util.setStorage("launch_biometrics", biometrics ? "1" : "0");
+                                    //   Utils.setStorage("launch_biometrics", biometrics ? "1" : "0");
                                     // });
                                   },
                                   child: Container(
@@ -550,7 +550,7 @@ class _HelperSettingState extends State<HelperSetting> {
               ),
             ),
           ),
-          if (!Util.notReviewAccount) ...[
+          if (!Utils.notReviewAccount) ...[
             SizedBox(
               height: 20,
             ),
@@ -592,7 +592,7 @@ class _HelperSettingState extends State<HelperSetting> {
               var hide = showWeuiLoadingToast(context: context);
               clearDiskCachedImages();
               hide();
-              Util.toast("图片缓存清理完成");
+              Utils.toast("图片缓存清理完成");
             },
             // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.all(20),
@@ -639,7 +639,7 @@ class _HelperSettingState extends State<HelperSetting> {
                   width: 8,
                 ),
                 Text(
-                  "关于${Util.appName}",
+                  "关于${Utils.appName}",
                   style: TextStyle(fontSize: 16),
                 ),
               ],
@@ -648,7 +648,7 @@ class _HelperSettingState extends State<HelperSetting> {
           SizedBox(
             height: 20,
           ),
-          if (Util.notReviewAccount)
+          if (Utils.notReviewAccount)
             CupertinoButton(
               onPressed: () {
                 Navigator.of(context).push(CupertinoPageRoute(

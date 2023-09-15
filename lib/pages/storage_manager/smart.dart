@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -64,7 +64,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
         getSmartLog();
       });
     } else {
-      Util.toast("执行检测失败，代码${res['error']['code']}");
+      Utils.toast("执行检测失败，代码${res['error']['code']}");
       setState(() {
         testing = false;
       });
@@ -91,7 +91,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
         smartInfo = res['data']['healthInfo']['smartInfo'];
       });
     } else {
-      Util.toast("获取失败");
+      Utils.toast("获取失败");
     }
   }
 
@@ -272,7 +272,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(

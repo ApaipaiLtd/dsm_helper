@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/user/otp_bind.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +42,7 @@ class _UserSettingState extends State<UserSetting> {
       _fullnameController.value = TextEditingValue(text: normalUser!['fullname']);
       _emailController.value = TextEditingValue(text: normalUser!['email']);
     } else {
-      Util.toast("加载失败，code:${res['error']['code']}");
+      Utils.toast("加载失败，code:${res['error']['code']}");
       Navigator.of(context).pop();
     }
   }
@@ -249,11 +249,11 @@ class _UserSettingState extends State<UserSetting> {
                       changedData.remove("confirm_password");
                     } else {
                       if (changedData['password'] == "") {
-                        Util.toast("请输入新密码");
+                        Utils.toast("请输入新密码");
                         return;
                       }
                       if (changedData['confirm_password'] != changedData['password']) {
-                        Util.toast("确认密码与新密码不一致");
+                        Utils.toast("确认密码与新密码不一致");
                         return;
                       }
                     }
@@ -268,13 +268,13 @@ class _UserSettingState extends State<UserSetting> {
                     });
                     var res = await Api.normalUser("set", changedData: data);
                     if (res['success']) {
-                      Util.toast("保存成功");
+                      Utils.toast("保存成功");
                       Navigator.of(context).pop(true);
                     } else {
                       setState(() {
                         saving = false;
                       });
-                      Util.toast("保存失败，原因:${res['error']['code']}");
+                      Utils.toast("保存失败，原因:${res['error']['code']}");
                     }
                   },
                   child: saving

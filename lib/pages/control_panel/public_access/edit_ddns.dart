@@ -1,6 +1,6 @@
 import 'package:cool_ui/cool_ui.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/neu_picker.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/neu_picker.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +51,7 @@ class _EditDdnsState extends State<EditDdns> {
   }
 
   deleteDdns() async {
-    Util.vibrate(FeedbackType.warning);
+    Utils.vibrate(FeedbackType.warning);
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -89,10 +89,10 @@ class _EditDdnsState extends State<EditDdns> {
                             var res = await Api.ddnsDelete(widget.ddns!['id']);
                             print(res);
                             if (res['success']) {
-                              Util.toast("DDNS删除成功");
+                              Utils.toast("DDNS删除成功");
                               Navigator.of(context).pop(true);
                             } else {
-                              Util.toast("删除失败，代码:${res['error']['code']}");
+                              Utils.toast("删除失败，代码:${res['error']['code']}");
                             }
                           },
                           color: Theme.of(context).scaffoldBackgroundColor,
@@ -137,16 +137,16 @@ class _EditDdnsState extends State<EditDdns> {
 
   bool checkForm() {
     if (ddns['provider'] == null || ddns['provider'] == "") {
-      Util.toast("请选择服务供应商");
+      Utils.toast("请选择服务供应商");
       return false;
     } else if (ddns['hostname'] == null || ddns['hostname'] == "") {
-      Util.toast("请输入主机名称");
+      Utils.toast("请输入主机名称");
       return false;
     } else if (ddns['username'] == null || ddns['username'] == "") {
-      Util.toast("请输入用户名/电子邮件");
+      Utils.toast("请输入用户名/电子邮件");
       return false;
     } else if (widget.ddns == null && (ddns['passwd'] == null || ddns['passwd'] == "")) {
-      Util.toast("请输入密码/密钥");
+      Utils.toast("请输入密码/密钥");
       return false;
     }
 
@@ -380,7 +380,7 @@ class _EditDdnsState extends State<EditDdns> {
                               ddns['status'] = res['data']['status'];
                             });
                           } else {
-                            Util.toast("测试失败，${res['error']['errors']},code:${res['error']['code']}");
+                            Utils.toast("测试失败，${res['error']['errors']},code:${res['error']['code']}");
                           }
                         }
                       },
@@ -405,10 +405,10 @@ class _EditDdnsState extends State<EditDdns> {
                   if (checkForm()) {
                     var res = await Api.ddnsSave(ddns);
                     if (res['success']) {
-                      Util.toast("保存成功");
+                      Utils.toast("保存成功");
                       Navigator.of(context).pop(true);
                     } else {
-                      Util.toast("保存失败,代码${res['error']['code']}");
+                      Utils.toast("保存失败,代码${res['error']['code']}");
                     }
                   }
                 },

@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:sp_util/sp_util.dart';
 
 /// id : 1
@@ -22,7 +22,7 @@ class VipRecordModel {
   });
   static Future<List<VipRecordModel>> fetch() async {
     String userToken = SpUtil.getString("user_token", defValue: '')!;
-    var res = await Util.post("${Util.appUrl}/vip/record", data: {"token": userToken});
+    var res = await Utils.post("${Utils.appUrl}/vip/record", data: {"token": userToken});
     if (res['code'] == 1) {
       List<VipRecordModel> records = [];
       res['data'].forEach((e) {

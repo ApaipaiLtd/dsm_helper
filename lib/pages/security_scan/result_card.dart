@@ -1,5 +1,5 @@
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/strings.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -26,7 +26,7 @@ class ResultCard extends StatelessWidget {
     data['fail'].forEach((k, v) {
       if (v > 0) {
         items.add(Text(
-          "${(webManagerStrings['securityscan']['securityscan_check_${k}_${data['category']}'] ?? Util.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']["securityscan_check_${k}_${data['category']}"]).replaceAll("{0}", "${data['fail'][k]}")}",
+          "${(webManagerStrings['securityscan']['securityscan_check_${k}_${data['category']}'] ?? Utils.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']["securityscan_check_${k}_${data['category']}"]).replaceAll("{0}", "${data['fail'][k]}")}",
           style: TextStyle(color: colors[k]),
         ));
       }
@@ -52,7 +52,7 @@ class ResultCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  "${webManagerStrings['securityscan']['securityscan_category_${data['category']}'] ?? Util.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']['securityscan_category_${data['category']}']}",
+                  "${webManagerStrings['securityscan']['securityscan_category_${data['category']}'] ?? Utils.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']['securityscan_category_${data['category']}']}",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
@@ -96,18 +96,18 @@ class ResultCard extends StatelessWidget {
             if (data['progress'] == 100)
               if (data['failSeverity'] == "safe")
                 Text(
-                  "${webManagerStrings['securityscan']['securityscan_check_pass_${data['category']}'] ?? Util.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']["securityscan_check_pass_${data['category']}"]}",
+                  "${webManagerStrings['securityscan']['securityscan_check_pass_${data['category']}'] ?? Utils.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']["securityscan_check_pass_${data['category']}"]}",
                   style: TextStyle(color: Colors.green),
                 )
               else
                 ..._buildFailItems()
             else ...[
               Text(
-                "${webManagerStrings['securityscan']['securityscan_check_desc_${data['category']}'] ?? Util.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']["securityscan_check_desc_${data['category']}"]}",
+                "${webManagerStrings['securityscan']['securityscan_check_desc_${data['category']}'] ?? Utils.strings['SYNO.SDS.SecurityScan.Instance']['securityscan']["securityscan_check_desc_${data['category']}"]}",
                 style: TextStyle(color: Colors.blue),
               ),
               Text(
-                "${webManagerStrings['rules']["${data['runningItem']}_desc_running"] ?? Util.strings['SYNO.SDS.SecurityScan.Instance']['rules']["${data['runningItem']}_desc_running"]}",
+                "${webManagerStrings['rules']["${data['runningItem']}_desc_running"] ?? Utils.strings['SYNO.SDS.SecurityScan.Instance']['rules']["${data['runningItem']}_desc_running"]}",
                 style: TextStyle(color: Colors.blue),
               ),
             ],

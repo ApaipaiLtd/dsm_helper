@@ -1,9 +1,8 @@
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 
 class SelectFolder extends StatefulWidget {
   final bool multi;
@@ -119,8 +118,8 @@ class _SelectFolderState extends State<SelectFolder> {
           }
           goPath(path);
         },
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: index == 0
             ? Icon(
@@ -136,7 +135,7 @@ class _SelectFolderState extends State<SelectFolder> {
   }
 
   Widget _buildFileItem(file) {
-    FileTypeEnum fileType = Util.fileType(file['name']);
+    FileTypeEnum fileType = Utils.fileType(file['name']);
     String path = file['path'];
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
@@ -153,15 +152,15 @@ class _SelectFolderState extends State<SelectFolder> {
           },
           // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: EdgeInsets.symmetric(vertical: 10),
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(20),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(20),
           child: Row(
             children: [
               SizedBox(
                 width: 20,
               ),
               Hero(
-                tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                 child: FileIcon(
                   file['isdir'] ? FileTypeEnum.folder : fileType,
                   thumb: file['path'],
@@ -184,7 +183,7 @@ class _SelectFolderState extends State<SelectFolder> {
                       height: 5,
                     ),
                     Text(
-                      (file['isdir'] ? "" : "${Util.formatSize(file['additional']['size'])}" + " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['crtime'] * 1000).format("Y/m/d H:i:s"),
+                      (file['isdir'] ? "" : "${Utils.formatSize(file['additional']['size'])}" + " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['crtime'] * 1000).format("Y/m/d H:i:s"),
                       style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
                     ),
                   ],
@@ -194,8 +193,8 @@ class _SelectFolderState extends State<SelectFolder> {
                 width: 10,
               ),
               CupertinoButton(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 onPressed: () {
                   setState(() {
                     if (widget.multi) {
@@ -343,26 +342,25 @@ class _SelectFolderState extends State<SelectFolder> {
                                                         child: CupertinoButton(
                                                           onPressed: () async {
                                                             if (name.trim() == "") {
-                                                              Util.toast("请输入文件夹名");
+                                                              Utils.toast("请输入文件夹名");
                                                               return;
                                                             }
                                                             Navigator.of(context).pop();
                                                             String path = paths.join("/").substring(1);
                                                             var res = await Api.createFolder(path, name);
                                                             if (res['success']) {
-                                                              Util.toast("文件夹创建成功");
+                                                              Utils.toast("文件夹创建成功");
                                                               refresh();
                                                             } else {
                                                               if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
-                                                                Util.toast("文件夹创建失败：指定的名称已存在");
+                                                                Utils.toast("文件夹创建失败：指定的名称已存在");
                                                               } else {
-                                                                Util.toast("文件夹创建失败");
+                                                                Utils.toast("文件夹创建失败");
                                                               }
                                                             }
                                                           },
-                                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                                            borderRadius: BorderRadius.circular(25),
-
+                                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                                          borderRadius: BorderRadius.circular(25),
                                                           padding: EdgeInsets.symmetric(vertical: 10),
                                                           child: Text(
                                                             "确定",
@@ -378,8 +376,8 @@ class _SelectFolderState extends State<SelectFolder> {
                                                           onPressed: () async {
                                                             Navigator.of(context).pop();
                                                           },
-                                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                                            borderRadius: BorderRadius.circular(25),
+                                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                                          borderRadius: BorderRadius.circular(25),
                                                           padding: EdgeInsets.symmetric(vertical: 10),
                                                           child: Text(
                                                             "取消",
@@ -398,8 +396,8 @@ class _SelectFolderState extends State<SelectFolder> {
                                     );
                                   });
                             },
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             child: Text(
                               "新建",
@@ -420,12 +418,12 @@ class _SelectFolderState extends State<SelectFolder> {
                               if (paths.length > 1) {
                                 Navigator.of(context).pop([paths.join("/").substring(1)]);
                               } else {
-                                Util.toast("无法选择根目录");
+                                Utils.toast("无法选择根目录");
                               }
                             }
                           },
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(20),
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           child: Text(
                             "选择",
@@ -444,12 +442,10 @@ class _SelectFolderState extends State<SelectFolder> {
                       ? Center(
                           child: Container(
                             padding: EdgeInsets.all(50),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-
                             child: CupertinoActivityIndicator(
                               radius: 14,
                             ),
@@ -472,8 +468,8 @@ class _SelectFolderState extends State<SelectFolder> {
                                     width: 200,
                                     child: CupertinoButton(
                                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(20),
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(20),
                                       onPressed: () {
                                         String path = paths.join("/").substring(1);
                                         goPath(path);

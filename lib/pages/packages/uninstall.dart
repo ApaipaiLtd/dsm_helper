@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +31,7 @@ class _UninstallPackageState extends State<UninstallPackage> {
         print(pageData);
       });
     } else {
-      Util.toast("获取卸载信息失败，代码${res['error']['code']}");
+      Utils.toast("获取卸载信息失败，代码${res['error']['code']}");
     }
   }
 
@@ -174,7 +174,7 @@ class _UninstallPackageState extends State<UninstallPackage> {
                             uninstalling = true;
                           });
                           await Api.uninstallPackageTask(widget.package['id'], extra: extra);
-                          Util.toast("卸载成功");
+                          Utils.toast("卸载成功");
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
                         },

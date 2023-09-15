@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:dsm_helper/providers/setting.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
@@ -136,7 +136,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -246,7 +246,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -377,7 +377,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -483,7 +483,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 14,
                                                     );
-                                                    return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                                    return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Utils.formatSize(touchedSpot.y.floor())}', textStyle);
                                                   }).toList();
                                                 },
                                               ),
@@ -506,7 +506,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    Util.formatSize(value, fixed: 0),
+                                                    Utils.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -514,13 +514,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: Util.chartInterval(maxNetworkSpeed),
+                                                interval: Utils.chartInterval(maxNetworkSpeed),
                                               )),
                                             ),
                                             // titlesData: FlTitlesData(
@@ -538,10 +538,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             //       fontSize: 12,
                                             //     ),
                                             //     getTitles: (v) {
-                                            //       return Util.formatSize(v, maxNetworkSpeed);
+                                            //       return Utils.formatSize(v, maxNetworkSpeed);
                                             //     },
                                             //     reservedSize: 28,
-                                            //     interval: Util.chartInterval(maxNetworkSpeed),
+                                            //     interval: Utils.chartInterval(maxNetworkSpeed),
                                             //   ),
                                             // ),
                                             minY: 0,
@@ -596,7 +596,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         color: Colors.blue,
                                       ),
                                       Text(
-                                        Util.formatSize(networks.last[0]['tx'], fixed: 0) + "/S",
+                                        Utils.formatSize(networks.last[0]['tx'], fixed: 0) + "/S",
                                         style: TextStyle(color: Colors.blue),
                                       ),
                                       Spacer(),
@@ -605,7 +605,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         color: Colors.green,
                                       ),
                                       Text(
-                                        Util.formatSize(networks.last[0]['rx'], fixed: 0) + "/S",
+                                        Utils.formatSize(networks.last[0]['rx'], fixed: 0) + "/S",
                                         style: TextStyle(color: Colors.green),
                                       ),
                                     ],
@@ -691,7 +691,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -819,7 +819,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -932,7 +932,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             );
                                           },
                                           // getTextStyles: (value, _) => const ,
-                                          // getTitles: Util.formatSize,
+                                          // getTitles: Utils.formatSize,
                                           // getTitles: (value) {
                                           //   value = value / 1000 / 1000;
                                           //   return (value.floor() * 1000).toString();
@@ -1278,7 +1278,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                             );
                                           },
                                           // getTextStyles: (value, _) => const ,
-                                          // getTitles: Util.formatSize,
+                                          // getTitles: Utils.formatSize,
                                           // getTitles: (value) {
                                           //   value = value / 1000 / 1000;
                                           //   return (value.floor() * 1000).toString();
@@ -1347,7 +1347,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                         width: 20,
                                       ),
                                       Text(
-                                        "${Util.formatSize(memories.last['memory_size'] * 1024, fixed: 0)}",
+                                        "${Utils.formatSize(memories.last['memory_size'] * 1024, fixed: 0)}",
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                       ),
                                     ],
@@ -1370,7 +1370,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               Text.rich(
                                                 TextSpan(
                                                   children: [
-                                                    TextSpan(text: "${Util.formatSize((memories.last['memory_size'] - memories.last['total_real']) * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                                                    TextSpan(text: "${Utils.formatSize((memories.last['memory_size'] - memories.last['total_real']) * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                                                   ],
                                                 ),
                                                 style: TextStyle(color: Colors.grey),
@@ -1399,7 +1399,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               Text.rich(
                                                 TextSpan(
                                                   children: [
-                                                    TextSpan(text: "${Util.formatSize(memories.last['real_usage'] * memories.last['memory_size'] * 10.24, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                                                    TextSpan(text: "${Utils.formatSize(memories.last['real_usage'] * memories.last['memory_size'] * 10.24, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                                                   ],
                                                 ),
                                                 style: TextStyle(color: Colors.orange),
@@ -1428,7 +1428,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               Text.rich(
                                                 TextSpan(
                                                   children: [
-                                                    TextSpan(text: "${Util.formatSize(memories.last['buffer'] * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                                                    TextSpan(text: "${Utils.formatSize(memories.last['buffer'] * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                                                   ],
                                                 ),
                                                 style: TextStyle(color: Colors.lightBlue),
@@ -1461,7 +1461,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               Text.rich(
                                                 TextSpan(
                                                   children: [
-                                                    TextSpan(text: "${Util.formatSize(memories.last['cached'] * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                                                    TextSpan(text: "${Utils.formatSize(memories.last['cached'] * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                                                   ],
                                                 ),
                                                 style: TextStyle(color: Colors.cyan),
@@ -1490,7 +1490,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               Text.rich(
                                                 TextSpan(
                                                   children: [
-                                                    TextSpan(text: "${Util.formatSize(memories.last['avail_real'] * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                                                    TextSpan(text: "${Utils.formatSize(memories.last['avail_real'] * 1024, fixed: 1)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                                                   ],
                                                 ),
                                                 style: TextStyle(color: Colors.green),
@@ -1566,7 +1566,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 14,
                                                       );
-                                                      return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                                      return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Utils.formatSize(touchedSpot.y.floor())}', textStyle);
                                                     }).toList();
                                                   },
                                                 ),
@@ -1589,7 +1589,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   showTitles: true,
                                                   getTitlesWidget: (value, _) {
                                                     return Text(
-                                                      Util.formatSize(value, fixed: 0),
+                                                      Utils.formatSize(value, fixed: 0),
                                                       style: TextStyle(
                                                         color: Color(0xff67727d),
                                                         fontSize: 12,
@@ -1597,13 +1597,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     );
                                                   },
                                                   // getTextStyles: (value, _) => const ,
-                                                  // getTitles: Util.formatSize,
+                                                  // getTitles: Utils.formatSize,
                                                   // getTitles: (value) {
                                                   //   value = value / 1000 / 1000;
                                                   //   return (value.floor() * 1000).toString();
                                                   // },
                                                   reservedSize: 28,
-                                                  interval: Util.chartInterval(maxNetworkSpeed),
+                                                  interval: Utils.chartInterval(maxNetworkSpeed),
                                                 )),
                                               ),
                                               // titlesData: FlTitlesData(
@@ -1621,10 +1621,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                               //       fontSize: 12,
                                               //     ),
                                               //     getTitles: (v) {
-                                              //       return Util.formatSize(v, maxNetworkSpeed);
+                                              //       return Utils.formatSize(v, maxNetworkSpeed);
                                               //     },
                                               //     reservedSize: 28,
-                                              //     interval: Util.chartInterval(maxNetworkSpeed),
+                                              //     interval: Utils.chartInterval(maxNetworkSpeed),
                                               //   ),
                                               // ),
                                               minY: 0,
@@ -1679,7 +1679,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           color: Colors.blue,
                                         ),
                                         Text(
-                                          Util.formatSize(networks.last[i]['tx']) + "/S",
+                                          Utils.formatSize(networks.last[i]['tx']) + "/S",
                                           style: TextStyle(color: Colors.blue),
                                         ),
                                         Spacer(),
@@ -1688,7 +1688,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                           color: Colors.green,
                                         ),
                                         Text(
-                                          Util.formatSize(networks.last[i]['rx']) + "/S",
+                                          Utils.formatSize(networks.last[i]['rx']) + "/S",
                                           style: TextStyle(color: Colors.green),
                                         ),
                                       ],
@@ -1804,7 +1804,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -1901,10 +1901,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return [
                                                       for (int i = 0; i < disks.last['disk'].length; i++)
                                                         LineTooltipItem(
-                                                          "${disks.last['disk'][i]['display_name']}：${Util.formatSize(disks[items[0].spotIndex]['disk'][i]['read_byte'].floor())}",
+                                                          "${disks.last['disk'][i]['display_name']}：${Utils.formatSize(disks[items[0].spotIndex]['disk'][i]['read_byte'].floor())}",
                                                           TextStyle(color: colors[i]),
                                                         ),
-                                                      LineTooltipItem("总计：${Util.formatSize(disks[items[0].spotIndex]['total']['read_byte'].floor())}", TextStyle(color: Colors.blue)),
+                                                      LineTooltipItem("总计：${Utils.formatSize(disks[items[0].spotIndex]['total']['read_byte'].floor())}", TextStyle(color: Colors.blue)),
                                                     ];
                                                   }),
                                             ),
@@ -1926,7 +1926,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    Util.formatSize(value, fixed: 0),
+                                                    Utils.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -1934,13 +1934,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: Util.chartInterval(maxDiskReadSpeed),
+                                                interval: Utils.chartInterval(maxDiskReadSpeed),
                                               )),
                                             ),
                                             // titlesData: FlTitlesData(
@@ -2051,10 +2051,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return [
                                                       for (int i = 0; i < disks.last['disk'].length; i++)
                                                         LineTooltipItem(
-                                                          "${disks.last['disk'][i]['display_name']}：${Util.formatSize(disks[items[0].spotIndex]['disk'][i]['write_byte'].floor())}",
+                                                          "${disks.last['disk'][i]['display_name']}：${Utils.formatSize(disks[items[0].spotIndex]['disk'][i]['write_byte'].floor())}",
                                                           TextStyle(color: colors[i]),
                                                         ),
-                                                      LineTooltipItem("总计：${Util.formatSize(disks[items[0].spotIndex]['total']['write_byte'].floor())}", TextStyle(color: Colors.blue)),
+                                                      LineTooltipItem("总计：${Utils.formatSize(disks[items[0].spotIndex]['total']['write_byte'].floor())}", TextStyle(color: Colors.blue)),
                                                     ];
                                                   }),
                                             ),
@@ -2076,7 +2076,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    Util.formatSize(value, fixed: 0),
+                                                    Utils.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2084,13 +2084,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: Util.chartInterval(maxDiskWriteSpeed),
+                                                interval: Utils.chartInterval(maxDiskWriteSpeed),
                                               )),
                                             ),
                                             // titlesData: FlTitlesData(
@@ -2234,7 +2234,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
@@ -2330,10 +2330,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return [
                                                       for (int i = 0; i < disks.last['disk'].length; i++)
                                                         LineTooltipItem(
-                                                          "${disks.last['disk'][i]['display_name']}：${Util.formatSize(disks[items[0].spotIndex]['disk'][i]['write_access'].floor())}",
+                                                          "${disks.last['disk'][i]['display_name']}：${Utils.formatSize(disks[items[0].spotIndex]['disk'][i]['write_access'].floor())}",
                                                           TextStyle(color: colors[i]),
                                                         ),
-                                                      LineTooltipItem("总计：${Util.formatSize(disks[items[0].spotIndex]['total']['write_access'].floor())}", TextStyle(color: Colors.blue)),
+                                                      LineTooltipItem("总计：${Utils.formatSize(disks[items[0].spotIndex]['total']['write_access'].floor())}", TextStyle(color: Colors.blue)),
                                                     ];
                                                   }),
                                             ),
@@ -2602,10 +2602,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return [
                                                       for (int i = 0; i < spaces.last['volume'].length; i++)
                                                         LineTooltipItem(
-                                                          "${spaces.last['volume'][i]['display_name']}：${Util.formatSize(spaces[items[0].spotIndex]['volume'][i]['read_byte'].floor())}",
+                                                          "${spaces.last['volume'][i]['display_name']}：${Utils.formatSize(spaces[items[0].spotIndex]['volume'][i]['read_byte'].floor())}",
                                                           TextStyle(color: colors[i]),
                                                         ),
-                                                      LineTooltipItem("总计：${Util.formatSize(spaces[items[0].spotIndex]['total']['read_byte'].floor())}", TextStyle(color: Colors.blue)),
+                                                      LineTooltipItem("总计：${Utils.formatSize(spaces[items[0].spotIndex]['total']['read_byte'].floor())}", TextStyle(color: Colors.blue)),
                                                     ];
                                                   }),
                                             ),
@@ -2627,7 +2627,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    Util.formatSize(value, fixed: 0),
+                                                    Utils.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2635,7 +2635,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 reservedSize: 28,
-                                                interval: Util.chartInterval(maxVolumeReadSpeed),
+                                                interval: Utils.chartInterval(maxVolumeReadSpeed),
                                               )),
                                             ),
                                             minY: 0,
@@ -2725,10 +2725,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return [
                                                       for (int i = 0; i < spaces.last['volume'].length; i++)
                                                         LineTooltipItem(
-                                                          "${spaces.last['volume'][i]['display_name']}：${Util.formatSize(spaces[items[0].spotIndex]['volume'][i]['write_byte'].floor())}",
+                                                          "${spaces.last['volume'][i]['display_name']}：${Utils.formatSize(spaces[items[0].spotIndex]['volume'][i]['write_byte'].floor())}",
                                                           TextStyle(color: colors[i]),
                                                         ),
-                                                      LineTooltipItem("总计：${Util.formatSize(spaces[items[0].spotIndex]['total']['write_byte'].floor())}", TextStyle(color: Colors.blue)),
+                                                      LineTooltipItem("总计：${Utils.formatSize(spaces[items[0].spotIndex]['total']['write_byte'].floor())}", TextStyle(color: Colors.blue)),
                                                     ];
                                                   }),
                                             ),
@@ -2750,7 +2750,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                 showTitles: true,
                                                 getTitlesWidget: (value, _) {
                                                   return Text(
-                                                    Util.formatSize(value, fixed: 0),
+                                                    Utils.formatSize(value, fixed: 0),
                                                     style: TextStyle(
                                                       color: Color(0xff67727d),
                                                       fontSize: 12,
@@ -2758,13 +2758,13 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();
                                                 // },
                                                 reservedSize: 28,
-                                                interval: Util.chartInterval(maxVolumeWriteSpeed),
+                                                interval: Utils.chartInterval(maxVolumeWriteSpeed),
                                               )),
                                             ),
                                             minY: 0,
@@ -2977,10 +2977,10 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                     return [
                                                       for (int i = 0; i < spaces.last['volume'].length; i++)
                                                         LineTooltipItem(
-                                                          "${spaces.last['volume'][i]['display_name']}：${Util.formatSize(spaces[items[0].spotIndex]['volume'][i]['write_access'].floor())}",
+                                                          "${spaces.last['volume'][i]['display_name']}：${Utils.formatSize(spaces[items[0].spotIndex]['volume'][i]['write_access'].floor())}",
                                                           TextStyle(color: colors[i]),
                                                         ),
-                                                      LineTooltipItem("总计：${Util.formatSize(spaces[items[0].spotIndex]['total']['write_access'].floor())}", TextStyle(color: Colors.blue)),
+                                                      LineTooltipItem("总计：${Utils.formatSize(spaces[items[0].spotIndex]['total']['write_access'].floor())}", TextStyle(color: Colors.blue)),
                                                     ];
                                                   }),
                                             ),
@@ -3010,7 +3010,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                                   );
                                                 },
                                                 // getTextStyles: (value, _) => const ,
-                                                // getTitles: Util.formatSize,
+                                                // getTitles: Utils.formatSize,
                                                 // getTitles: (value) {
                                                 //   value = value / 1000 / 1000;
                                                 //   return (value.floor() * 1000).toString();

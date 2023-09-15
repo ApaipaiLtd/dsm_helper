@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -27,7 +27,7 @@ class _LogSettingState extends State<LogSetting> {
         loading = false;
       });
     } else {
-      Util.toast("获取失败，code：${res['error']['code']}");
+      Utils.toast("获取失败，code：${res['error']['code']}");
       Navigator.of(context).pop();
     }
   }
@@ -256,12 +256,12 @@ class _LogSettingState extends State<LogSetting> {
                       var res = await Api.fileServiceLogSave(widget.protocol, setting);
                       print(res);
                       if (res['success']) {
-                        Util.vibrate(FeedbackType.light);
-                        Util.toast("应用成功");
+                        Utils.vibrate(FeedbackType.light);
+                        Utils.toast("应用成功");
                         Navigator.of(context).pop();
                       } else {
-                        Util.vibrate(FeedbackType.warning);
-                        Util.toast("应用失败，code:${res['error']['code']}");
+                        Utils.vibrate(FeedbackType.warning);
+                        Utils.toast("应用失败，code:${res['error']['code']}");
                       }
                     },
                     child: Text(

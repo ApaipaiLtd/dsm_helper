@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 
 class OtpBind extends StatefulWidget {
   final String username;
@@ -18,7 +17,7 @@ class OtpBind extends StatefulWidget {
 
 class _OtpBindState extends State<OtpBind> {
   TextEditingController _emailController = TextEditingController();
-  String email='';
+  String email = '';
   int step = 0;
   Uint8List? qrData;
   String key = "";
@@ -69,11 +68,11 @@ class _OtpBindState extends State<OtpBind> {
             ),
             CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: () async {
                 if (email.isBlank) {
-                  Util.toast("请输入邮箱");
+                  Utils.toast("请输入邮箱");
                   return;
                 }
                 if (emailSaving) {
@@ -85,7 +84,7 @@ class _OtpBindState extends State<OtpBind> {
                 var res = await Api.saveMail(email);
 
                 if (res['success']) {
-                  var qrcode = await Api.getQrCode("${widget.username}@${Util.hostname}");
+                  var qrcode = await Api.getQrCode("${widget.username}@${Utils.hostname}");
                   if (qrcode['success']) {
                     setState(() {
                       qrData = Base64Decoder().convert(qrcode['data']['img']);
@@ -93,10 +92,10 @@ class _OtpBindState extends State<OtpBind> {
                       step = 1;
                     });
                   } else {
-                    Util.toast("获取二部验证数据出错，代码${res['error']['code']}");
+                    Utils.toast("获取二部验证数据出错，代码${res['error']['code']}");
                   }
                 } else {
-                  Util.toast("保存邮箱出错，代码${res['error']['code']}");
+                  Utils.toast("保存邮箱出错，代码${res['error']['code']}");
                 }
                 setState(() {
                   emailSaving = false;
@@ -133,17 +132,17 @@ class _OtpBindState extends State<OtpBind> {
                   children: [
                     Expanded(
                       child: Text(
-                        "账号：${widget.username}@${Util.hostname}",
+                        "账号：${widget.username}@${Utils.hostname}",
                       ),
                     ),
                     CupertinoButton(
                       onPressed: () async {
-                        ClipboardData data = new ClipboardData(text: "${widget.username}@${Util.hostname}");
+                        ClipboardData data = new ClipboardData(text: "${widget.username}@${Utils.hostname}");
                         Clipboard.setData(data);
-                        Util.toast("已复制到剪贴板");
+                        Utils.toast("已复制到剪贴板");
                       },
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(5),
                       child: SizedBox(
                         width: 20,
@@ -180,10 +179,10 @@ class _OtpBindState extends State<OtpBind> {
                       onPressed: () async {
                         ClipboardData data = new ClipboardData(text: "$key");
                         Clipboard.setData(data);
-                        Util.toast("已复制到剪贴板");
+                        Utils.toast("已复制到剪贴板");
                       },
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(5),
                       child: SizedBox(
                         width: 20,
@@ -207,7 +206,6 @@ class _OtpBindState extends State<OtpBind> {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: TextField(
                 onChanged: (v) => code = v,
@@ -222,11 +220,11 @@ class _OtpBindState extends State<OtpBind> {
             ),
             CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: () async {
                 if (code.isBlank) {
-                  Util.toast("请输入6位验证代码");
+                  Utils.toast("请输入6位验证代码");
                   return;
                 }
                 if (codeChecking) {
@@ -242,7 +240,7 @@ class _OtpBindState extends State<OtpBind> {
                     step = 2;
                   });
                 } else {
-                  Util.toast("保存邮箱出错，代码${res['error']['code']}");
+                  Utils.toast("保存邮箱出错，代码${res['error']['code']}");
                 }
                 setState(() {
                   emailSaving = false;
@@ -262,8 +260,8 @@ class _OtpBindState extends State<OtpBind> {
             Text("注意：您可在“帐户活动” &gt; “记住的设备”中管理最常用的设备。"),
             CupertinoButton(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
               onPressed: () async {
                 Navigator.of(context).pop(true);
               },

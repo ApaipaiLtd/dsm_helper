@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _RewardState extends State<Reward> {
         rewards = res['data'];
       });
     } else {
-      Util.toast("获取列表失败");
+      Utils.toast("获取列表失败");
       Navigator.of(context).pop();
     }
   }

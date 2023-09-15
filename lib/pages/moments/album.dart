@@ -1,6 +1,6 @@
 import 'package:dsm_helper/pages/moments/photos.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/moments_api.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -36,7 +36,7 @@ class _AlbumState extends State<Album> {
   }
 
   Widget _buildAlbumItem(album) {
-    String thumbUrl = '${Util.baseUrl}/webapi/entry.cgi?id=${album['additional']['thumbnail']['unit_id']}&cache_key="${album['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
+    String thumbUrl = '${Utils.baseUrl}/webapi/entry.cgi?id=${album['additional']['thumbnail']['unit_id']}&cache_key="${album['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
     String tag = "album-${album['additional']['thumbnail']['unit_id']}";
     return GestureDetector(
       onTap: () {

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dsm_helper/models/photos/access_permission_model.dart';
 import 'package:dsm_helper/models/photos/photo_model.dart';
 import 'package:dsm_helper/models/photos/thumbnail_model.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 /// additional : {"thumbnail":[{"cache_key":"611690_1665630858","m":"ready","preview":"broken","sm":"ready","unit_id":611690,"xl":"ready"},{"cache_key":"611689_1665630860","m":"ready","preview":"broken","sm":"ready","unit_id":611689,"xl":"ready"},{"cache_key":"611688_1665630855","m":"ready","preview":"broken","sm":"ready","unit_id":611688,"xl":"ready"},{"cache_key":"611687_1665630852","m":"ready","preview":"broken","sm":"ready","unit_id":611687,"xl":"ready"}]}
 /// id : 14770
@@ -28,11 +28,11 @@ class FolderModel {
     this.sortDirection,
   });
   static Future<FolderModel> fetch({List<String> additional = const [], bool isTeam = false}) async {
-    var res = await Util.post("entry.cgi", data: {
+    var res = await Utils.post("entry.cgi", data: {
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Folder',
       "method": 'get',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "additional": jsonEncode(additional),
     });
     if (res['success']) {
@@ -48,14 +48,14 @@ class FolderModel {
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Folder',
       "method": 'list',
       "version": 2,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "additional": jsonEncode(additional),
       "sort_by": "filename",
       "sort_direction": "asc",
       "offset": 0,
       "limit": 5000,
     };
-    var res = await Util.post("entry.cgi", data: data);
+    var res = await Utils.post("entry.cgi", data: data);
     if (res['success']) {
       List list = res['data']['list'];
       folders = [];
@@ -69,12 +69,12 @@ class FolderModel {
   }
 
   Future<List<PhotoModel>> fetchPhotos({List<String> additional = const [], bool isTeam = false}) async {
-    var res = await Util.post("entry.cgi", data: {
+    var res = await Utils.post("entry.cgi", data: {
       "folder_id": id,
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Item',
       "method": 'list',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "additional": jsonEncode(additional),
       "sort_by": "takentime",
       "sort_direction": "asc",

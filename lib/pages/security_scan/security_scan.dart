@@ -1,6 +1,6 @@
 import 'package:dsm_helper/pages/security_scan/result_card.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/strings.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/strings.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -118,8 +118,8 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
         null) {
       return webManagerStrings['rules']["${strId}_desc_${status == 2 ? "good" : status == 0 ? "running" : "bad"}"];
     } else {
-      if (Util.strings['SYNO.SDS.SecurityScan.Instance'] != null && Util.strings['SYNO.SDS.SecurityScan.Instance']['rules'] != null) {
-        return (Util.strings['SYNO.SDS.SecurityScan.Instance']['rules']["${strId}_desc_${status == 2 ? "good" : status == 0 ? "running" : "bad"}"] ??
+      if (Utils.strings['SYNO.SDS.SecurityScan.Instance'] != null && Utils.strings['SYNO.SDS.SecurityScan.Instance']['rules'] != null) {
+        return (Utils.strings['SYNO.SDS.SecurityScan.Instance']['rules']["${strId}_desc_${status == 2 ? "good" : status == 0 ? "running" : "bad"}"] ??
             "$strId");
       } else {
         return strId;
@@ -138,8 +138,6 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        
-
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Row(
@@ -170,19 +168,16 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Text("安全顾问"),
       ),
       body: loading
           ? Center(
               child: Container(
                 padding: EdgeInsets.all(50),
-                
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -197,8 +192,6 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  
-
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -207,7 +200,7 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -241,8 +234,6 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            
-
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Row(
@@ -299,7 +290,7 @@ class _SecurityScanState extends State<SecurityScan> with SingleTickerProviderSt
                                         )
                                       else
                                         Text(
-                                          "已运行：${Util.timeRemaining(DateTime.now().secondsSinceEpoch - int.parse(startTime))}",
+                                          "已运行：${Utils.timeRemaining(DateTime.now().secondsSinceEpoch - int.parse(startTime))}",
                                           style: TextStyle(fontSize: 14),
                                         ),
                                     ],

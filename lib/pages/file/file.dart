@@ -4,7 +4,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
-import 'package:dsm_helper/util/log.dart';
+import 'package:dsm_helper/utils/log.dart';
 import 'package:flutter_floating/floating/listener/event_listener.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:just_audio/just_audio.dart' as ja;
@@ -24,7 +24,7 @@ import 'package:dsm_helper/pages/file/share_manager.dart';
 import 'package:dsm_helper/pages/file/upload.dart';
 import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
@@ -157,7 +157,7 @@ class FilesState extends State<Files> {
       });
       if (result['data']['finished']) {
         if (showProcessList = true) {
-          Util.toast("${result['data']['path']} ${backgroundProcess[taskId]['type'] == 'copy' ? '复制' : '移动'}到 ${result['data']['dest_folder_path']} 完成");
+          Utils.toast("${result['data']['path']} ${backgroundProcess[taskId]['type'] == 'copy' ? '复制' : '移动'}到 ${result['data']['dest_folder_path']} 完成");
         }
 
         backgroundProcess[taskId]['timer']?.cancel();
@@ -175,7 +175,7 @@ class FilesState extends State<Files> {
       if (result['success'] != null && result['success']) {
         if (result['data']['finished']) {
           if (showProcessList = true) {
-            Util.toast("文件删除完成");
+            Utils.toast("文件删除完成");
           }
           backgroundProcess[taskId]['timer']?.cancel();
           backgroundProcess[taskId]['timer'] = null;
@@ -184,7 +184,7 @@ class FilesState extends State<Files> {
         }
       }
     } catch (e) {
-      Util.toast("文件删除出错");
+      Utils.toast("文件删除出错");
       backgroundProcess[taskId]['timer']?.cancel();
       backgroundProcess[taskId]['timer'] = null;
       backgroundProcess.remove(taskId);
@@ -248,7 +248,7 @@ class FilesState extends State<Files> {
                                       child: CupertinoButton(
                                         onPressed: () async {
                                           if (password == "") {
-                                            Util.toast("请输入解压密码");
+                                            Utils.toast("请输入解压密码");
                                             return;
                                           }
                                           Navigator.of(context).pop();
@@ -293,7 +293,7 @@ class FilesState extends State<Files> {
           }
         } else {
           if (showProcessList = true) {
-            Util.toast("文件解压完成");
+            Utils.toast("文件解压完成");
           }
         }
         backgroundProcess[taskId]['timer']?.cancel();
@@ -315,7 +315,7 @@ class FilesState extends State<Files> {
       if (result['success'] != null && result['success']) {
         if (result['data']['finished']) {
           if (showProcessList = true) {
-            Util.toast("文件压缩完成");
+            Utils.toast("文件压缩完成");
           }
 
           backgroundProcess[taskId]['timer']?.cancel();
@@ -325,7 +325,7 @@ class FilesState extends State<Files> {
         }
       }
     } catch (e) {
-      Util.toast("文件压缩出错");
+      Utils.toast("文件压缩出错");
       backgroundProcess[taskId]['timer']?.cancel();
       backgroundProcess[taskId]['timer'] = null;
       backgroundProcess.remove(taskId);
@@ -510,7 +510,7 @@ class FilesState extends State<Files> {
   downloadFiles(List files) async {
     ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.mobile) {
-      Util.vibrate(FeedbackType.warning);
+      Utils.vibrate(FeedbackType.warning);
       showCupertinoModalPopup(
         context: context,
         builder: (context) {
@@ -603,31 +603,31 @@ class FilesState extends State<Files> {
         bool permission = false;
         permission = await Permission.manageExternalStorage.request().isGranted;
         if (!permission) {
-          Util.toast("安卓11以上需授权文件管理权限");
+          Utils.toast("安卓11以上需授权文件管理权限");
           return;
         }
       } else {
         bool permission = false;
         permission = await Permission.storage.request().isGranted;
         if (!permission) {
-          Util.toast("请先授权APP访问存储权限");
+          Utils.toast("请先授权APP访问存储权限");
           return;
         }
       }
     }
 
     for (var file in files) {
-      String url = Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${Util.sid}";
+      String url = Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${Utils.sid}";
       String filename = "";
       if (file['isdir']) {
         filename = file['name'] + ".zip";
       } else {
         filename = file['name'];
       }
-      // await Util.download(filename, url);
+      // await Utils.download(filename, url);
     }
-    Util.toast("已添加${files.length > 1 ? "${files.length}个" : ""}下载任务，请至下载页面查看");
-    // Util.downloadKey.currentState?.getData();
+    Utils.toast("已添加${files.length > 1 ? "${files.length}个" : ""}下载任务，请至下载页面查看");
+    // Utils.downloadKey.currentState?.getData();
   }
 
   Future<bool> result(String taskId) async {
@@ -738,14 +738,14 @@ class FilesState extends State<Files> {
       });
     } else {
       setState(() {
-        msg = res['msg'] ?? Util.notReviewAccount ? '暂无文件' : "加载失败，code:${res['error']['code']}";
+        msg = res['msg'] ?? Utils.notReviewAccount ? '暂无文件' : "加载失败，code:${res['error']['code']}";
       });
     }
   }
 
   goPath(String path) async {
     debugPrint("path:$path");
-    Util.vibrate(FeedbackType.light);
+    Utils.vibrate(FeedbackType.light);
     setState(() {
       success = true;
     });
@@ -764,7 +764,7 @@ class FilesState extends State<Files> {
     setState(() {
       loading = true;
     });
-    var res = await Util.get(Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}", decode: false);
+    var res = await Utils.get(Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}", decode: false);
     setState(() {
       loading = false;
     });
@@ -1195,7 +1195,7 @@ class FilesState extends State<Files> {
   }
 
   deleteFile(List<String> files) {
-    Util.vibrate(FeedbackType.warning);
+    Utils.vibrate(FeedbackType.warning);
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -1372,7 +1372,7 @@ class FilesState extends State<Files> {
                   CupertinoButton(
                     onPressed: () async {
                       // Navigator.of(context).pop();
-                      Util.toast("敬请期待");
+                      Utils.toast("敬请期待");
                     },
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
@@ -1434,9 +1434,9 @@ class FilesState extends State<Files> {
             List<String> paths = [];
             int index = 0;
             for (int i = 0; i < files.length; i++) {
-              if (Util.fileType(files[i]['name']) == FileTypeEnum.image) {
-                images.add(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
-                thumbs.add(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
+              if (Utils.fileType(files[i]['name']) == FileTypeEnum.image) {
+                images.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
+                thumbs.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
                 names.add(files[i]['name']);
                 paths.add(files[i]['path']);
                 if (files[i]['name'] == file['name']) {
@@ -1461,8 +1461,8 @@ class FilesState extends State<Files> {
             break;
           case FileTypeEnum.movie:
             bool videoPlayer = SpUtil.getBool("video_player", defValue: false)!;
-            String url = Util.baseUrl + "/fbdownload/${Uri.encodeComponent(file['name'])}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open";
-            // String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open";
+            String url = Utils.baseUrl + "/fbdownload/${Uri.encodeComponent(file['name'])}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open";
+            // String url = Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open";
             // print(url);
             // 调用nplayer
             // launchUrlString("nplayer-http://${Uri.encodeComponent(url)}");
@@ -1521,7 +1521,7 @@ class FilesState extends State<Files> {
             if (audioPlayerFloating!.isShowing) {
               audioPlayerFloating!.close();
             }
-            String url = Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open";
+            String url = Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open";
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return AudioPlayer(
                 url: url,
@@ -1537,7 +1537,7 @@ class FilesState extends State<Files> {
           // case FileType.music:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
           //     arguments: {},
           //     type: "audio/*",
           //   );
@@ -1546,7 +1546,7 @@ class FilesState extends State<Files> {
           // case FileType.word:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
           //     arguments: {},
           //     type: "application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           //   );
@@ -1555,7 +1555,7 @@ class FilesState extends State<Files> {
           // case FileType.excel:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
           //     arguments: {},
           //     type: "application/vnd.ms-excel|application/x-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           //   );
@@ -1564,7 +1564,7 @@ class FilesState extends State<Files> {
           // case FileType.ppt:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Util.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Util.sid}",
+          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
           //     arguments: {},
           //     type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
           //   );
@@ -1578,25 +1578,25 @@ class FilesState extends State<Files> {
             break;
           case FileTypeEnum.pdf:
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return PdfViewer(Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open", file['name']);
+              return PdfViewer(Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open", file['name']);
             }));
             break;
           default:
             AndroidIntent intent = AndroidIntent(
               action: 'action_view',
-              data: Util.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Util.utf8Encode(file['path'])}%22&_sid=%22${Util.sid}%22&mode=open",
+              data: Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open",
               arguments: {},
               // type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
             );
             await intent.launch();
-          // Util.toast("暂不支持打开此类型文件");
+          // Utils.toast("暂不支持打开此类型文件");
         }
       }
     }
   }
 
   fileAction(file, {bool remote = false}) async {
-    Util.vibrate(FeedbackType.light);
+    Utils.vibrate(FeedbackType.light);
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -1718,7 +1718,7 @@ class FilesState extends State<Files> {
                               ),
                             ),
                           ),
-                          if (Util.fileType(file['name']) == FileTypeEnum.zip && !remote && file['path'].startsWith("/"))
+                          if (Utils.fileType(file['name']) == FileTypeEnum.zip && !remote && file['path'].startsWith("/"))
                             Container(
                               constraints: BoxConstraints(maxWidth: 112),
                               width: (MediaQuery.of(context).size.width - 100) / 4,
@@ -1894,19 +1894,19 @@ class FilesState extends State<Files> {
                                                           child: CupertinoButton(
                                                             onPressed: () async {
                                                               if (name.trim() == "") {
-                                                                Util.toast("请输入新文件名");
+                                                                Utils.toast("请输入新文件名");
                                                                 return;
                                                               }
                                                               Navigator.of(context).pop();
                                                               var res = await Api.rename(file['path'], name);
                                                               if (res['success']) {
-                                                                Util.toast("重命名成功");
+                                                                Utils.toast("重命名成功");
                                                                 refresh();
                                                               } else {
                                                                 if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
-                                                                  Util.toast("重命名失败：指定的名称已存在");
+                                                                  Utils.toast("重命名失败：指定的名称已存在");
                                                                 } else {
-                                                                  Util.toast("重命名失败");
+                                                                  Utils.toast("重命名失败");
                                                                 }
                                                               }
                                                             },
@@ -1974,9 +1974,9 @@ class FilesState extends State<Files> {
                                   Navigator.of(context).pop();
                                   var res = await Api.favoriteAdd("${file['name']} - ${paths[1]}", file['path']);
                                   if (res['success']) {
-                                    Util.toast("收藏成功");
+                                    Utils.toast("收藏成功");
                                   } else {
-                                    Util.toast("收藏失败，代码${res['error']['code']}");
+                                    Utils.toast("收藏失败，代码${res['error']['code']}");
                                   }
                                 },
                                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -2005,11 +2005,11 @@ class FilesState extends State<Files> {
                                   Navigator.of(context).pop();
                                   var res = await Api.unMountFolder(file['path']);
                                   if (res['success']) {
-                                    Util.toast("卸载成功");
+                                    Utils.toast("卸载成功");
                                     refresh();
                                     getSmbFolder();
                                   } else {
-                                    Util.toast("卸载失败，代码${res['error']['code']}");
+                                    Utils.toast("卸载失败，代码${res['error']['code']}");
                                   }
                                 },
                                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -2038,11 +2038,11 @@ class FilesState extends State<Files> {
                                   Navigator.of(context).pop();
                                   var res = await Api.remoteUnConnect(file['path']);
                                   if (res['success']) {
-                                    Util.toast("远程连接已断开");
+                                    Utils.toast("远程连接已断开");
                                     refresh();
                                     getSmbFolder();
                                   } else {
-                                    Util.toast("断开连接失败，代码${res['error']['code']}");
+                                    Utils.toast("断开连接失败，代码${res['error']['code']}");
                                   }
                                 },
                                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -2120,12 +2120,12 @@ class FilesState extends State<Files> {
   }
 
   Widget _buildFileItem(file, {bool remote = false}) {
-    FileTypeEnum fileType = Util.fileType(file['name']);
+    FileTypeEnum fileType = Utils.fileType(file['name']);
     String path = file['path'];
     Widget actionButton = multiSelect
         ? Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: EdgeInsets.all(5),
@@ -2162,19 +2162,19 @@ class FilesState extends State<Files> {
     return Container(
       constraints: listType == ListType.icon && !remote ? BoxConstraints(maxWidth: 112) : null,
       width: listType == ListType.icon && !remote ? (MediaQuery.of(context).size.width - 80) / 3 : double.infinity,
-      padding: listType == ListType.icon && !remote ? EdgeInsets.zero : EdgeInsets.only(bottom: 20.0),
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onLongPress: () {
-          Util.vibrate(FeedbackType.light);
+          Utils.vibrate(FeedbackType.light);
           fileAction(file, remote: remote);
           // if (paths.length > 1) {
-          //   Util.vibrate(FeedbackType.light);
+          //   Utils.vibrate(FeedbackType.light);
           //   setState(() {
           //     multiSelect = true;
           //     selectedFiles.add(file);
           //   });
           // } else {
-          //   Util.vibrate(FeedbackType.warning);
+          //   Utils.vibrate(FeedbackType.warning);
           // }
         },
         onTap: () {
@@ -2189,7 +2189,7 @@ class FilesState extends State<Files> {
                       width: 10,
                     ),
                     Hero(
-                      tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                      tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                       child: FileIcon(
                         file['isdir'] ? FileTypeEnum.folder : fileType,
                         thumb: file['path'],
@@ -2222,7 +2222,7 @@ class FilesState extends State<Files> {
                             Text.rich(
                               TextSpan(
                                 children: [
-                                  if (!file['isdir']) TextSpan(text: "${Util.formatSize(file['additional']['size'])}"),
+                                  if (!file['isdir']) TextSpan(text: "${Utils.formatSize(file['additional']['size'])}"),
                                   if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
                                     TextSpan(
                                       text: (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
@@ -2258,7 +2258,7 @@ class FilesState extends State<Files> {
                       child: Column(
                         children: [
                           Hero(
-                            tag: Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true",
+                            tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                             child: FileIcon(
                               file['isdir'] ? FileTypeEnum.folder : fileType,
                               thumb: file['path'],
@@ -2319,7 +2319,7 @@ class FilesState extends State<Files> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: Text(
           paths[index],
-          style: TextStyle(fontSize: 12),
+          style: TextStyle(fontSize: 12, color: Colors.black),
         ),
       ),
     );
@@ -2444,7 +2444,7 @@ class FilesState extends State<Files> {
         title: Row(
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+              padding: EdgeInsets.only(top: 8, bottom: 8),
               child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
@@ -2480,7 +2480,7 @@ class FilesState extends State<Files> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+              padding: EdgeInsets.only(top: 8, bottom: 8),
               child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
@@ -2520,7 +2520,7 @@ class FilesState extends State<Files> {
                                             borderRadius: BorderRadius.circular(10),
                                             padding: EdgeInsets.all(5),
                                             onPressed: () async {
-                                              Util.toast("重新加载远程连接中");
+                                              Utils.toast("重新加载远程连接中");
                                               Navigator.of(context).pop();
                                               getFtpFolder();
                                               getSftpFolder();
@@ -2595,9 +2595,9 @@ class FilesState extends State<Files> {
                 ),
               ),
             ),
-            if (Util.notReviewAccount && paths.length > 0 && !multiSelect)
+            if (Utils.notReviewAccount && paths.length > 0 && !multiSelect)
               Padding(
-                padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: CupertinoButton(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
@@ -2621,7 +2621,7 @@ class FilesState extends State<Files> {
               ),
             if (backgroundProcess.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: CupertinoButton(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
@@ -2640,7 +2640,7 @@ class FilesState extends State<Files> {
             Spacer(),
             if (paths.length > 0)
               Padding(
-                padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: CupertinoButton(
                   onPressed: () async {
                     Navigator.of(context)
@@ -2665,7 +2665,7 @@ class FilesState extends State<Files> {
                 ),
               ),
             Padding(
-              padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+              padding: EdgeInsets.only(top: 8, bottom: 8),
               child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
@@ -2685,7 +2685,7 @@ class FilesState extends State<Files> {
             ),
             if (multiSelect)
               Padding(
-                padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: CupertinoButton(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
@@ -2711,7 +2711,7 @@ class FilesState extends State<Files> {
               )
             else if (paths.length > 1)
               Padding(
-                padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: CupertinoButton(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
@@ -2736,7 +2736,7 @@ class FilesState extends State<Files> {
                 ),
               ),
             Padding(
-              padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+              padding: EdgeInsets.only(top: 8, bottom: 8),
               child: CupertinoButton(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
@@ -2791,7 +2791,7 @@ class FilesState extends State<Files> {
                                                     }
                                                   });
                                                 } else {
-                                                  Util.toast("未获取到存储空间");
+                                                  Utils.toast("未获取到存储空间");
                                                 }
                                               },
                                               color: Theme.of(context).scaffoldBackgroundColor,
@@ -2870,20 +2870,20 @@ class FilesState extends State<Files> {
                                                                           child: CupertinoButton(
                                                                             onPressed: () async {
                                                                               if (name.trim() == "") {
-                                                                                Util.toast("请输入文件夹名");
+                                                                                Utils.toast("请输入文件夹名");
                                                                                 return;
                                                                               }
                                                                               Navigator.of(context).pop();
                                                                               String path = "/" + paths.join("/");
                                                                               var res = await Api.createFolder(path, name);
                                                                               if (res['success']) {
-                                                                                Util.toast("文件夹创建成功");
+                                                                                Utils.toast("文件夹创建成功");
                                                                                 refresh();
                                                                               } else {
                                                                                 if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
-                                                                                  Util.toast("文件夹创建失败：指定的名称已存在");
+                                                                                  Utils.toast("文件夹创建失败：指定的名称已存在");
                                                                                 } else {
-                                                                                  Util.toast("文件夹创建失败");
+                                                                                  Utils.toast("文件夹创建失败");
                                                                                 }
                                                                               }
                                                                             },
@@ -3191,7 +3191,7 @@ class FilesState extends State<Files> {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
+                    padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
                     child: CupertinoButton(
                       onPressed: () {
                         goPath("");
@@ -3202,6 +3202,7 @@ class FilesState extends State<Files> {
                       child: Icon(
                         CupertinoIcons.home,
                         size: 16,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -3211,6 +3212,7 @@ class FilesState extends State<Files> {
                       child: Icon(
                         CupertinoIcons.right_chevron,
                         size: 14,
+                        color: Colors.black,
                       ),
                     ),
                   Expanded(

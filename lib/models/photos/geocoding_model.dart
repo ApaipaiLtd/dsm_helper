@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/models/photos/photo_model.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 /// additional : {"thumbnail":{"cache_key":"611178_1665630275","m":"ready","preview":"broken","sm":"ready","unit_id":611178,"xl":"ready"}}
 /// country : "中国大陆"
@@ -24,12 +24,12 @@ class GeocodingModel {
     this.secondLevel,
   });
   static Future<List<GeocodingModel>> fetch({List<String>? additional, int limit = 5000, bool isTeam = false}) async {
-    var res = await Util.post("entry.cgi", data: {
+    var res = await Utils.post("entry.cgi", data: {
       // "folder_id": id,
       "api": 'SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Geocoding',
       "method": 'list',
       "version": 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
       "additional": jsonEncode(additional),
       "offset": 0,
       "limit": limit,

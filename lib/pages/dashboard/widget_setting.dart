@@ -1,6 +1,6 @@
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -81,10 +81,10 @@ class _WidgetSettingState extends State<WidgetSetting> {
                 };
                 var res = await Api.userSetting(data);
                 if (res['success']) {
-                  Util.toast("保存小组件成功");
+                  Utils.toast("保存小组件成功");
                   Navigator.of(context).pop(saveWidgets);
                 } else {
-                  Util.toast("保存小组件失败，代码${res['error']['code']}");
+                  Utils.toast("保存小组件失败，代码${res['error']['code']}");
                 }
               },
               child: Image.asset(

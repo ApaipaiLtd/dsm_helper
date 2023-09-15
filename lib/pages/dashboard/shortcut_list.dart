@@ -10,7 +10,7 @@ import 'package:dsm_helper/pages/packages/packages.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
 import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +29,7 @@ class ShortcutList extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -55,16 +55,16 @@ class ShortcutList extends StatelessWidget {
     String routerName = "";
     switch (shortcut.className) {
       case "SYNO.SDS.PkgManApp.Instance":
-        icon = "assets/applications/${Util.version}/package_center.png";
+        icon = "assets/applications/${Utils.version}/package_center.png";
         name = "套件中心";
-        page = Packages(system != null ? system['firmware_ver'] : 'DSM ${Util.version}.0-10049');
+        page = Packages(system != null ? system['firmware_ver'] : 'DSM ${Utils.version}.0-10049');
         routerName = "packages";
         if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
           unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
         }
         break;
       case "SYNO.SDS.AdminCenter.Application":
-        icon = "assets/applications/${Util.version}/control_panel.png";
+        icon = "assets/applications/${Utils.version}/control_panel.png";
         name = "控制面板";
         page = ControlPanel(system, volumes, disks, appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null ? appNotify['SYNO.SDS.AdminCenter.Application']['fn'] : null);
         routerName = "control_panel";
@@ -73,7 +73,7 @@ class ShortcutList extends StatelessWidget {
         }
         break;
       case "SYNO.SDS.StorageManager.Instance":
-        icon = "assets/applications/${Util.version}/storage_manager.png";
+        icon = "assets/applications/${Utils.version}/storage_manager.png";
         name = "存储空间管理员";
         page = StorageManager();
         routerName = "storage_manager";
@@ -113,13 +113,13 @@ class ShortcutList extends StatelessWidget {
 
         break;
       case "SYNO.SDS.LogCenter.Instance":
-        icon = "assets/applications/${Util.version}/log_center.png";
+        icon = "assets/applications/${Utils.version}/log_center.png";
         name = "日志中心";
         page = LogCenter();
         routerName = "log_center";
         break;
       case "SYNO.SDS.ResourceMonitor.Instance":
-        icon = "assets/applications/${Util.version}/resource_monitor.png";
+        icon = "assets/applications/${Utils.version}/resource_monitor.png";
         name = "资源监控";
         page = ResourceMonitor();
         routerName = "resource_monitor";
@@ -129,7 +129,7 @@ class ShortcutList extends StatelessWidget {
       //   icon = "assets/applications/security_scan.png";
       //   break;
       case "SYNO.SDS.Virtualization.Application":
-        icon = "assets/applications/${Util.version}/virtual_machine.png";
+        icon = "assets/applications/${Utils.version}/virtual_machine.png";
         name = "Virtual Machine Manager";
         page = VirtualMachine();
         routerName = "virtual_machine_manager";

@@ -1,7 +1,7 @@
 import 'package:dsm_helper/pages/control_panel/file_service/log_setting.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/neu_picker.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/neu_picker.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
         loading = false;
       });
       if (res['data']['has_fail']) {
-        Util.toast("加载失败");
+        Utils.toast("加载失败");
         Navigator.of(context).pop();
         return;
       }
@@ -165,7 +165,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -967,7 +967,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                           setState(() {
                             saving = false;
                           });
-                          Util.toast("保存成功");
+                          Utils.toast("保存成功");
                           getData();
                         }
                       },

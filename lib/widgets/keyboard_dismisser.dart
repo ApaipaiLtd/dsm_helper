@@ -121,13 +121,13 @@ class KeyboardDismisser extends StatelessWidget {
   /// [KeyboardDismisser] will dismiss the keyboard when performing a tapping
   /// gesture.
   const KeyboardDismisser({
-    super.key,
-    this.child,
+    Key? key,
+    required this.child,
     this.behavior,
     this.gestures = const [GestureType.onTap],
     this.dragStartBehavior = DragStartBehavior.start,
     this.excludeFromSemantics = false,
-  });
+  }) : super(key: key);
 
   /// The list of gestures that will dismiss the keyboard when performed.
   final List<GestureType> gestures;
@@ -158,7 +158,7 @@ class KeyboardDismisser extends StatelessWidget {
   final bool excludeFromSemantics;
 
   /// The widget below this widget in the tree.
-  final Widget? child;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) => GestureDetector(

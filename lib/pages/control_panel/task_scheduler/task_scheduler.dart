@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_record.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class _TaskSchedulerState extends State<TaskScheduler> {
         tasks = res['data']['tasks'];
       });
     } else {
-      Util.toast("加载失败");
+      Utils.toast("加载失败");
       Navigator.of(context).pop();
     }
   }
@@ -97,7 +97,7 @@ class _TaskSchedulerState extends State<TaskScheduler> {
                         task['enable'] = !task['enable'];
                       });
                     } else {
-                      Util.toast("操作失败，code：${res['error']['code']}");
+                      Utils.toast("操作失败，code：${res['error']['code']}");
                     }
                   },
                   child: Container(
@@ -162,7 +162,7 @@ class _TaskSchedulerState extends State<TaskScheduler> {
                     } else if (task['type'] == 'event_script') {
                       res = await Api.eventRun([task['name']]);
                     } else {
-                      Util.toast("暂不支持此类型任务");
+                      Utils.toast("暂不支持此类型任务");
                       return;
                     }
 
@@ -170,9 +170,9 @@ class _TaskSchedulerState extends State<TaskScheduler> {
                       task['running'] = false;
                     });
                     if (res['success']) {
-                      Util.toast("任务计划执行成功");
+                      Utils.toast("任务计划执行成功");
                     } else {
-                      Util.toast("任务计划执行失败，code：${res['error']['code']}");
+                      Utils.toast("任务计划执行失败，code：${res['error']['code']}");
                     }
                   },
                   color: Theme.of(context).scaffoldBackgroundColor,

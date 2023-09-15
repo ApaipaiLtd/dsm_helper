@@ -1,7 +1,7 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/moments_api.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 
 import 'package:dsm_helper/widgets/transparent_router.dart';
@@ -33,7 +33,7 @@ class _TimelineState extends State<Timeline> {
     if (res['success'] && mounted) {
       setState(() {
         timeline = [];
-        if (Util.version == 7) {
+        if (Utils.version == 7) {
           for (var section in res['data']['section']) {
             timeline.addAll(section['list']);
           }
@@ -88,7 +88,7 @@ class _TimelineState extends State<Timeline> {
     if (photo['type'] == "video") {
       if (photo['additional']['video_convert'].length > 0) {
         duration = photo['additional']['video_convert'][0]['metadata']['duration'] ~/ 1000;
-        timeLong = Util.timeLong(duration);
+        timeLong = Utils.timeLong(duration);
       } else {
         timeLong = {
           "hours": 0,
@@ -97,8 +97,8 @@ class _TimelineState extends State<Timeline> {
         };
       }
     }
-    String thumbUrl = '${Util.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
-    String originalUrl = '${Util.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
+    String thumbUrl = '${Utils.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
+    String originalUrl = '${Utils.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(TransparentPageRoute(

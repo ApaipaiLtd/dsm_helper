@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +66,7 @@ class _ShareState extends State<Share> {
   deleteShare() async {
     var res = await Api.deleteShare([link['id']]);
     if (res['success']) {
-      Util.toast("取消共享成功");
+      Utils.toast("取消共享成功");
       Navigator.of(context).pop();
     }
   }
@@ -156,7 +156,7 @@ class _ShareState extends State<Share> {
                     onPressed: () async {
                       ClipboardData data = new ClipboardData(text: link['url']);
                       Clipboard.setData(data);
-                      Util.toast("已复制到剪贴板");
+                      Utils.toast("已复制到剪贴板");
                     },
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(10),
@@ -356,7 +356,7 @@ class _ShareState extends State<Share> {
                               url.add(link['url']);
                               var res = await Api.editShare(link['path'], id, url, endTime, startTime, times, fileRequest: link['enable_upload'], requestName: requestName, requestInfo: requestInfo);
                               if (res['success']) {
-                                Util.toast("保存成功");
+                                Utils.toast("保存成功");
                               }
                             },
                             child: Text("保存修改"),

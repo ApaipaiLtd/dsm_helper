@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
@@ -15,7 +15,7 @@ class TerminalButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Util.vibrate(FeedbackType.light);
+        Utils.vibrate(FeedbackType.light);
         onPressed?.call();
       },
       child: Container(

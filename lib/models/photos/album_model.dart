@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/models/photos/photo_model.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 /// additional : {"sharing_info":{"enable_password":false,"expiration":0,"is_expired":false,"mtime":1666874109,"owner":{"id":1,"name":"yaoshuwei"},"passphrase":"5kpICmfPs","permission":[],"privacy_type":"public-view","sharing_link":"http://pan.apaipai.top:5000/mo/sharing/5kpICmfPs","type":"album"},"thumbnail":{"cache_key":"684382_1666619064","m":"ready","preview":"broken","sm":"ready","unit_id":684382,"xl":"ready"}}
 /// cant_migrate_condition : {}
@@ -63,13 +63,13 @@ class AlbumModel {
       "api": "SYNO.Foto${isTeam ? 'Team' : ''}.Browse.Album",
       "method": "list",
       "version": shared ? 2 : 1,
-      "_sid": Util.sid,
+      "_sid": Utils.sid,
     };
     if (shared) {
       data['category'] = '"shared"';
     }
     print(data);
-    var res = await Util.post("entry.cgi", data: data);
+    var res = await Utils.post("entry.cgi", data: data);
     print(res);
     if (res['success']) {
       List<AlbumModel> albums = [];

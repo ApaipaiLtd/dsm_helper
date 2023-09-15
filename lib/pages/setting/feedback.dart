@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class _FeedbackState extends State<Feedback> {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               onPressed: () {
-                Util.toast("感谢您的反馈");
+                Utils.toast("感谢您的反馈");
                 Navigator.of(context).pop();
               },
               child: Row(

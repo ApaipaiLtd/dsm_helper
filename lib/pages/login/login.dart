@@ -6,7 +6,7 @@ import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/update/update.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -98,8 +98,8 @@ class _LoginState extends State<Login> {
           _passwordController.value = TextEditingValue(text: password);
         }
       });
-      Util.cookie = widget.server!['cookie'];
-      Util.sid = widget.server!['sid'];
+      Utils.cookie = widget.server!['cookie'];
+      Utils.sid = widget.server!['sid'];
       if (widget.server!['action'] == "login") {
         _login();
       }
@@ -145,7 +145,7 @@ class _LoginState extends State<Login> {
                           child: Text.rich(
                             TextSpan(
                               children: [
-                                TextSpan(text: "感谢您使用${Util.appName}，为保护您的个人信息安全，我们将依据${Util.appName}的"),
+                                TextSpan(text: "感谢您使用${Utils.appName}，为保护您的个人信息安全，我们将依据${Utils.appName}的"),
                                 TextSpan(
                                   text: "用户协议",
                                   style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
@@ -166,14 +166,14 @@ class _LoginState extends State<Login> {
                                       FocusScope.of(context).unfocus();
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                         return Browser(
-                                          url: '${Util.appUrl}/privacy',
+                                          url: '${Utils.appUrl}/privacy',
                                           title: "隐私政策",
                                         );
                                       }));
                                     },
                                 ),
                                 TextSpan(text: "来帮助您了解：我们如何收集个人信息、如何使用及存储个人信息以及您享有的相关权利\n"),
-                                TextSpan(text: "在您使用${Util.appName}前，请务必仔细阅读"),
+                                TextSpan(text: "在您使用${Utils.appName}前，请务必仔细阅读"),
                                 TextSpan(
                                   text: "用户协议",
                                   style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
@@ -194,7 +194,7 @@ class _LoginState extends State<Login> {
                                       FocusScope.of(context).unfocus();
                                       Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                         return Browser(
-                                          url: '${Util.appUrl}/privacy',
+                                          url: '${Utils.appUrl}/privacy',
                                           title: "隐私政策",
                                         );
                                       }));
@@ -295,7 +295,7 @@ class _LoginState extends State<Login> {
     password = SpUtil.getString("password")!;
     autoLogin = SpUtil.getBool("auto_login", defValue: false)!;
     rememberPassword = SpUtil.getBool("remember_password", defValue: false)!;
-    Util.cookie = smid;
+    Utils.cookie = smid;
     if (host.isNotBlank) {
       _hostController.value = TextEditingValue(text: host);
     }
@@ -318,17 +318,17 @@ class _LoginState extends State<Login> {
   }
 
   checkLogin() async {
-    Util.account = account;
+    Utils.account = account;
     if (sid.isNotBlank && host.isNotBlank) {
       if (baseUrl.isNotBlank) {
-        Util.baseUrl = baseUrl;
+        Utils.baseUrl = baseUrl;
       } else {
-        Util.baseUrl = "${https ? "https" : "http"}://$host:$port";
+        Utils.baseUrl = "${https ? "https" : "http"}://$host:$port";
       }
       //开始自动登录
       debugPrint("BaseUrl:$baseUrl");
-      debugPrint("Util.BaseUrl:${Util.baseUrl}");
-      Util.sid = sid;
+      debugPrint("Utils.BaseUrl:${Utils.baseUrl}");
+      Utils.sid = sid;
       //如果开启了自动登录，则判断当前登录状态
       if (autoLogin) {
         setState(() {
@@ -355,14 +355,14 @@ class _LoginState extends State<Login> {
   }
 
   _login() async {
-    Util.checkSsl = checkSsl;
+    Utils.checkSsl = checkSsl;
     FocusScope.of(context).unfocus();
     if (host.trim() == "") {
-      Util.toast("请输入网址/IP/QuickConnect ID");
+      Utils.toast("请输入网址/IP/QuickConnect ID");
       return;
     }
     if (account == "") {
-      Util.toast("请输入账号");
+      Utils.toast("请输入账号");
       return;
     }
     setState(() {
@@ -429,7 +429,7 @@ class _LoginState extends State<Login> {
     } else if (res['errno'] == 4 && res['errinfo'].startsWith("get_server_info.go") && res['sites'].length > 0) {
       qcLogin(qcHost: res['sites'][0]);
     } else {
-      Util.toast("无法连接到服务器，请检查QuickConnect ID是否正确");
+      Utils.toast("无法连接到服务器，请检查QuickConnect ID是否正确");
       setState(() {
         login = false;
       });
@@ -443,7 +443,7 @@ class _LoginState extends State<Login> {
     });
     if (res['success'] == true) {
       //记住登录信息
-      Util.account = account;
+      Utils.account = account;
       SpUtil.putBool("https", https);
       SpUtil.putString("host", host.trim());
       SpUtil.putString("port", port);
@@ -453,7 +453,7 @@ class _LoginState extends State<Login> {
       SpUtil.putBool("remember_password", rememberPassword);
       SpUtil.putBool("auto_login", autoLogin);
       SpUtil.putBool("check_ssl", checkSsl);
-      Util.sid = res['data']['sid'];
+      Utils.sid = res['data']['sid'];
       if (rememberPassword) {
         SpUtil.putString("password", password);
       } else {
@@ -463,7 +463,7 @@ class _LoginState extends State<Login> {
         SpUtil.putString("sid", res['data']['sid']);
       }
 
-      Util.baseUrl = baseUri;
+      Utils.baseUrl = baseUri;
 
       //添加服务器记录
       bool exist = false;
@@ -480,7 +480,7 @@ class _LoginState extends State<Login> {
           servers[i]['note'] = note;
           servers[i]['auto_login'] = autoLogin;
           servers[i]['check_ssl'] = checkSsl;
-          servers[i]['cookie'] = Util.cookie;
+          servers[i]['cookie'] = Utils.cookie;
           servers[i]['sid'] = res['data']['sid'];
           servers[i]['base_url'] = baseUri;
           exist = true;
@@ -498,7 +498,7 @@ class _LoginState extends State<Login> {
           "remember_password": rememberPassword,
           "auto_login": autoLogin,
           "check_ssl": checkSsl,
-          "cookie": Util.cookie,
+          "cookie": Utils.cookie,
           "sid": res['data']['sid'],
         };
         if (rememberPassword) {
@@ -515,19 +515,19 @@ class _LoginState extends State<Login> {
         Navigator.of(context).pop(true);
       }
     } else {
-      Util.vibrate(FeedbackType.warning);
+      Utils.vibrate(FeedbackType.warning);
       if (res['error']['code'] == 400) {
-        Util.toast("用户名/密码有误");
+        Utils.toast("用户名/密码有误");
       } else if (res['error']['code'] == 403) {
-        Util.toast("请输入二次验证代码");
+        Utils.toast("请输入二次验证代码");
         setState(() {
           needOtp = true;
         });
       } else if (res['error']['code'] == 404) {
         _otpController.clear();
-        Util.toast("错误的验证代码。请再试一次。");
+        Utils.toast("错误的验证代码。请再试一次。");
       } else {
-        Util.toast("登录失败，code:${res['error']['code']}");
+        Utils.toast("登录失败，code:${res['error']['code']}");
       }
     }
   }
@@ -544,7 +544,7 @@ class _LoginState extends State<Login> {
   //     ipv4Address = IPv4Address(ipv4);
   //     //Continue execution
   //   } else {
-  //     Util.toast("IP地址有误");
+  //     Utils.toast("IP地址有误");
   //     return;
   //     // Handle invalid address case
   //   }
@@ -553,7 +553,7 @@ class _LoginState extends State<Login> {
   //     macAddress = MACAddress(mac);
   //     //Continue execution
   //   } else {
-  //     Util.toast("MAC地址有误");
+  //     Utils.toast("MAC地址有误");
   //     return;
   //     // Handle invalid address case
   //   }
@@ -975,7 +975,7 @@ class _LoginState extends State<Login> {
               onPressed: () {
                 print(login);
                 if (!read) {
-                  Util.toast("请先阅读并同意用户协议和隐私政策");
+                  Utils.toast("请先阅读并同意用户协议和隐私政策");
                   return;
                 }
                 if (login) {
@@ -1047,7 +1047,7 @@ class _LoginState extends State<Login> {
                     Text.rich(
                       TextSpan(
                         children: [
-                          TextSpan(text: "我已阅读并同意 ${Util.appName}"),
+                          TextSpan(text: "我已阅读并同意 ${Utils.appName}"),
                           TextSpan(
                             text: "用户协议",
                             style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue, fontSize: 12),
@@ -1068,7 +1068,7 @@ class _LoginState extends State<Login> {
                                 FocusScope.of(context).unfocus();
                                 Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                   return Browser(
-                                    url: '${Util.appUrl}/privacy',
+                                    url: '${Utils.appUrl}/privacy',
                                     title: "隐私政策",
                                   );
                                 }));

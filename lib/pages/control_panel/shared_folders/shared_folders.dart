@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dsm_helper/pages/control_panel/shared_folders/add_shared_folder.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -118,10 +118,10 @@ class _SharedFoldersState extends State<SharedFolders> {
                             var res = await Api.deleteSharedFolder([folder]);
                             print(res);
                             if (res['success']) {
-                              Util.toast("共享文件夹删除成功");
+                              Utils.toast("共享文件夹删除成功");
                               getData();
                             } else {
-                              Util.toast("共享文件夹删除出错");
+                              Utils.toast("共享文件夹删除出错");
                             }
                           },
                           color: Theme.of(context).scaffoldBackgroundColor,
@@ -232,7 +232,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                         height: 5,
                       ),
                       Text(
-                        "共享文件夹配额：${folder['quota_value'] > 0 ? Util.formatSize(folder['quota_value'] * 1024 * 1024) : "已停用"}",
+                        "共享文件夹配额：${folder['quota_value'] > 0 ? Utils.formatSize(folder['quota_value'] * 1024 * 1024) : "已停用"}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
@@ -241,7 +241,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                         height: 5,
                       ),
                       Text(
-                        "共享文件夹大小：${Util.formatSize(folder['share_quota_used'] * 1024 * 1024)}",
+                        "共享文件夹大小：${Utils.formatSize(folder['share_quota_used'] * 1024 * 1024)}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
@@ -343,7 +343,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                                             Navigator.of(context).pop();
                                             Api.cleanRecycleBin(folder['name']).then((res) {
                                               if (res['success']) {
-                                                Util.toast("请求已发送");
+                                                Utils.toast("请求已发送");
                                               }
                                             });
                                           },

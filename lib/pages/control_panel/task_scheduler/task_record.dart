@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class _TaskRecordState extends State<TaskRecord> {
         records = res['data'];
       });
     } else {
-      Util.toast("加载失败");
+      Utils.toast("加载失败");
       Navigator.of(context).pop();
     }
   }

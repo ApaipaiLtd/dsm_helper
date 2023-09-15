@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +139,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   //         if (widget.cover.startsWith("http")) {
   //           return ExtendedImage.network(widget.cover);
   //         } else {
-  //           return ExtendedImage.network(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true");
+  //           return ExtendedImage.network(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
   //         }
   //       } else {
   //         return SizedBox();
@@ -151,8 +151,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
   parseNfo() async {
     if (widget.nfo != null) {
       final myTransformer = Xml2Json();
-      String nfoUrl = Util.baseUrl + "/fbdownload/info.nfo?dlink=%22${Util.utf8Encode(widget.nfo!)}%22&_sid=%22${Util.sid}%22&mode=open";
-      var res = await Util.get(nfoUrl, decode: false);
+      String nfoUrl = Utils.baseUrl + "/fbdownload/info.nfo?dlink=%22${Utils.utf8Encode(widget.nfo!)}%22&_sid=%22${Utils.sid}%22&mode=open";
+      var res = await Utils.get(nfoUrl, decode: false);
       try {
         myTransformer.parse(res);
         var json = jsonDecode(myTransformer.toParker());
@@ -213,7 +213,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
           //     fit: FijkFit.contain,
           //     player: player,
           //     color: Colors.black,
-          //     cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
+          //     cover: widget.cover != null ? ExtendedNetworkImageProvider(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true") : null,
           //   ),
           // ),
           FView(
@@ -223,7 +223,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
             color: Colors.black,
             fsFit: FFit.contain, // 全屏模式下的填充
             fit: FFit.contain, // 正常模式下的填充
-            cover: widget.cover != null ? ExtendedNetworkImageProvider(Util.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover!)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Util.sid}&animate=true") : null,
+            cover: widget.cover != null ? ExtendedNetworkImageProvider(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(widget.cover!)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true") : null,
 
             panelBuilder: fPanelBuilder(
               // 单视频配置

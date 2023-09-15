@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -163,7 +163,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                 ),
               ),
               Text(
-                "${Util.formatSize(quota['used'] * 1024 * 1024)}",
+                "${Utils.formatSize(quota['used'] * 1024 * 1024)}",
                 style: TextStyle(fontSize: 16),
               ),
               Text(
@@ -171,7 +171,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                 style: TextStyle(fontSize: 16),
               ),
               Text(
-                "${quota['quota'] == 0 ? "无限制" : Util.formatSize(quota['quota'] * 1024 * 1024)}",
+                "${quota['quota'] == 0 ? "无限制" : Utils.formatSize(quota['quota'] * 1024 * 1024)}",
                 style: TextStyle(fontSize: 16),
               ),
             ],
@@ -331,7 +331,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
               unselectedLabelColor: Colors.grey,
               indicator: BubbleTabIndicator(
                 indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
               ),
               tabs: [
                 Padding(
@@ -702,11 +702,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                 onPressed: () async {
                   if ((password != null && password!.isNotBlank) || (confirmPassword != null && confirmPassword!.isNotBlank)) {
                     if (password != confirmPassword) {
-                      Util.toast("密码输入不一致");
+                      Utils.toast("密码输入不一致");
                       return;
                     }
                     if (password!.length < 6) {
-                      Util.toast("密码最低6位");
+                      Utils.toast("密码最低6位");
                       return;
                     }
                     user!['password'] = password;
@@ -728,9 +728,9 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                   if (res['success']) {
                     widget.user['name'] = user!['new_name'];
                     widget.user['email'] = user!['email'];
-                    Util.toast("保存成功");
+                    Utils.toast("保存成功");
                   } else {
-                    Util.toast("保存失败,代码${res['error']['code']}");
+                    Utils.toast("保存失败,代码${res['error']['code']}");
                   }
                 },
                 child: saving

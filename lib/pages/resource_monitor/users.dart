@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class _UsersState extends State<Users> {
         users = res['data']['items'];
       });
     } else {
-      Util.toast("获取目前连接用户失败，代码${res['error']['code']}");
+      Utils.toast("获取目前连接用户失败，代码${res['error']['code']}");
       Navigator.of(context).pop();
     }
   }
@@ -158,7 +158,7 @@ class _UsersState extends State<Users> {
                                           });
 
                                           if (res['success']) {
-                                            Util.toast("连接已终止");
+                                            Utils.toast("连接已终止");
                                           }
                                         },
                                           color: Theme.of(context).scaffoldBackgroundColor,

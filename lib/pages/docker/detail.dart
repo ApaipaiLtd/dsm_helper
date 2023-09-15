@@ -1,5 +1,5 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,7 +67,7 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
       }
       getLogDates();
     } else {
-      Util.toast("获取详情失败");
+      Utils.toast("获取详情失败");
     }
   }
 
@@ -244,7 +244,7 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                 ),
                 Expanded(
                   child: Text(
-                    "RAM：${Util.formatSize(process['memory'], fixed: 0)}",
+                    "RAM：${Utils.formatSize(process['memory'], fixed: 0)}",
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -335,7 +335,6 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
           ? Center(
               child: Container(
                 padding: EdgeInsets.all(50),
-                
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
@@ -354,7 +353,6 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-
                   child: TabBar(
                     isScrollable: false,
                     controller: _tabController,
@@ -363,7 +361,7 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
@@ -463,7 +461,7 @@ class _ContainerDetailState extends State<ContainerDetail> with SingleTickerProv
                                       Text("内存限制："),
                                       Expanded(
                                         child: Text(
-                                          memory > 0 ? Util.formatSize(memory) : "自动",
+                                          memory > 0 ? Utils.formatSize(memory) : "自动",
                                         ),
                                       ),
                                     ],

@@ -1,5 +1,5 @@
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 
 import 'package:easy_app_installer/easy_app_installer.dart';
@@ -32,7 +32,7 @@ class _UpdateState extends State<Update> {
   download() async {
     // 检查安装应用权限
     // if (!await Permission.requestInstallPackages.request().isGranted) {
-    //   Util.toast("权限不足，无法安装更新");
+    //   Utils.toast("权限不足，无法安装更新");
     // }
     setState(() {
       downloading = true;
@@ -52,7 +52,7 @@ class _UpdateState extends State<Update> {
         },
       );
     } catch (e) {
-      Util.toast("下载失败");
+      Utils.toast("下载失败");
     }
     setState(() {
       downloading = false;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:dsm_helper/models/api_model.dart';
@@ -20,7 +21,8 @@ import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:extended_image/extended_image.dart';
@@ -98,9 +100,9 @@ class DashboardState extends State<Dashboard> {
     getGroups();
     networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
     getNotifyStrings();
-    ApiModel.fetch().then((apis) {
-      Api.apiList = apis;
-    });
+    // ApiModel.fetch().then((apis) {
+    //   Api.apiList = apis;
+    // });
     getInfo().then((_) {
       getData(init: true);
     });
@@ -112,8 +114,8 @@ class DashboardState extends State<Dashboard> {
   }
 
   getGroups() async {
-    Util.groups = await GroupsModel.fetch();
-    if (Util.notReviewAccount) {
+    Utils.groups = await GroupsModel.fetch();
+    if (Utils.notReviewAccount) {
       showFirstLaunchDialog();
     }
   }
@@ -172,7 +174,7 @@ class DashboardState extends State<Dashboard> {
                           child: Padding(
                               padding: EdgeInsets.all(15),
                               child: Column(
-                                children: Util.groups.channel!.map((channel) {
+                                children: Utils.groups.channel!.map((channel) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Row(
@@ -215,7 +217,7 @@ class DashboardState extends State<Dashboard> {
                           child: Padding(
                               padding: EdgeInsets.all(15),
                               child: Column(
-                                children: Util.groups.wechat!.map((wechat) {
+                                children: Utils.groups.wechat!.map((wechat) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Row(
@@ -239,7 +241,7 @@ class DashboardState extends State<Dashboard> {
                                           onPressed: () {
                                             ClipboardData data = new ClipboardData(text: wechat.name!);
                                             Clipboard.setData(data);
-                                            Util.toast("已复制到剪贴板");
+                                            Utils.toast("已复制到剪贴板");
                                           },
                                           child: Text("复制"),
                                         ),
@@ -288,7 +290,7 @@ class DashboardState extends State<Dashboard> {
     debugPrint("notifyStrings");
     if (res['success']) {
       setState(() {
-        Util.notifyStrings = res['data'] ?? {};
+        Utils.notifyStrings = res['data'] ?? {};
       });
     }
   }
@@ -347,10 +349,10 @@ class DashboardState extends State<Dashboard> {
         }
         if (init['data']['Session'] != null) {
           hostname = init['data']['Session']['hostname'];
-          Util.hostname = hostname;
+          Utils.hostname = hostname;
         }
         if (init['data']['Strings'] != null) {
-          Util.strings = init['data']['Strings'] ?? {};
+          Utils.strings = init['data']['Strings'] ?? {};
         }
       });
     }
@@ -386,9 +388,8 @@ class DashboardState extends State<Dashboard> {
               break;
             case "SYNO.Core.System":
               setState(() {
-                print(item['data']);
                 system = item['data'];
-                Util.systemVersion(system!['firmware_ver']);
+                Utils.systemVersion(system!['firmware_ver']);
               });
               break;
             case "SYNO.Core.CurrentConnection":
@@ -427,6 +428,7 @@ class DashboardState extends State<Dashboard> {
               });
               break;
             case "SYNO.Core.SyslogClient.Log":
+              Log.logger.info(jsonEncode(item['data']));
               setState(() {
                 fileLogs = item['data']['items'];
               });
@@ -460,7 +462,7 @@ class DashboardState extends State<Dashboard> {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return GestureDetector(
         onTap: () {
-          if (Util.notReviewAccount)
+          if (Utils.notReviewAccount)
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return SystemInfo(0, system!, volumes, disks);
             }));
@@ -479,7 +481,7 @@ class DashboardState extends State<Dashboard> {
                     children: [
                       if (wallpaperProvider.showWallpaper && wallpaperModel != null && (wallpaperModel!.customizeWallpaper! || wallpaperModel!.customizeBackground!))
                         ExtendedImage.network(
-                          Util.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Util.sid}",
+                          Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Utils.sid}",
                           height: 170,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -500,7 +502,13 @@ class DashboardState extends State<Dashboard> {
                           padding: EdgeInsets.all(20),
                           child: DefaultTextStyle(
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  color: Color.fromARGB(80, 0, 0, 0),
+                                  blurRadius: 5,
+                                )
+                              ],
                             ),
                             child: Column(
                               children: [
@@ -562,7 +570,7 @@ class DashboardState extends State<Dashboard> {
                                     child: Row(
                                       children: [
                                         Text("运行时间："),
-                                        Text("${Util.parseOpTime(system!['up_time'])}"),
+                                        Text("${Utils.parseOpTime(system!['up_time'])}"),
                                       ],
                                     ),
                                   ),
@@ -871,7 +879,7 @@ class DashboardState extends State<Dashboard> {
                           color: Colors.blue,
                         ),
                         Text(
-                          Util.formatSize(utilization!['network'][0]['tx']) + "/S",
+                          Utils.formatSize(utilization!['network'][0]['tx']) + "/S",
                           style: TextStyle(color: Colors.blue),
                         ),
                         SizedBox(
@@ -882,7 +890,7 @@ class DashboardState extends State<Dashboard> {
                           color: Colors.green,
                         ),
                         Text(
-                          Util.formatSize(utilization!['network'][0]['rx']) + "/S",
+                          Utils.formatSize(utilization!['network'][0]['rx']) + "/S",
                           style: TextStyle(color: Colors.green),
                         ),
                       ],
@@ -930,7 +938,7 @@ class DashboardState extends State<Dashboard> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                       );
-                                      return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Util.formatSize(touchedSpot.y.floor())}', textStyle);
+                                      return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Utils.formatSize(touchedSpot.y.floor())}', textStyle);
                                     }).toList();
                                   },
                                 ),
@@ -961,14 +969,14 @@ class DashboardState extends State<Dashboard> {
                                     // ),
                                     // getTitles: chartTitle,
                                     getTitlesWidget: (value, _) {
-                                      return Text(Util.formatSize(value, fixed: 0),
+                                      return Text(Utils.formatSize(value, fixed: 0),
                                           style: TextStyle(
                                             color: Color(0xff67727d),
                                             fontSize: 12,
                                           ));
                                     },
                                     reservedSize: 35,
-                                    interval: Util.chartInterval(maxNetworkSpeed),
+                                    interval: Utils.chartInterval(maxNetworkSpeed),
                                   ),
                                 ),
                               ),
@@ -1179,7 +1187,7 @@ class DashboardState extends State<Dashboard> {
     user['running'] = user['running'] ?? false;
     DateTime loginTime = DateTime.parse(user['time'].toString().replaceAll("/", "-"));
     DateTime currentTime = DateTime.now();
-    Map timeLong = Util.timeLong(currentTime.difference(loginTime).inSeconds);
+    Map timeLong = Utils.timeLong(currentTime.difference(loginTime).inSeconds);
     return Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       child: Row(
@@ -1255,7 +1263,7 @@ class DashboardState extends State<Dashboard> {
                                         });
 
                                         if (res['success']) {
-                                          Util.toast("连接已终止");
+                                          Utils.toast("连接已终止");
                                         }
                                       },
                                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -1359,9 +1367,9 @@ class DashboardState extends State<Dashboard> {
                   task['running'] = false;
                 });
                 if (res['success']) {
-                  Util.toast("任务计划执行成功");
+                  Utils.toast("任务计划执行成功");
                 } else {
-                  Util.toast("任务计划执行失败，code：${res['error']['code']}");
+                  Utils.toast("任务计划执行失败，code：${res['error']['code']}");
                 }
               },
               color: Theme.of(context).scaffoldBackgroundColor,
@@ -1392,7 +1400,7 @@ class DashboardState extends State<Dashboard> {
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(15),
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1413,7 +1421,7 @@ class DashboardState extends State<Dashboard> {
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(15),
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Row(
         children: [
           Icon(log['cmd'] == "delete"
@@ -1465,7 +1473,7 @@ class DashboardState extends State<Dashboard> {
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+      margin: EdgeInsets.only(top: 10, left: 20, right: 20),
       child: Row(
         children: [
           Container(
@@ -1545,15 +1553,15 @@ class DashboardState extends State<Dashboard> {
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
+                Text("已用：${Utils.formatSize(int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
+                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -1650,15 +1658,15 @@ class DashboardState extends State<Dashboard> {
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
+                Text("已用：${Utils.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
+                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -1706,10 +1714,10 @@ class DashboardState extends State<Dashboard> {
                   onPressed: () async {
                     var res = await Api.ejectEsata(esata['dev_id']);
                     if (res['success']) {
-                      Util.toast("设备已退出");
+                      Utils.toast("设备已退出");
                       getData();
                     } else {
-                      Util.toast("设备退出失败，代码${res['error']['code']}");
+                      Utils.toast("设备退出失败，代码${res['error']['code']}");
                     }
                   },
                   color: Theme.of(context).scaffoldBackgroundColor,
@@ -1734,8 +1742,8 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    SettingProvider settingProvider = Provider.of<SettingProvider>(context);
-    ShortcutProvider shortcutProvider = Provider.of<ShortcutProvider>(context);
+    SettingProvider settingProvider = context.watch<SettingProvider>();
+    ShortcutProvider shortcutProvider = context.watch<ShortcutProvider>();
     refreshDuration = settingProvider.refreshDuration;
     return Scaffold(
       key: _scaffoldKey,
@@ -1745,9 +1753,9 @@ class DashboardState extends State<Dashboard> {
           children: [
             Row(
               children: [
-                if (Util.notReviewAccount)
+                if (Utils.notReviewAccount)
                   Padding(
-                    padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
                     child: CupertinoButton(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
@@ -1763,7 +1771,7 @@ class DashboardState extends State<Dashboard> {
                   ),
                 if ((esatas + usbs).length > 0)
                   Padding(
-                    padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
                     child: CupertinoButton(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
@@ -1851,7 +1859,7 @@ class DashboardState extends State<Dashboard> {
                   ),
                 if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0))
                   Padding(
-                    padding: EdgeInsets.only(left: 10, top: 8, bottom: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
                     child: CupertinoButton(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
@@ -1870,9 +1878,9 @@ class DashboardState extends State<Dashboard> {
                     ),
                   ),
                 Spacer(),
-                if (Util.notReviewAccount)
+                if (Utils.notReviewAccount)
                   Padding(
-                    padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
                     child: CupertinoButton(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(10),
@@ -1897,7 +1905,7 @@ class DashboardState extends State<Dashboard> {
                     ),
                   ),
                 Padding(
-                  padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
                   child: CupertinoButton(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(10),
@@ -1960,9 +1968,9 @@ class DashboardState extends State<Dashboard> {
             )
           : success
               ? ListView(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   children: [
-                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Util.notReviewAccount && shortcutProvider.showShortcut)
+                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Utils.notReviewAccount && shortcutProvider.showShortcut)
                       ShortcutList(
                         shortcutItems,
                         system!,

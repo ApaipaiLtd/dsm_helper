@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 
 class FileDetail extends StatefulWidget {
   final Map file;
@@ -86,7 +85,6 @@ class _FileDetailState extends State<FileDetail> {
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
-
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Row(
@@ -101,10 +99,10 @@ class _FileDetailState extends State<FileDetail> {
                     onPressed: () async {
                       ClipboardData data = new ClipboardData(text: widget.file['path']);
                       Clipboard.setData(data);
-                      Util.toast("已复制到剪贴板");
+                      Utils.toast("已复制到剪贴板");
                     },
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     child: SizedBox(
                       width: 20,
                       height: 20,
@@ -139,10 +137,10 @@ class _FileDetailState extends State<FileDetail> {
                     onPressed: () async {
                       ClipboardData data = new ClipboardData(text: widget.file['additional']['real_path']);
                       Clipboard.setData(data);
-                      Util.toast("已复制到剪贴板");
+                      Utils.toast("已复制到剪贴板");
                     },
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     padding: EdgeInsets.all(5),
                     child: SizedBox(
                       width: 20,
@@ -166,7 +164,7 @@ class _FileDetailState extends State<FileDetail> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
-              children: [Text("大小："), loadingSize ? CupertinoActivityIndicator() : Text(Util.formatSize(size))],
+              children: [Text("大小："), loadingSize ? CupertinoActivityIndicator() : Text(Utils.formatSize(size))],
             ),
           ),
           if (widget.file['isdir'])

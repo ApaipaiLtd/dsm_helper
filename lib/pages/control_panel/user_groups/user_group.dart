@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class _UserGroupsState extends State<UserGroups> {
         groups = res['data']['groups'];
       });
     } else {
-      Util.toast("加载失败");
+      Utils.toast("加载失败");
       Navigator.of(context).pop();
     }
   }

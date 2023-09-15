@@ -1,6 +1,6 @@
 import 'package:dsm_helper/pages/common/image_preview.dart';
-import 'package:dsm_helper/util/function.dart';
-import 'package:dsm_helper/util/moments_api.dart';
+import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/moments_api.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 
 import 'package:dsm_helper/widgets/transparent_router.dart';
@@ -33,7 +33,7 @@ class _PhotosState extends State<Photos> {
   }
 
   Widget _buildPhotoItem(photo) {
-    String thumbUrl = '${Util.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}';
+    String thumbUrl = '${Utils.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(TransparentPageRoute(
@@ -41,7 +41,7 @@ class _PhotosState extends State<Photos> {
             return ImagePreview(
               photos
                   .map((photo) =>
-                      '${Util.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}')
+                      '${Utils.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}')
                   .toList(),
               photos.indexOf(photo),
               tag: "photo-ablum-${photo['additional']['thumbnail']['unit_id']}",
@@ -57,7 +57,7 @@ class _PhotosState extends State<Photos> {
             Hero(
               tag: "photo-ablum-${photo['additional']['thumbnail']['unit_id']}",
               child: CupertinoExtendedImage(
-                // "http://pan.fmtol.com:5000/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key=%22${photo['additional']['thumbnail']['cache_key']}%22&type=%22unit%22&size=%22sm%22&api=%22SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail%22&method=%22get%22&version=1&_sid=${Util.sid}",
+                // "http://pan.fmtol.com:5000/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key=%22${photo['additional']['thumbnail']['cache_key']}%22&type=%22unit%22&size=%22sm%22&api=%22SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail%22&method=%22get%22&version=1&_sid=${Utils.sid}",
                 thumbUrl,
                 width: photoWidth,
                 height: photoWidth,
@@ -82,7 +82,7 @@ class _PhotosState extends State<Photos> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "${Util.timeLong(5235)['hours'].toString().padLeft(2, "0")}:${Util.timeLong(5235)['minutes'].toString().padLeft(2, "0")}:${Util.timeLong(5235)['seconds'].toString().padLeft(2, "0")}",
+                      "${Utils.timeLong(5235)['hours'].toString().padLeft(2, "0")}:${Utils.timeLong(5235)['minutes'].toString().padLeft(2, "0")}:${Utils.timeLong(5235)['seconds'].toString().padLeft(2, "0")}",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],
@@ -115,11 +115,11 @@ class _PhotosState extends State<Photos> {
                 background: Hero(
                   tag: widget.tag,
                   child: CupertinoExtendedImage(
-                    '${Util.baseUrl}/webapi/entry.cgi?id=${widget.album['additional']['thumbnail']['unit_id']}&cache_key="${widget.album['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}',
+                    '${Utils.baseUrl}/webapi/entry.cgi?id=${widget.album['additional']['thumbnail']['unit_id']}&cache_key="${widget.album['additional']['thumbnail']['cache_key']}"&type="unit"&size="xl"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}',
                     fit: BoxFit.cover,
                     height: 200,
                     placeholder: CupertinoExtendedImage(
-                      '${Util.baseUrl}/webapi/entry.cgi?id=${widget.album['additional']['thumbnail']['unit_id']}&cache_key="${widget.album['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Util.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Util.sid}',
+                      '${Utils.baseUrl}/webapi/entry.cgi?id=${widget.album['additional']['thumbnail']['unit_id']}&cache_key="${widget.album['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}',
                       fit: BoxFit.cover,
                     ),
                   ),

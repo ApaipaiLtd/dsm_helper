@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/packages/detail.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -87,7 +87,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
         loadingAll = false;
       });
     } else {
-      Util.toast("数据加载失败");
+      Utils.toast("数据加载失败");
       Navigator.of(context).pop();
       return;
     }
@@ -170,7 +170,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
         if (installedPackageInfo['id'] == package['id']) {
           package['installed'] = true;
           package['installed_version'] = installedPackageInfo['version'];
-          package['can_update'] = Util.versionCompare(package['installed_version'], package['version']) < 0;
+          package['can_update'] = Utils.versionCompare(package['installed_version'], package['version']) < 0;
           package['additional'] = installedPackageInfo['additional'];
           if (package['installed']) {
             installedPackages.add(package);
@@ -254,7 +254,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
             });
             var res = await Api.launchPackage(package['id'], package['dsm_apps'], "start");
             if (res['success']) {
-              Util.toast("已启动");
+              Utils.toast("已启动");
               // await getLaunchedPackages();
               await getInstalledPackages();
               setState(() {
@@ -301,7 +301,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                                     });
                                     var res = await Api.launchPackage(package['id'], package['dsm_apps'], "stop");
                                     if (res['success']) {
-                                      Util.toast("已停用");
+                                      Utils.toast("已停用");
                                       // await getLaunchedPackages();
                                       await getInstalledPackages();
                                       setState(() {
@@ -393,7 +393,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
   Widget _buildUpdateItem(update) {
     String thumbnailUrl = update['thumbnail'].last;
     if (!thumbnailUrl.startsWith("http")) {
-      thumbnailUrl = Util.baseUrl + thumbnailUrl;
+      thumbnailUrl = Utils.baseUrl + thumbnailUrl;
     }
     return GestureDetector(
       onTap: () {
@@ -474,7 +474,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
     if (package['thumbnail'].length > 0) {
       thumbnailUrl = package['thumbnail'].last;
       if (!thumbnailUrl.startsWith("http")) {
-        thumbnailUrl = Util.baseUrl + thumbnailUrl;
+        thumbnailUrl = Utils.baseUrl + thumbnailUrl;
       }
     }
 
@@ -594,7 +594,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                   unselectedLabelColor: Colors.grey,
                   indicator: BubbleTabIndicator(
                     indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                    shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                    shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                   ),
                   tabs: [
                     Padding(

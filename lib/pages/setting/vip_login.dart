@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,58 +19,58 @@ class _VipLoginState extends State<VipLogin> {
   String confirmPassword = "";
   _login() async {
     if (account.isBlank) {
-      Util.toast("请输入用户名");
+      Utils.toast("请输入用户名");
       return;
     }
     if (password.length < 8 || password.length > 16) {
-      Util.toast("请输入8-16位密码");
+      Utils.toast("请输入8-16位密码");
       return;
     }
 
     try {
-      var res = await Util.post("${Util.appUrl}/login/password", data: {
+      var res = await Utils.post("${Utils.appUrl}/login/password", data: {
         "account": account,
         "password": password,
       });
       if (res['code'] == 1) {
-        Util.toast("登录成功");
+        Utils.toast("登录成功");
         SpUtil.putString("user_token", res['data']['token']);
         Navigator.of(context).pop(true);
       } else {
-        Util.toast(res['msg'] ?? '登录失败，请检查网络');
+        Utils.toast(res['msg'] ?? '登录失败，请检查网络');
       }
     } catch (e) {
-      Util.toast("登录失败");
+      Utils.toast("登录失败");
     }
   }
 
   _register() async {
     if (account.length < 6 || password.length > 30) {
-      Util.toast("请输入6-30位用户名");
+      Utils.toast("请输入6-30位用户名");
       return;
     }
     if (password.length < 8 || password.length > 16) {
-      Util.toast("请输入8-16位密码");
+      Utils.toast("请输入8-16位密码");
       return;
     }
     if (confirmPassword != password) {
-      Util.toast("两次密码输入不一致");
+      Utils.toast("两次密码输入不一致");
       return;
     }
     try {
-      var res = await Util.post("${Util.appUrl}/login/register", data: {
+      var res = await Utils.post("${Utils.appUrl}/login/register", data: {
         "account": account,
         "password": password,
       });
       if (res['code'] == 1) {
-        Util.toast("注册成功");
+        Utils.toast("注册成功");
         SpUtil.putString("user_token", res['data']['token']);
         Navigator.of(context).pop(true);
       } else {
-        Util.toast(res['msg'] ?? '注册失败，请检查网络');
+        Utils.toast(res['msg'] ?? '注册失败，请检查网络');
       }
     } catch (e) {
-      Util.toast("注册失败");
+      Utils.toast("注册失败");
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/setting/vip_login.dart';
 import 'package:dsm_helper/pages/setting/vip_record.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,9 +60,9 @@ class _VipState extends State<Vip> {
           checkPayment();
         } else {
           if (res.errCode == -2) {
-            Util.toast("已取消支付");
+            Utils.toast("已取消支付");
           } else {
-            Util.toast(res.errStr != null ? res.errStr! : '支付失败');
+            Utils.toast(res.errStr != null ? res.errStr! : '支付失败');
           }
         }
       });
@@ -72,9 +72,9 @@ class _VipState extends State<Vip> {
   checkPayment() async {
     var hide = showWeuiLoadingToast(context: context, backButtonClose: true);
     timer = Timer.periodic(Duration(seconds: 1), (_) async {
-      var res = await Util.post("${Util.appUrl}/payment/check", data: {"out_trade_no": outTradeNo});
+      var res = await Utils.post("${Utils.appUrl}/payment/check", data: {"out_trade_no": outTradeNo});
       if (res['code'] == 1) {
-        Util.toast("支付成功");
+        Utils.toast("支付成功");
         timer?.cancel();
         initData(tips: true);
         hide();
@@ -99,15 +99,15 @@ class _VipState extends State<Vip> {
     }
     userToken = SpUtil.getString("user_token")!;
     if (userToken.isNotBlank) {
-      var res = await Util.post("${Util.appUrl}/vip/info", data: {"token": userToken});
+      var res = await Utils.post("${Utils.appUrl}/vip/info", data: {"token": userToken});
       if (res['code'] == 1) {
         isLogin = true;
         if (res['data']['is_forever'] == 1) {
-          isForever = Util.vipForever = true;
+          isForever = Utils.vipForever = true;
         }
-        // isForever = Util.vipForever = true;
+        // isForever = Utils.vipForever = true;
         if (res['data']['vip_expire_time'] != null) {
-          Util.vipExpireTime = vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
+          Utils.vipExpireTime = vipExpireTime = DateTime.parse(res['data']['vip_expire_time']);
           if (noAdTime == null) {
             if (vipExpireTime!.isAfter(DateTime.now())) {
               noAdTime = vipExpireTime;
@@ -126,20 +126,20 @@ class _VipState extends State<Vip> {
   login(String code) async {
     var hide = showWeuiLoadingToast(context: context);
     try {
-      var res = await Util.post("${Util.appUrl}/login/app", data: {"code": code});
+      var res = await Utils.post("${Utils.appUrl}/login/app", data: {"code": code});
       if (res['code'] == 1) {
         SpUtil.putString("user_openid", res['data']['openid']);
         SpUtil.putString("user_token", res['data']['token']);
         setState(() {
           isLogin = true;
         });
-        Util.toast("登录成功");
+        Utils.toast("登录成功");
         initData();
       } else {
-        Util.toast(res['msg']);
+        Utils.toast(res['msg']);
       }
     } catch (e) {
-      Util.toast("登录失败");
+      Utils.toast("登录失败");
     } finally {
       hide();
     }
@@ -161,12 +161,12 @@ class _VipState extends State<Vip> {
           noAdTime = noAdTime!.add(Duration(days: 3));
         });
         lastVideoTime = DateTime.now();
-        Util.toast("恭喜您成功获得3天免广告特权");
+        Utils.toast("恭喜您成功获得3天免广告特权");
         SpUtil.putString("no_ad_time", noAdTime!.format("Y-m-d H:i:s"));
         SpUtil.putString("last_video_time", lastVideoTime!.format("Y-m-d H:i:s"));
       }
     } catch (e) {
-      Util.toast("广告播放失败");
+      Utils.toast("广告播放失败");
     } finally {
       hide();
     }
@@ -174,7 +174,7 @@ class _VipState extends State<Vip> {
 
   close3() {
     if (lastVideoTime != null && lastVideoTime!.isSameDay(DateTime.now())) {
-      Util.toast("今天已经领取过，明天再来吧~");
+      Utils.toast("今天已经领取过，明天再来吧~");
       return;
     }
     showCupertinoDialog(
@@ -320,14 +320,14 @@ class _VipState extends State<Vip> {
                               child: CupertinoButton(
                                 onPressed: () async {
                                   if (code.trim() == "") {
-                                    Util.toast("请输入兑换码");
+                                    Utils.toast("请输入兑换码");
                                     return;
                                   }
-                                  var res = await Util.post("${Util.appUrl}/vip/exchange", data: {"token": userToken, "code": code.trim()});
+                                  var res = await Utils.post("${Utils.appUrl}/vip/exchange", data: {"token": userToken, "code": code.trim()});
                                   if (res['code'] == 0) {
-                                    Util.toast(res['msg']);
+                                    Utils.toast(res['msg']);
                                   } else {
-                                    Util.toast("成功兑换7天免广告特权");
+                                    Utils.toast("成功兑换7天免广告特权");
                                     initData(tips: true);
                                     Navigator.of(context).pop();
                                   }
@@ -485,7 +485,7 @@ class _VipState extends State<Vip> {
     if (!isLogin) {
       loginDialog();
     } else if (isForever) {
-      Util.toast("您已开通永久免广告特权，无需继续购买");
+      Utils.toast("您已开通永久免广告特权，无需继续购买");
     } else {
       var hide = showWeuiLoadingToast(context: context);
 
@@ -498,13 +498,13 @@ class _VipState extends State<Vip> {
   }
 
   payOrder(String type) async {
-    var res = await Util.post("${Util.appUrl}/payment/wechat", data: {"token": userToken, "type": type});
+    var res = await Utils.post("${Utils.appUrl}/payment/wechat", data: {"token": userToken, "type": type});
     if (res['code'] == 1) {
       var data = res['data'];
       outTradeNo = data['out_trade_no'];
       fluwx.pay(which: Payment(appId: data['appid'], partnerId: data['partnerid'], prepayId: data['prepayid'], packageValue: data['package'], nonceStr: data['noncestr'], timestamp: int.parse(data['timestamp']), sign: data['sign']));
     } else {
-      Util.toast(res['msg']);
+      Utils.toast(res['msg']);
     }
   }
 
@@ -582,7 +582,7 @@ class _VipState extends State<Vip> {
               style: TextStyle(color: Colors.red),
             )
           else
-            Text("${Util.appName}是一款开源免费的APP，作者花费大量时间开发${Util.appName}，但是为爱发电终究无法维持最初的激情。\n为了能继续将${Util.appName}做强做好，在近期的版本中加入了开屏广告以获取一些微薄的收入。当然广告会让很多朋友（包括作者自己）反感，所以加入了一些措施来关闭开屏广告，希望大家能够理解和支持。"),
+            Text("${Utils.appName}是一款开源免费的APP，作者花费大量时间开发${Utils.appName}，但是为爱发电终究无法维持最初的激情。\n为了能继续将${Utils.appName}做强做好，在近期的版本中加入了开屏广告以获取一些微薄的收入。当然广告会让很多朋友（包括作者自己）反感，所以加入了一些措施来关闭开屏广告，希望大家能够理解和支持。"),
           NoAdButton(
             "关闭3天",
             price: "观看广告",

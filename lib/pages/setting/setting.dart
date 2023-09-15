@@ -10,7 +10,7 @@ import 'package:dsm_helper/pages/setting/feedback.dart';
 import 'package:dsm_helper/pages/setting/helper_setting.dart';
 import 'package:dsm_helper/pages/terminal/select_server.dart';
 import 'package:dsm_helper/pages/user/setting.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/terminal_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +25,7 @@ class SettingButton extends StatelessWidget {
   final String name;
   final String icon;
   final OnPressed? onPressed;
-  const SettingButton({required this.name, required this.icon, this.onPressed, this.loading: false, super.key});
+  const SettingButton({required this.name, required this.icon, this.onPressed, this.loading = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -184,14 +184,14 @@ class _SettingState extends State<Setting> {
       }
     });
     if (res['success']) {
-      Util.toast("已发送指令");
+      Utils.toast("已发送指令");
     } else if (res['error']['code'] == 117) {
       List errors = res['error']['errors']['runningTasks'];
       List msgs = [];
       for (int i = 0; i < errors.length; i++) {
         List titles = errors[i].split(":");
         if (titles.length == 3) {
-          msgs.add(Util.strings[titles[0]][titles[1]][titles[2]]);
+          msgs.add(Utils.strings[titles[0]][titles[1]][titles[2]]);
         }
         //系统正在处理下列任务。现在关机可能会导致套件异常或数据丢失。是否确定要继续？
         showCupertinoModalPopup(
@@ -272,7 +272,7 @@ class _SettingState extends State<Setting> {
         );
       }
     } else {
-      Util.toast("操作失败，code:${res['error']['code']}");
+      Utils.toast("操作失败，code:${res['error']['code']}");
     }
   }
 
@@ -654,7 +654,7 @@ class _SettingState extends State<Setting> {
             spacing: 20,
             runSpacing: 20,
             children: [
-              if (Util.notReviewAccount) ...[
+              if (Utils.notReviewAccount) ...[
                 SettingButton(name: "关机", icon: "shutdown", loading: shutdowning, onPressed: onShutdown),
                 SettingButton(name: "重启", icon: "reboot", loading: rebooting, onPressed: onReboot),
               ],
@@ -663,7 +663,7 @@ class _SettingState extends State<Setting> {
                 child: GestureDetector(
                   onTap: () async {
                     if (ssh == null) {
-                      Util.toast("未获取到SSH状态，正在重试");
+                      Utils.toast("未获取到SSH状态，正在重试");
                       getData();
                     } else {
                       showCupertinoModalPopup(
@@ -707,7 +707,7 @@ class _SettingState extends State<Setting> {
                                                 var res = await Api.setTerminal(!ssh!, telnet, sshPort);
                                                 print(res);
                                                 if (!res['success']) {
-                                                  Util.toast("操作失败，代码：${res['error']['code']}");
+                                                  Utils.toast("操作失败，代码：${res['error']['code']}");
                                                 }
                                                 await getData();
                                               },
@@ -819,7 +819,7 @@ class _SettingState extends State<Setting> {
                 name: "问题反馈",
                 icon: "edit",
                 onPressed: () async {
-                  if (Util.notReviewAccount) {
+                  if (Utils.notReviewAccount) {
                     showCupertinoModalPopup(
                       context: context,
                       builder: (context) {
@@ -896,7 +896,7 @@ class _SettingState extends State<Setting> {
                   }
                 },
               ),
-              if (Util.notReviewAccount && Util.vipExpireTime.difference(DateTime.now()).inDays < 7 && !Util.vipForever)
+              if (Utils.notReviewAccount && Utils.vipExpireTime.difference(DateTime.now()).inDays < 7 && !Utils.vipForever)
                 SettingButton(
                   name: "关闭广告",
                   icon: "no_ad",

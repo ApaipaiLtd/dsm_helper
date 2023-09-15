@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';

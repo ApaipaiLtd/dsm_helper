@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -50,15 +50,15 @@ class _AddTrackerState extends State<AddTracker> {
                 }
               });
               if (tracker.length == 0) {
-                Util.toast("请填写Tacker");
+                Utils.toast("请填写Tacker");
                 return;
               }
               var res = await Api.downloadTrackerAdd(widget.id, trackers);
               if (res['success']) {
-                Util.toast("添加Tracker成功");
+                Utils.toast("添加Tracker成功");
                 Navigator.of(context).pop(true);
               } else {
-                Util.toast("添加Tracker失败，代码${res['error']['code']}");
+                Utils.toast("添加Tracker失败，代码${res['error']['code']}");
               }
             },
             child: Text(

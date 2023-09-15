@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +106,7 @@ class _SelectServerState extends State<SelectServer> {
                   });
 
                   SpUtil.putString("terminal_servers", jsonEncode(servers));
-                  Util.toast("删除成功");
+                  Utils.toast("删除成功");
                 },
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),

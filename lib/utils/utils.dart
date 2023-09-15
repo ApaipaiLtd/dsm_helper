@@ -8,23 +8,23 @@ import 'package:dio/io.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
-import 'package:dsm_helper/util/api.dart';
-import 'package:dsm_helper/util/log.dart';
+import 'package:dsm_helper/utils/api.dart';
+import 'package:dsm_helper/utils/log.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:gal/gal.dart';
-import 'package:oktoast/oktoast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sp_util/sp_util.dart';
 
-export 'package:dsm_helper/extensions/datetime.dart';
+export 'package:dsm_helper/utils/extensions/datetime_ext.dart';
 export 'package:dsm_helper/extensions/int.dart';
 export 'package:dsm_helper/extensions/string.dart';
-export 'package:dsm_helper/util/api.dart';
+export 'package:dsm_helper/utils/api.dart';
 
 enum FileTypeEnum {
   folder,
@@ -53,7 +53,7 @@ enum UploadStatus {
   wait,
 }
 
-class Util {
+class Utils {
   static GroupsModel groups = GroupsModel(
     qq: [
       GroupModel(name: "交流群①", no: "240557031", key: "4woOsiYfPZO4lZ08fX4el43n926mj1r5", status: "已满"),
@@ -92,13 +92,18 @@ class Util {
   static bool downloadWifiOnly = true;
 
   static bool get notReviewAccount => account != "jinx";
-  static toast(String text) {
-    showToast(text ?? "", dismissOtherToast: true, textPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 8));
+  static void toast(String message, {Toast toastLength = Toast.LENGTH_SHORT, ToastGravity gravity = ToastGravity.CENTER}) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: toastLength,
+      gravity: gravity,
+      timeInSecForIosWeb: 1,
+    );
   }
 
   static String systemVersion(String version) {
     version = version.replaceAll("DSM ", "");
-    Util.version = int.parse(version.split(".").first);
+    Utils.version = int.parse(version.split(".").first);
     return version;
   }
 
@@ -194,7 +199,7 @@ class Util {
       }
       return MapEntry(key, (value + amount).floor());
     });
-    return Color.fromRGBO(colors['r'] ?? 255, colors['g']?? 255, colors['b'] ?? 255, 1);
+    return Color.fromRGBO(colors['r'] ?? 255, colors['g'] ?? 255, colors['b'] ?? 255, 1);
   }
 
   static FileTypeEnum fileType(String name) {
@@ -288,7 +293,7 @@ class Util {
 
   static Future<dynamic> get(String url, {Map<String, dynamic>? data, bool login = true, String? host, Map<String, dynamic>? headers, CancelToken? cancelToken, bool? checkSsl, String? cookie, int timeout = 20, bool decode = true}) async {
     headers = headers ?? {};
-    headers['Cookie'] = cookie ?? Util.cookie;
+    headers['Cookie'] = cookie ?? Utils.cookie;
 
     headers["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
     headers['origin'] = host ?? baseUrl;
@@ -309,7 +314,7 @@ class Util {
     //   }; //
     // }
     //忽略Https校验
-    if (!(checkSsl ?? Util.checkSsl)) {
+    if (!(checkSsl ?? Utils.checkSsl)) {
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
         HttpClient httpClient = HttpClient();
         httpClient.badCertificateCallback = (cert, host, port) {
@@ -327,8 +332,8 @@ class Util {
           List cookies = [];
           //从原始cookie中提取did
           String did = "";
-          if (Util.cookie != null && Util.cookie != '') {
-            List originCookies = Util.cookie!.split("; ");
+          if (Utils.cookie != null && Utils.cookie != '') {
+            List originCookies = Utils.cookie!.split("; ");
             for (int i = 0; i < originCookies.length; i++) {
               Cookie cookie = Cookie.fromSetCookieValue(originCookies[i]);
               if (cookie.name == "did") {
@@ -337,7 +342,7 @@ class Util {
             }
           }
           bool haveDid = false;
-          if(response.headers.map['set-cookie'] != null){
+          if (response.headers.map['set-cookie'] != null) {
             for (int i = 0; i < response.headers.map['set-cookie']!.length; i++) {
               Cookie cookie = Cookie.fromSetCookieValue(response.headers.map['set-cookie']![i]);
               cookies.add("${cookie.name}=${cookie.value}");
@@ -352,8 +357,8 @@ class Util {
             cookies.add("did=$did");
           }
 
-          Util.cookie = cookies.join("; ");
-          SpUtil.putString("smid", Util.cookie ?? '');
+          Utils.cookie = cookies.join("; ");
+          SpUtil.putString("smid", Utils.cookie ?? '');
         }
       }
 
@@ -399,7 +404,7 @@ class Util {
 
   static Future<dynamic> post(String url, {Map<String, dynamic>? data, bool login = true, String? host, CancelToken? cancelToken, Map<String, dynamic>? headers, bool? checkSsl, String? cookie, int timeout = 20}) async {
     headers = headers ?? {};
-    headers['Cookie'] = cookie ?? Util.cookie;
+    headers['Cookie'] = cookie ?? Utils.cookie;
     headers["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
     headers['origin'] = host ?? baseUrl;
     headers['referer'] = host ?? baseUrl;
@@ -433,7 +438,7 @@ class Util {
     //   responseHeader: false,
     //   logPrint: logPrint,
     // ));
-    if (!(checkSsl ?? Util.checkSsl)) {
+    if (!(checkSsl ?? Utils.checkSsl)) {
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
         HttpClient httpClient = HttpClient();
         httpClient.badCertificateCallback = (cert, host, port) {
@@ -460,7 +465,7 @@ class Util {
   static Future<dynamic> upload(String url, {Map<String, dynamic>? params, Map<String, dynamic>? data, bool login = true, String? host, CancelToken? cancelToken, Function(int, int)? onSendProgress, Map<String, dynamic>? headers}) async {
     headers = headers ?? {};
     data = data ?? {};
-    headers['Cookie'] = Util.cookie;
+    headers['Cookie'] = Utils.cookie;
     headers['Accept-Encoding'] = "gzip, deflate";
     headers['Accept'] = "*/*";
     // headers["Accept-Language"] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5";
@@ -565,7 +570,7 @@ class Util {
   //   // bool permission = false;
   //   // permission = await Permission.storage.request().isGranted;
   //   // if (!permission) {
-  //   //   Util.toast("请先授权APP访问存储权限");
+  //   //   Utils.toast("请先授权APP访问存储权限");
   //   //   return "";
   //   // }
   //   String savePath = await getDownloadPath();
@@ -664,7 +669,7 @@ class Util {
       } else {
         save = File(url);
       }
-      await Gal.putImage(save.path, album: Util.appName);
+      await Gal.putImage(save.path, album: Utils.appName);
       if (showLoading) {
         hide();
       }

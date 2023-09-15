@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,7 +47,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       getFolderDetail(widget.folder!['name']);
     }
 
-    volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
+    volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Utils.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
     unitController.text = units[selectedUnitIndex];
     super.initState();
   }
@@ -91,7 +91,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       for (var i = 0; i < widget.volumes.length; i++) {
         if (widget.volumes[i]['volume_path'] == folder['vol_path']) {
           selectedVolumeIndex = i;
-          volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
+          volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Utils.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";
           break;
         }
       }
@@ -101,9 +101,9 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
       });
     } else {
       if (res['error']['code'] == 402) {
-        Util.toast("此共享文件夹不存在");
+        Utils.toast("此共享文件夹不存在");
       } else {
-        Util.toast("加载失败，code: ${res['error']['code']}");
+        Utils.toast("加载失败，code: ${res['error']['code']}");
       }
 
       Navigator.of(context).pop();
@@ -114,28 +114,28 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
     FocusScope.of(context).unfocus();
     print(name);
     if (name.trim() == "") {
-      Util.toast("请输入共享文件夹名称");
+      Utils.toast("请输入共享文件夹名称");
       return;
     }
     if (encryption) {
       if (password.length < 8) {
-        Util.toast("加密密钥最短为8位");
+        Utils.toast("加密密钥最短为8位");
         return;
       }
       if (password != confirmPassword) {
-        Util.toast("加密密钥和确认密钥不一致");
+        Utils.toast("加密密钥和确认密钥不一致");
         return;
       }
     }
     if (enableShareQuota) {
       if (shareQuotaController.text.trim() == "") {
-        Util.toast("请输入共享文件夹配额");
+        Utils.toast("请输入共享文件夹配额");
         return;
       }
       try {
         shareQuota = "${int.parse(shareQuotaController.text) * pow(1024, 2 - selectedUnitIndex)}";
       } catch (e) {
-        Util.toast("共享文件夹配额仅支持输入整数");
+        Utils.toast("共享文件夹配额仅支持输入整数");
         return;
       }
     }
@@ -166,7 +166,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
     });
     print(res);
     if (res['success']) {
-      Util.toast("${widget.folder != null ? '修改' : '新增'}共享文件夹成功");
+      Utils.toast("${widget.folder != null ? '修改' : '新增'}共享文件夹成功");
       Navigator.of(context).pop(true);
     }
   }
@@ -261,7 +261,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                               setState(() {
                                                 selectedVolumeIndex = widget.volumes.indexOf(volume);
                                               });
-                                              volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Util.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
+                                              volumeController.value = TextEditingValue(text: "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Utils.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}");
                                               Navigator.of(context).pop();
                                             },
                                             color: Theme.of(context).scaffoldBackgroundColor,
@@ -273,7 +273,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text("${volume['display_name']}(可用容量：${Util.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
+                                                  Text("${volume['display_name']}(可用容量：${Utils.formatSize(int.parse(volume['size_free_byte']))}) - ${volume['fs_type']}"),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -635,7 +635,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                           Text("启用共享文件夹配额"),
                           if (shareQuotaUsed != null)
                             Text(
-                              "(已使用${Util.formatSize((shareQuotaUsed! * 1024 * 1024).toInt())})",
+                              "(已使用${Utils.formatSize((shareQuotaUsed! * 1024 * 1024).toInt())})",
                               style: TextStyle(color: Colors.blue),
                             ),
                           Spacer(),

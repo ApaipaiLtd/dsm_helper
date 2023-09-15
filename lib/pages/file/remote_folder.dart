@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/file/select_folder.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -48,7 +48,7 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
               unselectedLabelColor: Colors.grey,
               indicator: BubbleTabIndicator(
                 indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
               ),
               tabs: [
                 Padding(
@@ -201,24 +201,24 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                         borderRadius: BorderRadius.circular(20),
                       onPressed: () async {
                         if (mountPoint == "") {
-                          Util.toast("请选择保存位置");
-                          Util.vibrate(FeedbackType.impact);
+                          Utils.toast("请选择保存位置");
+                          Utils.vibrate(FeedbackType.impact);
                           return;
                         }
                         if (serverIp.trim() == "") {
-                          Util.toast("请输入远程文件夹地址");
+                          Utils.toast("请输入远程文件夹地址");
                           return;
                         }
                         var res = await Api.mountFolder(serverIp, account, passwd, mountPoint, autoMount);
                         if (res['success']) {
-                          Util.toast("装载成功");
-                          Util.vibrate(FeedbackType.light);
+                          Utils.toast("装载成功");
+                          Utils.vibrate(FeedbackType.light);
                         } else {
-                          Util.vibrate(FeedbackType.warning);
+                          Utils.vibrate(FeedbackType.warning);
                           if (res['error']['code'] == 436) {
-                            Util.toast("远程文件夹地址有误");
+                            Utils.toast("远程文件夹地址有误");
                           } else {
-                            Util.toast("装载失败，代码${res['error']['code']}");
+                            Utils.toast("装载失败，代码${res['error']['code']}");
                           }
                         }
                       },

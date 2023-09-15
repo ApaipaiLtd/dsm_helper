@@ -1,4 +1,4 @@
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -74,8 +74,6 @@ class _MediaIndexState extends State<MediaIndex> {
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            
-            
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -150,8 +148,6 @@ class _MediaIndexState extends State<MediaIndex> {
               borderRadius: BorderRadius.circular(20),
             ),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            
-            
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -254,8 +250,6 @@ class _MediaIndexState extends State<MediaIndex> {
                 borderRadius: BorderRadius.circular(20),
               ),
               margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-              
-              
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -280,13 +274,15 @@ class _MediaIndexState extends State<MediaIndex> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap:mobileEnabled!=null ? () async {
-                            setState(() {
-                              mobileEnabled = !mobileEnabled!;
-                            });
-                            await Api.mediaIndexSet(thumbnailQuality, mobileEnabled!);
-                            getData();
-                          }:null,
+                          onTap: mobileEnabled != null
+                              ? () async {
+                                  setState(() {
+                                    mobileEnabled = !mobileEnabled!;
+                                  });
+                                  await Api.mediaIndexSet(thumbnailQuality, mobileEnabled!);
+                                  getData();
+                                }
+                              : null,
                           child: Container(
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,

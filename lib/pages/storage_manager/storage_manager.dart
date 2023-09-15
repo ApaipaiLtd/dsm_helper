@@ -1,5 +1,5 @@
 import 'package:dsm_helper/pages/storage_manager/smart.dart';
-import 'package:dsm_helper/util/function.dart';
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/dashed_decoration.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -51,7 +51,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
         hotSpares = res['data']['hotSpares'];
       });
     } else {
-      Util.toast("获取存储空间信息失败，代码${res['error']['code']}");
+      Utils.toast("获取存储空间信息失败，代码${res['error']['code']}");
       Navigator.of(context).pop();
     }
   }
@@ -127,15 +127,15 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
+                Text("已用：${Utils.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
+                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("容量：${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -240,15 +240,15 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                 SizedBox(
                   height: 5,
                 ),
-                Text("已用：${Util.formatSize(int.parse(volume['size']['used']))}"),
+                Text("已用：${Utils.formatSize(int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("可用：${Util.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
+                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
                 SizedBox(
                   height: 5,
                 ),
-                Text("全部：${Util.formatSize(int.parse(volume['size']['total']))}"),
+                Text("全部：${Utils.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -327,7 +327,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                       SizedBox(
                         height: 5,
                       ),
-                      Text("${Util.formatSize(int.parse(disk['size_total']))}"),
+                      Text("${Utils.formatSize(int.parse(disk['size_total']))}"),
                     ],
                   ),
                 )
@@ -575,7 +575,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                                 fill: true,
                               ),
                 Spacer(),
-                Text("${Util.formatSize(int.parse(pool['size']['used']))} / ${Util.formatSize(int.parse(pool['size']['total']))}"),
+                Text("${Utils.formatSize(int.parse(pool['size']['used']))} / ${Utils.formatSize(int.parse(pool['size']['total']))}"),
               ],
             ),
             Row(
@@ -622,7 +622,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
-                Text("${Util.formatSize(int.parse(pool['size']['total']) - int.parse(pool['size']['used']))}"),
+                Text("${Utils.formatSize(int.parse(pool['size']['total']) - int.parse(pool['size']['used']))}"),
               ],
             ),
             SizedBox(
@@ -751,7 +751,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                                 fill: true,
                               ),
                 Spacer(),
-                Text(Util.formatSize(int.parse(pool['size']['total']))),
+                Text(Utils.formatSize(int.parse(pool['size']['total']))),
               ],
             ),
             SizedBox(
@@ -816,7 +816,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                     unselectedLabelColor: Colors.grey,
                     indicator: BubbleTabIndicator(
                       indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Util.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
                     ),
                     tabs: [
                       Padding(
