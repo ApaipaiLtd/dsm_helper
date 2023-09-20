@@ -21,7 +21,7 @@ class ControlPanel extends StatefulWidget {
   final List volumes;
   final List disks;
   final Map notify;
-  ControlPanel(this.system, this.volumes, this.disks, this.notify);
+  ControlPanel({this.system, this.volumes = const [], this.disks = const [], this.notify = const {}});
   @override
   _ControlPanelState createState() => _ControlPanelState();
 }

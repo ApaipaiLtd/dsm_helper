@@ -1,3 +1,7 @@
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
+import 'package:dsm_helper/models/base_model.dart';
+
 /// cpu_clock_speed : 1996
 /// cpu_cores : "4"
 /// cpu_family : "Celeron"
@@ -23,7 +27,7 @@
 /// up_time : "240:6:24"
 /// usb_dev : [{"cls":"hub","pid":"0608","producer":"Genesys Logic, Inc.","product":"Hub","rev":"85.37","vid":"05e3"}]
 
-class System {
+class System extends BaseModel {
   System({
     this.cpuClockSpeed,
     this.cpuCores,
@@ -50,6 +54,11 @@ class System {
     this.upTime,
     this.usbDev,
   });
+
+  static Future<System> info() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.System", "info", version: 1, post: true, parser: System.fromJson);
+    return res.data;
+  }
 
   System.fromJson(dynamic json) {
     cpuClockSpeed = json['cpu_clock_speed'];
@@ -92,6 +101,10 @@ class System {
       });
     }
   }
+  String? api = "SYNO.Core.System";
+  String? method = "info";
+  int? version = 1;
+
   num? cpuClockSpeed;
   String? cpuCores;
   String? cpuFamily;

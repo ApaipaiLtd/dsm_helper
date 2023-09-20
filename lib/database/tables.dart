@@ -74,6 +74,14 @@ class Database extends _$Database {
   Future updateServer(Server server) {
     return update(servers).replace(server);
   }
+
+  Future deleteServer(Server server) {
+    return delete(servers).delete(server);
+  }
+
+  Future deleteAccount(Account account) {
+    return delete(accounts).delete(account);
+  }
 }
 
 LazyDatabase _openConnection() {

@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:dsm_helper/models/api_model.dart';
+import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
+import 'package:dsm_helper/models/Syno/Core/System.dart';
+import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
-import 'package:dsm_helper/models/shortcut_item_model.dart';
 import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
@@ -13,12 +14,16 @@ import 'package:dsm_helper/pages/dashboard/applications.dart';
 import 'package:dsm_helper/pages/dashboard/media_converter.dart';
 import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
 import 'package:dsm_helper/pages/dashboard/widget_setting.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/system_health_widget.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
+import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/system_info_provider.dart';
+import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -34,6 +39,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:dsm_helper/apis/api.dart' as api;
 
 class Dashboard extends StatefulWidget {
   Dashboard({key}) : super(key: key);
@@ -42,19 +48,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard> {
-  List<String> supportedShortcuts = [
-    "SYNO.SDS.PkgManApp.Instance",
-    "SYNO.SDS.AdminCenter.Application",
-    "SYNO.SDS.StorageManager.Instance",
-    "SYNO.SDS.Docker.Application",
-    "SYNO.SDS.Docker.ContainerDetail.Instance",
-    "SYNO.SDS.LogCenter.Instance",
-    "SYNO.SDS.ResourceMonitor.Instance",
-    "SYNO.SDS.Virtualization.Application",
-    "SYNO.SDS.DownloadStation.Application",
-    "SYNO.SDS.XLPan.Application",
-  ];
-
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map? utilization;
   List volumes = [];
@@ -66,10 +59,8 @@ class DashboardState extends State<Dashboard> {
   List tasks = [];
   List latestLog = [];
   List notifies = [];
-  List widgets = [];
   List applications = [];
   List fileLogs = [];
-  List<ShortcutItemModel> shortcutItems = [];
   List validAppViewOrder = [];
   WallpaperModel? wallpaperModel;
   List esatas = [];
@@ -103,9 +94,7 @@ class DashboardState extends State<Dashboard> {
     // ApiModel.fetch().then((apis) {
     //   Api.apiList = apis;
     // });
-    getInfo().then((_) {
-      getData(init: true);
-    });
+    getData(init: true);
     super.initState();
   }
 
@@ -330,263 +319,137 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
-  Future<void> getInfo() async {
-    var init = await Api.initData();
-    if (init['success']) {
-      setState(() {
-        if (init['data']['UserSettings'] != null) {
-          if (init['data']['UserSettings']['SYNO.SDS._Widget.Instance'] != null) {
-            widgets = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['modulelist'] ?? [];
-            restoreSizePos = init['data']['UserSettings']['SYNO.SDS._Widget.Instance']['restoreSizePos'];
-          }
-          if (init['data']['UserSettings']['Desktop'] != null) {
-            applications = init['data']['UserSettings']['Desktop']['valid_appview_order'] ?? init['data']['UserSettings']['Desktop']['appview_order'] ?? [];
-
-            shortcutItems = ShortcutItemModel.fromList(init['data']['UserSettings']['Desktop']['ShortcutItems']);
-            validAppViewOrder = init['data']['UserSettings']['Desktop']['valid_appview_order'];
-            wallpaperModel = WallpaperModel.fromJson(init['data']['UserSettings']['Desktop']['wallpaper']);
-          }
-        }
-        if (init['data']['Session'] != null) {
-          hostname = init['data']['Session']['hostname'];
-          Utils.hostname = hostname;
-        }
-        if (init['data']['Strings'] != null) {
-          Utils.strings = init['data']['Strings'] ?? {};
+  getData({bool init = false}) async {
+    // getExternalDevice();
+    // getMediaConverter();
+    InitDataModel initData = await InitDataModel.get();
+    InitDataProvider initDataProvider = context.read<InitDataProvider>();
+    initDataProvider.setInitData(initData);
+    setState(() {});
+    var batchRes = await api.Api.dsm.batch(apis: [System()]);
+    if (batchRes['success']) {
+      List res = batchRes['data']['result'];
+      res.forEach((element) {
+        switch (element['api']) {
+          case "SYNO.Core.System":
+            setState(() {
+              SystemInfoProvider provider = context.read<SystemInfoProvider>();
+              provider.setSystemInfo(System.fromJson(element['data']));
+            });
+            break;
         }
       });
-    }
-  }
-
-  getData({bool init = false}) async {
-    getExternalDevice();
-    getMediaConverter();
-    var res = await Api.systemInfo(widgets);
-
-    if (res['success']) {
-      if (!mounted) {
-        return;
-      }
-
       setState(() {
         loading = false;
         success = true;
       });
-
-      List result = res['data']['result'];
-      result.forEach((item) {
-        if (item['success'] == true) {
-          switch (item['api']) {
-            case "SYNO.Core.System.Utilization":
-              setState(() {
-                utilization = item['data'];
-                if (networks.length > 20) {
-                  networks.removeAt(0);
-                }
-                networks.add(item['data']['network'][0]);
-              });
-              break;
-            case "SYNO.Core.System":
-              setState(() {
-                system = item['data'];
-                Utils.systemVersion(system!['firmware_ver']);
-              });
-              break;
-            case "SYNO.Core.CurrentConnection":
-              setState(() {
-                connectedUsers = item['data']['items'];
-              });
-              break;
-            case "SYNO.Storage.CGI.Storage":
-              setState(() {
-                ssdCaches = item['data']['ssdCaches'];
-                volumes = item['data']['volumes'];
-                volumes.sort((a, b) {
-                  return a['num_id'].compareTo(b['num_id']);
-                });
-                disks = item['data']['disks'];
-              });
-              break;
-            case 'SYNO.Core.TaskScheduler':
-              setState(() {
-                tasks = item['data']['tasks'];
-              });
-              break;
-            case 'SYNO.Core.SyslogClient.Status':
-              setState(() {
-                latestLog = item['data']['logs'];
-              });
-              break;
-            case "SYNO.Core.DSMNotify":
-              setState(() {
-                notifies = item['data']['items'];
-              });
-              break;
-            case "SYNO.Core.AppNotify":
-              setState(() {
-                appNotify = item['data'];
-              });
-              break;
-            case "SYNO.Core.SyslogClient.Log":
-              Log.logger.info(jsonEncode(item['data']));
-              setState(() {
-                fileLogs = item['data']['items'];
-              });
-              break;
-          }
-        }
-
-        // else if(item['api'] == ""){
-        //
-        // }
-      });
-    } else {
-      setState(() {
-        if (loading) {
-          success = res['success'];
-          loading = false;
-        }
-
-        msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
-      });
     }
-    if (init && mounted) {
-      Future.delayed(Duration(seconds: refreshDuration)).then((value) {
-        getData(init: init);
-      });
-      return;
-    }
+    UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
+    Utilization utilization = await Utilization.get();
+    utilizationProvider.setUtilization(utilization);
+    print(utilization);
+
+    return;
+    // var res = await Api.systemInfo(widgets);
+    //
+    // if (res['success']) {
+    //   if (!mounted) {
+    //     return;
+    //   }
+    //
+    //   setState(() {
+    //     loading = false;
+    //     success = true;
+    //   });
+    //
+    //   List result = res['data']['result'];
+    //   result.forEach((item) {
+    //     if (item['success'] == true) {
+    //       switch (item['api']) {
+    //         case "SYNO.Core.System.Utilization":
+    //           setState(() {
+    //             utilization = item['data'];
+    //             if (networks.length > 20) {
+    //               networks.removeAt(0);
+    //             }
+    //             networks.add(item['data']['network'][0]);
+    //           });
+    //           break;
+    //         case "SYNO.Core.System":
+    //           setState(() {
+    //             system = item['data'];
+    //             Utils.systemVersion(system!['firmware_ver']);
+    //           });
+    //           break;
+    //         case "SYNO.Core.CurrentConnection":
+    //           setState(() {
+    //             connectedUsers = item['data']['items'];
+    //           });
+    //           break;
+    //         case "SYNO.Storage.CGI.Storage":
+    //           setState(() {
+    //             ssdCaches = item['data']['ssdCaches'];
+    //             volumes = item['data']['volumes'];
+    //             volumes.sort((a, b) {
+    //               return a['num_id'].compareTo(b['num_id']);
+    //             });
+    //             disks = item['data']['disks'];
+    //           });
+    //           break;
+    //         case 'SYNO.Core.TaskScheduler':
+    //           setState(() {
+    //             tasks = item['data']['tasks'];
+    //           });
+    //           break;
+    //         case 'SYNO.Core.SyslogClient.Status':
+    //           setState(() {
+    //             latestLog = item['data']['logs'];
+    //           });
+    //           break;
+    //         case "SYNO.Core.DSMNotify":
+    //           setState(() {
+    //             notifies = item['data']['items'];
+    //           });
+    //           break;
+    //         case "SYNO.Core.AppNotify":
+    //           setState(() {
+    //             appNotify = item['data'];
+    //           });
+    //           break;
+    //         case "SYNO.Core.SyslogClient.Log":
+    //           Log.logger.info(jsonEncode(item['data']));
+    //           setState(() {
+    //             fileLogs = item['data']['items'];
+    //           });
+    //           break;
+    //       }
+    //     }
+    //
+    //     // else if(item['api'] == ""){
+    //     //
+    //     // }
+    //   });
+    // } else {
+    //   setState(() {
+    //     if (loading) {
+    //       success = res['success'];
+    //       loading = false;
+    //     }
+    //
+    //     msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
+    //   });
+    // }
+    // if (init && mounted) {
+    //   Future.delayed(Duration(seconds: refreshDuration)).then((value) {
+    //     getData(init: init);
+    //   });
+    //   return;
+    // }
   }
 
   Widget _buildWidgetItem(widget) {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
-      return GestureDetector(
-        onTap: () {
-          if (Utils.notReviewAccount)
-            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return SystemInfo(0, system!, volumes, disks);
-            }));
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Stack(
-            children: [
-              Consumer<WallpaperProvider>(
-                builder: (context, wallpaperProvider, _) {
-                  return Stack(
-                    children: [
-                      if (wallpaperProvider.showWallpaper && wallpaperModel != null && (wallpaperModel!.customizeWallpaper! || wallpaperModel!.customizeBackground!))
-                        ExtendedImage.network(
-                          Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Utils.sid}",
-                          height: 170,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      if (Theme.of(context).brightness == Brightness.dark)
-                        Container(
-                          height: 170,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: DefaultTextStyle(
-                            style: TextStyle(
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  color: Color.fromARGB(80, 0, 0, 0),
-                                  blurRadius: 5,
-                                )
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/info.png",
-                                      width: 26,
-                                      height: 26,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "系统状态",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                if (system != null && system!['model'] != null)
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 5),
-                                    child: Row(
-                                      children: [
-                                        Text("产品型号："),
-                                        Text("${system!['model']}"),
-                                      ],
-                                    ),
-                                  ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  children: [
-                                    Text("系统名称："),
-                                    Text("$hostname"),
-                                  ],
-                                ),
-                                if (system != null && system!['sys_temp'] != null)
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 5),
-                                    child: Row(
-                                      children: [
-                                        Text("散热状态："),
-                                        Text(
-                                          "${system!['sys_temp']}℃ ${system!['temperature_warning'] == null ? (system!['sys_temp'] > 80 ? "警告" : "正常") : (system!['temperature_warning'] ? "警告" : "正常")}",
-                                          style: TextStyle(color: system!['temperature_warning'] == null ? (system!['sys_temp'] > 80 ? Colors.red : Colors.green) : (system!['temperature_warning'] ? Colors.red : Colors.green)),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                if (system != null && system!['up_time'] != null && system!['up_time'] != "")
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 5),
-                                    child: Row(
-                                      children: [
-                                        Text("运行时间："),
-                                        Text("${Utils.parseOpTime(system!['up_time'])}"),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      );
+      return SystemHealthWidget();
     } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget" && connectedUsers.length > 0) {
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -1742,9 +1605,9 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    SettingProvider settingProvider = context.watch<SettingProvider>();
-    ShortcutProvider shortcutProvider = context.watch<ShortcutProvider>();
-    refreshDuration = settingProvider.refreshDuration;
+    refreshDuration = context.watch<SettingProvider>().refreshDuration;
+
+    InitDataModel initData = context.watch<InitDataProvider>().initData;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -1886,16 +1749,16 @@ class DashboardState extends State<Dashboard> {
                       borderRadius: BorderRadius.circular(10),
                       padding: EdgeInsets.all(10),
                       onPressed: () {
-                        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                          return WidgetSetting(widgets, restoreSizePos!);
-                        })).then((res) {
-                          if (res != null) {
-                            setState(() {
-                              widgets = res;
-                              getData();
-                            });
-                          }
-                        });
+                        // Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                        //   return WidgetSetting(widgets, restoreSizePos!);
+                        // })).then((res) {
+                        //   if (res != null) {
+                        //     setState(() {
+                        //       widgets = res;
+                        //       getData();
+                        //     });
+                        //   }
+                        // });
                       },
                       child: Image.asset(
                         "assets/icons/edit.png",
@@ -1970,18 +1833,9 @@ class DashboardState extends State<Dashboard> {
               ? ListView(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   children: [
-                    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Utils.notReviewAccount && shortcutProvider.showShortcut)
-                      ShortcutList(
-                        shortcutItems,
-                        system!,
-                        volumes,
-                        disks,
-                        appNotify!,
-                        context,
-                        validAppViewOrder: validAppViewOrder,
-                      ),
-                    if (widgets.length > 0)
-                      ...widgets.map((widget) {
+                    ShortcutList(),
+                    if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
+                      ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
                         return _buildWidgetItem(widget);
                         // return Text(widget);
                       }).toList()
@@ -2003,16 +1857,16 @@ class DashboardState extends State<Dashboard> {
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
                                 onPressed: () {
-                                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                    return WidgetSetting(widgets, restoreSizePos!);
-                                  })).then((res) {
-                                    if (res != null) {
-                                      setState(() {
-                                        widgets = res;
-                                        getData();
-                                      });
-                                    }
-                                  });
+                                  // Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                  //   return WidgetSetting(widgets, restoreSizePos!);
+                                  // })).then((res) {
+                                  //   if (res != null) {
+                                  //     setState(() {
+                                  //       widgets = res;
+                                  //       getData();
+                                  //     });
+                                  //   }
+                                  // });
                                 },
                                 child: Text(
                                   ' 添加 ',
@@ -2052,6 +1906,12 @@ class DashboardState extends State<Dashboard> {
                   ),
                 ),
       drawer: applications.length > 0 ? ApplicationList(applications, system, volumes, disks, appNotify) : null,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.refresh),
+        onPressed: () {
+          getData();
+        },
+      ),
     );
   }
 }

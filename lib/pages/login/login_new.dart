@@ -4,12 +4,13 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:dsm_helper/apis/api.dart';
-import 'package:dsm_helper/apis/dsm_api/dsm_resopnse.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/database/table_extention.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/Syno/Api/auth.dart';
 import 'package:dsm_helper/models/Syno/SDS/Session/SessionData.dart';
 import 'package:dsm_helper/pages/dashboard/dashboard.dart';
+import 'package:dsm_helper/pages/home.dart';
 // import 'package:dsm_helper/pages/index/index.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
@@ -111,7 +112,8 @@ class _LoginState extends State<Login> {
                 synoToken: authModel.synotoken!,
               ),
             );
-        // context.push(Index(), replace: true);
+        Api.dsm.init(widget.server.url, deviceId: authModel.deviceId, sid: authModel.sid);
+        context.push(Home(), replace: true);
       } else if (res.error?['code'] == 400) {
         Utils.toast("用户名/密码有误");
       } else if (res.error?['code'] == 403) {

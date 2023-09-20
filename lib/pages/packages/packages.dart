@@ -7,10 +7,9 @@ import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class Packages extends StatefulWidget {
-  final String version;
-  Packages(this.version);
+  // final String version;
+  Packages();
   @override
   _PackagesState createState() => _PackagesState();
 }
@@ -42,7 +41,7 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    String ver = widget.version;
+    String ver = "7.2";
     int end = ver.indexOf("-");
     var dsmVersion = ver.substring(4, end);
     List v = dsmVersion.split(".");
@@ -233,8 +232,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           });
         },
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         child: Text("更新"),
       );
     } else if (package['installed']) {
@@ -309,9 +308,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                                       });
                                     }
                                   },
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
                                     "停用",
@@ -327,9 +325,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                                   onPressed: () async {
                                     Navigator.of(context).pop();
                                   },
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   child: Text(
                                     "取消",
@@ -352,8 +349,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           }
         },
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         child: Text(
           "$text",
           style: text == "启动"
@@ -382,8 +379,8 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
           });
         },
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
         child: Text("安装套件"),
       );
     }
@@ -414,12 +411,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
       child: Container(
         width: (MediaQuery.of(context).size.width - 60) / 2,
         margin: EdgeInsets.only(bottom: 20),
-        
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
@@ -496,12 +491,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
       },
       child: Container(
         width: (MediaQuery.of(context).size.width - 60) / 2,
-        
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -568,7 +561,6 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Text(
           "套件中心",
         ),
@@ -584,8 +576,6 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                
-
                 child: TabBar(
                   isScrollable: true,
                   controller: _tabController,
@@ -626,12 +616,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                           ? Center(
                               child: Container(
                                 padding: EdgeInsets.all(50),
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -664,12 +652,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                           ? Center(
                               child: Container(
                                 padding: EdgeInsets.all(50),
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -693,12 +679,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
                           ? Center(
                               child: Container(
                                 padding: EdgeInsets.all(50),
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-
                                 child: CupertinoActivityIndicator(
                                   radius: 14,
                                 ),
@@ -743,12 +727,10 @@ class _PackagesState extends State<Packages> with TickerProviderStateMixin {
               child: Center(
                 child: Container(
                   padding: EdgeInsets.all(50),
-                  
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
-
                   child: CupertinoActivityIndicator(
                     radius: 14,
                   ),

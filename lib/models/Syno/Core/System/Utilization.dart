@@ -1,3 +1,6 @@
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
+
 /// cpu : {"15min_load":163,"1min_load":141,"5min_load":234,"device":"System","other_load":3,"system_load":3,"user_load":7}
 /// disk : {"disk":[{"device":"sda","display_name":"Drive 1","read_access":0,"read_byte":0,"type":"internal","utilization":7,"write_access":24,"write_byte":458410},{"device":"sdc","display_name":"Drive 3","read_access":0,"read_byte":0,"type":"internal","utilization":2,"write_access":38,"write_byte":594517},{"device":"sdf","display_name":"Drive 6","read_access":0,"read_byte":0,"type":"internal","utilization":2,"write_access":0,"write_byte":0}],"total":{"device":"total","read_access":0,"read_byte":0,"utilization":3,"write_access":62,"write_byte":1052927}}
 /// memory : {"avail_real":443220,"avail_swap":4610020,"buffer":16888,"cached":4283888,"device":"Memory","memory_size":8388608,"real_usage":40,"si_disk":0,"so_disk":0,"swap_usage":33,"total_real":8025040,"total_swap":6913964}
@@ -12,6 +15,20 @@ class Utilization {
     this.network,
     this.time,
   });
+
+  static Future<Utilization> get() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.System.Utilization",
+      "get",
+      post: true,
+      parser: Utilization.fromJson,
+      data: {
+        "type": "current",
+        "resource": ["cpu", "memory", "network", "lun", "disk", "space"],
+      },
+    );
+    return res.data;
+  }
 
   Utilization.fromJson(dynamic json) {
     cpu = json['cpu'] != null ? Cpu.fromJson(json['cpu']) : null;

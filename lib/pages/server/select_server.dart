@@ -7,6 +7,7 @@ import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
 import 'package:dsm_helper/database/table_extention.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/api_model.dart';
+import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/login_new.dart';
 import 'package:dsm_helper/pages/server/add_server.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
@@ -38,11 +39,19 @@ class _SelectServerState extends State<SelectServer> {
   queryServers() async {
     // servers = await DbUtils.db.select(DbUtils.db.servers).get();
     DbUtils.db.select(DbUtils.db.servers).watch().listen((event) {
-      setState(() {
-        servers = event;
-      });
+      if (mounted) {
+        setState(() {
+          servers = event;
+        });
+      }
     });
-    accounts = await DbUtils.db.select(DbUtils.db.accounts).get();
+    DbUtils.db.select(DbUtils.db.accounts).watch().listen((event) {
+      if (mounted) {
+        setState(() {
+          accounts = event;
+        });
+      }
+    });
     setState(() {});
   }
 
@@ -224,7 +233,7 @@ class _SelectServerState extends State<SelectServer> {
                                                     color: Colors.red,
                                                     child: Text("删除"),
                                                     onPressed: () {
-                                                      // DbUtils.db.delete(server);
+                                                      DbUtils.db.deleteServer(server);
                                                       Navigator.of(context).pop();
                                                     },
                                                   ),
@@ -346,13 +355,66 @@ class _SelectServerState extends State<SelectServer> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () async {
-        Api.dsm = DsmApi(baseUrl: server.url);
+        var hide = showWeuiLoadingToast(context: context);
+        Api.dsm = DsmApi(baseUrl: server.url, deviceId: account.deviceId, sid: account.sid);
         ApiModel.apiInfo = await ApiModel.info();
-        // context.push(Index());
+        hide();
+        context.push(Home(), replace: true);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Text(account.account),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(account.account),
+            ),
+            IconButton(
+              onPressed: () {
+                showCustomDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text("提示"),
+                      content: Text("确定删除此账号？"),
+                      actionsOverflowDirection: VerticalDirection.up,
+                      actions: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Button(
+                                color: Colors.red,
+                                child: Text("删除"),
+                                onPressed: () {
+                                  DbUtils.db.deleteAccount(account);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Button(
+                                child: Text("取消"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: Icon(
+                Icons.remove_circle,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

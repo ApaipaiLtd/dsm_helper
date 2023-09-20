@@ -12,7 +12,7 @@ class HttpUtil {
   // 工厂模式
   bool isShowLoginDialog = false;
 
-  init(String baseUrl) {
+  init(String baseUrl, {String? deviceId, String? sid}) {
     // final Directory appDocDir = await getApplicationDocumentsDirectory();
     // final String appDocPath = appDocDir.path;
     // final cookieJar = PersistCookieJar(
@@ -38,6 +38,8 @@ class HttpUtil {
     // CookieJar cookieJar = CookieJar();
     dio?.interceptors
       ?..add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) async {
+        options.headers['did'] = deviceId;
+        options.headers['sid'] = sid;
         return handler.next(options);
       }, onResponse: (Response response, handler) async {
         return handler.next(response);

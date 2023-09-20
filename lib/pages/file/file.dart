@@ -91,9 +91,9 @@ class FilesState extends State<Files> {
     getFtpFolder();
     getSftpFolder();
     getDavFolder();
-    processingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
-      getBackgroundTask();
-    });
+    // processingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+    //   getBackgroundTask();
+    // });
 
     _fileScrollController.addListener(() {
       String path = "";

@@ -1,5 +1,7 @@
+import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
+import 'package:dsm_helper/database/table_extention.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/models/synology/qcid_model.dart' hide Server;
@@ -100,6 +102,52 @@ class _AddServerState extends State<AddServer> {
   }
 
   navToLogin() async {
+    // 判断是否存在
+    List<Server> res = await (DbUtils.db.select(DbUtils.db.servers)..where((server) => server.domain.equals(domain))).get();
+    if (res.length > 0) {
+      showCustomDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("提示"),
+            content: Text("服务器$domain已存在，请直接登录或者返回选择已有账号"),
+            actionsOverflowDirection: VerticalDirection.up,
+            actions: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Button(
+                      child: Text("确定"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Button(
+                      child: Text("登录"),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        Server server = res[0];
+                        var hide = showWeuiLoadingToast(context: context);
+                        Api.dsm = DsmApi(baseUrl: server.url);
+                        ApiModel.apiInfo = await ApiModel.info();
+                        hide();
+                        context.push(Login(res[0]), replace: true);
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        },
+      );
+      return;
+    }
     Server server = await DbUtils.db.into(DbUtils.db.servers).insertReturning(
           ServersCompanion.insert(
             ssl: ssl,

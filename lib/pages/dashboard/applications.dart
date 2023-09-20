@@ -54,7 +54,7 @@ class ApplicationList extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) {
-                      return ControlPanel(system, volumes, disks, appNotify?['SYNO.SDS.AdminCenter.Application'] == null ? null : appNotify!['SYNO.SDS.AdminCenter.Application']['fn']);
+                      return ControlPanel();
                     },
                     settings: RouteSettings(name: "control_panel")));
               },
@@ -105,7 +105,7 @@ class ApplicationList extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) {
-                      return Packages(system!['firmware_ver']);
+                      return Packages();
                     },
                     settings: RouteSettings(name: "packages")));
               },

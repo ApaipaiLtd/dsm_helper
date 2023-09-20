@@ -1,4 +1,4 @@
-import 'package:dsm_helper/models/shortcut_item_model.dart';
+import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/control_panel/control_panel.dart';
 import 'package:dsm_helper/pages/docker/detail.dart';
@@ -13,41 +13,78 @@ import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../providers/init_data_provider.dart';
+import '../../providers/shortcut.dart';
 import '../photos/photos.dart';
 
 class ShortcutList extends StatelessWidget {
-  final List<ShortcutItemModel> shortcutItems;
-  final BuildContext context;
-  final Map system;
-  final List volumes;
-  final List disks;
-  final Map appNotify;
-  final List? validAppViewOrder;
-  const ShortcutList(this.shortcutItems, this.system, this.volumes, this.disks, this.appNotify, this.context, {this.validAppViewOrder, super.key});
+  // final List<ShortcutItems> shortcutItems;
+  // final BuildContext context;
+  // final Map system;
+  // final List volumes;
+  // final List disks;
+  // final Map appNotify;
+  // final List? validAppViewOrder;
+  const ShortcutList(
+      // this.shortcutItems,
+      // this.system,
+      // this.volumes,
+      // this.disks,
+      // this.appNotify,
+      // this.context,
+      {
+    // this.validAppViewOrder,
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext ctx) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        height: 95,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, i) {
-            return _buildShortcutItem(context, shortcutItems[i]);
-          },
-          itemCount: shortcutItems.length,
+  Widget build(BuildContext context) {
+    const List<String> supportedShortcuts = [
+      "SYNO.SDS.PkgManApp.Instance",
+      "SYNO.SDS.AdminCenter.Application",
+      "SYNO.SDS.StorageManager.Instance",
+      "SYNO.SDS.Docker.Application",
+      "SYNO.SDS.Docker.ContainerDetail.Instance",
+      "SYNO.SDS.LogCenter.Instance",
+      "SYNO.SDS.ResourceMonitor.Instance",
+      "SYNO.SDS.Virtualization.Application",
+      "SYNO.SDS.DownloadStation.Application",
+      "SYNO.SDS.XLPan.Application",
+    ];
+    bool showShortcut = context.watch<ShortcutProvider>().showShortcut;
+    InitDataModel initData = context.watch<InitDataProvider>().initData;
+    List<ShortcutItems> shortcutItems = initData.userSettings?.desktop?.shortcutItems != null ? initData.userSettings!.desktop!.shortcutItems! : [];
+    List<String> validAppViewOrder = initData.userSettings?.desktop?.validAppviewOrder != null ? initData.userSettings!.desktop!.validAppviewOrder! : [];
+    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Utils.notReviewAccount && showShortcut) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
         ),
-      ),
-    );
+        child: Container(
+          height: 95,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (ctx, i) {
+              return _buildShortcutItem(
+                context,
+                shortcutItems[i],
+                validAppViewOrder,
+              );
+            },
+            itemCount: shortcutItems.length,
+          ),
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 
-  Widget _buildShortcutItem(BuildContext context, ShortcutItemModel shortcut) {
+  Widget _buildShortcutItem(BuildContext context, ShortcutItems shortcut, List<String> validAppViewOrder) {
     String icon = "";
     String name = "";
     int unread = 0;
@@ -57,20 +94,20 @@ class ShortcutList extends StatelessWidget {
       case "SYNO.SDS.PkgManApp.Instance":
         icon = "assets/applications/${Utils.version}/package_center.png";
         name = "套件中心";
-        page = Packages(system != null ? system['firmware_ver'] : 'DSM ${Utils.version}.0-10049');
+        page = Packages();
         routerName = "packages";
-        if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
-          unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
-        }
+        // if (appNotify != null && appNotify['SYNO.SDS.PkgManApp.Instance'] != null) {
+        //   unread = appNotify['SYNO.SDS.PkgManApp.Instance']['unread'];
+        // }
         break;
       case "SYNO.SDS.AdminCenter.Application":
         icon = "assets/applications/${Utils.version}/control_panel.png";
         name = "控制面板";
-        page = ControlPanel(system, volumes, disks, appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null ? appNotify['SYNO.SDS.AdminCenter.Application']['fn'] : null);
+        page = ControlPanel();
         routerName = "control_panel";
-        if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
-          unread = appNotify['SYNO.SDS.AdminCenter.Application']['unread'];
-        }
+        // if (appNotify != null && appNotify['SYNO.SDS.AdminCenter.Application'] != null) {
+        //   unread = appNotify['SYNO.SDS.AdminCenter.Application']['unread'];
+        // }
         break;
       case "SYNO.SDS.StorageManager.Instance":
         icon = "assets/applications/${Utils.version}/storage_manager.png";
@@ -79,7 +116,7 @@ class ShortcutList extends StatelessWidget {
         routerName = "storage_manager";
         break;
       case "SYNO.SDS.Docker.Application":
-        if (validAppViewOrder != null && validAppViewOrder!.contains("SYNO.SDS.ContainerManager.Application")) {
+        if (validAppViewOrder.contains("SYNO.SDS.ContainerManager.Application")) {
           icon = "assets/applications/container_manager.png";
           name = "Container Manager";
           page = Docker(
@@ -94,7 +131,7 @@ class ShortcutList extends StatelessWidget {
         routerName = "docker";
         break;
       case "SYNO.SDS.Docker.ContainerDetail.Instance":
-        if (validAppViewOrder != null && validAppViewOrder!.contains("SYNO.SDS.ContainerManager.Application")) {
+        if (validAppViewOrder.contains("SYNO.SDS.ContainerManager.Application")) {
           icon = "assets/applications/container_manager.png";
         } else {
           icon = "assets/applications/docker.png";
@@ -196,7 +233,7 @@ class ShortcutList extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: 12, color: Colors.black45),
                       ),
                     ],
                   ),

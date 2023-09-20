@@ -1,3 +1,6 @@
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
+
 /// ActionPrivilege : []
 /// AppPrivilege : {"SYNO.AFP":true,"SYNO.Desktop":true,"SYNO.FTP":true,"SYNO.Finder.Application":true,"SYNO.Foto.AppInstance":true,"SYNO.Rsync":true,"SYNO.SDS.App.FileStation3.Instance":true,"SYNO.SDS.BackupService.Instance":true,"SYNO.SDS.Drive.Application":true,"SYNO.SDS.HomeAssistant.Application":true,"SYNO.SDS.MailPlusServer.Instance":true,"SYNO.SDS.MailServer.Instance":true,"SYNO.SDS.PersonalPhotoStation":true,"SYNO.SDS.SMBService.AppPrivilege.Instance":true,"SYNO.SDS.Virtualization.Application":true,"SYNO.SDS.WebDAVServer.Instance":true,"SYNO.SFTP":true}
 /// GroupSettings : {"PackageTask":{"tasks":{}}}
@@ -16,6 +19,16 @@ class InitDataModel {
     this.urlTag,
     this.userSettings,
   });
+
+  static Future<InitDataModel> get() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.Desktop.Initdata", "get",
+        post: true,
+        data: {
+          "launch_app": "null",
+        },
+        parser: InitDataModel.fromJson);
+    return res.data;
+  }
 
   InitDataModel.fromJson(dynamic json) {
     actionPrivilege = [];
@@ -107,135 +120,135 @@ class UserSettings {
     this.backgroundTask,
     this.desktop,
     this.personal,
-    this.sYNOFinderSpotlightApplication,
-    this.sYNOSDSAdminCenterApplication,
-    this.sYNOSDSAppDiskMessageAppInstance,
-    this.sYNOSDSAppFileStation3Instance,
-    this.sYNOSDSAppFileTaskMonitorInstance,
-    this.sYNOSDSAppPersonalSettingsInstance,
-    this.sYNOSDSAppPromotionApp,
-    this.sYNOSDSAria2Application,
-    this.sYNOSDSBrowserBoxApplication,
-    this.sYNOSDSCSTNInstance,
-    this.sYNOSDSDSMNotifyTray,
-    this.sYNOSDSDockerApplication,
-    this.sYNOSDSDockerContainerDetailInstance,
-    this.sYNOSDSDriveApplication,
-    this.sYNOSDSHelpBrowserApplication,
-    this.sYNOSDSPhotoViewerApplication,
-    this.sYNOSDSPkgManAppInstance,
-    this.sYNOSDSResourceMonitorInstance,
-    this.sYNOSDSStorageManagerInstance,
-    this.sYNOSDSStorageManagerQuickWizardInstance,
-    this.sYNOSDSWebDAVServerInstance,
-    this.sYNOSDSWidgetInstance,
+    this.synoFinderSpotlightApplication,
+    this.synoSDSAdminCenterApplication,
+    this.synoSDSAppDiskMessageAppInstance,
+    this.synoSDSAppFileStation3Instance,
+    this.synoSDSAppFileTaskMonitorInstance,
+    this.synoSDSAppPersonalSettingsInstance,
+    this.synoSDSAppPromotionApp,
+    this.synoSDSAria2Application,
+    this.synoSDSBrowserBoxApplication,
+    this.synoSDSCSTNInstance,
+    this.synoSDSDSMNotifyTray,
+    this.synoSDSDockerApplication,
+    this.synoSDSDockerContainerDetailInstance,
+    this.synoSDSDriveApplication,
+    this.synoSDSHelpBrowserApplication,
+    this.synoSDSPhotoViewerApplication,
+    this.synoSDSPkgManAppInstance,
+    this.synoSDSResourceMonitorInstance,
+    this.synoSDSStorageManagerInstance,
+    this.synoSDSStorageManagerQuickWizardInstance,
+    this.synoSDSWebDAVServerInstance,
+    this.synoSDSWidgetInstance,
   });
 
   UserSettings.fromJson(dynamic json) {
     backgroundTask = json['BackgroundTask'];
     desktop = json['Desktop'] != null ? Desktop.fromJson(json['Desktop']) : null;
     personal = json['Personal'] != null ? Personal.fromJson(json['Personal']) : null;
-    sYNOFinderSpotlightApplication = json['SYNO.Finder.Spotlight.Application'] != null ? SynoFinderSpotlightApplication.fromJson(json['SYNO.Finder.Spotlight.Application']) : null;
-    sYNOSDSAdminCenterApplication = json['SYNO.SDS.AdminCenter.Application'] != null ? SynoSdsAdminCenterApplication.fromJson(json['SYNO.SDS.AdminCenter.Application']) : null;
-    sYNOSDSAppDiskMessageAppInstance = json['SYNO.SDS.App.DiskMessageApp.Instance'] != null ? SynoSdsAppDiskMessageAppInstance.fromJson(json['SYNO.SDS.App.DiskMessageApp.Instance']) : null;
-    sYNOSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'] != null ? SynoSdsAppFileStation3Instance.fromJson(json['SYNO.SDS.App.FileStation3.Instance']) : null;
-    sYNOSDSAppFileTaskMonitorInstance = json['SYNO.SDS.App.FileTaskMonitor.Instance'] != null ? SynoSdsAppFileTaskMonitorInstance.fromJson(json['SYNO.SDS.App.FileTaskMonitor.Instance']) : null;
-    sYNOSDSAppPersonalSettingsInstance = json['SYNO.SDS.App.PersonalSettings.Instance'] != null ? SynoSdsAppPersonalSettingsInstance.fromJson(json['SYNO.SDS.App.PersonalSettings.Instance']) : null;
-    sYNOSDSAppPromotionApp = json['SYNO.SDS.App.PromotionApp'] != null ? SynoSdsAppPromotionApp.fromJson(json['SYNO.SDS.App.PromotionApp']) : null;
-    sYNOSDSAria2Application = json['SYNO.SDS.Aria2.Application'] != null ? SynoSdsAria2Application.fromJson(json['SYNO.SDS.Aria2.Application']) : null;
-    sYNOSDSBrowserBoxApplication = json['SYNO.SDS.BrowserBox.Application'] != null ? SynoSdsBrowserBoxApplication.fromJson(json['SYNO.SDS.BrowserBox.Application']) : null;
-    sYNOSDSCSTNInstance = json['SYNO.SDS.CSTN.Instance'] != null ? SynoSdsCstnInstance.fromJson(json['SYNO.SDS.CSTN.Instance']) : null;
-    sYNOSDSDSMNotifyTray = json['SYNO.SDS.DSMNotify.Tray'] != null ? SynoSdsDsmNotifyTray.fromJson(json['SYNO.SDS.DSMNotify.Tray']) : null;
-    sYNOSDSDockerApplication = json['SYNO.SDS.Docker.Application'] != null ? SynoSdsDockerApplication.fromJson(json['SYNO.SDS.Docker.Application']) : null;
-    sYNOSDSDockerContainerDetailInstance = json['SYNO.SDS.Docker.ContainerDetail.Instance'] != null ? SynoSdsDockerContainerDetailInstance.fromJson(json['SYNO.SDS.Docker.ContainerDetail.Instance']) : null;
-    sYNOSDSDriveApplication = json['SYNO.SDS.Drive.Application'] != null ? SynoSdsDriveApplication.fromJson(json['SYNO.SDS.Drive.Application']) : null;
-    sYNOSDSHelpBrowserApplication = json['SYNO.SDS.HelpBrowser.Application'] != null ? SynoSdsHelpBrowserApplication.fromJson(json['SYNO.SDS.HelpBrowser.Application']) : null;
-    sYNOSDSPhotoViewerApplication = json['SYNO.SDS.PhotoViewer.Application'] != null ? SynoSdsPhotoViewerApplication.fromJson(json['SYNO.SDS.PhotoViewer.Application']) : null;
-    sYNOSDSPkgManAppInstance = json['SYNO.SDS.PkgManApp.Instance'] != null ? SynoSdsPkgManAppInstance.fromJson(json['SYNO.SDS.PkgManApp.Instance']) : null;
-    sYNOSDSResourceMonitorInstance = json['SYNO.SDS.ResourceMonitor.Instance'] != null ? SynoSdsResourceMonitorInstance.fromJson(json['SYNO.SDS.ResourceMonitor.Instance']) : null;
-    sYNOSDSStorageManagerInstance = json['SYNO.SDS.StorageManager.Instance'] != null ? SynoSdsStorageManagerInstance.fromJson(json['SYNO.SDS.StorageManager.Instance']) : null;
-    sYNOSDSStorageManagerQuickWizardInstance = json['SYNO.SDS.StorageManager.QuickWizard.Instance'] != null ? SynoSdsStorageManagerQuickWizardInstance.fromJson(json['SYNO.SDS.StorageManager.QuickWizard.Instance']) : null;
-    sYNOSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'] != null ? SynoSdsWebDavServerInstance.fromJson(json['SYNO.SDS.WebDAVServer.Instance']) : null;
-    sYNOSDSWidgetInstance = json['SYNO.SDS._Widget.Instance'] != null ? SynoSdsWidgetInstance.fromJson(json['SYNO.SDS._Widget.Instance']) : null;
+    synoFinderSpotlightApplication = json['SYNO.Finder.Spotlight.Application'] != null ? SynoFinderSpotlightApplication.fromJson(json['SYNO.Finder.Spotlight.Application']) : null;
+    synoSDSAdminCenterApplication = json['SYNO.SDS.AdminCenter.Application'] != null ? SynoSdsAdminCenterApplication.fromJson(json['SYNO.SDS.AdminCenter.Application']) : null;
+    synoSDSAppDiskMessageAppInstance = json['SYNO.SDS.App.DiskMessageApp.Instance'] != null ? SynoSdsAppDiskMessageAppInstance.fromJson(json['SYNO.SDS.App.DiskMessageApp.Instance']) : null;
+    synoSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'] != null ? SynoSdsAppFileStation3Instance.fromJson(json['SYNO.SDS.App.FileStation3.Instance']) : null;
+    synoSDSAppFileTaskMonitorInstance = json['SYNO.SDS.App.FileTaskMonitor.Instance'] != null ? SynoSdsAppFileTaskMonitorInstance.fromJson(json['SYNO.SDS.App.FileTaskMonitor.Instance']) : null;
+    synoSDSAppPersonalSettingsInstance = json['SYNO.SDS.App.PersonalSettings.Instance'] != null ? SynoSdsAppPersonalSettingsInstance.fromJson(json['SYNO.SDS.App.PersonalSettings.Instance']) : null;
+    synoSDSAppPromotionApp = json['SYNO.SDS.App.PromotionApp'] != null ? SynoSdsAppPromotionApp.fromJson(json['SYNO.SDS.App.PromotionApp']) : null;
+    synoSDSAria2Application = json['SYNO.SDS.Aria2.Application'] != null ? SynoSdsAria2Application.fromJson(json['SYNO.SDS.Aria2.Application']) : null;
+    synoSDSBrowserBoxApplication = json['SYNO.SDS.BrowserBox.Application'] != null ? SynoSdsBrowserBoxApplication.fromJson(json['SYNO.SDS.BrowserBox.Application']) : null;
+    synoSDSCSTNInstance = json['SYNO.SDS.CSTN.Instance'] != null ? SynoSdsCstnInstance.fromJson(json['SYNO.SDS.CSTN.Instance']) : null;
+    synoSDSDSMNotifyTray = json['SYNO.SDS.DSMNotify.Tray'] != null ? SynoSdsDsmNotifyTray.fromJson(json['SYNO.SDS.DSMNotify.Tray']) : null;
+    synoSDSDockerApplication = json['SYNO.SDS.Docker.Application'] != null ? SynoSdsDockerApplication.fromJson(json['SYNO.SDS.Docker.Application']) : null;
+    synoSDSDockerContainerDetailInstance = json['SYNO.SDS.Docker.ContainerDetail.Instance'] != null ? SynoSdsDockerContainerDetailInstance.fromJson(json['SYNO.SDS.Docker.ContainerDetail.Instance']) : null;
+    synoSDSDriveApplication = json['SYNO.SDS.Drive.Application'] != null ? SynoSdsDriveApplication.fromJson(json['SYNO.SDS.Drive.Application']) : null;
+    synoSDSHelpBrowserApplication = json['SYNO.SDS.HelpBrowser.Application'] != null ? SynoSdsHelpBrowserApplication.fromJson(json['SYNO.SDS.HelpBrowser.Application']) : null;
+    synoSDSPhotoViewerApplication = json['SYNO.SDS.PhotoViewer.Application'] != null ? SynoSdsPhotoViewerApplication.fromJson(json['SYNO.SDS.PhotoViewer.Application']) : null;
+    synoSDSPkgManAppInstance = json['SYNO.SDS.PkgManApp.Instance'] != null ? SynoSdsPkgManAppInstance.fromJson(json['SYNO.SDS.PkgManApp.Instance']) : null;
+    synoSDSResourceMonitorInstance = json['SYNO.SDS.ResourceMonitor.Instance'] != null ? SynoSdsResourceMonitorInstance.fromJson(json['SYNO.SDS.ResourceMonitor.Instance']) : null;
+    synoSDSStorageManagerInstance = json['SYNO.SDS.StorageManager.Instance'] != null ? SynoSdsStorageManagerInstance.fromJson(json['SYNO.SDS.StorageManager.Instance']) : null;
+    synoSDSStorageManagerQuickWizardInstance = json['SYNO.SDS.StorageManager.QuickWizard.Instance'] != null ? SynoSdsStorageManagerQuickWizardInstance.fromJson(json['SYNO.SDS.StorageManager.QuickWizard.Instance']) : null;
+    synoSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'] != null ? SynoSdsWebDavServerInstance.fromJson(json['SYNO.SDS.WebDAVServer.Instance']) : null;
+    synoSDSWidgetInstance = json['SYNO.SDS._Widget.Instance'] != null ? SynoSdsWidgetInstance.fromJson(json['SYNO.SDS._Widget.Instance']) : null;
   }
   dynamic backgroundTask;
   Desktop? desktop;
   Personal? personal;
-  SynoFinderSpotlightApplication? sYNOFinderSpotlightApplication;
-  SynoSdsAdminCenterApplication? sYNOSDSAdminCenterApplication;
-  SynoSdsAppDiskMessageAppInstance? sYNOSDSAppDiskMessageAppInstance;
-  SynoSdsAppFileStation3Instance? sYNOSDSAppFileStation3Instance;
-  SynoSdsAppFileTaskMonitorInstance? sYNOSDSAppFileTaskMonitorInstance;
-  SynoSdsAppPersonalSettingsInstance? sYNOSDSAppPersonalSettingsInstance;
-  SynoSdsAppPromotionApp? sYNOSDSAppPromotionApp;
-  SynoSdsAria2Application? sYNOSDSAria2Application;
-  SynoSdsBrowserBoxApplication? sYNOSDSBrowserBoxApplication;
-  SynoSdsCstnInstance? sYNOSDSCSTNInstance;
-  SynoSdsDsmNotifyTray? sYNOSDSDSMNotifyTray;
-  SynoSdsDockerApplication? sYNOSDSDockerApplication;
-  SynoSdsDockerContainerDetailInstance? sYNOSDSDockerContainerDetailInstance;
-  SynoSdsDriveApplication? sYNOSDSDriveApplication;
-  SynoSdsHelpBrowserApplication? sYNOSDSHelpBrowserApplication;
-  SynoSdsPhotoViewerApplication? sYNOSDSPhotoViewerApplication;
-  SynoSdsPkgManAppInstance? sYNOSDSPkgManAppInstance;
-  SynoSdsResourceMonitorInstance? sYNOSDSResourceMonitorInstance;
-  SynoSdsStorageManagerInstance? sYNOSDSStorageManagerInstance;
-  SynoSdsStorageManagerQuickWizardInstance? sYNOSDSStorageManagerQuickWizardInstance;
-  SynoSdsWebDavServerInstance? sYNOSDSWebDAVServerInstance;
-  SynoSdsWidgetInstance? sYNOSDSWidgetInstance;
+  SynoFinderSpotlightApplication? synoFinderSpotlightApplication;
+  SynoSdsAdminCenterApplication? synoSDSAdminCenterApplication;
+  SynoSdsAppDiskMessageAppInstance? synoSDSAppDiskMessageAppInstance;
+  SynoSdsAppFileStation3Instance? synoSDSAppFileStation3Instance;
+  SynoSdsAppFileTaskMonitorInstance? synoSDSAppFileTaskMonitorInstance;
+  SynoSdsAppPersonalSettingsInstance? synoSDSAppPersonalSettingsInstance;
+  SynoSdsAppPromotionApp? synoSDSAppPromotionApp;
+  SynoSdsAria2Application? synoSDSAria2Application;
+  SynoSdsBrowserBoxApplication? synoSDSBrowserBoxApplication;
+  SynoSdsCstnInstance? synoSDSCSTNInstance;
+  SynoSdsDsmNotifyTray? synoSDSDSMNotifyTray;
+  SynoSdsDockerApplication? synoSDSDockerApplication;
+  SynoSdsDockerContainerDetailInstance? synoSDSDockerContainerDetailInstance;
+  SynoSdsDriveApplication? synoSDSDriveApplication;
+  SynoSdsHelpBrowserApplication? synoSDSHelpBrowserApplication;
+  SynoSdsPhotoViewerApplication? synoSDSPhotoViewerApplication;
+  SynoSdsPkgManAppInstance? synoSDSPkgManAppInstance;
+  SynoSdsResourceMonitorInstance? synoSDSResourceMonitorInstance;
+  SynoSdsStorageManagerInstance? synoSDSStorageManagerInstance;
+  SynoSdsStorageManagerQuickWizardInstance? synoSDSStorageManagerQuickWizardInstance;
+  SynoSdsWebDavServerInstance? synoSDSWebDAVServerInstance;
+  SynoSdsWidgetInstance? synoSDSWidgetInstance;
   UserSettings copyWith({
     dynamic backgroundTask,
     Desktop? desktop,
     Personal? personal,
-    SynoFinderSpotlightApplication? sYNOFinderSpotlightApplication,
-    SynoSdsAdminCenterApplication? sYNOSDSAdminCenterApplication,
-    SynoSdsAppDiskMessageAppInstance? sYNOSDSAppDiskMessageAppInstance,
-    SynoSdsAppFileStation3Instance? sYNOSDSAppFileStation3Instance,
-    SynoSdsAppFileTaskMonitorInstance? sYNOSDSAppFileTaskMonitorInstance,
-    SynoSdsAppPersonalSettingsInstance? sYNOSDSAppPersonalSettingsInstance,
-    SynoSdsAppPromotionApp? sYNOSDSAppPromotionApp,
-    SynoSdsAria2Application? sYNOSDSAria2Application,
-    SynoSdsBrowserBoxApplication? sYNOSDSBrowserBoxApplication,
-    SynoSdsCstnInstance? sYNOSDSCSTNInstance,
-    SynoSdsDsmNotifyTray? sYNOSDSDSMNotifyTray,
-    SynoSdsDockerApplication? sYNOSDSDockerApplication,
-    SynoSdsDockerContainerDetailInstance? sYNOSDSDockerContainerDetailInstance,
-    SynoSdsDriveApplication? sYNOSDSDriveApplication,
-    SynoSdsHelpBrowserApplication? sYNOSDSHelpBrowserApplication,
-    SynoSdsPhotoViewerApplication? sYNOSDSPhotoViewerApplication,
-    SynoSdsPkgManAppInstance? sYNOSDSPkgManAppInstance,
-    SynoSdsResourceMonitorInstance? sYNOSDSResourceMonitorInstance,
-    SynoSdsStorageManagerInstance? sYNOSDSStorageManagerInstance,
-    SynoSdsStorageManagerQuickWizardInstance? sYNOSDSStorageManagerQuickWizardInstance,
-    SynoSdsWebDavServerInstance? sYNOSDSWebDAVServerInstance,
-    SynoSdsWidgetInstance? sYNOSDSWidgetInstance,
+    SynoFinderSpotlightApplication? synoFinderSpotlightApplication,
+    SynoSdsAdminCenterApplication? synoSDSAdminCenterApplication,
+    SynoSdsAppDiskMessageAppInstance? synoSDSAppDiskMessageAppInstance,
+    SynoSdsAppFileStation3Instance? synoSDSAppFileStation3Instance,
+    SynoSdsAppFileTaskMonitorInstance? synoSDSAppFileTaskMonitorInstance,
+    SynoSdsAppPersonalSettingsInstance? synoSDSAppPersonalSettingsInstance,
+    SynoSdsAppPromotionApp? synoSDSAppPromotionApp,
+    SynoSdsAria2Application? synoSDSAria2Application,
+    SynoSdsBrowserBoxApplication? synoSDSBrowserBoxApplication,
+    SynoSdsCstnInstance? synoSDSCSTNInstance,
+    SynoSdsDsmNotifyTray? synoSDSDSMNotifyTray,
+    SynoSdsDockerApplication? synoSDSDockerApplication,
+    SynoSdsDockerContainerDetailInstance? synoSDSDockerContainerDetailInstance,
+    SynoSdsDriveApplication? synoSDSDriveApplication,
+    SynoSdsHelpBrowserApplication? synoSDSHelpBrowserApplication,
+    SynoSdsPhotoViewerApplication? synoSDSPhotoViewerApplication,
+    SynoSdsPkgManAppInstance? synoSDSPkgManAppInstance,
+    SynoSdsResourceMonitorInstance? synoSDSResourceMonitorInstance,
+    SynoSdsStorageManagerInstance? synoSDSStorageManagerInstance,
+    SynoSdsStorageManagerQuickWizardInstance? synoSDSStorageManagerQuickWizardInstance,
+    SynoSdsWebDavServerInstance? synoSDSWebDAVServerInstance,
+    SynoSdsWidgetInstance? synoSDSWidgetInstance,
   }) =>
       UserSettings(
         backgroundTask: backgroundTask ?? this.backgroundTask,
         desktop: desktop ?? this.desktop,
         personal: personal ?? this.personal,
-        sYNOFinderSpotlightApplication: sYNOFinderSpotlightApplication ?? this.sYNOFinderSpotlightApplication,
-        sYNOSDSAdminCenterApplication: sYNOSDSAdminCenterApplication ?? this.sYNOSDSAdminCenterApplication,
-        sYNOSDSAppDiskMessageAppInstance: sYNOSDSAppDiskMessageAppInstance ?? this.sYNOSDSAppDiskMessageAppInstance,
-        sYNOSDSAppFileStation3Instance: sYNOSDSAppFileStation3Instance ?? this.sYNOSDSAppFileStation3Instance,
-        sYNOSDSAppFileTaskMonitorInstance: sYNOSDSAppFileTaskMonitorInstance ?? this.sYNOSDSAppFileTaskMonitorInstance,
-        sYNOSDSAppPersonalSettingsInstance: sYNOSDSAppPersonalSettingsInstance ?? this.sYNOSDSAppPersonalSettingsInstance,
-        sYNOSDSAppPromotionApp: sYNOSDSAppPromotionApp ?? this.sYNOSDSAppPromotionApp,
-        sYNOSDSAria2Application: sYNOSDSAria2Application ?? this.sYNOSDSAria2Application,
-        sYNOSDSBrowserBoxApplication: sYNOSDSBrowserBoxApplication ?? this.sYNOSDSBrowserBoxApplication,
-        sYNOSDSCSTNInstance: sYNOSDSCSTNInstance ?? this.sYNOSDSCSTNInstance,
-        sYNOSDSDSMNotifyTray: sYNOSDSDSMNotifyTray ?? this.sYNOSDSDSMNotifyTray,
-        sYNOSDSDockerApplication: sYNOSDSDockerApplication ?? this.sYNOSDSDockerApplication,
-        sYNOSDSDockerContainerDetailInstance: sYNOSDSDockerContainerDetailInstance ?? this.sYNOSDSDockerContainerDetailInstance,
-        sYNOSDSDriveApplication: sYNOSDSDriveApplication ?? this.sYNOSDSDriveApplication,
-        sYNOSDSHelpBrowserApplication: sYNOSDSHelpBrowserApplication ?? this.sYNOSDSHelpBrowserApplication,
-        sYNOSDSPhotoViewerApplication: sYNOSDSPhotoViewerApplication ?? this.sYNOSDSPhotoViewerApplication,
-        sYNOSDSPkgManAppInstance: sYNOSDSPkgManAppInstance ?? this.sYNOSDSPkgManAppInstance,
-        sYNOSDSResourceMonitorInstance: sYNOSDSResourceMonitorInstance ?? this.sYNOSDSResourceMonitorInstance,
-        sYNOSDSStorageManagerInstance: sYNOSDSStorageManagerInstance ?? this.sYNOSDSStorageManagerInstance,
-        sYNOSDSStorageManagerQuickWizardInstance: sYNOSDSStorageManagerQuickWizardInstance ?? this.sYNOSDSStorageManagerQuickWizardInstance,
-        sYNOSDSWebDAVServerInstance: sYNOSDSWebDAVServerInstance ?? this.sYNOSDSWebDAVServerInstance,
-        sYNOSDSWidgetInstance: sYNOSDSWidgetInstance ?? this.sYNOSDSWidgetInstance,
+        synoFinderSpotlightApplication: synoFinderSpotlightApplication ?? this.synoFinderSpotlightApplication,
+        synoSDSAdminCenterApplication: synoSDSAdminCenterApplication ?? this.synoSDSAdminCenterApplication,
+        synoSDSAppDiskMessageAppInstance: synoSDSAppDiskMessageAppInstance ?? this.synoSDSAppDiskMessageAppInstance,
+        synoSDSAppFileStation3Instance: synoSDSAppFileStation3Instance ?? this.synoSDSAppFileStation3Instance,
+        synoSDSAppFileTaskMonitorInstance: synoSDSAppFileTaskMonitorInstance ?? this.synoSDSAppFileTaskMonitorInstance,
+        synoSDSAppPersonalSettingsInstance: synoSDSAppPersonalSettingsInstance ?? this.synoSDSAppPersonalSettingsInstance,
+        synoSDSAppPromotionApp: synoSDSAppPromotionApp ?? this.synoSDSAppPromotionApp,
+        synoSDSAria2Application: synoSDSAria2Application ?? this.synoSDSAria2Application,
+        synoSDSBrowserBoxApplication: synoSDSBrowserBoxApplication ?? this.synoSDSBrowserBoxApplication,
+        synoSDSCSTNInstance: synoSDSCSTNInstance ?? this.synoSDSCSTNInstance,
+        synoSDSDSMNotifyTray: synoSDSDSMNotifyTray ?? this.synoSDSDSMNotifyTray,
+        synoSDSDockerApplication: synoSDSDockerApplication ?? this.synoSDSDockerApplication,
+        synoSDSDockerContainerDetailInstance: synoSDSDockerContainerDetailInstance ?? this.synoSDSDockerContainerDetailInstance,
+        synoSDSDriveApplication: synoSDSDriveApplication ?? this.synoSDSDriveApplication,
+        synoSDSHelpBrowserApplication: synoSDSHelpBrowserApplication ?? this.synoSDSHelpBrowserApplication,
+        synoSDSPhotoViewerApplication: synoSDSPhotoViewerApplication ?? this.synoSDSPhotoViewerApplication,
+        synoSDSPkgManAppInstance: synoSDSPkgManAppInstance ?? this.synoSDSPkgManAppInstance,
+        synoSDSResourceMonitorInstance: synoSDSResourceMonitorInstance ?? this.synoSDSResourceMonitorInstance,
+        synoSDSStorageManagerInstance: synoSDSStorageManagerInstance ?? this.synoSDSStorageManagerInstance,
+        synoSDSStorageManagerQuickWizardInstance: synoSDSStorageManagerQuickWizardInstance ?? this.synoSDSStorageManagerQuickWizardInstance,
+        synoSDSWebDAVServerInstance: synoSDSWebDAVServerInstance ?? this.synoSDSWebDAVServerInstance,
+        synoSDSWidgetInstance: synoSDSWidgetInstance ?? this.synoSDSWidgetInstance,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -246,71 +259,71 @@ class UserSettings {
     if (personal != null) {
       map['Personal'] = personal?.toJson();
     }
-    if (sYNOFinderSpotlightApplication != null) {
-      map['SYNO.Finder.Spotlight.Application'] = sYNOFinderSpotlightApplication?.toJson();
+    if (synoFinderSpotlightApplication != null) {
+      map['SYNO.Finder.Spotlight.Application'] = synoFinderSpotlightApplication?.toJson();
     }
-    if (sYNOSDSAdminCenterApplication != null) {
-      map['SYNO.SDS.AdminCenter.Application'] = sYNOSDSAdminCenterApplication?.toJson();
+    if (synoSDSAdminCenterApplication != null) {
+      map['SYNO.SDS.AdminCenter.Application'] = synoSDSAdminCenterApplication?.toJson();
     }
-    if (sYNOSDSAppDiskMessageAppInstance != null) {
-      map['SYNO.SDS.App.DiskMessageApp.Instance'] = sYNOSDSAppDiskMessageAppInstance?.toJson();
+    if (synoSDSAppDiskMessageAppInstance != null) {
+      map['SYNO.SDS.App.DiskMessageApp.Instance'] = synoSDSAppDiskMessageAppInstance?.toJson();
     }
-    if (sYNOSDSAppFileStation3Instance != null) {
-      map['SYNO.SDS.App.FileStation3.Instance'] = sYNOSDSAppFileStation3Instance?.toJson();
+    if (synoSDSAppFileStation3Instance != null) {
+      map['SYNO.SDS.App.FileStation3.Instance'] = synoSDSAppFileStation3Instance?.toJson();
     }
-    if (sYNOSDSAppFileTaskMonitorInstance != null) {
-      map['SYNO.SDS.App.FileTaskMonitor.Instance'] = sYNOSDSAppFileTaskMonitorInstance?.toJson();
+    if (synoSDSAppFileTaskMonitorInstance != null) {
+      map['SYNO.SDS.App.FileTaskMonitor.Instance'] = synoSDSAppFileTaskMonitorInstance?.toJson();
     }
-    if (sYNOSDSAppPersonalSettingsInstance != null) {
-      map['SYNO.SDS.App.PersonalSettings.Instance'] = sYNOSDSAppPersonalSettingsInstance?.toJson();
+    if (synoSDSAppPersonalSettingsInstance != null) {
+      map['SYNO.SDS.App.PersonalSettings.Instance'] = synoSDSAppPersonalSettingsInstance?.toJson();
     }
-    if (sYNOSDSAppPromotionApp != null) {
-      map['SYNO.SDS.App.PromotionApp'] = sYNOSDSAppPromotionApp?.toJson();
+    if (synoSDSAppPromotionApp != null) {
+      map['SYNO.SDS.App.PromotionApp'] = synoSDSAppPromotionApp?.toJson();
     }
-    if (sYNOSDSAria2Application != null) {
-      map['SYNO.SDS.Aria2.Application'] = sYNOSDSAria2Application?.toJson();
+    if (synoSDSAria2Application != null) {
+      map['SYNO.SDS.Aria2.Application'] = synoSDSAria2Application?.toJson();
     }
-    if (sYNOSDSBrowserBoxApplication != null) {
-      map['SYNO.SDS.BrowserBox.Application'] = sYNOSDSBrowserBoxApplication?.toJson();
+    if (synoSDSBrowserBoxApplication != null) {
+      map['SYNO.SDS.BrowserBox.Application'] = synoSDSBrowserBoxApplication?.toJson();
     }
-    if (sYNOSDSCSTNInstance != null) {
-      map['SYNO.SDS.CSTN.Instance'] = sYNOSDSCSTNInstance?.toJson();
+    if (synoSDSCSTNInstance != null) {
+      map['SYNO.SDS.CSTN.Instance'] = synoSDSCSTNInstance?.toJson();
     }
-    if (sYNOSDSDSMNotifyTray != null) {
-      map['SYNO.SDS.DSMNotify.Tray'] = sYNOSDSDSMNotifyTray?.toJson();
+    if (synoSDSDSMNotifyTray != null) {
+      map['SYNO.SDS.DSMNotify.Tray'] = synoSDSDSMNotifyTray?.toJson();
     }
-    if (sYNOSDSDockerApplication != null) {
-      map['SYNO.SDS.Docker.Application'] = sYNOSDSDockerApplication?.toJson();
+    if (synoSDSDockerApplication != null) {
+      map['SYNO.SDS.Docker.Application'] = synoSDSDockerApplication?.toJson();
     }
-    if (sYNOSDSDockerContainerDetailInstance != null) {
-      map['SYNO.SDS.Docker.ContainerDetail.Instance'] = sYNOSDSDockerContainerDetailInstance?.toJson();
+    if (synoSDSDockerContainerDetailInstance != null) {
+      map['SYNO.SDS.Docker.ContainerDetail.Instance'] = synoSDSDockerContainerDetailInstance?.toJson();
     }
-    if (sYNOSDSDriveApplication != null) {
-      map['SYNO.SDS.Drive.Application'] = sYNOSDSDriveApplication?.toJson();
+    if (synoSDSDriveApplication != null) {
+      map['SYNO.SDS.Drive.Application'] = synoSDSDriveApplication?.toJson();
     }
-    if (sYNOSDSHelpBrowserApplication != null) {
-      map['SYNO.SDS.HelpBrowser.Application'] = sYNOSDSHelpBrowserApplication?.toJson();
+    if (synoSDSHelpBrowserApplication != null) {
+      map['SYNO.SDS.HelpBrowser.Application'] = synoSDSHelpBrowserApplication?.toJson();
     }
-    if (sYNOSDSPhotoViewerApplication != null) {
-      map['SYNO.SDS.PhotoViewer.Application'] = sYNOSDSPhotoViewerApplication?.toJson();
+    if (synoSDSPhotoViewerApplication != null) {
+      map['SYNO.SDS.PhotoViewer.Application'] = synoSDSPhotoViewerApplication?.toJson();
     }
-    if (sYNOSDSPkgManAppInstance != null) {
-      map['SYNO.SDS.PkgManApp.Instance'] = sYNOSDSPkgManAppInstance?.toJson();
+    if (synoSDSPkgManAppInstance != null) {
+      map['SYNO.SDS.PkgManApp.Instance'] = synoSDSPkgManAppInstance?.toJson();
     }
-    if (sYNOSDSResourceMonitorInstance != null) {
-      map['SYNO.SDS.ResourceMonitor.Instance'] = sYNOSDSResourceMonitorInstance?.toJson();
+    if (synoSDSResourceMonitorInstance != null) {
+      map['SYNO.SDS.ResourceMonitor.Instance'] = synoSDSResourceMonitorInstance?.toJson();
     }
-    if (sYNOSDSStorageManagerInstance != null) {
-      map['SYNO.SDS.StorageManager.Instance'] = sYNOSDSStorageManagerInstance?.toJson();
+    if (synoSDSStorageManagerInstance != null) {
+      map['SYNO.SDS.StorageManager.Instance'] = synoSDSStorageManagerInstance?.toJson();
     }
-    if (sYNOSDSStorageManagerQuickWizardInstance != null) {
-      map['SYNO.SDS.StorageManager.QuickWizard.Instance'] = sYNOSDSStorageManagerQuickWizardInstance?.toJson();
+    if (synoSDSStorageManagerQuickWizardInstance != null) {
+      map['SYNO.SDS.StorageManager.QuickWizard.Instance'] = synoSDSStorageManagerQuickWizardInstance?.toJson();
     }
-    if (sYNOSDSWebDAVServerInstance != null) {
-      map['SYNO.SDS.WebDAVServer.Instance'] = sYNOSDSWebDAVServerInstance?.toJson();
+    if (synoSDSWebDAVServerInstance != null) {
+      map['SYNO.SDS.WebDAVServer.Instance'] = synoSDSWebDAVServerInstance?.toJson();
     }
-    if (sYNOSDSWidgetInstance != null) {
-      map['SYNO.SDS._Widget.Instance'] = sYNOSDSWidgetInstance?.toJson();
+    if (synoSDSWidgetInstance != null) {
+      map['SYNO.SDS._Widget.Instance'] = synoSDSWidgetInstance?.toJson();
     }
     return map;
   }
@@ -322,32 +335,32 @@ class UserSettings {
 
 class SynoSdsWidgetInstance {
   SynoSdsWidgetInstance({
-    this.modulelist,
+    this.moduleList,
     this.restoreParams,
     this.restoreSizePos,
   });
 
   SynoSdsWidgetInstance.fromJson(dynamic json) {
-    modulelist = json['modulelist'] != null ? json['modulelist'].cast<String>() : [];
+    moduleList = json['modulelist'] != null ? json['modulelist'].cast<String>() : [];
     restoreParams = json['restoreParams'] != null ? RestoreParams.fromJson(json['restoreParams']) : null;
     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
   }
-  List<String>? modulelist;
+  List<String>? moduleList;
   RestoreParams? restoreParams;
   RestoreSizePos? restoreSizePos;
   SynoSdsWidgetInstance copyWith({
-    List<String>? modulelist,
+    List<String>? moduleList,
     RestoreParams? restoreParams,
     RestoreSizePos? restoreSizePos,
   }) =>
       SynoSdsWidgetInstance(
-        modulelist: modulelist ?? this.modulelist,
+        moduleList: moduleList ?? this.moduleList,
         restoreParams: restoreParams ?? this.restoreParams,
         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['modulelist'] = modulelist;
+    map['modulelist'] = moduleList;
     if (restoreParams != null) {
       map['restoreParams'] = restoreParams?.toJson();
     }
@@ -1731,27 +1744,94 @@ class Wallpaper {
 class ShortcutItems {
   ShortcutItems({
     this.className,
-    this.id,
+    this.icon,
+    this.needHide,
+    this.needUpdate,
+    this.param,
+    this.title,
+    this.type,
+    this.url,
   });
+  static List<ShortcutItems> fromList(dynamic json) {
+    if (json != null && json is List) {
+      List list = json;
+      return list.map((e) => ShortcutItems.fromJson(e)).toList();
+    } else {
+      return [];
+    }
+  }
 
   ShortcutItems.fromJson(dynamic json) {
     className = json['className'];
-    id = json['id'];
+    icon = json['icon'];
+    needHide = json['needHide'];
+    needUpdate = json['needUpdate'];
+    param = json['param'] != null ? Param.fromJson(json['param']) : null;
+    title = json['title'];
+    type = json['type'];
+    url = json['url'];
   }
   String? className;
-  String? id;
-  ShortcutItems copyWith({
-    String? className,
-    String? id,
-  }) =>
-      ShortcutItems(
-        className: className ?? this.className,
-        id: id ?? this.id,
-      );
+  String? icon;
+  bool? needHide;
+  bool? needUpdate;
+  Param? param;
+  String? title;
+  String? type;
+  String? url;
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['className'] = className;
-    map['id'] = id;
+    map['icon'] = icon;
+    map['needHide'] = needHide;
+    map['needUpdate'] = needUpdate;
+    if (param != null) {
+      map['param'] = param!.toJson();
+    }
+    map['title'] = title;
+    map['type'] = type;
+    map['url'] = url;
+    return map;
+  }
+}
+
+/// data : {"name":"firefox"}
+
+class Param {
+  Param({
+    this.data,
+  });
+
+  Param.fromJson(dynamic json) {
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+  }
+  Data? data;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (data != null) {
+      map['data'] = data!.toJson();
+    }
+    return map;
+  }
+}
+
+/// name : "firefox"
+
+class Data {
+  Data({
+    this.name,
+  });
+
+  Data.fromJson(dynamic json) {
+    name = json['name'];
+  }
+  String? name;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['name'] = name;
     return map;
   }
 }
@@ -2246,22 +2326,22 @@ class Session {
 
 class ServiceStatus {
   ServiceStatus({
-    this.sYNOSDSPersonalPhotoStation,
+    this.synoSDSPersonalPhotoStation,
   });
 
   ServiceStatus.fromJson(dynamic json) {
-    sYNOSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
+    synoSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
   }
-  bool? sYNOSDSPersonalPhotoStation;
+  bool? synoSDSPersonalPhotoStation;
   ServiceStatus copyWith({
-    bool? sYNOSDSPersonalPhotoStation,
+    bool? synoSDSPersonalPhotoStation,
   }) =>
       ServiceStatus(
-        sYNOSDSPersonalPhotoStation: sYNOSDSPersonalPhotoStation ?? this.sYNOSDSPersonalPhotoStation,
+        synoSDSPersonalPhotoStation: synoSDSPersonalPhotoStation ?? this.synoSDSPersonalPhotoStation,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['SYNO.SDS.PersonalPhotoStation'] = sYNOSDSPersonalPhotoStation;
+    map['SYNO.SDS.PersonalPhotoStation'] = synoSDSPersonalPhotoStation;
     return map;
   }
 }
@@ -2337,116 +2417,116 @@ class PackageTask {
 class AppPrivilege {
   AppPrivilege({
     this.synoafp,
-    this.sYNODesktop,
+    this.synoDesktop,
     this.synoftp,
-    this.sYNOFinderApplication,
-    this.sYNOFotoAppInstance,
-    this.sYNORsync,
-    this.sYNOSDSAppFileStation3Instance,
-    this.sYNOSDSBackupServiceInstance,
-    this.sYNOSDSDriveApplication,
-    this.sYNOSDSHomeAssistantApplication,
-    this.sYNOSDSMailPlusServerInstance,
-    this.sYNOSDSMailServerInstance,
-    this.sYNOSDSPersonalPhotoStation,
-    this.sYNOSDSSMBServiceAppPrivilegeInstance,
-    this.sYNOSDSVirtualizationApplication,
-    this.sYNOSDSWebDAVServerInstance,
+    this.synoFinderApplication,
+    this.synoFotoAppInstance,
+    this.synoRsync,
+    this.synoSDSAppFileStation3Instance,
+    this.synoSDSBackupServiceInstance,
+    this.synoSDSDriveApplication,
+    this.synoSDSHomeAssistantApplication,
+    this.synoSDSMailPlusServerInstance,
+    this.synoSDSMailServerInstance,
+    this.synoSDSPersonalPhotoStation,
+    this.synoSDSSMBServiceAppPrivilegeInstance,
+    this.synoSDSVirtualizationApplication,
+    this.synoSDSWebDAVServerInstance,
     this.synosftp,
   });
 
   AppPrivilege.fromJson(dynamic json) {
     synoafp = json['SYNO.AFP'];
-    sYNODesktop = json['SYNO.Desktop'];
+    synoDesktop = json['SYNO.Desktop'];
     synoftp = json['SYNO.FTP'];
-    sYNOFinderApplication = json['SYNO.Finder.Application'];
-    sYNOFotoAppInstance = json['SYNO.Foto.AppInstance'];
-    sYNORsync = json['SYNO.Rsync'];
-    sYNOSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'];
-    sYNOSDSBackupServiceInstance = json['SYNO.SDS.BackupService.Instance'];
-    sYNOSDSDriveApplication = json['SYNO.SDS.Drive.Application'];
-    sYNOSDSHomeAssistantApplication = json['SYNO.SDS.HomeAssistant.Application'];
-    sYNOSDSMailPlusServerInstance = json['SYNO.SDS.MailPlusServer.Instance'];
-    sYNOSDSMailServerInstance = json['SYNO.SDS.MailServer.Instance'];
-    sYNOSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
-    sYNOSDSSMBServiceAppPrivilegeInstance = json['SYNO.SDS.SMBService.AppPrivilege.Instance'];
-    sYNOSDSVirtualizationApplication = json['SYNO.SDS.Virtualization.Application'];
-    sYNOSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'];
+    synoFinderApplication = json['SYNO.Finder.Application'];
+    synoFotoAppInstance = json['SYNO.Foto.AppInstance'];
+    synoRsync = json['SYNO.Rsync'];
+    synoSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'];
+    synoSDSBackupServiceInstance = json['SYNO.SDS.BackupService.Instance'];
+    synoSDSDriveApplication = json['SYNO.SDS.Drive.Application'];
+    synoSDSHomeAssistantApplication = json['SYNO.SDS.HomeAssistant.Application'];
+    synoSDSMailPlusServerInstance = json['SYNO.SDS.MailPlusServer.Instance'];
+    synoSDSMailServerInstance = json['SYNO.SDS.MailServer.Instance'];
+    synoSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
+    synoSDSSMBServiceAppPrivilegeInstance = json['SYNO.SDS.SMBService.AppPrivilege.Instance'];
+    synoSDSVirtualizationApplication = json['SYNO.SDS.Virtualization.Application'];
+    synoSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'];
     synosftp = json['SYNO.SFTP'];
   }
   bool? synoafp;
-  bool? sYNODesktop;
+  bool? synoDesktop;
   bool? synoftp;
-  bool? sYNOFinderApplication;
-  bool? sYNOFotoAppInstance;
-  bool? sYNORsync;
-  bool? sYNOSDSAppFileStation3Instance;
-  bool? sYNOSDSBackupServiceInstance;
-  bool? sYNOSDSDriveApplication;
-  bool? sYNOSDSHomeAssistantApplication;
-  bool? sYNOSDSMailPlusServerInstance;
-  bool? sYNOSDSMailServerInstance;
-  bool? sYNOSDSPersonalPhotoStation;
-  bool? sYNOSDSSMBServiceAppPrivilegeInstance;
-  bool? sYNOSDSVirtualizationApplication;
-  bool? sYNOSDSWebDAVServerInstance;
+  bool? synoFinderApplication;
+  bool? synoFotoAppInstance;
+  bool? synoRsync;
+  bool? synoSDSAppFileStation3Instance;
+  bool? synoSDSBackupServiceInstance;
+  bool? synoSDSDriveApplication;
+  bool? synoSDSHomeAssistantApplication;
+  bool? synoSDSMailPlusServerInstance;
+  bool? synoSDSMailServerInstance;
+  bool? synoSDSPersonalPhotoStation;
+  bool? synoSDSSMBServiceAppPrivilegeInstance;
+  bool? synoSDSVirtualizationApplication;
+  bool? synoSDSWebDAVServerInstance;
   bool? synosftp;
   AppPrivilege copyWith({
     bool? synoafp,
-    bool? sYNODesktop,
+    bool? synoDesktop,
     bool? synoftp,
-    bool? sYNOFinderApplication,
-    bool? sYNOFotoAppInstance,
-    bool? sYNORsync,
-    bool? sYNOSDSAppFileStation3Instance,
-    bool? sYNOSDSBackupServiceInstance,
-    bool? sYNOSDSDriveApplication,
-    bool? sYNOSDSHomeAssistantApplication,
-    bool? sYNOSDSMailPlusServerInstance,
-    bool? sYNOSDSMailServerInstance,
-    bool? sYNOSDSPersonalPhotoStation,
-    bool? sYNOSDSSMBServiceAppPrivilegeInstance,
-    bool? sYNOSDSVirtualizationApplication,
-    bool? sYNOSDSWebDAVServerInstance,
+    bool? synoFinderApplication,
+    bool? synoFotoAppInstance,
+    bool? synoRsync,
+    bool? synoSDSAppFileStation3Instance,
+    bool? synoSDSBackupServiceInstance,
+    bool? synoSDSDriveApplication,
+    bool? synoSDSHomeAssistantApplication,
+    bool? synoSDSMailPlusServerInstance,
+    bool? synoSDSMailServerInstance,
+    bool? synoSDSPersonalPhotoStation,
+    bool? synoSDSSMBServiceAppPrivilegeInstance,
+    bool? synoSDSVirtualizationApplication,
+    bool? synoSDSWebDAVServerInstance,
     bool? synosftp,
   }) =>
       AppPrivilege(
         synoafp: synoafp ?? this.synoafp,
-        sYNODesktop: sYNODesktop ?? this.sYNODesktop,
+        synoDesktop: synoDesktop ?? this.synoDesktop,
         synoftp: synoftp ?? this.synoftp,
-        sYNOFinderApplication: sYNOFinderApplication ?? this.sYNOFinderApplication,
-        sYNOFotoAppInstance: sYNOFotoAppInstance ?? this.sYNOFotoAppInstance,
-        sYNORsync: sYNORsync ?? this.sYNORsync,
-        sYNOSDSAppFileStation3Instance: sYNOSDSAppFileStation3Instance ?? this.sYNOSDSAppFileStation3Instance,
-        sYNOSDSBackupServiceInstance: sYNOSDSBackupServiceInstance ?? this.sYNOSDSBackupServiceInstance,
-        sYNOSDSDriveApplication: sYNOSDSDriveApplication ?? this.sYNOSDSDriveApplication,
-        sYNOSDSHomeAssistantApplication: sYNOSDSHomeAssistantApplication ?? this.sYNOSDSHomeAssistantApplication,
-        sYNOSDSMailPlusServerInstance: sYNOSDSMailPlusServerInstance ?? this.sYNOSDSMailPlusServerInstance,
-        sYNOSDSMailServerInstance: sYNOSDSMailServerInstance ?? this.sYNOSDSMailServerInstance,
-        sYNOSDSPersonalPhotoStation: sYNOSDSPersonalPhotoStation ?? this.sYNOSDSPersonalPhotoStation,
-        sYNOSDSSMBServiceAppPrivilegeInstance: sYNOSDSSMBServiceAppPrivilegeInstance ?? this.sYNOSDSSMBServiceAppPrivilegeInstance,
-        sYNOSDSVirtualizationApplication: sYNOSDSVirtualizationApplication ?? this.sYNOSDSVirtualizationApplication,
-        sYNOSDSWebDAVServerInstance: sYNOSDSWebDAVServerInstance ?? this.sYNOSDSWebDAVServerInstance,
+        synoFinderApplication: synoFinderApplication ?? this.synoFinderApplication,
+        synoFotoAppInstance: synoFotoAppInstance ?? this.synoFotoAppInstance,
+        synoRsync: synoRsync ?? this.synoRsync,
+        synoSDSAppFileStation3Instance: synoSDSAppFileStation3Instance ?? this.synoSDSAppFileStation3Instance,
+        synoSDSBackupServiceInstance: synoSDSBackupServiceInstance ?? this.synoSDSBackupServiceInstance,
+        synoSDSDriveApplication: synoSDSDriveApplication ?? this.synoSDSDriveApplication,
+        synoSDSHomeAssistantApplication: synoSDSHomeAssistantApplication ?? this.synoSDSHomeAssistantApplication,
+        synoSDSMailPlusServerInstance: synoSDSMailPlusServerInstance ?? this.synoSDSMailPlusServerInstance,
+        synoSDSMailServerInstance: synoSDSMailServerInstance ?? this.synoSDSMailServerInstance,
+        synoSDSPersonalPhotoStation: synoSDSPersonalPhotoStation ?? this.synoSDSPersonalPhotoStation,
+        synoSDSSMBServiceAppPrivilegeInstance: synoSDSSMBServiceAppPrivilegeInstance ?? this.synoSDSSMBServiceAppPrivilegeInstance,
+        synoSDSVirtualizationApplication: synoSDSVirtualizationApplication ?? this.synoSDSVirtualizationApplication,
+        synoSDSWebDAVServerInstance: synoSDSWebDAVServerInstance ?? this.synoSDSWebDAVServerInstance,
         synosftp: synosftp ?? this.synosftp,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['SYNO.AFP'] = synoafp;
-    map['SYNO.Desktop'] = sYNODesktop;
+    map['SYNO.Desktop'] = synoDesktop;
     map['SYNO.FTP'] = synoftp;
-    map['SYNO.Finder.Application'] = sYNOFinderApplication;
-    map['SYNO.Foto.AppInstance'] = sYNOFotoAppInstance;
-    map['SYNO.Rsync'] = sYNORsync;
-    map['SYNO.SDS.App.FileStation3.Instance'] = sYNOSDSAppFileStation3Instance;
-    map['SYNO.SDS.BackupService.Instance'] = sYNOSDSBackupServiceInstance;
-    map['SYNO.SDS.Drive.Application'] = sYNOSDSDriveApplication;
-    map['SYNO.SDS.HomeAssistant.Application'] = sYNOSDSHomeAssistantApplication;
-    map['SYNO.SDS.MailPlusServer.Instance'] = sYNOSDSMailPlusServerInstance;
-    map['SYNO.SDS.MailServer.Instance'] = sYNOSDSMailServerInstance;
-    map['SYNO.SDS.PersonalPhotoStation'] = sYNOSDSPersonalPhotoStation;
-    map['SYNO.SDS.SMBService.AppPrivilege.Instance'] = sYNOSDSSMBServiceAppPrivilegeInstance;
-    map['SYNO.SDS.Virtualization.Application'] = sYNOSDSVirtualizationApplication;
-    map['SYNO.SDS.WebDAVServer.Instance'] = sYNOSDSWebDAVServerInstance;
+    map['SYNO.Finder.Application'] = synoFinderApplication;
+    map['SYNO.Foto.AppInstance'] = synoFotoAppInstance;
+    map['SYNO.Rsync'] = synoRsync;
+    map['SYNO.SDS.App.FileStation3.Instance'] = synoSDSAppFileStation3Instance;
+    map['SYNO.SDS.BackupService.Instance'] = synoSDSBackupServiceInstance;
+    map['SYNO.SDS.Drive.Application'] = synoSDSDriveApplication;
+    map['SYNO.SDS.HomeAssistant.Application'] = synoSDSHomeAssistantApplication;
+    map['SYNO.SDS.MailPlusServer.Instance'] = synoSDSMailPlusServerInstance;
+    map['SYNO.SDS.MailServer.Instance'] = synoSDSMailServerInstance;
+    map['SYNO.SDS.PersonalPhotoStation'] = synoSDSPersonalPhotoStation;
+    map['SYNO.SDS.SMBService.AppPrivilege.Instance'] = synoSDSSMBServiceAppPrivilegeInstance;
+    map['SYNO.SDS.Virtualization.Application'] = synoSDSVirtualizationApplication;
+    map['SYNO.SDS.WebDAVServer.Instance'] = synoSDSWebDAVServerInstance;
     map['SYNO.SFTP'] = synosftp;
     return map;
   }

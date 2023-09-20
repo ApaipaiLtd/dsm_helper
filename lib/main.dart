@@ -8,8 +8,11 @@ import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/pages/splash/splash.dart';
 import 'package:dsm_helper/providers/audio_player_provider.dart';
+import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/system_info_provider.dart';
+import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/themes/light_theme.dart';
 import 'package:dsm_helper/themes/dark.dart';
@@ -52,7 +55,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await SpUtil.getInstance();
-  bool agreement = await SpUtil.getBool("agreement", defValue: false)!;
+  bool agreement = SpUtil.getBool("agreement", defValue: false)!;
   Log.init();
   if (agreement) {
     Fluwx fluwx = Fluwx();
@@ -148,6 +151,9 @@ void main() async {
         ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
         ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
         ChangeNotifierProvider.value(value: AudioPlayerProvider()),
+        ChangeNotifierProvider.value(value: SystemInfoProvider()),
+        ChangeNotifierProvider.value(value: InitDataProvider()),
+        ChangeNotifierProvider.value(value: UtilizationProvider()),
       ],
       child: DsmHelper(authPage, launchAccountPage),
     ),
