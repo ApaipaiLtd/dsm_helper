@@ -426,6 +426,9 @@ class Cpu {
   num? otherLoad;
   num? systemLoad;
   num? userLoad;
+
+  int get totalLoad => ((userLoad ?? 0) + (systemLoad ?? 0) + (otherLoad ?? 0)).toInt();
+
   Cpu copyWith({
     num? minLoad15,
     num? minLoad1,

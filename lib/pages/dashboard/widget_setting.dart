@@ -1,3 +1,5 @@
+import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
+import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -7,9 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sp_util/sp_util.dart';
 
 class WidgetSetting extends StatefulWidget {
-  final List widgets;
-  final Map restoreSizePos;
-  WidgetSetting(this.widgets, this.restoreSizePos);
+  WidgetSetting();
   @override
   _WidgetSettingState createState() => _WidgetSettingState();
 }
@@ -36,15 +36,16 @@ class _WidgetSettingState extends State<WidgetSetting> {
     "SYNO.SDS.SystemInfoApp.StorageUsageWidget": "存储",
     "SYNO.SDS.ResourceMonitor.Widget": "资源监控",
   };
-  List showWidgets = [];
-  List selectedWidgets = [];
+  List<String> showWidgets = [];
+  List<String> selectedWidgets = [];
   @override
   void initState() {
+    InitDataModel initData = context.read<InitDataProvider>().initData;
     showShortcut = SpUtil.getBool("show_shortcut", defValue: true)!;
     showWallpaper = SpUtil.getBool("show_wallpaper", defValue: true)!;
     setState(() {
-      selectedWidgets.addAll(widget.widgets);
-      showWidgets.addAll(widget.widgets);
+      selectedWidgets.addAll(initData.userSettings!.synoSDSWidgetInstance!.moduleList!);
+      showWidgets.addAll(initData.userSettings!.synoSDSWidgetInstance!.moduleList!);
     });
     allWidgets.forEach((widget) {
       if (!showWidgets.contains(widget)) {
@@ -65,8 +66,8 @@ class _WidgetSettingState extends State<WidgetSetting> {
           Padding(
             padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: CupertinoButton(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(10),
               padding: EdgeInsets.all(10),
               onPressed: () async {
                 List saveWidgets = [];
