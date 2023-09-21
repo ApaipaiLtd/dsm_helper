@@ -234,6 +234,8 @@ class _SelectServerState extends State<SelectServer> {
                                                     child: Text("删除"),
                                                     onPressed: () {
                                                       DbUtils.db.deleteServer(server);
+                                                      // 删除服务器下关联账户
+                                                      DbUtils.db.deleteAccountByServerId(server.id);
                                                       Navigator.of(context).pop();
                                                     },
                                                   ),

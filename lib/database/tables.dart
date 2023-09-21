@@ -82,6 +82,10 @@ class Database extends _$Database {
   Future deleteAccount(Account account) {
     return delete(accounts).delete(account);
   }
+
+  Future deleteAccountByServerId(int serverId) {
+    return (delete(accounts)..where((t) => t.id.equals(serverId))).go();
+  }
 }
 
 LazyDatabase _openConnection() {

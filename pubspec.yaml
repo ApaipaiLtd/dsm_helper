@@ -112,6 +112,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+fluwx:
+  app_id: 'wxabdf23571f34b49b'
+  debug_logging: true # Logging in debug mode.
+  android:
+  #    interrupt_wx_request: true # Defaults to true.
+  #    flutter_activity: 'MainActivity' # Defaults to app's launcher
+  ios:
+    universal_link: https://dsm.apaipai.top/app/
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
