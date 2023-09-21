@@ -1,11 +1,13 @@
+import 'package:dsm_helper/models/base_model.dart';
+
 /// errorCount : 0
 /// infoCount : 0
 /// items : [{"cmd":"write","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/32M34S_1618407154.mp4","filesize":"63.94 KB","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:56","username":"admin"},{"cmd":"create","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/32M34S_1618407154.mp4","filesize":"0 Bytes","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:56","username":"admin"},{"cmd":"write","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/31M34S_1618407094.mp4","filesize":"63.94 KB","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:49","username":"admin"},{"cmd":"create","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/31M34S_1618407094.mp4","filesize":"0 Bytes","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:48","username":"admin"},{"cmd":"write","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/30M34S_1618407034.mp4","filesize":"63.94 KB","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:42","username":"admin"},{"cmd":"create","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/30M34S_1618407034.mp4","filesize":"0 Bytes","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:42","username":"admin"},{"cmd":"write","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/29M34S_1618406974.mp4","filesize":"63.94 KB","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:33","username":"admin"},{"cmd":"create","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/29M34S_1618406974.mp4","filesize":"0 Bytes","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:33","username":"admin"},{"cmd":"write","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/28M34S_1618406914.mp4","filesize":"63.94 KB","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:26","username":"admin"},{"cmd":"create","descr":"/监控/xiaomi_camera_videos/50ec5058c51c/2021041421/28M34S_1618406914.mp4","filesize":"0 Bytes","ip":"192.168.0.131","isdir":"false","logtype":"SMB","orginalLogType":"smbxfer","time":"2021/04/14 21:34:26","username":"admin"}]
 /// total : 10
 /// warnCount : 0
 
-class Log {
-  Log({
+class SyslogClientLog extends BaseModel {
+  SyslogClientLog({
     this.errorCount,
     this.infoCount,
     this.items,
@@ -13,31 +15,48 @@ class Log {
     this.warnCount,
   });
 
-  Log.fromJson(dynamic json) {
+  SyslogClientLog.fromJson(dynamic json) {
     errorCount = json['errorCount'];
     infoCount = json['infoCount'];
     if (json['items'] != null) {
       items = [];
       json['items'].forEach((v) {
-        items?.add(Items.fromJson(v));
+        items?.add(SyslogClientLogItem.fromJson(v));
       });
     }
     total = json['total'];
     warnCount = json['warnCount'];
   }
+  fromJson(dynamic json) {
+    return SyslogClientLog.fromJson(json);
+  }
+
   num? errorCount;
   num? infoCount;
-  List<Items>? items;
+  List<SyslogClientLogItem>? items;
   num? total;
   num? warnCount;
-  Log copyWith({
+
+  String? api = "SYNO.Core.SyslogClient.Log";
+  String? method = "list";
+  int? version = 1;
+
+  Map<String, dynamic>? data = {
+    "start": 0,
+    "limit": 50,
+    "target": "LOCAL",
+    "logtype": "ftp,filestation,webdav,cifs,tftp,afp",
+    "dir": "desc",
+  };
+
+  SyslogClientLog copyWith({
     num? errorCount,
     num? infoCount,
-    List<Items>? items,
+    List<SyslogClientLogItem>? items,
     num? total,
     num? warnCount,
   }) =>
-      Log(
+      SyslogClientLog(
         errorCount: errorCount ?? this.errorCount,
         infoCount: infoCount ?? this.infoCount,
         items: items ?? this.items,
@@ -67,8 +86,8 @@ class Log {
 /// time : "2021/04/14 21:34:56"
 /// username : "admin"
 
-class Items {
-  Items({
+class SyslogClientLogItem {
+  SyslogClientLogItem({
     this.cmd,
     this.descr,
     this.filesize,
@@ -80,7 +99,7 @@ class Items {
     this.username,
   });
 
-  Items.fromJson(dynamic json) {
+  SyslogClientLogItem.fromJson(dynamic json) {
     cmd = json['cmd'];
     descr = json['descr'];
     filesize = json['filesize'];
@@ -100,7 +119,7 @@ class Items {
   String? orginalLogType;
   String? time;
   String? username;
-  Items copyWith({
+  SyslogClientLogItem copyWith({
     String? cmd,
     String? descr,
     String? filesize,
@@ -111,7 +130,7 @@ class Items {
     String? time,
     String? username,
   }) =>
-      Items(
+      SyslogClientLogItem(
         cmd: cmd ?? this.cmd,
         descr: descr ?? this.descr,
         filesize: filesize ?? this.filesize,

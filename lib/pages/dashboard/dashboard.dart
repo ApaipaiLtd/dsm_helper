@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
+import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
+import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashboard/applications.dart';
+import 'package:dsm_helper/pages/dashboard/dialogs/first_launch_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/media_converter.dart';
 import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
 import 'package:dsm_helper/pages/dashboard/widget_setting.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/file_change_log_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/resource_monitor_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/system_health_widget.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
@@ -41,7 +46,6 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Map? utilization;
   List volumes = [];
   List disks = [];
   List connectedUsers = [];
@@ -52,7 +56,7 @@ class DashboardState extends State<Dashboard> {
   List latestLog = [];
   List notifies = [];
   List applications = [];
-  List fileLogs = [];
+  SyslogClientLog fileChangeLogs = SyslogClientLog();
   List validAppViewOrder = [];
   WallpaperModel? wallpaperModel;
   List esatas = [];
@@ -80,14 +84,22 @@ class DashboardState extends State<Dashboard> {
   String msg = "";
   @override
   void initState() {
-    getGroups();
+    // getGroups();
     networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
-    getNotifyStrings();
+    // getNotifyStrings();
     // ApiModel.fetch().then((apis) {
     //   Api.apiList = apis;
     // });
+    initData();
     getData(init: true);
     super.initState();
+  }
+
+  initData() async {
+    InitDataModel initData = await InitDataModel.get();
+    InitDataProvider initDataProvider = context.read<InitDataProvider>();
+    initDataProvider.setInitData(initData);
+    setState(() {});
   }
 
   bool get isDrawerOpen {
@@ -96,173 +108,12 @@ class DashboardState extends State<Dashboard> {
 
   getGroups() async {
     Utils.groups = await GroupsModel.fetch();
-    if (Utils.notReviewAccount) {
-      showFirstLaunchDialog();
-    }
+    FirstLaunchDialog.show(context);
   }
 
   closeDrawer() {
     if (_scaffoldKey.currentState!.isDrawerOpen) {
       Navigator.of(context).pop();
-    }
-  }
-
-  showFirstLaunchDialog() async {
-    bool firstLaunch = SpUtil.getBool("first_launch_channel", defValue: true)!;
-    if (firstLaunch) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return Material(
-            color: Colors.transparent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 50),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Text(
-                          "温馨提示",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          child: Text("前往'设置-关闭广告'页面，即可关闭开屏广告。"),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                              padding: EdgeInsets.all(15),
-                              child: Column(
-                                children: Utils.groups.channel!.map((channel) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/icons/qq.png",
-                                          width: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "${channel.displayName}",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        Spacer(),
-                                        CupertinoButton(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(20),
-                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                          onPressed: () {
-                                            launchUrlString(channel.key!, mode: LaunchMode.externalApplication);
-                                          },
-                                          child: Text("加入"),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              )),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                              padding: EdgeInsets.all(15),
-                              child: Column(
-                                children: Utils.groups.wechat!.map((wechat) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/icons/wechat.png",
-                                          width: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "${wechat.displayName}",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        Spacer(),
-                                        CupertinoButton(
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(20),
-                                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                          onPressed: () {
-                                            ClipboardData data = new ClipboardData(text: wechat.name!);
-                                            Clipboard.setData(data);
-                                            Utils.toast("已复制到剪贴板");
-                                          },
-                                          child: Text("复制"),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              )),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CupertinoButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                  SpUtil.putBool("first_launch_channel", false);
-                                },
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(25),
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Text(
-                                  "我知道了",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
     }
   }
 
@@ -314,33 +165,28 @@ class DashboardState extends State<Dashboard> {
   getData({bool init = false}) async {
     // getExternalDevice();
     // getMediaConverter();
-    InitDataModel initData = await InitDataModel.get();
-    InitDataProvider initDataProvider = context.read<InitDataProvider>();
-    initDataProvider.setInitData(initData);
-    setState(() {});
-    var batchRes = await api.Api.dsm.batch(apis: [System()]);
-    if (batchRes['success']) {
-      List res = batchRes['data']['result'];
-      res.forEach((element) {
-        switch (element['api']) {
-          case "SYNO.Core.System":
-            setState(() {
-              SystemInfoProvider provider = context.read<SystemInfoProvider>();
-              provider.setSystemInfo(System.fromJson(element['data']));
-            });
-            break;
-        }
-      });
-      setState(() {
-        loading = false;
-        success = true;
-      });
-    }
+    List<BaseModel> apis = [System(), SyslogClientLog()];
+    List<DsmResponse> batchRes = await api.Api.dsm.batch(apis: apis);
+    batchRes.forEach((element) {
+      switch (element.data.runtimeType.toString()) {
+        case "System":
+          SystemInfoProvider provider = context.read<SystemInfoProvider>();
+          provider.setSystemInfo(element.data);
+          break;
+        case "SyslogClientLog":
+          setState(() {
+            fileChangeLogs = element.data;
+          });
+      }
+    });
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
     Utilization utilization = await Utilization.get();
     utilizationProvider.setUtilization(utilization);
     print(utilization);
-
+    setState(() {
+      loading = false;
+      success = true;
+    });
     return;
     // var res = await Api.systemInfo(widgets);
     //
@@ -682,63 +528,7 @@ class DashboardState extends State<Dashboard> {
         ],
       );
     } else if (widget == "SYNO.SDS.SystemInfoApp.FileChangeLogWidget") {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/icons/file_change.png",
-                    width: 26,
-                    height: 26,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "文件更改日志",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              height: 300,
-              child: fileLogs.length > 0
-                  ? CupertinoScrollbar(
-                      child: ListView.builder(
-                        itemBuilder: (context, i) {
-                          return _buildFileLogItem(fileLogs[i]);
-                        },
-                        itemCount: fileLogs.length,
-                      ),
-                    )
-                  : Center(
-                      child: Text(
-                        "暂无日志",
-                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                      ),
-                    ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
-        ),
-      );
+      return FileChangeLogWidget(fileChangeLogs);
     } else {
       return Container();
     }
@@ -969,58 +759,6 @@ class DashboardState extends State<Dashboard> {
           Text(
             "${log['msg']}",
             style: TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFileLogItem(log) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: EdgeInsets.all(15),
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: Row(
-        children: [
-          Icon(log['cmd'] == "delete"
-              ? Icons.delete
-              : log['cmd'] == "copy"
-                  ? Icons.copy
-                  : log['cmd'] == "edit"
-                      ? Icons.edit
-                      : log['cmd'] == "move"
-                          ? Icons.drive_file_move_outline
-                          : log['cmd'] == "download"
-                              ? Icons.download_outlined
-                              : log['cmd'] == "upload"
-                                  ? Icons.upload_outlined
-                                  : log['cmd'] == "rename"
-                                      ? Icons.drive_file_rename_outline
-                                      : log['cmd'] == "write"
-                                          ? Icons.edit
-                                          : log['cmd'] == 'create'
-                                              ? Icons.add
-                                              : Icons.device_unknown),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${log['time']}",
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  "${log['descr']}",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
           ),
         ],
       ),

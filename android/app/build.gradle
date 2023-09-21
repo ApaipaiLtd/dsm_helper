@@ -70,6 +70,19 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    flavorDimensions "app"
+
+    productFlavors {
+        beta {
+            dimension "app"
+            resValue "string", "app_name", "群晖助手"
+            applicationId "top.apaipai.dsm_helper"
+        }
+        production {
+            dimension "app"
+            resValue "string", "app_name", "群晖助手"
+        }
+    }
 }
 
 flutter {

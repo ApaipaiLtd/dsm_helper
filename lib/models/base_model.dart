@@ -1,4 +1,4 @@
-class BaseModel {
+abstract class BaseModel {
   String? api;
   Map<String, dynamic>? data;
   String? method;
@@ -6,5 +6,5 @@ class BaseModel {
 
   BaseModel({this.api, this.method, this.data, this.version = 1});
 
-  BaseModel.fromJson(dynamic json);
+  fromJson(dynamic json);
 }

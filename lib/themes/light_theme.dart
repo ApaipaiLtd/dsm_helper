@@ -43,6 +43,6 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     iconColor: Colors.black,
     suffixIconColor: Color(0xff7E7E7E),
   ),
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: Color(0xFFF7F7F7),
   useMaterial3: true,
 );

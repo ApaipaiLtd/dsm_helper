@@ -47,7 +47,7 @@ class DsmApi extends HttpUtil {
     return res;
   }
 
-  Future<Map<String, dynamic>> batch({
+  Future<List<DsmResponse>> batch({
     required List<BaseModel> apis,
     String mode = "sequential", // parallel
     Map<String, dynamic>? parameters,
@@ -73,7 +73,12 @@ class DsmApi extends HttpUtil {
     }).toList());
     data['_sid'] = sid;
     Response response = await dio!.post("/webapi/entry.cgi", data: data, queryParameters: parameters, options: options);
-
-    return response.data;
+    List<DsmResponse> res = [];
+    if (response.data['success']) {
+      for (int i = 0; i < apis.length; i++) {
+        res.add(DsmResponse.fromJson(response.data['data']['result'][i], apis[i].fromJson));
+      }
+    }
+    return res;
   }
 }

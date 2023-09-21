@@ -101,6 +101,12 @@ class System extends BaseModel {
       });
     }
   }
+
+  @override
+  fromJson(json) {
+    return System.fromJson(json);
+  }
+
   String? api = "SYNO.Core.System";
   String? method = "info";
   int? version = 1;

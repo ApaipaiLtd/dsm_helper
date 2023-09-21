@@ -112,7 +112,7 @@ class _LoginState extends State<Login> {
                 synoToken: authModel.synotoken!,
               ),
             );
-        Api.dsm.init(widget.server.url, deviceId: authModel.deviceId, sid: authModel.sid);
+        await Api.dsm.init(widget.server.url, deviceId: authModel.deviceId, sid: authModel.sid);
         context.push(Home(), replace: true);
       } else if (res.error?['code'] == 400) {
         Utils.toast("用户名/密码有误");
