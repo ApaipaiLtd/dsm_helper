@@ -517,7 +517,7 @@ class _ControlPanelState extends State<ControlPanel> {
                         onTap: () {
                           Navigator.of(context).push(CupertinoPageRoute(
                               builder: (content) {
-                                return SystemInfo(0, widget.system, widget.volumes, widget.disks);
+                                return SystemInfo(0);
                               },
                               settings: RouteSettings(name: "system_info_all")));
                         },

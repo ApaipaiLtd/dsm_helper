@@ -1,16 +1,16 @@
+import 'package:dsm_helper/models/Syno/Core/System.dart';
+import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class SystemInfo extends StatefulWidget {
   final int index;
-  final Map? system;
-  final List volumes;
-  final List disks;
-  SystemInfo(this.index, this.system, this.volumes, this.disks);
+  SystemInfo(this.index);
   @override
   _SystemInfoState createState() => _SystemInfoState();
 }
@@ -26,24 +26,24 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   @override
   void initState() {
     _tabController = TabController(initialIndex: widget.index, length: 6, vsync: this);
-    if (widget.system != null) {
-      setState(() {
-        usbDev = widget.system!['usb_dev'];
-      });
-    }
-
-    getData();
-    if (widget.volumes.length > 0 || widget.disks.length > 0) {
-      setState(() {
-        volumes = widget.volumes;
-        disks = widget.disks;
-      });
-    } else {
-      setState(() {
-        loadingDisks = true;
-      });
-      getDisks();
-    }
+    // if (widget.system != null) {
+    //   setState(() {
+    //     usbDev = widget.system!['usb_dev'];
+    //   });
+    // }
+    //
+    // getData();
+    // if (widget.volumes.length > 0 || widget.disks.length > 0) {
+    //   setState(() {
+    //     volumes = widget.volumes;
+    //     disks = widget.disks;
+    //   });
+    // } else {
+    //   setState(() {
+    //     loadingDisks = true;
+    //   });
+    //   getDisks();
+    // }
     super.initState();
   }
 
@@ -371,6 +371,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    System system = context.read<SystemInfoProvider>().systemInfo;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -465,7 +466,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['serial']}",
+                                    "${system.serial}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -490,7 +491,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['model']}",
+                                    "${system.model}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -515,7 +516,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['cpu_vendor']} ${widget.system!['cpu_family']} ${widget.system!['cpu_series']}",
+                                    "${system.cpuVendor} ${system.cpuFamily} ${system.cpuSeries}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -540,7 +541,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['cpu_cores']}核 @ ${(widget.system!['cpu_clock_speed'] / 1000).toStringAsFixed(2)}GHz",
+                                    "${system.cpuCores}核 @ ${(system.cpuClockSpeed! / 1000).toStringAsFixed(2)}GHz",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -565,7 +566,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['ram_size']}MB",
+                                    "${system.ramSize}MB",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -590,7 +591,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['firmware_ver']}",
+                                    "${system.firmwareVer}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -615,7 +616,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['time']}",
+                                    "${system.time}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -640,14 +641,14 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${Utils.parseOpTime(widget.system!['up_time'])}",
+                                    "${Utils.parseOpTime(system.upTime!)}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          if (widget.system!['sys_temp'] != null)
+                          if (system.sysTemp != null)
                             Container(
                               decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -666,8 +667,8 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                   Expanded(
                                     flex: 2,
                                     child: Text(
-                                      "${widget.system!['sys_temp']}℃ ${widget.system!['temperature_warning'] == null ? (widget.system!['sys_temp'] > 80 ? "警告" : "正常") : (widget.system!['temperature_warning'] ? "警告" : "正常")}",
-                                      style: TextStyle(color: widget.system!['temperature_warning'] == null ? (widget.system!['sys_temp'] > 80 ? Colors.red : Colors.green) : (widget.system!['temperature_warning'] ? Colors.red : Colors.green)),
+                                      "${system.sysTemp}℃ ${system.temperatureWarning == null ? (system.sysTemp! > 80 ? "警告" : "正常") : (system.temperatureWarning! ? "警告" : "正常")}",
+                                      style: TextStyle(color: system.temperatureWarning == null ? (system.sysTemp! > 80 ? Colors.red : Colors.green) : (system.temperatureWarning! ? Colors.red : Colors.green)),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -714,7 +715,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['ntp_server']} ${widget.system!['enabled_ntp'] ? "" : "(暂未启用)"}",
+                                    "${system.ntpServer} ${system.enabledNtp! ? "" : "(暂未启用)"}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -740,7 +741,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${widget.system!['time_zone_desc']}",
+                                    "${system.timeZoneDesc}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),

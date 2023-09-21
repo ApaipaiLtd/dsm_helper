@@ -44,12 +44,7 @@ class WidgetCard extends StatelessWidget {
                   ],
                 ),
               ),
-            if (body != null) ...[
-              SizedBox(
-                height: 10,
-              ),
-              body!,
-            ],
+            if (body != null) body!,
           ],
         ),
       ),

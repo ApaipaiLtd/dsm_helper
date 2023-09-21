@@ -11,6 +11,7 @@ import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
@@ -154,6 +155,7 @@ void main() async {
         ChangeNotifierProvider.value(value: SystemInfoProvider()),
         ChangeNotifierProvider.value(value: InitDataProvider()),
         ChangeNotifierProvider.value(value: UtilizationProvider()),
+        ChangeNotifierProvider.value(value: StorageProvider()),
       ],
       child: DsmHelper(authPage, launchAccountPage),
     ),

@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
-
-import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
@@ -9,9 +6,7 @@ import 'package:dsm_helper/database/table_extention.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/Syno/Api/auth.dart';
 import 'package:dsm_helper/models/Syno/SDS/Session/SessionData.dart';
-import 'package:dsm_helper/pages/dashboard/dashboard.dart';
 import 'package:dsm_helper/pages/home.dart';
-// import 'package:dsm_helper/pages/index/index.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
@@ -19,7 +14,6 @@ import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/button.dart';
 import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
-// import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

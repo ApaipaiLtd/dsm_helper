@@ -16,12 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Badge;
 
 class ApplicationList extends StatelessWidget {
-  final List applications;
-  final Map? system;
-  final List volumes;
-  final List disks;
-  final Map? appNotify;
-  const ApplicationList(this.applications, this.system, this.volumes, this.disks, this.appNotify, {super.key});
+  const ApplicationList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +40,8 @@ class ApplicationList extends StatelessWidget {
 
   List<Widget> _buildApplicationList(BuildContext context) {
     List<Widget> apps = [];
+    List applications = [];
+    Map? appNotify;
     applications.forEach((application) {
       switch (application) {
         case "SYNO.SDS.AdminCenter.Application":

@@ -6,6 +6,7 @@ import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
+import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/models/wallpaper_model.dart';
@@ -19,11 +20,13 @@ import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
 import 'package:dsm_helper/pages/dashboard/widget_setting.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/file_change_log_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/resource_monitor_widget.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/storage_usage_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/system_health_widget.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
@@ -31,11 +34,8 @@ import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:sp_util/sp_util.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:dsm_helper/apis/api.dart' as api;
 
 class Dashboard extends StatefulWidget {
@@ -46,8 +46,7 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List volumes = [];
-  List disks = [];
+
   List connectedUsers = [];
   List interfaces = [];
   List networks = [];
@@ -179,6 +178,11 @@ class DashboardState extends State<Dashboard> {
           });
       }
     });
+
+    Storage storage = await Storage.loadInfo();
+    StorageProvider storageProvider = context.read<StorageProvider>();
+    storageProvider.setStorage(storage);
+
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
     Utilization utilization = await Utilization.get();
     utilizationProvider.setUtilization(utilization);
@@ -441,92 +445,7 @@ class DashboardState extends State<Dashboard> {
     } else if (widget == "SYNO.SDS.ResourceMonitor.Widget") {
       return ResourceMonitorWidget();
     } else if (widget == "SYNO.SDS.SystemInfoApp.StorageUsageWidget") {
-      return Column(
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                return SystemInfo(2, system!, volumes, disks);
-              }));
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/icons/pie.png",
-                          width: 26,
-                          height: 26,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "存储",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ...volumes.map(_buildVolumeItem).toList(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (ssdCaches.length > 0)
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/icons/cache.png",
-                          width: 26,
-                          height: 26,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "缓存",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ...ssdCaches.map(_buildSSDCacheItem).toList(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
-            )
-        ],
-      );
+      return StorageUsageWidget();
     } else if (widget == "SYNO.SDS.SystemInfoApp.FileChangeLogWidget") {
       return FileChangeLogWidget(fileChangeLogs);
     } else {
@@ -760,215 +679,6 @@ class DashboardState extends State<Dashboard> {
             "${log['msg']}",
             style: TextStyle(fontSize: 12),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVolumeItem(volume) {
-    double used = int.parse(volume['size']['used']) / int.parse(volume['size']['total']);
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      margin: EdgeInsets.only(top: 10, left: 20, right: 20),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(80),
-              // color: Colors.red,
-            ),
-            padding: EdgeInsets.all(5),
-            child: CircularPercentIndicator(
-              radius: 40,
-              animation: true,
-              linearGradient: LinearGradient(
-                colors: used <= 0.9
-                    ? [
-                        Colors.blue,
-                        Colors.blueAccent,
-                      ]
-                    : [
-                        Colors.red,
-                        Colors.orangeAccent,
-                      ],
-              ),
-              animateFromLastPercent: true,
-              circularStrokeCap: CircularStrokeCap.round,
-              lineWidth: 12,
-              backgroundColor: Colors.black12,
-              percent: used,
-              center: Text(
-                "${(used * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: used <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "${volume['deploy_path'] != null ? volume['deploy_path'].toString().replaceFirst("volume_", "存储空间 ") : volume['id'].toString().replaceFirst("volume_", "存储空间 ")}",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    volume['status'] == "normal"
-                        ? Label(
-                            "正常",
-                            Colors.green,
-                            fill: true,
-                          )
-                        : volume['status'] == "background"
-                            ? Label(
-                                "正在检查硬盘",
-                                Colors.lightBlueAccent,
-                                fill: true,
-                              )
-                            : volume['status'] == "attention"
-                                ? Label(
-                                    "注意",
-                                    Colors.orangeAccent,
-                                    fill: true,
-                                  )
-                                : Label(
-                                    volume['status'],
-                                    Colors.red,
-                                    fill: true,
-                                  ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("已用：${Utils.formatSize(int.parse(volume['size']['used']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSSDCacheItem(volume) {
-    double percent = int.parse(volume['size']['used'] ?? volume['size']['reusable']) / int.parse(volume['size']['total']);
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(80),
-              // color: Colors.red,
-            ),
-            padding: EdgeInsets.all(5),
-            child: CircularPercentIndicator(
-              radius: 40,
-              animation: true,
-              linearGradient: LinearGradient(
-                colors: percent <= 0.9
-                    ? [
-                        Colors.blue,
-                        Colors.blueAccent,
-                      ]
-                    : [
-                        Colors.red,
-                        Colors.orangeAccent,
-                      ],
-              ),
-              animateFromLastPercent: true,
-              circularStrokeCap: CircularStrokeCap.round,
-              lineWidth: 12,
-              backgroundColor: Colors.black12,
-              percent: percent,
-              center: Text(
-                "${(percent * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: percent <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "${volume['id'].toString().replaceFirst("ssd_", "SSD 缓存 ")}",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    volume['status'] == "normal"
-                        ? Label(
-                            "正常",
-                            Colors.green,
-                            fill: true,
-                          )
-                        : volume['status'] == "background"
-                            ? Label(
-                                "正在检查硬盘",
-                                Colors.lightBlueAccent,
-                                fill: true,
-                              )
-                            : volume['status'] == "attention"
-                                ? Label(
-                                    "注意",
-                                    Colors.orangeAccent,
-                                    fill: true,
-                                  )
-                                : Label(
-                                    volume['status'],
-                                    Colors.red,
-                                    fill: true,
-                                  ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("已用：${Utils.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
-              ],
-            ),
-          )
         ],
       ),
     );
@@ -1335,7 +1045,7 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-      drawer: applications.length > 0 ? ApplicationList(applications, system, volumes, disks, appNotify) : null,
+      drawer: applications.length > 0 ? ApplicationList() : null,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.refresh),
         onPressed: () {
