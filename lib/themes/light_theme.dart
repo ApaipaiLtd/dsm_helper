@@ -26,6 +26,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     elevation: 0,
   ),
   dialogTheme: DialogTheme(
+    backgroundColor: Colors.white,
     actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
   ),
   // iconTheme: IconThemeData(
@@ -43,6 +44,6 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     iconColor: Colors.black,
     suffixIconColor: Color(0xff7E7E7E),
   ),
-  scaffoldBackgroundColor: Color(0xFFF7F7F7),
+  scaffoldBackgroundColor: Color(0xFFF2F2F7),
   useMaterial3: true,
 );

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
@@ -9,115 +10,291 @@ import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart' hide CornerStyle;
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class ResourceMonitorWidget extends StatelessWidget {
   const ResourceMonitorWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width);
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
     Utilization utilization = utilizationProvider.utilization;
-    List<Network> network = utilizationProvider.network;
+    List<Network> networks = utilizationProvider.networks;
     return WidgetCard(
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
           return ResourceMonitor();
         }));
       },
-      icon: Image.asset(
-        "assets/icons/resources.png",
-        width: 26,
-        height: 26,
-      ),
-      title: "资源监控",
+      // icon: Image.asset(
+      //   "assets/icons/resources.png",
+      //   width: 26,
+      //   height: 26,
+      // ),
+      // title: "资源监控",
       body: Column(
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return Performance(
-                      tabIndex: 1,
-                    );
-                  },
-                  settings: RouteSettings(name: "performance"),
-                ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 60,
-                    child: Text("CPU："),
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: FAProgressBar(
-                        backgroundColor: Colors.transparent,
-                        changeColorValue: 90,
-                        changeProgressColor: Colors.red,
-                        progressColor: Colors.blue,
-                        displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
-                        currentValue: utilization.cpu!.totalLoad,
-                        displayText: '%',
-                      ),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) {
+                            return Performance(
+                              tabIndex: 2,
+                            );
+                          },
+                          settings: RouteSettings(name: "performance"),
+                        ),
+                      );
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: SfRadialGauge(
+                      enableLoadingAnimation: true,
+                      axes: <RadialAxis>[
+                        RadialAxis(
+                          showLabels: false,
+                          showTicks: false,
+                          radiusFactor: 0.8,
+                          maximum: 100,
+                          axisLineStyle: AxisLineStyle(cornerStyle: CornerStyle.bothCurve, thickness: 8),
+                          annotations: <GaugeAnnotation>[
+                            GaugeAnnotation(
+                              angle: 90,
+                              positionFactor: 0.4,
+                              widget: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Image.asset(
+                                    "assets/icons/cpu_line.png",
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '${utilization.cpu!.totalLoad}',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                                        ),
+                                        TextSpan(
+                                          text: '%',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.black45),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    "CPU",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.black45),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          pointers: <GaugePointer>[
+                            RangePointer(
+                              value: utilization.cpu!.totalLoad.toDouble(),
+                              width: 8,
+                              cornerStyle: CornerStyle.bothCurve,
+                              color: Color(0xFFF67280),
+                              gradient: SweepGradient(colors: <Color>[Color(0xFF00BAAD), Color(0xFF4BD6CD)], stops: <double>[0.25, 0.75]),
+                            ),
+                            // MarkerPointer(
+                            //   value: utilization.cpu!.totalLoad.toDouble() - 3,
+                            //   color: Colors.white,
+                            //   markerType: MarkerType.circle,
+                            // ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return Performance(
-                      tabIndex: 2,
-                    );
-                  },
-                  settings: RouteSettings(name: "performance"),
                 ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  SizedBox(width: 60, child: Text("RAM：")),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: FAProgressBar(
-                        backgroundColor: Colors.transparent,
-                        changeColorValue: 90,
-                        changeProgressColor: Colors.red,
-                        progressColor: Colors.blue,
-                        displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
-                        currentValue: utilization.memory!.realUsage!.toInt(),
-                        displayText: '%',
-                      ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) {
+                            return Performance(
+                              tabIndex: 2,
+                            );
+                          },
+                          settings: RouteSettings(name: "performance"),
+                        ),
+                      );
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: SfRadialGauge(
+                      enableLoadingAnimation: true,
+                      axes: <RadialAxis>[
+                        RadialAxis(
+                          showLabels: false,
+                          showTicks: false,
+                          radiusFactor: 0.8,
+                          maximum: 100,
+                          axisLineStyle: AxisLineStyle(cornerStyle: CornerStyle.bothCurve, thickness: 8),
+                          annotations: <GaugeAnnotation>[
+                            GaugeAnnotation(
+                              angle: 90,
+                              positionFactor: 0.4,
+                              widget: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Image.asset(
+                                    "assets/icons/memory.png",
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '${utilization.memory!.realUsage}',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                                        ),
+                                        TextSpan(
+                                          text: '%',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.black45),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    "RAM",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.black45),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          pointers: <GaugePointer>[
+                            RangePointer(
+                              value: utilization.memory!.realUsage!.toDouble(),
+                              width: 8,
+                              cornerStyle: CornerStyle.bothCurve,
+                              color: Color(0xFFF67280),
+                              gradient: SweepGradient(colors: <Color>[Color(0xFF2A82E4), Color(0xFF75ACFF)], stops: <double>[0.25, 0.75]),
+                            ),
+                            // MarkerPointer(
+                            //   value: utilization.cpu!.totalLoad.toDouble() - 3,
+                            //   color: Colors.white,
+                            //   markerType: MarkerType.circle,
+                            // ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+              // Expanded(child: SizedBox()),
+            ],
           ),
+          // GestureDetector(
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       CupertinoPageRoute(
+          //         builder: (context) {
+          //           return Performance(
+          //             tabIndex: 1,
+          //           );
+          //         },
+          //         settings: RouteSettings(name: "performance"),
+          //       ),
+          //     );
+          //   },
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 20),
+          //     child: Row(
+          //       children: [
+          //         SizedBox(
+          //           width: 60,
+          //           child: Text("CPU："),
+          //         ),
+          //         Expanded(
+          //           child: Container(
+          //             decoration: BoxDecoration(
+          //               color: Theme.of(context).scaffoldBackgroundColor,
+          //               borderRadius: BorderRadius.circular(8),
+          //             ),
+          //             child: FAProgressBar(
+          //               backgroundColor: Colors.transparent,
+          //               changeColorValue: 90,
+          //               changeProgressColor: Colors.red,
+          //               progressColor: Colors.blue,
+          //               displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
+          //               currentValue: utilization.cpu!.totalLoad,
+          //               displayText: '%',
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(
+          //   height: 10,
+          // ),
+          // GestureDetector(
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       CupertinoPageRoute(
+          //         builder: (context) {
+          //           return Performance(
+          //             tabIndex: 2,
+          //           );
+          //         },
+          //         settings: RouteSettings(name: "performance"),
+          //       ),
+          //     );
+          //   },
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 20),
+          //     child: Row(
+          //       children: [
+          //         SizedBox(width: 60, child: Text("RAM：")),
+          //         Expanded(
+          //           child: Container(
+          //             decoration: BoxDecoration(
+          //               color: Theme.of(context).scaffoldBackgroundColor,
+          //               borderRadius: BorderRadius.circular(8),
+          //             ),
+          //             child: FAProgressBar(
+          //               backgroundColor: Colors.transparent,
+          //               changeColorValue: 90,
+          //               changeProgressColor: Colors.red,
+          //               progressColor: Colors.blue,
+          //               displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
+          //               currentValue: utilization.memory!.realUsage!.toInt(),
+          //               displayText: '%',
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           SizedBox(
-            height: 15,
+            height: 10,
           ),
           GestureDetector(
             onTap: () {
@@ -136,21 +313,20 @@ class ResourceMonitorWidget extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  SizedBox(width: 60, child: Text("网络：")),
-                  Icon(
-                    Icons.upload_sharp,
-                    color: Colors.blue,
+                  Image.asset(
+                    "assets/icons/arrow_down.png",
+                    width: 20,
+                    height: 20,
                   ),
                   Text(
                     Utils.formatSize(utilization.network!.first.tx!) + "/S",
                     style: TextStyle(color: Colors.blue),
                   ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  Icon(
-                    Icons.download_sharp,
-                    color: Colors.green,
+                  Spacer(),
+                  Image.asset(
+                    "assets/icons/arrow_up.png",
+                    width: 20,
+                    height: 20,
                   ),
                   Text(
                     Utils.formatSize(utilization.network!.first.rx!) + "/S",
@@ -177,115 +353,40 @@ class ResourceMonitorWidget extends StatelessWidget {
               );
             },
             child: AspectRatio(
-              aspectRatio: 1.70,
+              aspectRatio: 2.2,
               child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: SfCartesianChart(
+                  plotAreaBorderWidth: 0,
+                  primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift, isVisible: false, interval: 1, majorGridLines: const MajorGridLines(width: 0)),
+                  primaryYAxis: NumericAxis(
+                    labelFormat: '{value}',
+                    axisLine: const AxisLine(width: 0),
+                    majorTickLines: const MajorTickLines(color: Colors.transparent),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    // child: LineChart(
-                    //   LineChartData(
-                    //     lineTouchData: LineTouchData(
-                    //       touchTooltipData: LineTouchTooltipData(
-                    //         tooltipBgColor: Colors.white.withOpacity(0.6),
-                    //         tooltipRoundedRadius: 20,
-                    //         fitInsideHorizontally: true,
-                    //         fitInsideVertically: true,
-                    //         getTooltipItems: (List<LineBarSpot> items) {
-                    //           return items.map((LineBarSpot touchedSpot) {
-                    //             final textStyle = TextStyle(
-                    //               color: touchedSpot.bar.color,
-                    //               // color: touchedSpot.bar.colors[0],
-                    //               fontWeight: FontWeight.bold,
-                    //               fontSize: 14,
-                    //             );
-                    //             return LineTooltipItem('${touchedSpot.bar.color == Colors.blue ? "上传" : "下载"}:${Utils.formatSize(touchedSpot.y.floor())}', textStyle);
-                    //           }).toList();
-                    //         },
-                    //       ),
-                    //     ),
-                    //     gridData: FlGridData(
-                    //       show: false,
-                    //     ),
-                    //     titlesData: FlTitlesData(
-                    //       show: true,
-                    //       bottomTitles: AxisTitles(
-                    //         sideTitles: SideTitles(
-                    //           showTitles: false,
-                    //           reservedSize: 22,
-                    //         ),
-                    //       ),
-                    //       topTitles: AxisTitles(
-                    //         sideTitles: SideTitles(showTitles: false),
-                    //       ),
-                    //       rightTitles: AxisTitles(
-                    //         sideTitles: SideTitles(showTitles: false),
-                    //       ),
-                    //       leftTitles: AxisTitles(
-                    //         sideTitles: SideTitles(
-                    //           showTitles: true,
-                    //           // getTextStyles: (value, _) => const TextStyle(
-                    //           //   color: Color(0xff67727d),
-                    //           //   fontSize: 12,
-                    //           // ),
-                    //           // getTitles: chartTitle,
-                    //           getTitlesWidget: (value, _) {
-                    //             return Text(Utils.formatSize(value, fixed: 0),
-                    //                 style: TextStyle(
-                    //                   color: Color(0xff67727d),
-                    //                   fontSize: 12,
-                    //                 ));
-                    //           },
-                    //           reservedSize: 35,
-                    //           interval: Utils.chartInterval(maxNetworkSpeed),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     // maxY: 20,
-                    //     minY: 0,
-                    //     borderData: FlBorderData(show: true, border: Border.all(color: Colors.black12, width: 1)),
-                    //     lineBarsData: [
-                    //       LineChartBarData(
-                    //         spots: networks.map((network) {
-                    //           return FlSpot(networks.indexOf(network).toDouble(), network['tx'].toDouble());
-                    //         }).toList(),
-                    //         isCurved: true,
-                    //         color: Colors.blue,
-                    //         barWidth: 2,
-                    //         isStrokeCapRound: true,
-                    //         dotData: FlDotData(
-                    //           show: false,
-                    //         ),
-                    //         belowBarData: BarAreaData(
-                    //           show: true,
-                    //           color: Colors.blue.withOpacity(0.2),
-                    //         ),
-                    //       ),
-                    //       LineChartBarData(
-                    //         spots: networks.map((network) {
-                    //           return FlSpot(networks.indexOf(network).toDouble(), network['rx'].toDouble());
-                    //         }).toList(),
-                    //         isCurved: true,
-                    //         color: Colors.green,
-                    //         barWidth: 2,
-                    //         isStrokeCapRound: true,
-                    //         dotData: FlDotData(
-                    //           show: false,
-                    //         ),
-                    //         belowBarData: BarAreaData(
-                    //           show: true,
-                    //           color: Colors.green.withOpacity(0.2),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                  ),
+                  series: <LineSeries<Network, num>>[
+                    LineSeries<Network, num>(
+                      animationDuration: 1000,
+                      dataSource: networks,
+                      xValueMapper: (Network network, _) => networks.indexOf(network),
+                      yValueMapper: (Network network, _) => network.tx,
+                      width: 2,
+                      name: '上传',
+                      markerSettings: const MarkerSettings(isVisible: false),
+                      color: Colors.blue,
+                    ),
+                    LineSeries<Network, num>(
+                      animationDuration: 1000,
+                      dataSource: networks,
+                      width: 2,
+                      name: '下载',
+                      xValueMapper: (Network network, _) => networks.indexOf(network),
+                      yValueMapper: (Network network, _) => network.rx,
+                      markerSettings: const MarkerSettings(isVisible: false),
+                      color: Colors.green,
+                    )
+                  ],
+                  tooltipBehavior: TooltipBehavior(enable: true, shared: true),
                 ),
               ),
             ),

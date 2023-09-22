@@ -97,12 +97,12 @@ class Network {
     tx = json['tx'];
   }
   String? device;
-  num? rx;
-  num? tx;
+  int? rx;
+  int? tx;
   Network copyWith({
     String? device,
-    num? rx,
-    num? tx,
+    int? rx,
+    int? tx,
   }) =>
       Network(
         device: device ?? this.device,

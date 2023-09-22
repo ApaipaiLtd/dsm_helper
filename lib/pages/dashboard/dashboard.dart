@@ -6,13 +6,11 @@ import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
+import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
 import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
-import 'package:dsm_helper/models/wallpaper_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
-import 'package:dsm_helper/pages/control_panel/info/info.dart';
-import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashboard/applications.dart';
 import 'package:dsm_helper/pages/dashboard/dialogs/first_launch_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/media_converter.dart';
@@ -48,23 +46,17 @@ class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List connectedUsers = [];
-  List interfaces = [];
   List networks = [];
-  List ssdCaches = [];
   List tasks = [];
   List latestLog = [];
   List notifies = [];
   List applications = [];
   SyslogClientLog fileChangeLogs = SyslogClientLog();
-  List validAppViewOrder = [];
-  WallpaperModel? wallpaperModel;
+
   List esatas = [];
   List usbs = [];
   Map? appNotify;
-  Map? system;
-  Map? restoreSizePos;
   Map? converter;
-  Map? volWarnings;
   bool loading = true;
   bool success = true;
   int refreshDuration = 10;
@@ -178,6 +170,8 @@ class DashboardState extends State<Dashboard> {
           });
       }
     });
+    TaskScheduler taskScheduler = await TaskScheduler.list();
+    print(taskScheduler);
 
     Storage storage = await Storage.loadInfo();
     StorageProvider storageProvider = context.read<StorageProvider>();
@@ -186,7 +180,6 @@ class DashboardState extends State<Dashboard> {
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
     Utilization utilization = await Utilization.get();
     utilizationProvider.setUtilization(utilization);
-    print(utilization);
     setState(() {
       loading = false;
       success = true;
@@ -330,9 +323,9 @@ class DashboardState extends State<Dashboard> {
     } else if (widget == "SYNO.SDS.TaskScheduler.TaskSchedulerWidget") {
       return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-            return TaskScheduler();
-          }));
+          // Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+          //   return TaskScheduler();
+          // }));
         },
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -973,50 +966,54 @@ class DashboardState extends State<Dashboard> {
               ),
             )
           : success
-              ? ListView(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+              ? Stack(
                   children: [
-                    ShortcutList(),
-                    if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
-                      ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
-                        return _buildWidgetItem(widget);
-                        // return Text(widget);
-                      }).toList()
-                    else
-                      Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "未添加小组件",
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            SizedBox(
-                              width: 200,
-                              child: CupertinoButton(
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(20),
-                                onPressed: () {
-                                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                    return WidgetSetting();
-                                  })).then((res) {
-                                    if (res != null) {
-                                      getData();
-                                    }
-                                  });
-                                },
-                                child: Text(
-                                  ' 添加 ',
-                                  style: TextStyle(fontSize: 18),
+                    ListView(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      children: [
+                        ShortcutList(),
+                        if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
+                          ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
+                            return _buildWidgetItem(widget);
+                            // return Text(widget);
+                          }).toList()
+                        else
+                          Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "未添加小组件",
                                 ),
-                              ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: CupertinoButton(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20),
+                                    onPressed: () {
+                                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                        return WidgetSetting();
+                                      })).then((res) {
+                                        if (res != null) {
+                                          getData();
+                                        }
+                                      });
+                                    },
+                                    child: Text(
+                                      ' 添加 ',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
+                          )
+                      ],
+                    ),
                   ],
                 )
               : Center(

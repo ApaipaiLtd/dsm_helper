@@ -18,33 +18,35 @@ class WidgetCard extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        padding: EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
         child: Column(
           children: [
             if (icon != null && title != null)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (icon != null) ...[
-                      icon!,
-                      SizedBox(
-                        width: 10,
-                      ),
-                    ],
                     if (title != null)
                       Text(
                         title!,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
+                    if (icon != null) icon!,
                   ],
                 ),
               ),
-            if (body != null) body!,
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: [
+                  if (body != null) body!,
+                ],
+              ),
+            ),
           ],
         ),
       ),

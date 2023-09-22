@@ -51,7 +51,6 @@ class FileChangeLogWidget extends StatelessWidget {
       "create": Icons.add,
     };
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15),
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
