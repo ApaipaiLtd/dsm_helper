@@ -22,6 +22,7 @@ class FileChangeLogWidget extends StatelessWidget {
         child: fileLogs.items != null && fileLogs.items!.isNotEmpty
             ? CupertinoScrollbar(
                 child: ListView.builder(
+                  padding: EdgeInsets.zero,
                   itemBuilder: (context, i) {
                     return _buildFileLogItem(fileLogs.items![i]);
                   },

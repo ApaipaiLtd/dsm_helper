@@ -20,7 +20,7 @@ class WidgetCard extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
-            if (icon != null && title != null)
+            if (icon != null || title != null)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(

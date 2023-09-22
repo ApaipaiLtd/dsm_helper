@@ -4,12 +4,12 @@ import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TaskScheduler extends StatefulWidget {
+class TaskSchedulerManage extends StatefulWidget {
   @override
-  _TaskSchedulerState createState() => _TaskSchedulerState();
+  _TaskSchedulerManageState createState() => _TaskSchedulerManageState();
 }
 
-class _TaskSchedulerState extends State<TaskScheduler> {
+class _TaskSchedulerManageState extends State<TaskSchedulerManage> {
   bool loading = true;
   List tasks = [];
   @override

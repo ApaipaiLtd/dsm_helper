@@ -59,24 +59,17 @@ class ShortcutList extends StatelessWidget {
     List<String> validAppViewOrder = initData.userSettings?.desktop?.validAppviewOrder != null ? initData.userSettings!.desktop!.validAppviewOrder! : [];
     if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Utils.notReviewAccount && showShortcut) {
       return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          height: 95,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (ctx, i) {
-              return _buildShortcutItem(
-                context,
-                shortcutItems[i],
-                validAppViewOrder,
-              );
-            },
-            itemCount: shortcutItems.length,
-          ),
+        height: 95,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, i) {
+            return _buildShortcutItem(
+              context,
+              shortcutItems[i],
+              validAppViewOrder,
+            );
+          },
+          itemCount: shortcutItems.length,
         ),
       );
     } else {
@@ -233,7 +226,7 @@ class ShortcutList extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, color: Colors.black45),
+                        style: TextStyle(fontSize: 13, color: Colors.black),
                       ),
                     ],
                   ),

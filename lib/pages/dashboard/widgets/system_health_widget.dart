@@ -1,11 +1,14 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
+import 'package:dsm_helper/pages/control_panel/info/info.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,12 +20,81 @@ class SystemHealthWidget extends StatelessWidget {
     System system = context.watch<SystemInfoProvider>().systemInfo;
     InitDataModel initData = context.watch<InitDataProvider>().initData;
     bool showWallpaper = context.watch<WallpaperProvider>().showWallpaper;
+    return WidgetCard(
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icons/system_name.png",
+                    width: 20,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "系统名称",
+                        style: TextStyle(color: Color(0x99000000), fontSize: 16),
+                      ),
+                      Text(
+                        "ChallengerV",
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 30,
+              child: VerticalDivider(
+                color: Color(0xF000000),
+              ),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icons/system_up_time.png",
+                    width: 20,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "运行时间",
+                        style: TextStyle(color: Color(0x99000000), fontSize: 16),
+                      ),
+                      Text(
+                        "16天12:30:30",
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
     return GestureDetector(
       onTap: () {
-        // if (Utils.notReviewAccount)
-        //   Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-        //     return SystemInfo(0, system!, volumes, disks);
-        //   }));
+        if (Utils.notReviewAccount)
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+            return SystemInfo(0);
+          }));
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),

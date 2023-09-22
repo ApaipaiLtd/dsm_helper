@@ -115,18 +115,20 @@ class Tasks {
   bool? canEdit;
   bool? canRun;
   bool? enable;
-  num? id;
+  int? id;
   String? name;
   String? nextTriggerTime;
   String? owner;
   String? type;
+
+  bool running = false;
   Tasks copyWith({
     String? action,
     bool? canDelete,
     bool? canEdit,
     bool? canRun,
     bool? enable,
-    num? id,
+    int? id,
     String? name,
     String? nextTriggerTime,
     String? owner,

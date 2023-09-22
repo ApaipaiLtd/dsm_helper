@@ -15,6 +15,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     ),
     centerTitle: true,
   ),
+  buttonTheme: ButtonThemeData(padding: EdgeInsets.symmetric(horizontal: 0)),
   textSelectionTheme: TextSelectionThemeData(
     cursorColor: Colors.black,
     selectionHandleColor: Colors.black,

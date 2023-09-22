@@ -23,12 +23,12 @@ class StorageUsageWidget extends StatelessWidget {
               return SystemInfo(2);
             }));
           },
-          icon: Image.asset(
-            "assets/icons/pie.png",
-            width: 26,
-            height: 26,
-          ),
-          title: "存储",
+          // icon: Image.asset(
+          //   "assets/icons/pie.png",
+          //   width: 26,
+          //   height: 26,
+          // ),
+          title: "存储信息",
           body: Column(
             children: [
               if (storage.volumes != null)

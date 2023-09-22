@@ -69,7 +69,7 @@ class _SelectServerState extends State<SelectServer> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
-              color: Colors.white.withOpacity(0.5), // 设置模糊背景的颜色和透明度
+              color: Colors.white.withOpacity(0.2), // 设置模糊背景的颜色和透明度
             ),
           ),
         ),

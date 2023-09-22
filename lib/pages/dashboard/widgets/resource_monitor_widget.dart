@@ -57,6 +57,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                     },
                     behavior: HitTestBehavior.opaque,
                     child: SfRadialGauge(
+                      animationDuration: 1000,
                       enableLoadingAnimation: true,
                       axes: <RadialAxis>[
                         RadialAxis(
@@ -141,6 +142,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                     },
                     behavior: HitTestBehavior.opaque,
                     child: SfRadialGauge(
+                      animationDuration: 1000,
                       enableLoadingAnimation: true,
                       axes: <RadialAxis>[
                         RadialAxis(
@@ -293,6 +295,12 @@ class ResourceMonitorWidget extends StatelessWidget {
           //     ),
           //   ),
           // ),
+
+          Divider(
+            indent: 16,
+            endIndent: 16,
+            color: Color(0xF000000),
+          ),
           SizedBox(
             height: 10,
           ),
@@ -364,26 +372,33 @@ class ResourceMonitorWidget extends StatelessWidget {
                     axisLine: const AxisLine(width: 0),
                     majorTickLines: const MajorTickLines(color: Colors.transparent),
                   ),
-                  series: <LineSeries<Network, num>>[
-                    LineSeries<Network, num>(
+                  series: <AreaSeries<Network, num>>[
+                    AreaSeries<Network, num>(
                       animationDuration: 1000,
                       dataSource: networks,
                       xValueMapper: (Network network, _) => networks.indexOf(network),
                       yValueMapper: (Network network, _) => network.tx,
-                      width: 2,
+                      // dataLabelSettings: DataLabelSettings(),
+                      // width: 2,
                       name: '上传',
                       markerSettings: const MarkerSettings(isVisible: false),
-                      color: Colors.blue,
+                      // color: Colors.lightBlue,
+                      borderWidth: 2,
+                      borderColor: Color(0xFF2A82E4),
+                      gradient: LinearGradient(colors: [Colors.white, Color(0xFFD5E4F5)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
                     ),
-                    LineSeries<Network, num>(
+                    AreaSeries<Network, num>(
                       animationDuration: 1000,
                       dataSource: networks,
-                      width: 2,
+                      // width: 2,
                       name: '下载',
                       xValueMapper: (Network network, _) => networks.indexOf(network),
                       yValueMapper: (Network network, _) => network.rx,
                       markerSettings: const MarkerSettings(isVisible: false),
-                      color: Colors.green,
+                      color: Colors.lightGreen,
+                      borderColor: Color(0xFF43CF7C),
+                      borderWidth: 2,
+                      gradient: LinearGradient(colors: [Color(0x0CCCCCCC), Color(0x2343CF7C)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
                     )
                   ],
                   tooltipBehavior: TooltipBehavior(enable: true, shared: true),

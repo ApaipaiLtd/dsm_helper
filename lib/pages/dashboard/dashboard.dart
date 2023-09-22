@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
@@ -7,11 +8,10 @@ import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
 import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
-import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
+import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart' hide Size;
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
-import 'package:dsm_helper/pages/dashboard/applications.dart';
 import 'package:dsm_helper/pages/dashboard/dialogs/first_launch_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/media_converter.dart';
 import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
@@ -20,6 +20,7 @@ import 'package:dsm_helper/pages/dashboard/widgets/file_change_log_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/resource_monitor_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/storage_usage_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/system_health_widget.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/task_scheduler_widget.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
@@ -28,10 +29,12 @@ import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:dsm_helper/apis/api.dart' as api;
@@ -47,12 +50,10 @@ class DashboardState extends State<Dashboard> {
 
   List connectedUsers = [];
   List networks = [];
-  List tasks = [];
+  TaskScheduler taskScheduler = TaskScheduler();
   List latestLog = [];
   List notifies = [];
-  List applications = [];
   SyslogClientLog fileChangeLogs = SyslogClientLog();
-
   List esatas = [];
   List usbs = [];
   Map? appNotify;
@@ -170,8 +171,7 @@ class DashboardState extends State<Dashboard> {
           });
       }
     });
-    TaskScheduler taskScheduler = await TaskScheduler.list();
-    print(taskScheduler);
+    taskScheduler = await TaskScheduler.list();
 
     Storage storage = await Storage.loadInfo();
     StorageProvider storageProvider = context.read<StorageProvider>();
@@ -321,50 +321,7 @@ class DashboardState extends State<Dashboard> {
         ),
       );
     } else if (widget == "SYNO.SDS.TaskScheduler.TaskSchedulerWidget") {
-      return GestureDetector(
-        onTap: () {
-          // Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-          //   return TaskScheduler();
-          // }));
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      "assets/icons/task.png",
-                      width: 26,
-                      height: 26,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "计划任务",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-              ...tasks.map(_buildTaskItem).toList(),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
-        ),
-      );
+      return TaskSchedulerWidget(taskScheduler);
     } else if (widget == "SYNO.SDS.SystemInfoApp.RecentLogWidget") {
       return GestureDetector(
         onTap: () {
@@ -587,75 +544,6 @@ class DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _buildTaskItem(task) {
-    task['running'] = task['running'] ?? false;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                "${task['name']}",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              "${task['next_trigger_time']}",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            CupertinoButton(
-              onPressed: () async {
-                if (task['running']) {
-                  return;
-                }
-                setState(() {
-                  task['running'] = true;
-                });
-                var res = await Api.taskRun([task['id']]);
-                setState(() {
-                  task['running'] = false;
-                });
-                if (res['success']) {
-                  Utils.toast("任务计划执行成功");
-                } else {
-                  Utils.toast("任务计划执行失败，code：${res['error']['code']}");
-                }
-              },
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(10),
-              padding: EdgeInsets.all(5),
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: task['running']
-                    ? CupertinoActivityIndicator()
-                    : Icon(
-                        CupertinoIcons.play_arrow_solid,
-                        color: Color(0xffff9813),
-                        size: 16,
-                      ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildLogItem(log) {
     return Container(
       decoration: BoxDecoration(
@@ -749,205 +637,178 @@ class DashboardState extends State<Dashboard> {
     InitDataModel initData = context.watch<InitDataProvider>().initData;
     return Scaffold(
       key: _scaffoldKey,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        notificationPredicate: (_) {
+          return false;
+        },
+        flexibleSpace: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              color: Colors.transparent, // 设置模糊背景的颜色和透明度
+            ),
+          ),
+        ),
         title: Stack(
           alignment: Alignment.center,
           children: [
             Row(
               children: [
-                if (Utils.notReviewAccount)
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: CupertinoButton(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                      padding: EdgeInsets.all(10),
-                      onPressed: () {
-                        _scaffoldKey.currentState?.openDrawer();
-                      },
-                      child: Image.asset(
-                        "assets/icons/application.png",
-                        width: 20,
-                      ),
-                    ),
-                  ),
-                if ((esatas + usbs).length > 0)
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: CupertinoButton(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                      padding: EdgeInsets.all(10),
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) {
-                            return Material(
-                              color: Colors.transparent,
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                child: SafeArea(
-                                  top: false,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          "外接设备",
-                                          style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                // if ((esatas + usbs).length > 0)
+                CupertinoButton(
+                  onPressed: () {
+                    showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) {
+                        return Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                            child: SafeArea(
+                              top: false,
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      "外接设备",
+                                      style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    ...(esatas + usbs).map(_buildESataItem).toList(),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: CupertinoButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).push(CupertinoPageRoute(
+                                                  builder: (context) {
+                                                    return ExternalDevice();
+                                                  },
+                                                  settings: RouteSettings(name: "external_device")));
+                                            },
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
+                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                            child: Text(
+                                              "查看详情",
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
                                         ),
                                         SizedBox(
-                                          height: 12,
+                                          width: 16,
                                         ),
-                                        ...(esatas + usbs).map(_buildESataItem).toList(),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: CupertinoButton(
-                                                onPressed: () async {
-                                                  Navigator.of(context).push(CupertinoPageRoute(
-                                                      builder: (context) {
-                                                        return ExternalDevice();
-                                                      },
-                                                      settings: RouteSettings(name: "external_device")));
-                                                },
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(25),
-                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                child: Text(
-                                                  "查看详情",
-                                                  style: TextStyle(fontSize: 18),
-                                                ),
-                                              ),
+                                        Expanded(
+                                          child: CupertinoButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                            },
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            borderRadius: BorderRadius.circular(25),
+                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                            child: Text(
+                                              "取消",
+                                              style: TextStyle(fontSize: 18),
                                             ),
-                                            SizedBox(
-                                              width: 16,
-                                            ),
-                                            Expanded(
-                                              child: CupertinoButton(
-                                                onPressed: () async {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(25),
-                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                child: Text(
-                                                  "取消",
-                                                  style: TextStyle(fontSize: 18),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 8,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         );
                       },
-                      child: Image.asset(
-                        "assets/icons/external_devices.png",
-                        width: 20,
-                      ),
-                    ),
+                    );
+                  },
+                  child: Image.asset(
+                    "assets/icons/external_devices.png",
+                    width: 20,
                   ),
-                if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0))
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: CupertinoButton(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                      padding: EdgeInsets.all(10),
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                            context: context,
-                            builder: (context) {
-                              return MediaConverter(converter!);
-                            });
-                      },
-                      child: Image.asset(
-                        "assets/icons/converter.gif",
-                        width: 20,
-                      ),
-                    ),
+                ),
+                // if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0))
+                CupertinoButton(
+                  onPressed: () {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return MediaConverter(converter!);
+                        });
+                  },
+                  child: Image.asset(
+                    "assets/icons/converting.png",
+                    width: 20,
                   ),
+                ),
                 Spacer(),
                 if (Utils.notReviewAccount)
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: CupertinoButton(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                      padding: EdgeInsets.all(10),
-                      onPressed: () {
-                        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                          return WidgetSetting();
-                        })).then((res) {
-                          if (res != null) {
-                            getData();
-                          }
-                        });
-                      },
-                      child: Image.asset(
-                        "assets/icons/edit.png",
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
-                  ),
-                Padding(
-                  padding: EdgeInsets.only(top: 8, bottom: 8),
-                  child: CupertinoButton(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                    padding: EdgeInsets.all(10),
+                  CupertinoButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(
-                              builder: (context) {
-                                return Notify(notifies);
-                              },
-                              settings: RouteSettings(name: "notify")))
-                          .then((res) {
-                        if (res != null && res) {
-                          setState(() {
-                            notifies = [];
-                          });
+                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                        return WidgetSetting();
+                      })).then((res) {
+                        if (res != null) {
+                          getData();
                         }
                       });
                     },
-                    child: Stack(
-                      alignment: Alignment.topRight,
-                      children: [
-                        Image.asset(
-                          "assets/icons/message.png",
-                          width: 20,
-                          height: 20,
-                        ),
-                        if (notifies.length > 0)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            width: 5,
-                            height: 5,
-                          )
-                      ],
+                    child: Image.asset(
+                      "assets/icons/plus_circle.png",
+                      width: 20,
+                      height: 20,
                     ),
+                  ),
+                CupertinoButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(CupertinoPageRoute(
+                            builder: (context) {
+                              return Notify(notifies);
+                            },
+                            settings: RouteSettings(name: "notify")))
+                        .then((res) {
+                      if (res != null && res) {
+                        setState(() {
+                          notifies = [];
+                        });
+                      }
+                    });
+                  },
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Image.asset(
+                        "assets/icons/message.png",
+                        width: 20,
+                        height: 20,
+                      ),
+                      if (notifies.length > 0)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          width: 5,
+                          height: 5,
+                        )
+                    ],
                   ),
                 ),
               ],
             ),
-            Text("控制台")
           ],
         ),
         automaticallyImplyLeading: false,
@@ -968,8 +829,42 @@ class DashboardState extends State<Dashboard> {
           : success
               ? Stack(
                   children: [
+                    Positioned(
+                      left: -137,
+                      top: -153,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 450,
+                              color: Color(0xFFDFDFFB),
+                            ),
+                          ],
+                        ),
+                        width: 392,
+                        height: 392,
+                      ),
+                    ),
+                    Positioned(
+                      right: -257,
+                      top: -153,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 450,
+                              color: Color(0xFFE9F5FF),
+                            ),
+                          ],
+                        ),
+                        width: 392,
+                        height: 392,
+                      ),
+                    ),
                     ListView(
-                      padding: EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.only(top: context.padding.top + 60, bottom: 10),
                       children: [
                         ShortcutList(),
                         if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
@@ -1042,13 +937,12 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-      drawer: applications.length > 0 ? ApplicationList() : null,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.refresh),
-        onPressed: () {
-          getData();
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.refresh),
+      //   onPressed: () {
+      //     getData();
+      //   },
+      // ),
     );
   }
 }

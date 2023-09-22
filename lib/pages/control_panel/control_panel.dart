@@ -637,7 +637,7 @@ class _ControlPanelState extends State<ControlPanel> {
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
                                 builder: (context) {
-                                  return TaskScheduler();
+                                  return TaskSchedulerManage();
                                 },
                                 settings: RouteSettings(name: "task_scheduler")));
                           },
@@ -1020,7 +1020,7 @@ class _ControlPanelState extends State<ControlPanel> {
                           onTap: () {
                             Navigator.of(context).push(CupertinoPageRoute(
                                 builder: (context) {
-                                  return TaskScheduler();
+                                  return TaskSchedulerManage();
                                 },
                                 settings: RouteSettings(name: "task_scheduler")));
                           },
