@@ -99,6 +99,7 @@ dependencies:
   fplayer:
     path: fplayer
   easy_app_installer: ^1.0.0
+  quiver: ^3.2.1
 
   # drift 相关依赖
   drift: ^2.11.1
