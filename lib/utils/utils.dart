@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:dsm_helper/models/Syno/Core/Notify/DsmNotifyStrings.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/update/update.dart';
@@ -84,7 +85,7 @@ class Utils {
   static bool vibrateNormal = true;
   static String? cookie = "";
   static Map strings = {};
-  static Map notifyStrings = {};
+  static Map<String, DsmNotifyStrings> notifyStrings = {};
   static bool isAuthPage = false;
   static GlobalKey<DownloadState> downloadKey = GlobalKey<DownloadState>();
   static String appName = "";

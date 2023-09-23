@@ -543,9 +543,9 @@ class _ExpansionContainerState extends State<ExpansionContainer> with SingleTick
                 ),
               ),
               if (widget.showFirst && widget.first != null) widget.first ?? SizedBox(),
+              if (!widget.bottomTitle) children,
             ],
           ),
-          if (!widget.bottomTitle) children,
         ],
       ),
     );

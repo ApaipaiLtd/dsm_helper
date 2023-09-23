@@ -85,7 +85,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: '${utilization.cpu!.totalLoad}',
+                                          text: '${utilization.cpu?.totalLoad ?? '-'}',
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                                         ),
                                         TextSpan(
@@ -107,7 +107,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                             RangePointer(
                               enableAnimation: true,
                               animationDuration: 1000,
-                              value: utilization.cpu!.totalLoad.toDouble(),
+                              value: (utilization.cpu?.totalLoad ?? 0).toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
                               gradient: SweepGradient(colors: <Color>[Color(0xFF00BAAD), Color(0xFF4BD6CD)]),
@@ -171,7 +171,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: '${utilization.memory!.realUsage}',
+                                          text: '${utilization.memory?.realUsage ?? '-'}',
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                                         ),
                                         TextSpan(
@@ -193,7 +193,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                             RangePointer(
                               enableAnimation: true,
                               animationDuration: 1000,
-                              value: utilization.memory!.realUsage!.toDouble(),
+                              value: (utilization.memory?.realUsage ?? 0).toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
                               gradient: SweepGradient(colors: <Color>[Color(0xFF2A82E4), Color(0xFF75ACFF)]),

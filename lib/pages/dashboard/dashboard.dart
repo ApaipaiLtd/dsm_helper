@@ -5,6 +5,8 @@ import 'dart:ui';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
+import 'package:dsm_helper/models/Syno/Core/Notify.dart';
+import 'package:dsm_helper/models/Syno/Core/Notify/DsmNotifyStrings.dart';
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/Status.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
@@ -55,10 +57,9 @@ class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   CurrentConnection connectedUsers = CurrentConnection();
-  List networks = [];
   TaskScheduler taskScheduler = TaskScheduler();
   SynoClientStatus latestLog = SynoClientStatus();
-  List notifies = [];
+  DsmNotify dsmNotify = DsmNotify();
   SyslogClientLog fileChangeLogs = SyslogClientLog();
   List esatas = [];
   List usbs = [];
@@ -67,24 +68,22 @@ class DashboardState extends State<Dashboard> {
   bool loading = true;
   bool success = true;
   int refreshDuration = 10;
-  String hostname = "获取中";
-  int get maxNetworkSpeed {
-    int maxSpeed = 0;
-    for (int i = 0; i < networks.length; i++) {
-      int maxVal = max(networks[i]['rx'], networks[i]['tx']);
-      if (maxSpeed < maxVal) {
-        maxSpeed = maxVal;
-      }
-    }
-    return maxSpeed;
-  }
+  // int get maxNetworkSpeed {
+  //   int maxSpeed = 0;
+  //   for (int i = 0; i < networks.length; i++) {
+  //     int maxVal = max(networks[i]['rx'], networks[i]['tx']);
+  //     if (maxSpeed < maxVal) {
+  //       maxSpeed = maxVal;
+  //     }
+  //   }
+  //   return maxSpeed;
+  // }
 
   String msg = "";
   @override
   void initState() {
     // getGroups();
-    networks = List.generate(20, (i) => {"tx": 0, "rx": 0});
-    // getNotifyStrings();
+    getNotifyStrings();
     // ApiModel.fetch().then((apis) {
     //   Api.apiList = apis;
     // });
@@ -116,13 +115,8 @@ class DashboardState extends State<Dashboard> {
   }
 
   getNotifyStrings() async {
-    var res = await Api.notifyStrings();
-    debugPrint("notifyStrings");
-    if (res['success']) {
-      setState(() {
-        Utils.notifyStrings = res['data'] ?? {};
-      });
-    }
+    Utils.notifyStrings = await DsmNotifyStrings.get();
+    print("xx");
   }
 
   getExternalDevice() async {
@@ -160,6 +154,25 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
+  initUtilizationTask() async {
+    UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
+    Utilization utilization = await Utilization.get();
+    utilizationProvider.setUtilization(utilization);
+    setState(() {});
+    await Future.delayed(Duration(seconds: 10));
+
+    initUtilizationTask();
+  }
+
+  initNotifyTask({bool loop = true}) async {
+    dsmNotify = await DsmNotify.notify();
+    setState(() {});
+    await Future.delayed(Duration(seconds: 30));
+    if (loop) {
+      initNotifyTask();
+    }
+  }
+
   getData({bool init = false}) async {
     // getExternalDevice();
     // getMediaConverter();
@@ -187,9 +200,10 @@ class DashboardState extends State<Dashboard> {
     StorageProvider storageProvider = context.read<StorageProvider>();
     storageProvider.setStorage(storage);
 
-    UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
-    Utilization utilization = await Utilization.get();
-    utilizationProvider.setUtilization(utilization);
+    initUtilizationTask();
+
+    initNotifyTask();
+
     setState(() {
       loading = false;
       success = true;
@@ -483,7 +497,8 @@ class DashboardState extends State<Dashboard> {
                   },
                   child: Image.asset(
                     "assets/icons/external_devices.png",
-                    width: 20,
+                    width: 24,
+                    height: 24,
                   ),
                 ),
                 // if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0))
@@ -497,7 +512,8 @@ class DashboardState extends State<Dashboard> {
                   },
                   child: Image.asset(
                     "assets/icons/converting.png",
-                    width: 20,
+                    width: 24,
+                    height: 24,
                   ),
                 ),
                 Spacer(),
@@ -514,22 +530,25 @@ class DashboardState extends State<Dashboard> {
                     },
                     child: Image.asset(
                       "assets/icons/plus_circle.png",
-                      width: 20,
-                      height: 20,
+                      width: 24,
+                      height: 24,
                     ),
                   ),
                 CupertinoButton(
                   onPressed: () {
                     Navigator.of(context)
-                        .push(CupertinoPageRoute(
-                            builder: (context) {
-                              return Notify(notifies);
-                            },
-                            settings: RouteSettings(name: "notify")))
+                        .push(
+                      CupertinoPageRoute(
+                        builder: (context) {
+                          return Notify(dsmNotify);
+                        },
+                        settings: RouteSettings(name: "notify"),
+                      ),
+                    )
                         .then((res) {
                       if (res != null && res) {
                         setState(() {
-                          notifies = [];
+                          dsmNotify.items = [];
                         });
                       }
                     });
@@ -539,17 +558,17 @@ class DashboardState extends State<Dashboard> {
                     children: [
                       Image.asset(
                         "assets/icons/message.png",
-                        width: 20,
-                        height: 20,
+                        width: 24,
+                        height: 24,
                       ),
-                      if (notifies.length > 0)
+                      if (dsmNotify.items != null && dsmNotify.items!.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          width: 5,
-                          height: 5,
+                          width: 8,
+                          height: 8,
                         )
                     ],
                   ),

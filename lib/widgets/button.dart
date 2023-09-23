@@ -1,5 +1,5 @@
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 typedef Callback = Function();
 
@@ -139,7 +139,7 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
               if (widget.loading)
                 Padding(
                   padding: EdgeInsets.only(right: 5),
-                  child: LoadingAnimationWidget.fourRotatingDots(
+                  child: LoadingWidget(
                     color: widget.textStyle?.color ?? defaultTextColor,
                     size: widget.textStyle?.fontSize ?? 14,
                   ),
