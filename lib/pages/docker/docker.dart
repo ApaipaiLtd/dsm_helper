@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 class Docker extends StatefulWidget {
   final String title;
-  Docker({this.title: 'Docker'});
+  Docker({this.title = 'Docker'});
   @override
   _DockerState createState() => _DockerState();
 }
@@ -159,8 +159,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                 powerLoading[container['id']] = false;
                               });
                             },
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "确认",
@@ -176,8 +176,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(25),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(25),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: Text(
                               "取消",
@@ -227,7 +227,6 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
             settings: RouteSettings(name: "docker_container_detail")));
       },
       child: Container(
-        
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(20),
@@ -286,7 +285,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (powerLoading[container['id']]== null || powerLoading[container['id']]!) {
+                      if (powerLoading[container['id']] == null || powerLoading[container['id']]!) {
                         return;
                       }
 
@@ -317,8 +316,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                           Navigator.of(context).pop();
                                           power(container, "start");
                                         },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "启动",
@@ -333,8 +332,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                           Navigator.of(context).pop();
                                           power(container, "delete", preserveProfile: true);
                                         },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "清除",
@@ -349,8 +348,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                           Navigator.of(context).pop();
                                           power(container, "delete", preserveProfile: false);
                                         },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "删除",
@@ -363,8 +362,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                           Navigator.of(context).pop();
                                           power(container, "stop");
                                         },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "停止",
@@ -379,8 +378,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                           Navigator.of(context).pop();
                                           power(container, "signal");
                                         },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "强制停止",
@@ -395,8 +394,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                           Navigator.of(context).pop();
                                           power(container, "restart");
                                         },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        borderRadius: BorderRadius.circular(25),
                                         padding: EdgeInsets.symmetric(vertical: 10),
                                         child: Text(
                                           "重新启动",
@@ -620,7 +619,6 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                     ? Center(
                         child: Container(
                           padding: EdgeInsets.all(50),
-                          
                           decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
@@ -637,7 +635,6 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                             children: [
                               Expanded(
                                 child: Container(
-                                  
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
@@ -689,7 +686,6 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               ),
                               Expanded(
                                 child: Container(
-                                  
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
@@ -748,7 +744,6 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                     ? Center(
                         child: Container(
                           padding: EdgeInsets.all(50),
-                          
                           decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),

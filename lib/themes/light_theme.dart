@@ -22,7 +22,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     selectionColor: Colors.black38,
   ),
   navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: Colors.white30,
+    backgroundColor: Colors.white,
     shadowColor: Colors.transparent,
     elevation: 0,
   ),

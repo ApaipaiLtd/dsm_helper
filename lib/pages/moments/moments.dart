@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/pages/moments/album.dart';
@@ -171,17 +172,17 @@ class _MomentsState extends State<Moments> {
 
   Widget _buildPhotoItem(photo, List photos) {
     int duration = 0;
-    Map timeLong = {};
+    var timeLong;
     if (photo['type'] == "video") {
       if (photo['additional']['video_convert'].length > 0) {
         duration = photo['additional']['video_convert'][0]['metadata']['duration'] ~/ 1000;
         timeLong = Utils.timeLong(duration);
       } else {
-        timeLong = {
-          "hours": 0,
-          "minutes": 0,
-          "seconds": 0,
-        };
+        timeLong = (
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        );
       }
     }
     String thumbUrl = '${Utils.baseUrl}/webapi/entry.cgi?id=${photo['additional']['thumbnail']['unit_id']}&cache_key="${photo['additional']['thumbnail']['cache_key']}"&type="unit"&size="sm"&api="SYNO.${Utils.version == 7 ? "Foto" : "Photo"}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
@@ -232,7 +233,7 @@ class _MomentsState extends State<Moments> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "${timeLong['hours'].toString().padLeft(2, "0")}:${timeLong['minutes'].toString().padLeft(2, "0")}:${timeLong['seconds'].toString().padLeft(2, "0")}",
+                      "${timeLong!.hours.toString().padLeft(2, "0")}:${timeLong!.minutes.toString().padLeft(2, "0")}:${timeLong!.seconds.toString().padLeft(2, "0")}",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],

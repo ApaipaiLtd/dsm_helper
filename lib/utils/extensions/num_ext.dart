@@ -1,5 +1,5 @@
 extension NumExt on num {
-  String format({int point: 3, bool divider: true}) {
+  String format({int point = 3, bool divider = true}) {
     String str = this.toStringAsFixed(point);
     // 去除小数末尾的0
     for (int i = point; i > 0; i--) {

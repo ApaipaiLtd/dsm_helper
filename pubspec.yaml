@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 0.0.146+148
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependency_overrides:
   ffi: ^2.0.1  # open_file 3.2.1 需要重写
@@ -108,6 +108,8 @@ dependencies:
   path: ^1.8.3
 
   # drift 依赖结束
+
+  timelines: ^0.1.0
 #  flutter_filereader: ^3.0.0
 #  x5_webview: ^0.2.4
 dev_dependencies:

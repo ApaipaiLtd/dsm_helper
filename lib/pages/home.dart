@@ -229,44 +229,40 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             });
           },
           currentIndex: _currentIndex,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.grey,
+          selectedFontSize: 13,
+          unselectedFontSize: 13,
+          selectedItemColor: Color(0xFF2A8AE4),
+          unselectedItemColor: Colors.black,
           showSelectedLabels: true,
           showUnselectedLabels: true,
           enableFeedback: true,
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset(
-                "assets/tabbar/meter.png",
-                width: 30,
-                height: 30,
+              icon: ImageIcon(
+                AssetImage("assets/tabbar/dashboard.png"),
+                size: 24,
               ),
               label: "控制台",
             ),
             BottomNavigationBarItem(
-              icon: Image.asset(
-                "assets/tabbar/folder.png",
-                width: 30,
-                height: 30,
+              icon: ImageIcon(
+                AssetImage("assets/tabbar/file.png"),
+                size: 24,
               ),
               label: "文件",
             ),
             BottomNavigationBarItem(
-              icon: Image.asset(
-                "assets/tabbar/save.png",
-                width: 30,
-                height: 30,
+              icon: ImageIcon(
+                AssetImage("assets/tabbar/download.png"),
+                size: 24,
               ),
               label: "下载",
             ),
             BottomNavigationBarItem(
-              icon: Image.asset(
-                "assets/tabbar/setting.png",
-                width: 30,
-                height: 30,
+              icon: ImageIcon(
+                AssetImage("assets/tabbar/setting.png"),
+                size: 24,
               ),
               label: "设置",
             ),

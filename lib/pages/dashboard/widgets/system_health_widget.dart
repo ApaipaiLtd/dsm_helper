@@ -44,7 +44,7 @@ class SystemHealthWidget extends StatelessWidget {
                         style: TextStyle(color: Color(0x99000000), fontSize: 16),
                       ),
                       Text(
-                        "ChallengerV",
+                        "${initData.session?.hostname}",
                         style: TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ],
@@ -77,7 +77,7 @@ class SystemHealthWidget extends StatelessWidget {
                         style: TextStyle(color: Color(0x99000000), fontSize: 16),
                       ),
                       Text(
-                        "16天12:30:30",
+                        "${Utils.parseOpTime(system.upTime!)}",
                         style: TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ],

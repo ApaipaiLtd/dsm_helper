@@ -34,7 +34,7 @@ class AlbumTabState extends State<AlbumTab> {
     super.initState();
   }
 
-  getData({bool isTeam: false}) {
+  getData({bool isTeam = false}) {
     this.isTeam = isTeam;
     setState(() {
       recentlyAdds = [];

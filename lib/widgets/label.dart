@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 
 class Label extends StatelessWidget {
-  Label(this.name, this.color, {this.fill: false, this.fontSize, this.height});
+  Label(this.name, this.color, {this.fill = false, this.fontSize, this.height});
   final String name;
   final Color color;
   final bool fill;

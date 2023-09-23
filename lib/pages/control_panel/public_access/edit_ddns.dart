@@ -10,7 +10,7 @@ class EditDdns extends StatefulWidget {
   final Map? ddns;
   final List extIp;
   final List providers;
-  const EditDdns(this.providers, {this.extIp: const [], this.ddns, super.key});
+  const EditDdns(this.providers, {this.extIp = const [], this.ddns, super.key});
 
   @override
   _EditDdnsState createState() => _EditDdnsState();

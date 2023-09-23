@@ -63,7 +63,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                         RadialAxis(
                           showLabels: false,
                           showTicks: false,
-                          radiusFactor: 0.8,
+                          // radiusFactor: 0.8,
                           maximum: 100,
                           axisLineStyle: AxisLineStyle(cornerStyle: CornerStyle.bothCurve, thickness: 8),
                           annotations: <GaugeAnnotation>[
@@ -105,11 +105,12 @@ class ResourceMonitorWidget extends StatelessWidget {
                           ],
                           pointers: <GaugePointer>[
                             RangePointer(
+                              enableAnimation: true,
+                              animationDuration: 1000,
                               value: utilization.cpu!.totalLoad.toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
-                              color: Color(0xFFF67280),
-                              gradient: SweepGradient(colors: <Color>[Color(0xFF00BAAD), Color(0xFF4BD6CD)], stops: <double>[0.25, 0.75]),
+                              gradient: SweepGradient(colors: <Color>[Color(0xFF00BAAD), Color(0xFF4BD6CD)]),
                             ),
                             // MarkerPointer(
                             //   value: utilization.cpu!.totalLoad.toDouble() - 3,
@@ -148,7 +149,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                         RadialAxis(
                           showLabels: false,
                           showTicks: false,
-                          radiusFactor: 0.8,
+                          // radiusFactor: 0.8,
                           maximum: 100,
                           axisLineStyle: AxisLineStyle(cornerStyle: CornerStyle.bothCurve, thickness: 8),
                           annotations: <GaugeAnnotation>[
@@ -190,11 +191,12 @@ class ResourceMonitorWidget extends StatelessWidget {
                           ],
                           pointers: <GaugePointer>[
                             RangePointer(
+                              enableAnimation: true,
+                              animationDuration: 1000,
                               value: utilization.memory!.realUsage!.toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
-                              color: Color(0xFFF67280),
-                              gradient: SweepGradient(colors: <Color>[Color(0xFF2A82E4), Color(0xFF75ACFF)], stops: <double>[0.25, 0.75]),
+                              gradient: SweepGradient(colors: <Color>[Color(0xFF2A82E4), Color(0xFF75ACFF)]),
                             ),
                             // MarkerPointer(
                             //   value: utilization.cpu!.totalLoad.toDouble() - 3,

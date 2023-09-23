@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
 import 'dart:math';
 
@@ -170,15 +171,15 @@ class Utils {
     return "${days > 0 ? "$days天" : ""} ${items.join(":")}";
   }
 
-  static Map timeLong(int ticket) {
+  static ({int hours, int minutes, int seconds}) timeLong(int ticket) {
     int seconds = ticket % 60;
     int minutes = ticket ~/ 60 % 60;
     int hours = ticket ~/ 60 ~/ 60;
-    return {
-      "hours": hours,
-      "minutes": minutes,
-      "seconds": seconds,
-    };
+    return (
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    );
   }
 
   static String utf8Encode(String data) {

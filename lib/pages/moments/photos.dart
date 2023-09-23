@@ -82,7 +82,7 @@ class _PhotosState extends State<Photos> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "${Utils.timeLong(5235)['hours'].toString().padLeft(2, "0")}:${Utils.timeLong(5235)['minutes'].toString().padLeft(2, "0")}:${Utils.timeLong(5235)['seconds'].toString().padLeft(2, "0")}",
+                      "${Utils.timeLong(5235).hours.toString().padLeft(2, "0")}:${Utils.timeLong(5235).minutes.toString().padLeft(2, "0")}:${Utils.timeLong(5235).seconds.toString().padLeft(2, "0")}",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],

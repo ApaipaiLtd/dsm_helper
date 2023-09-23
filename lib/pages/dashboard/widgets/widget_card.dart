@@ -17,7 +17,7 @@ class WidgetCard extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           children: [
             if (icon != null || title != null)

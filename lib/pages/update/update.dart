@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 class Update extends StatefulWidget {
   final Map data;
   final bool direct;
-  Update(this.data, {this.direct: false});
+  Update(this.data, {this.direct = false});
   @override
   _UpdateState createState() => _UpdateState();
 }

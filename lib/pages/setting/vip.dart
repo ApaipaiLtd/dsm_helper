@@ -376,7 +376,7 @@ class _VipState extends State<Vip> {
     fluwx.authBy(which: NormalAuth(scope: "snsapi_userinfo"));
   }
 
-  loginDialog({bool alert: true}) {
+  loginDialog({bool alert = true}) {
     showCupertinoDialog(
       context: context,
       builder: (context) {

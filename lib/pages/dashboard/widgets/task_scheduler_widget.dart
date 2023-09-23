@@ -1,3 +1,4 @@
+import 'package:dsm_helper/extensions/list.dart';
 import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
@@ -10,6 +11,12 @@ class TaskSchedulerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = taskScheduler.tasks!
+        .map((task) => TaskSchedulerItem(
+              task,
+              isLast: taskScheduler.tasks!.last == task,
+            ))
+        .toList();
     return WidgetCard(
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -23,7 +30,7 @@ class TaskSchedulerWidget extends StatelessWidget {
       //   height: 26,
       // ),
       body: Column(
-        children: taskScheduler.tasks!.map((task) => TaskSchedulerItem(task)).toList(),
+        children: children.expand((element) => [element, if (element != children.last) Divider()]).toList(),
       ),
     );
   }
@@ -31,7 +38,8 @@ class TaskSchedulerWidget extends StatelessWidget {
 
 class TaskSchedulerItem extends StatefulWidget {
   final Tasks task;
-  const TaskSchedulerItem(this.task, {super.key});
+  final bool isLast;
+  const TaskSchedulerItem(this.task, {this.isLast = false, super.key});
 
   @override
   State<TaskSchedulerItem> createState() => _TaskSchedulerItemState();
@@ -41,7 +49,7 @@ class _TaskSchedulerItemState extends State<TaskSchedulerItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Expanded(

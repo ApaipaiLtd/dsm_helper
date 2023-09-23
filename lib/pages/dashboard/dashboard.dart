@@ -3,8 +3,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
+import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
+import 'package:dsm_helper/models/Syno/Core/SyslogClient/Status.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
 import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
@@ -16,7 +18,9 @@ import 'package:dsm_helper/pages/dashboard/dialogs/first_launch_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/media_converter.dart';
 import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
 import 'package:dsm_helper/pages/dashboard/widget_setting.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/connection_log_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/file_change_log_widget.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/recent_log_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/resource_monitor_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/storage_usage_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/system_health_widget.dart';
@@ -32,6 +36,8 @@ import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
+import 'package:dsm_helper/widgets/page_body_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,10 +54,10 @@ class Dashboard extends StatefulWidget {
 class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List connectedUsers = [];
+  CurrentConnection connectedUsers = CurrentConnection();
   List networks = [];
   TaskScheduler taskScheduler = TaskScheduler();
-  List latestLog = [];
+  SynoClientStatus latestLog = SynoClientStatus();
   List notifies = [];
   SyslogClientLog fileChangeLogs = SyslogClientLog();
   List esatas = [];
@@ -173,6 +179,10 @@ class DashboardState extends State<Dashboard> {
     });
     taskScheduler = await TaskScheduler.list();
 
+    connectedUsers = await CurrentConnection.get();
+
+    latestLog = await SynoClientStatus.get();
+
     Storage storage = await Storage.loadInfo();
     StorageProvider storageProvider = context.read<StorageProvider>();
     storageProvider.setStorage(storage);
@@ -285,113 +295,12 @@ class DashboardState extends State<Dashboard> {
   Widget _buildWidgetItem(widget) {
     if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
       return SystemHealthWidget();
-    } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget" && connectedUsers.length > 0) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/icons/user.png",
-                    width: 26,
-                    height: 26,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "登录用户",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
-            ...connectedUsers.map(_buildUserItem).toList(),
-          ],
-        ),
-      );
+    } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget") {
+      return ConnectionLogWidget(connectedUsers);
     } else if (widget == "SYNO.SDS.TaskScheduler.TaskSchedulerWidget") {
       return TaskSchedulerWidget(taskScheduler);
     } else if (widget == "SYNO.SDS.SystemInfoApp.RecentLogWidget") {
-      return GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) {
-                return LogCenter();
-              },
-              settings: RouteSettings(name: "log_center"),
-            ),
-          );
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      "assets/icons/log.png",
-                      width: 26,
-                      height: 26,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "最新日志",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                height: 300,
-                child: latestLog.length > 0
-                    ? CupertinoScrollbar(
-                        child: ListView.builder(
-                          itemBuilder: (context, i) {
-                            return _buildLogItem(latestLog[i]);
-                          },
-                          itemCount: latestLog.length,
-                        ),
-                      )
-                    : Center(
-                        child: Text(
-                          "暂无日志",
-                          style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                        ),
-                      ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
-        ),
-      );
+      return RecentLogWidget(latestLog);
     } else if (widget == "SYNO.SDS.ResourceMonitor.Widget") {
       return ResourceMonitorWidget();
     } else if (widget == "SYNO.SDS.SystemInfoApp.StorageUsageWidget") {
@@ -401,168 +310,6 @@ class DashboardState extends State<Dashboard> {
     } else {
       return Container();
     }
-  }
-
-  Widget _buildUserItem(user) {
-    user['running'] = user['running'] ?? false;
-    DateTime loginTime = DateTime.parse(user['time'].toString().replaceAll("/", "-"));
-    DateTime currentTime = DateTime.now();
-    Map timeLong = Utils.timeLong(currentTime.difference(loginTime).inSeconds);
-    return Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              "${user['who']}",
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "${user['type']}",
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "${timeLong['hours'].toString().padLeft(2, "0")}:${timeLong['minutes'].toString().padLeft(2, "0")}:${timeLong['seconds'].toString().padLeft(2, "0")}",
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.right,
-            ),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          CupertinoButton(
-            onPressed: () async {
-              if (user['running']) {
-                return;
-              }
-              showCupertinoModalPopup(
-                context: context,
-                builder: (context) {
-                  return Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                      child: SafeArea(
-                        top: false,
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                "终止连接",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                "确认要终止此连接？",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
-                              ),
-                              SizedBox(
-                                height: 22,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CupertinoButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          user['running'] = true;
-                                        });
-                                        var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
-                                        setState(() {
-                                          user['running'] = false;
-                                        });
-
-                                        if (res['success']) {
-                                          Utils.toast("连接已终止");
-                                        }
-                                      },
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "终止连接",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Expanded(
-                                    child: CupertinoButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                      },
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "取消",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-            padding: EdgeInsets.all(5),
-            child: SizedBox(
-              width: 20,
-              height: 20,
-              child: user['running']
-                  ? CupertinoActivityIndicator()
-                  : Icon(
-                      Icons.remove_circle_outline,
-                      color: Colors.red,
-                      size: 18,
-                    ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLogItem(log) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: EdgeInsets.all(15),
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("${log['ldate']} ${log['ltime']}"),
-          Text(
-            "${log['msg']}",
-            style: TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildESataItem(esata) {
@@ -815,101 +562,58 @@ class DashboardState extends State<Dashboard> {
       ),
       body: loading
           ? Center(
-              child: Container(
-                padding: EdgeInsets.all(50),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: CupertinoActivityIndicator(
-                  radius: 14,
-                ),
+              child: LoadingWidget(
+                size: 30,
               ),
             )
           : success
-              ? Stack(
-                  children: [
-                    Positioned(
-                      left: -137,
-                      top: -153,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 450,
-                              color: Color(0xFFDFDFFB),
-                            ),
-                          ],
-                        ),
-                        width: 392,
-                        height: 392,
-                      ),
-                    ),
-                    Positioned(
-                      right: -257,
-                      top: -153,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 450,
-                              color: Color(0xFFE9F5FF),
-                            ),
-                          ],
-                        ),
-                        width: 392,
-                        height: 392,
-                      ),
-                    ),
-                    ListView(
-                      padding: EdgeInsets.only(top: context.padding.top + 60, bottom: 10),
-                      children: [
-                        ShortcutList(),
-                        if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
-                          ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
-                            return _buildWidgetItem(widget);
-                            // return Text(widget);
-                          }).toList()
-                        else
-                          Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "未添加小组件",
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: CupertinoButton(
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                    onPressed: () {
-                                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                        return WidgetSetting();
-                                      })).then((res) {
-                                        if (res != null) {
-                                          getData();
-                                        }
-                                      });
-                                    },
-                                    child: Text(
-                                      ' 添加 ',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
+              ? PageBodyWidget(
+                  body: ListView(
+                    // padding: EdgeInsets.only(top: context.padding.top + 60, bottom: 10),
+                    children: [
+                      ShortcutList(),
+                      if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
+                        ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
+                          return _buildWidgetItem(widget);
+                          // return Text(widget);
+                        }).toList()
+                      else
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "未添加小组件",
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  onPressed: () {
+                                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+                                      return WidgetSetting();
+                                    })).then((res) {
+                                      if (res != null) {
+                                        getData();
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    ' 添加 ',
+                                    style: TextStyle(fontSize: 18),
                                   ),
                                 ),
-                              ],
-                            ),
-                          )
-                      ],
-                    ),
-                  ],
+                              ),
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
                 )
               : Center(
                   child: Column(

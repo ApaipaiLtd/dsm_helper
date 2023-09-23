@@ -34,7 +34,7 @@ class ThumbnailModel {
   num? unitId;
   String? xl;
   num? folderCoverSeq;
-  String thumbUrl({String size = 'sm', num? folderId, bool isTeam: false}) {
+  String thumbUrl({String size = 'sm', num? folderId, bool isTeam = false}) {
     if (unitId != null) {
       return '${Utils.baseUrl}/webapi/entry.cgi?id=$unitId&cache_key="$cacheKey"&type="unit"&size="$size"&api="SYNO.Foto${isTeam ? 'Team' : ''}.Thumbnail"&method="get"&version=1&_sid=${Utils.sid}';
     } else {

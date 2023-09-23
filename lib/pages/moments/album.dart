@@ -6,11 +6,10 @@ import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class Album extends StatefulWidget {
   final bool shared;
   final String title;
-  Album(this.title, {this.shared: false});
+  Album(this.title, {this.shared = false});
   @override
   _AlbumState createState() => _AlbumState();
 }
@@ -99,12 +98,10 @@ class _AlbumState extends State<Album> {
           ? Center(
               child: Container(
                 padding: EdgeInsets.all(50),
-                
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),

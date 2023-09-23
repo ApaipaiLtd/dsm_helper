@@ -1,5 +1,5 @@
 class DateTimeUtil {
-  static DateTime fromWeekOfYear(int year, int week, {bool start: true}) {
+  static DateTime fromWeekOfYear(int year, int week, {bool start = true}) {
     DateTime yearStartDate = DateTime(year);
     // 第一周的开始日期
     DateTime startDate = yearStartDate.subtract(Duration(days: yearStartDate.weekday));
@@ -10,7 +10,7 @@ class DateTimeUtil {
     }
   }
 
-  static DateTime fromQuarter(int year, int quarter, {bool start: true}) {
+  static DateTime fromQuarter(int year, int quarter, {bool start = true}) {
     if (start) {
       return DateTime(year, (quarter * 3) - 2);
     } else {

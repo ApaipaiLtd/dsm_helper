@@ -17,7 +17,7 @@ class FAProgressBar extends StatefulWidget {
     this.progressColor = const Color(0xFFFA7268),
     this.changeColorValue,
     this.changeProgressColor = const Color(0xFF5F4B8B),
-    this.displayText: '',
+    this.displayText = '',
     this.displayTextStyle = const TextStyle(color: const Color(0xFFFFFFFF), fontSize: 12),
   }) : _borderRadius = borderRadius ?? BorderRadius.circular(8);
   final int currentValue;
@@ -130,18 +130,16 @@ class AnimatedProgressBar extends AnimatedWidget {
     );
     progressWidgets.add(progressWidget);
     Widget? textProgress;
-    if (widget.displayText != null) {
-      double position = max(-1, (animation.value * 2) - 1.2);
-      textProgress = Container(
-        alignment: widget.direction == Axis.horizontal ? Alignment(position, 0) : (widget.verticalDirection == VerticalDirection.up ? FractionalOffset(0.5, 0.05) : FractionalOffset(0.5, 0.95)),
-        child: Text(
-          (widget.currentValue).toInt().toString() + widget.displayText,
-          softWrap: false,
-          style: widget.displayTextStyle,
-        ),
-      );
-      progressWidgets.add(textProgress);
-    }
+    double position = max(-1, (animation.value * 2) - 1.2);
+    textProgress = Container(
+      alignment: widget.direction == Axis.horizontal ? Alignment(position, 0) : (widget.verticalDirection == VerticalDirection.up ? FractionalOffset(0.5, 0.05) : FractionalOffset(0.5, 0.95)),
+      child: Text(
+        (widget.currentValue).toInt().toString() + widget.displayText,
+        softWrap: false,
+        style: widget.displayTextStyle,
+      ),
+    );
+    progressWidgets.add(textProgress);
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -169,7 +167,7 @@ class AnimatedProgressBar extends AnimatedWidget {
                 )
               ],
             ),
-            if (widget.displayText != null && textProgress != null) textProgress,
+            textProgress,
           ],
         ),
       ),

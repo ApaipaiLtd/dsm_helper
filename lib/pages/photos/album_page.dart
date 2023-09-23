@@ -6,7 +6,7 @@ import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:flutter/material.dart';
 
 class AlbumPage extends StatefulWidget {
-  const AlbumPage(this.album, {this.isTeam: false, super.key});
+  const AlbumPage(this.album, {this.isTeam = false, super.key});
   final AlbumModel album;
   final bool isTeam;
   @override
