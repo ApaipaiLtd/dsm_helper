@@ -542,8 +542,19 @@ class _ExpansionContainerState extends State<ExpansionContainer> with SingleTick
                   ),
                 ),
               ),
-              if (widget.showFirst && widget.first != null) widget.first ?? SizedBox(),
-              if (!widget.bottomTitle) children,
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(23),
+                ),
+                child: Column(
+                  children: [
+                    if (widget.showFirst && widget.first != null) widget.first!,
+                    if (!widget.bottomTitle) children,
+                  ],
+                ),
+              ),
             ],
           ),
         ],

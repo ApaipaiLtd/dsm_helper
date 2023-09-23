@@ -11,19 +11,12 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       progressColor: Color(0xfff4f4f4),
     ),
   ],
+  primaryColor: Colors.black,
   textTheme: TextTheme(
-    bodyLarge: TextStyle(
-      fontSize: 12.0,
-      color: Color(0xff121212),
-    ),
-    bodyMedium: TextStyle(
-      fontSize: 15.0,
-      color: Color(0xff121212),
-    ),
-    titleMedium: TextStyle(
-      fontSize: 18.0,
-      color: Color(0xff121212),
-    ),
+    bodyLarge: TextStyle(fontSize: 18.0, color: Colors.black),
+    bodyMedium: TextStyle(fontSize: 15.0, color: Colors.black),
+    bodySmall: TextStyle(fontSize: 12.0, color: Colors.black),
+    titleMedium: TextStyle(fontSize: 18.0, color: Colors.black),
   ),
   inputDecorationTheme: InputDecorationTheme(
     hintStyle: TextStyle(
@@ -38,14 +31,18 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   appBarTheme: AppBarTheme(
     centerTitle: true,
     elevation: 0,
-    color: Color(0xFFF4F4F4),
-    iconTheme: IconThemeData(color: Color(0xff121212)),
-    actionsIconTheme: IconThemeData(color: Color(0xff121212)),
-    titleTextStyle: TextStyle(fontSize: 20.0, color: Color(0xff121212)),
+    // color: Color(0xFFF4F4F4),
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: Colors.transparent,
+    iconTheme: IconThemeData(color: Colors.black),
+    actionsIconTheme: IconThemeData(color: Colors.black),
+    titleTextStyle: TextStyle(fontSize: 18.0, color: Colors.black),
     systemOverlayStyle: SystemUiOverlayStyle.dark,
   ),
   colorScheme: ColorScheme.light(
+    primary: Colors.black,
     background: Color(0xFFF4F4F4),
   ),
   scaffoldBackgroundColor: Color(0xFFF4F4F4),
+  useMaterial3: true,
 );

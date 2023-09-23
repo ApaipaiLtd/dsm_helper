@@ -11,6 +11,7 @@ class ConnectionLogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = connectedUsers.items!.map((item) => _buildUserItem(context, item)).toList();
     return WidgetCard(
       title: "已连接用户",
       // icon: Image.asset(
@@ -20,7 +21,7 @@ class ConnectionLogWidget extends StatelessWidget {
       // ),
       body: connectedUsers.items != null && connectedUsers.items!.length > 0
           ? Column(
-              children: connectedUsers.items!.map((item) => _buildUserItem(context, item, isLast: connectedUsers.items!.last == item)).toList(),
+              children: children.expand((element) => [element, if (element != children.last) Container(margin: EdgeInsets.symmetric(horizontal: 16), color: Colors.black12, height: 0.5)]).toList(),
             )
           : Center(
               child: Text(
@@ -31,18 +32,13 @@ class ConnectionLogWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildUserItem(BuildContext context, UserItems user, {bool isLast = false}) {
+  Widget _buildUserItem(BuildContext context, UserItems user) {
     DateTime loginTime = DateTime.parse(user.time!.toString().replaceAll("/", "-"));
     DateTime currentTime = DateTime.now();
     var timeLong = Utils.timeLong(currentTime.difference(loginTime).inSeconds);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16),
       padding: EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.black12),
-        ),
-      ),
       child: Row(
         children: [
           Expanded(

@@ -6,6 +6,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/pages/common/video_player.dart';
 import 'package:dsm_helper/pages/download/download_setting.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -39,7 +40,7 @@ class Download extends StatefulWidget {
 class DownloadState extends State<Download> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return GlassScaffold();
   }
   // List<DownloadInfo> tasks = [];
   // bool loading = true;

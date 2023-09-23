@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:dsm_helper/models/Syno/Core/Notify.dart';
+import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/utils/strings.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/page_body_widget.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -94,7 +97,9 @@ class _NotifyState extends State<Notify> {
   }
 
   Widget _buildNotifyGroup(groupName, List<DsmNotifyItems> notifies) {
+    List<Widget> children = notifies.map((_buildNotifyItem)).toList();
     return Container(
+      margin: EdgeInsets.only(top: 10),
       child: ExpansionContainer(
         title: Text(
           "$groupName （${notifies.length}）",
@@ -103,7 +108,7 @@ class _NotifyState extends State<Notify> {
         ),
         showFirst: true,
         first: _buildNotifyItem(notifies.first),
-        children: notifies.map((_buildNotifyItem)).toList(),
+        children: children.expand((element) => [element, if (element != children.last) Container(margin: EdgeInsets.symmetric(horizontal: 16), color: Colors.black12, height: 0.5)]).toList(),
       ),
     );
   }
@@ -111,8 +116,7 @@ class _NotifyState extends State<Notify> {
   Widget _buildNotifyItem(DsmNotifyItems notify) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -132,52 +136,37 @@ class _NotifyState extends State<Notify> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: Text(
-            "消息",
-          ),
-          backgroundColor: Colors.transparent,
-          notificationPredicate: (_) {
-            return false;
-          },
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          flexibleSpace: ClipRRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                color: Colors.transparent, // 设置模糊背景的颜色和透明度
-              ),
-            ),
-          ),
-          actions: [
-            CupertinoButton(
-              onPressed: () async {
-                // var res = await Api.clearNotify();
-                // if (res['success']) {
-                //   Utils.toast("清除成功");
-                //   Navigator.of(context).pop(true);
-                // }
-              },
-              child: Image.asset(
-                "assets/icons/clean.png",
-                width: 20,
-                height: 20,
-              ),
-            ),
-          ],
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text(
+          "消息",
         ),
-        body: PageBodyWidget(
-          body: widget.notifies.items != null && widget.notifies.items!.isNotEmpty
-              ? ListView(
-                  children: notifyGroups.keys.map((key) {
-                    return _buildNotifyGroup(key, notifyGroups[key]!);
-                  }).toList(),
-                )
-              : EmptyWidget(
-                  text: "暂无数据",
-                ),
-        ));
+        actions: [
+          CupertinoButton(
+            onPressed: () async {
+              // var res = await Api.clearNotify();
+              // if (res['success']) {
+              //   Utils.toast("清除成功");
+              //   Navigator.of(context).pop(true);
+              // }
+            },
+            child: Image.asset(
+              "assets/icons/clean.png",
+              width: 20,
+              height: 20,
+            ),
+          ),
+        ],
+      ),
+      body: widget.notifies.items != null && widget.notifies.items!.isNotEmpty
+          ? ListView(
+              children: notifyGroups.keys.map((key) {
+                return _buildNotifyGroup(key, notifyGroups[key]!);
+              }).toList(),
+            )
+          : EmptyWidget(
+              text: "暂无数据",
+            ),
+    );
   }
 }

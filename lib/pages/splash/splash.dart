@@ -7,8 +7,8 @@ import 'package:dsm_helper/pages/server/select_server.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../server/add_server.dart';
 
@@ -55,7 +55,7 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: LoadingAnimationWidget.fourRotatingDots(color: Theme.of(context).primaryColor, size: 30),
+        child: LoadingWidget(size: 30),
       ),
     );
   }

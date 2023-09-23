@@ -329,7 +329,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                     height: 20,
                   ),
                   Text(
-                    Utils.formatSize(utilization.network!.first.tx!) + "/S",
+                    utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.tx!) + "/S",
                     style: TextStyle(color: Colors.blue),
                   ),
                   Spacer(),
@@ -339,7 +339,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                     height: 20,
                   ),
                   Text(
-                    Utils.formatSize(utilization.network!.first.rx!) + "/S",
+                    utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.rx!) + "/S",
                     style: TextStyle(color: Colors.green),
                   ),
                 ],

@@ -9,7 +9,7 @@ class LoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoadingAnimationWidget.fourRotatingDots(
-      color: color ?? Colors.blue,
+      color: color ?? Colors.black,
       size: size,
     );
   }

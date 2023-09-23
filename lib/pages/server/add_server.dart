@@ -13,6 +13,7 @@ import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api, DateTimeExt;
 import 'package:dsm_helper/widgets/button.dart';
 import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddServer extends StatefulWidget {
@@ -206,7 +207,7 @@ class _AddServerState extends State<AddServer> {
       appBar: AppBar(
         title: Text("${widget.server == null ? '添加' : '修改'}服务器"),
         actions: [
-          Button(
+          CupertinoButton(
             onPressed: () {
               showCustomDialog(
                 context: context,
@@ -228,9 +229,8 @@ class _AddServerState extends State<AddServer> {
             },
             child: Icon(
               Icons.help,
-              color: Theme.of(context).extension<AppTheme>()?.placeholderColor,
+              size: 24,
             ),
-            fill: false,
           ),
         ],
       ),

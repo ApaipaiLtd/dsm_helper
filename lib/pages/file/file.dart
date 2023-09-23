@@ -5,6 +5,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/utils/log.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:flutter_floating/floating/listener/event_listener.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:just_audio/just_audio.dart' as ja;
@@ -2436,9 +2438,9 @@ class FilesState extends State<Files> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GlassScaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
+      appBar: GlassAppBar(
         automaticallyImplyLeading: false,
         titleSpacing: 0,
         title: Row(
@@ -3247,7 +3249,7 @@ class FilesState extends State<Files> {
                               controller: _fileScrollController,
                               child: ListView.builder(
                                 controller: _fileScrollController,
-                                padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: selectedFiles.length > 0 ? 140 : 20),
+                                // padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: selectedFiles.length > 0 ? 140 : 20),
                                 itemBuilder: (context, i) {
                                   return _buildFileItem(files[i]);
                                 },
@@ -3262,7 +3264,7 @@ class FilesState extends State<Files> {
                                 controller: _fileScrollController,
                                 child: ListView(
                                   controller: _fileScrollController,
-                                  padding: EdgeInsets.all(20),
+                                  // padding: EdgeInsets.all(20),
                                   children: [
                                     Wrap(
                                       runSpacing: 20,
@@ -3487,8 +3489,8 @@ class FilesState extends State<Files> {
           ),
         ],
       ),
-      drawer: Favorite(goPath),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      // drawer: Favorite(goPath),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       // floatingActionButton: FloatingActionButton(
       //   child: Icon(Icons.refresh),
       //   onPressed: getBackgroundTask,

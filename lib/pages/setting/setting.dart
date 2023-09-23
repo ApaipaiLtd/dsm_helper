@@ -11,6 +11,8 @@ import 'package:dsm_helper/pages/setting/helper_setting.dart';
 import 'package:dsm_helper/pages/terminal/select_server.dart';
 import 'package:dsm_helper/pages/user/setting.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/terminal_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -513,8 +515,8 @@ class _SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
     double width = (MediaQuery.of(context).size.width - 81) / 3;
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text(
           "设置",
         ),
@@ -549,7 +551,6 @@ class _SettingState extends State<Setting> {
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20),
         children: [
           SizedBox(
             height: 30,

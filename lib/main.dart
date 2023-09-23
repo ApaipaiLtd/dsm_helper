@@ -15,7 +15,7 @@ import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
-import 'package:dsm_helper/themes/light_theme.dart';
+import 'package:dsm_helper/themes/light.dart';
 import 'package:dsm_helper/themes/dark.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/utils/log.dart';

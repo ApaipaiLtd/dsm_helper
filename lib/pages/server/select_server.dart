@@ -15,7 +15,11 @@ import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/widgets/button.dart';
 import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/page_body_widget.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -57,66 +61,51 @@ class _SelectServerState extends State<SelectServer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        notificationPredicate: (_) {
-          return false;
-        },
-        flexibleSpace: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              color: Colors.white.withOpacity(0.2), // 设置模糊背景的颜色和透明度
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("服务器/账号"),
+        actions: [
+          CupertinoButton(
+            onPressed: () {
+              context.push(AddServer());
+            },
+            child: Image.asset(
+              "assets/icons/plus_circle.png",
+              width: 24,
+              height: 24,
             ),
           ),
-        ),
-        title: Text("选择服务器/账号"),
-        actions: [
-          IconButton(
+          CupertinoButton(
             onPressed: () {
               setState(() {
                 hide = !hide;
               });
             },
-            icon: Icon(Icons.remove_red_eye),
+            child: Image.asset(
+              "assets/icons/${hide ? "eye_slash" : "eye"}.png",
+              width: 24,
+              height: 24,
+            ),
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.fromLTRB(20, context.padding.top + 70, 20, 20),
-        itemBuilder: (context, i) {
-          return _buildServerItem(servers[i]);
-        },
-        separatorBuilder: (context, i) {
-          return SizedBox(
-            height: 10,
-          );
-        },
-        itemCount: servers.length,
+      body: PageBodyWidget(
+        body: ListView.builder(
+          itemBuilder: (context, i) {
+            return _buildServerItem(servers[i]);
+          },
+          itemCount: servers.length,
+        ),
       ),
-      persistentFooterButtons: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Button(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              context.push(AddServer());
-            },
-            child: Text("添加新服务器"),
-          ),
-        )
-      ],
     );
   }
 
   Widget _buildServerItem(Server server) {
-    double width = context.width - 40;
-    double height = (context.width - 40) / 16 * 9;
+    double width = context.width - 32;
+    double height = width / 16 * 9;
     List<Account> serverAccounts = accounts.where((account) => account.serverId == server.id).toList();
     return Container(
+      margin: EdgeInsets.only(left: 16, right: 16, top: 20),
       // padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -368,7 +357,10 @@ class _SelectServerState extends State<SelectServer> {
         child: Row(
           children: [
             Expanded(
-              child: Text(account.account),
+              child: Text(
+                account.account,
+                style: TextStyle(),
+              ),
             ),
             IconButton(
               onPressed: () {
