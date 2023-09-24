@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
+import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -37,6 +40,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_floating/floating/assist/floating_slide_type.dart';
 import 'package:flutter_floating/floating/floating.dart';
 import 'package:flutter_floating/floating/manager/floating_manager.dart';
+import 'package:kumi_popup_window/kumi_popup_window.dart';
 
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -52,9 +56,10 @@ class Files extends StatefulWidget {
 }
 
 class FilesState extends State<Files> {
+  GlobalKey moreActionKey = GlobalKey();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List paths = [];
-  List files = [];
+  FileStationList files = FileStationList();
   List smbFolders = [];
   List ftpFolders = [];
   List sftpFolders = [];
@@ -65,7 +70,7 @@ class FilesState extends State<Files> {
   bool success = true;
   String msg = "";
   bool multiSelect = false;
-  List selectedFiles = [];
+  List<FileItem> selectedFiles = [];
   ScrollController _pathScrollController = ScrollController();
   ScrollController _fileScrollController = ScrollController();
   Map backgroundProcess = {};
@@ -89,10 +94,10 @@ class FilesState extends State<Files> {
   @override
   void initState() {
     getShareList();
-    getSmbFolder();
-    getFtpFolder();
-    getSftpFolder();
-    getDavFolder();
+    // getSmbFolder();
+    // getFtpFolder();
+    // getSftpFolder();
+    // getDavFolder();
     // processingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
     //   getBackgroundTask();
     // });
@@ -645,7 +650,7 @@ class FilesState extends State<Files> {
         if (res['data']['files'] != null) {
           files = res['data']['files'];
         } else {
-          files = [];
+          // files = [];
         }
       });
 
@@ -706,19 +711,16 @@ class FilesState extends State<Files> {
       }
       loading = true;
     });
-    var res = await Api.shareList();
-    setState(() {
-      loading = false;
-      success = res['success'];
-    });
-    if (res['success']) {
+    try {
+      files = await FileStationList.shareList(sortBy: sortBy, sortDirection: sortDirection);
       setState(() {
-        files = res['data']['shares'];
+        loading = false;
+        success = true;
       });
-    } else {
+    } catch (e) {
       if (loading) {
         setState(() {
-          msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
+          // msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
         });
       }
     }
@@ -1435,17 +1437,17 @@ class FilesState extends State<Files> {
             List<String> names = [];
             List<String> paths = [];
             int index = 0;
-            for (int i = 0; i < files.length; i++) {
-              if (Utils.fileType(files[i]['name']) == FileTypeEnum.image) {
-                images.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
-                thumbs.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
-                names.add(files[i]['name']);
-                paths.add(files[i]['path']);
-                if (files[i]['name'] == file['name']) {
-                  index = images.length - 1;
-                }
-              }
-            }
+            // for (int i = 0; i < files.length; i++) {
+            //   if (Utils.fileType(files[i]['name']) == FileTypeEnum.image) {
+            //     images.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
+            //     thumbs.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
+            //     names.add(files[i]['name']);
+            //     paths.add(files[i]['path']);
+            //     if (files[i]['name'] == file['name']) {
+            //       index = images.length - 1;
+            //     }
+            //   }
+            // }
             Navigator.of(context).push(TransparentPageRoute(
               pageBuilder: (context, _, __) {
                 return ImagePreview(
@@ -1481,40 +1483,40 @@ class FilesState extends State<Files> {
               await intent.launch();
             } else {
               // 获取封面
-              String name = file['name'];
-              name = name.substring(0, name.lastIndexOf('.'));
-              String? cover;
-              String? nfo;
-              try {
-                cover = files.firstWhere((element) => element['name'].startsWith("$name-fanart") || element['name'].startsWith("fanart"))['path'];
-              } catch (e) {
-                try {
-                  cover = files.firstWhere((element) => element['name'].startsWith("$name-thumb") || element['name'].startsWith("thumb"))['path'];
-                } catch (e) {
-                  try {
-                    cover = files.firstWhere((element) => element['name'].startsWith("$name-poster") || element['name'].startsWith("poster"))['path'];
-                  } catch (e) {
-                    try {
-                      cover = files.firstWhere((element) => element['name'].startsWith("$name-cover") || element['name'].startsWith("cover"))['path'];
-                    } catch (e) {
-                      debugPrint("无封面图");
-                    }
-                  }
-                }
-              }
-              try {
-                nfo = files.firstWhere((element) => element['name'] == "$name.nfo")['path'];
-              } catch (e) {
-                debugPrint("无NFO文件");
-              }
-              Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                return VideoPlayer(
-                  url: url,
-                  name: file['name'],
-                  cover: cover,
-                  nfo: nfo,
-                );
-              }));
+              // String name = file['name'];
+              // name = name.substring(0, name.lastIndexOf('.'));
+              // String? cover;
+              // String? nfo;
+              // try {
+              //   cover = files.firstWhere((element) => element['name'].startsWith("$name-fanart") || element['name'].startsWith("fanart"))['path'];
+              // } catch (e) {
+              //   try {
+              //     cover = files.firstWhere((element) => element['name'].startsWith("$name-thumb") || element['name'].startsWith("thumb"))['path'];
+              //   } catch (e) {
+              //     try {
+              //       cover = files.firstWhere((element) => element['name'].startsWith("$name-poster") || element['name'].startsWith("poster"))['path'];
+              //     } catch (e) {
+              //       try {
+              //         cover = files.firstWhere((element) => element['name'].startsWith("$name-cover") || element['name'].startsWith("cover"))['path'];
+              //       } catch (e) {
+              //         debugPrint("无封面图");
+              //       }
+              //     }
+              //   }
+              // }
+              // try {
+              //   nfo = files.firstWhere((element) => element['name'] == "$name.nfo")['path'];
+              // } catch (e) {
+              //   debugPrint("无NFO文件");
+              // }
+              // Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+              //   return VideoPlayer(
+              //     url: url,
+              //     name: file['name'],
+              //     cover: cover,
+              //     nfo: nfo,
+              //   );
+              // }));
             }
 
             break;
@@ -2121,9 +2123,9 @@ class FilesState extends State<Files> {
     );
   }
 
-  Widget _buildFileItem(file, {bool remote = false}) {
-    FileTypeEnum fileType = Utils.fileType(file['name']);
-    String path = file['path'];
+  Widget _buildFileItem(FileItem file, {bool remote = false}) {
+    FileTypeEnum fileType = Utils.fileType(file.name!);
+    String path = file.path!;
     Widget actionButton = multiSelect
         ? Container(
             decoration: BoxDecoration(
@@ -2142,23 +2144,14 @@ class FilesState extends State<Files> {
                   : null,
             ),
           )
-        : GestureDetector(
-            onTap: () {
+        : CupertinoButton(
+            onPressed: () {
               fileAction(file, remote: remote);
             },
-            child: Container(
-              // padding: EdgeInsets.zero,
-
-              padding: EdgeInsets.only(left: 6, right: 4, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                // color: Colors.red,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                CupertinoIcons.right_chevron,
-                size: 18,
-              ),
+            child: Image.asset(
+              "assets/icons/more_horizontal.png",
+              width: 20,
+              height: 20,
             ),
           );
     return Container(
@@ -2193,8 +2186,8 @@ class FilesState extends State<Files> {
                     Hero(
                       tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                       child: FileIcon(
-                        file['isdir'] ? FileTypeEnum.folder : fileType,
-                        thumb: file['path'],
+                        file.isdir == true ? FileTypeEnum.folder : fileType,
+                        thumb: file.path!,
                       ),
                     ),
                     SizedBox(
@@ -2205,8 +2198,8 @@ class FilesState extends State<Files> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ExtendedText(
-                            file['name'],
-                            style: TextStyle(fontSize: 14, color: file['additional']['mount_point_type'] == "remotefail" ? AppTheme.of(context)?.placeholderColor : null),
+                            file.name!,
+                            style: TextStyle(fontSize: 16, color: file.additional?.mountPointType == "remotefail" ? AppTheme.of(context)?.placeholderColor : null),
                             overflowWidget: TextOverflowWidget(
                               position: TextOverflowPosition.middle,
                               align: TextOverflowAlign.right,
@@ -2218,24 +2211,23 @@ class FilesState extends State<Files> {
                             maxLines: 2,
                           ),
                           SizedBox(
-                            height: 5,
+                            height: 2,
                           ),
-                          if (!file['isdir'] && file['additional'] != null || (file['additional']['time'] != null && file['additional']['time']['mtime'] != null))
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  if (!file['isdir']) TextSpan(text: "${Utils.formatSize(file['additional']['size'])}"),
-                                  if (file['additional'] != null && file['additional']['time'] != null && file['additional']['time']['mtime'] != null)
-                                    TextSpan(
-                                      text: (file['isdir'] ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file['additional']['time']['mtime'] * 1000).format("Y/m/d H:i:s"),
-                                    )
-                                ],
-                                style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
-                              ),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                if (file.isdir == false) TextSpan(text: "${Utils.formatSize(file.additional!.size!)}"),
+                                if (file.additional != null || (file.additional?.time != null && file.additional?.time?.mtime != null))
+                                  TextSpan(
+                                    text: (file.isdir == true ? "" : " | ") + DateTime.fromMillisecondsSinceEpoch(file.additional!.time!.mtime! * 1000).format("Y/m/d H:i:s"),
+                                  )
+                              ],
+                              style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
                             ),
+                          ),
                           if (remote)
                             Text(
-                              file['path'],
+                              file.path!,
                               style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
                             ),
                         ],
@@ -2262,8 +2254,8 @@ class FilesState extends State<Files> {
                           Hero(
                             tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
                             child: FileIcon(
-                              file['isdir'] ? FileTypeEnum.folder : fileType,
-                              thumb: file['path'],
+                              file.isdir == true ? FileTypeEnum.folder : fileType,
+                              thumb: file.path!,
                               width: (MediaQuery.of(context).size.width - 140) / 3,
                               height: 60,
                             ),
@@ -2272,7 +2264,7 @@ class FilesState extends State<Files> {
                             height: 10,
                           ),
                           Text(
-                            file['name'],
+                            file.name!,
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -2445,156 +2437,145 @@ class FilesState extends State<Files> {
         titleSpacing: 0,
         title: Row(
           children: [
-            Padding(
-              padding: EdgeInsets.only(top: 8, bottom: 8),
-              child: CupertinoButton(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-                padding: EdgeInsets.all(10),
-                onPressed: () async {
-                  if (multiSelect) {
+            CupertinoButton(
+              onPressed: () async {
+                if (multiSelect) {
+                  setState(() {
+                    multiSelect = false;
+                    selectedFiles = [];
+                  });
+                } else {
+                  _scaffoldKey.currentState!.openDrawer();
+                  setState(() {
+                    favoriteLoading = true;
+                  });
+                  var res = await Api.favoriteList();
+                  setState(() {
+                    favoriteLoading = false;
+                  });
+                  if (res['success']) {
                     setState(() {
-                      multiSelect = false;
-                      selectedFiles = [];
+                      favorites = res['data']['favorites'];
                     });
-                  } else {
-                    _scaffoldKey.currentState!.openDrawer();
-                    setState(() {
-                      favoriteLoading = true;
-                    });
-                    var res = await Api.favoriteList();
-                    setState(() {
-                      favoriteLoading = false;
-                    });
-                    if (res['success']) {
-                      setState(() {
-                        favorites = res['data']['favorites'];
-                      });
-                    }
                   }
-                },
-                child: multiSelect
-                    ? Icon(Icons.close)
-                    : Image.asset(
-                        "assets/icons/collect.png",
-                        width: 20,
-                      ),
-              ),
+                }
+              },
+              child: multiSelect
+                  ? Icon(Icons.close)
+                  : Image.asset(
+                      "assets/icons/star.png",
+                      width: 24,
+                    ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 8, bottom: 8),
-              child: CupertinoButton(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-                padding: EdgeInsets.all(10),
-                onPressed: () async {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (context) {
-                      return Material(
-                        color: Colors.transparent,
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                          child: SafeArea(
-                            top: false,
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Stack(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "远程文件夹",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                        ),
+            CupertinoButton(
+              onPressed: () async {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) {
+                    return Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                        child: SafeArea(
+                          top: false,
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "远程文件夹",
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                                       ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          child: CupertinoButton(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(10),
-                                            padding: EdgeInsets.all(5),
-                                            onPressed: () async {
-                                              Utils.toast("重新加载远程连接中");
-                                              Navigator.of(context).pop();
-                                              getFtpFolder();
-                                              getSftpFolder();
-                                              getSmbFolder();
-                                              getDavFolder();
-                                            },
-                                            child: Icon(
-                                              Icons.refresh,
-                                              size: 20,
-                                            ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        child: CupertinoButton(
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(10),
+                                          padding: EdgeInsets.all(5),
+                                          onPressed: () async {
+                                            Utils.toast("重新加载远程连接中");
+                                            Navigator.of(context).pop();
+                                            getFtpFolder();
+                                            getSftpFolder();
+                                            getSmbFolder();
+                                            getDavFolder();
+                                          },
+                                          child: Icon(
+                                            Icons.refresh,
+                                            size: 20,
                                           ),
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    constraints: BoxConstraints(
-                                      minHeight: 50,
-                                      maxHeight: MediaQuery.of(context).size.height * 0.8,
-                                    ),
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          if ((smbFolders + ftpFolders + sftpFolders + davFolders).length > 0) ...[
-                                            ...(smbFolders + ftpFolders + sftpFolders + davFolders).map((folder) {
-                                              return _buildFileItem(folder, remote: true);
-                                            }).toList(),
-                                          ] else
-                                            Center(
-                                              child: Text(
-                                                "未挂载远程文件夹",
-                                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                                              ),
-                                            ),
-                                        ],
                                       ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  constraints: BoxConstraints(
+                                    minHeight: 50,
+                                    maxHeight: MediaQuery.of(context).size.height * 0.8,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        if ((smbFolders + ftpFolders + sftpFolders + davFolders).length > 0) ...[
+                                          ...(smbFolders + ftpFolders + sftpFolders + davFolders).map((folder) {
+                                            return _buildFileItem(folder, remote: true);
+                                          }).toList(),
+                                        ] else
+                                          Center(
+                                            child: Text(
+                                              "未挂载远程文件夹",
+                                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 16,
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                CupertinoButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                  },
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  child: Text(
+                                    "取消",
+                                    style: TextStyle(fontSize: 18),
                                   ),
-                                  CupertinoButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                    },
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "取消",
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      );
-                    },
-                  );
-                },
-                child: Image.asset(
-                  "assets/icons/remote.png",
-                  width: 20,
-                ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Image.asset(
+                "assets/icons/remote.png",
+                width: 24,
+                height: 24,
               ),
             ),
             if (Utils.notReviewAccount && paths.length > 0 && !multiSelect)
@@ -2666,452 +2647,564 @@ class FilesState extends State<Files> {
                   ),
                 ),
               ),
-            Padding(
-              padding: EdgeInsets.only(top: 8, bottom: 8),
-              child: CupertinoButton(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-                padding: EdgeInsets.all(10),
-                onPressed: () {
-                  setState(() {
-                    listType = listType == ListType.list ? ListType.icon : ListType.list;
-                  });
-                  SpUtil.putString("file_list_type", listType == ListType.list ? "list" : "icon");
-                },
-                child: Image.asset(
-                  listType == ListType.list ? "assets/icons/list_list.png" : "assets/icons/list_icon.png",
-                  width: 20,
-                  height: 20,
-                ),
+            CupertinoButton(
+              onPressed: () {
+                setState(() {
+                  listType = listType == ListType.list ? ListType.icon : ListType.list;
+                });
+                SpUtil.putString("file_list_type", listType == ListType.list ? "list" : "icon");
+              },
+              child: Image.asset(
+                listType == ListType.list ? "assets/icons/file_list.png" : "assets/icons/file_grid.png",
+                width: 24,
+                height: 24,
               ),
             ),
             if (multiSelect)
-              Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 8),
-                child: CupertinoButton(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  padding: EdgeInsets.all(10),
-                  onPressed: () {
-                    if (selectedFiles.length == files.length) {
-                      selectedFiles = [];
-                    } else {
-                      selectedFiles = [];
-                      files.forEach((file) {
-                        selectedFiles.add(file);
-                      });
-                    }
+              CupertinoButton(
+                onPressed: () {
+                  if (selectedFiles.length == files.files!.length) {
+                    selectedFiles = [];
+                  } else {
+                    selectedFiles = [];
+                    files.files!.forEach((file) {
+                      selectedFiles.add(file);
+                    });
+                  }
 
-                    setState(() {});
-                  },
-                  child: Image.asset(
-                    "assets/icons/select_all.png",
-                    width: 20,
-                    height: 20,
-                  ),
+                  setState(() {});
+                },
+                child: Image.asset(
+                  "assets/icons/select_all.png",
+                  width: 24,
+                  height: 24,
                 ),
               )
             else if (paths.length > 1)
-              Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 8),
-                child: CupertinoButton(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  padding: EdgeInsets.all(10),
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (context) {
-                        return StatefulBuilder(
-                          builder: _buildSortMenu,
-                        );
-                      },
-                    ).then((value) {
-                      refresh();
-                    });
-                  },
-                  child: Image.asset(
-                    "assets/icons/sort.png",
-                    width: 20,
-                    height: 20,
-                  ),
-                ),
-              ),
-            Padding(
-              padding: EdgeInsets.only(top: 8, bottom: 8),
-              child: CupertinoButton(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-                padding: EdgeInsets.all(10),
+              CupertinoButton(
                 onPressed: () {
                   showCupertinoModalPopup(
                     context: context,
                     builder: (context) {
-                      return Material(
-                        color: Colors.transparent,
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                          child: SafeArea(
-                            top: false,
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    "选择操作",
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    child: Wrap(
-                                      runSpacing: 20,
-                                      spacing: 20,
-                                      children: [
-                                        if (paths.length == 0) ...[
-                                          Container(
-                                            constraints: BoxConstraints(maxWidth: 112),
-                                            width: (MediaQuery.of(context).size.width - 100) / 4,
-                                            child: CupertinoButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                List volumes = await getVolumes();
-                                                if (volumes.length > 0) {
-                                                  Navigator.of(context)
-                                                      .push(CupertinoPageRoute(
-                                                          builder: (context) {
-                                                            return AddSharedFolders(volumes);
-                                                          },
-                                                          settings: RouteSettings(name: "add_shared_folders")))
-                                                      .then((res) {
-                                                    if (res != null && res) {
-                                                      refresh();
-                                                    }
-                                                  });
-                                                } else {
-                                                  Utils.toast("未获取到存储空间");
-                                                }
-                                              },
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(10),
-                                              padding: EdgeInsets.symmetric(vertical: 10),
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
-                                                    "assets/icons/new_folder.png",
-                                                    width: 30,
-                                                  ),
-                                                  Text(
-                                                    "共享文件夹",
-                                                    style: TextStyle(fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                        if (paths.length > 0) ...[
-                                          Container(
-                                            constraints: BoxConstraints(maxWidth: 112),
-                                            width: (MediaQuery.of(context).size.width - 100) / 4,
-                                            child: CupertinoButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                String name = "";
-                                                showCupertinoDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return Material(
-                                                        color: Colors.transparent,
-                                                        child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Container(
-                                                              width: double.infinity,
-                                                              margin: EdgeInsets.symmetric(horizontal: 50),
-                                                              decoration: BoxDecoration(
-                                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                                borderRadius: BorderRadius.circular(25),
-                                                              ),
-                                                              child: Padding(
-                                                                padding: EdgeInsets.all(20),
-                                                                child: Column(
-                                                                  children: [
-                                                                    Text(
-                                                                      "新建文件夹",
-                                                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 16,
-                                                                    ),
-                                                                    Container(
-                                                                      decoration: BoxDecoration(
-                                                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                                                        borderRadius: BorderRadius.circular(20),
-                                                                      ),
-                                                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                                                      child: TextField(
-                                                                        onChanged: (v) => name = v,
-                                                                        decoration: InputDecoration(
-                                                                          border: InputBorder.none,
-                                                                          hintText: "请输入文件夹名",
-                                                                          labelText: "文件夹名",
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 20,
-                                                                    ),
-                                                                    Row(
-                                                                      children: [
-                                                                        Expanded(
-                                                                          child: CupertinoButton(
-                                                                            onPressed: () async {
-                                                                              if (name.trim() == "") {
-                                                                                Utils.toast("请输入文件夹名");
-                                                                                return;
-                                                                              }
-                                                                              Navigator.of(context).pop();
-                                                                              String path = "/" + paths.join("/");
-                                                                              var res = await Api.createFolder(path, name);
-                                                                              if (res['success']) {
-                                                                                Utils.toast("文件夹创建成功");
-                                                                                refresh();
-                                                                              } else {
-                                                                                if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
-                                                                                  Utils.toast("文件夹创建失败：指定的名称已存在");
-                                                                                } else {
-                                                                                  Utils.toast("文件夹创建失败");
-                                                                                }
-                                                                              }
-                                                                            },
-                                                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                                                            borderRadius: BorderRadius.circular(25),
-                                                                            padding: EdgeInsets.symmetric(vertical: 10),
-                                                                            child: Text(
-                                                                              "确定",
-                                                                              style: TextStyle(fontSize: 18),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width: 16,
-                                                                        ),
-                                                                        Expanded(
-                                                                          child: CupertinoButton(
-                                                                            onPressed: () async {
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                                                            borderRadius: BorderRadius.circular(25),
-                                                                            padding: EdgeInsets.symmetric(vertical: 10),
-                                                                            child: Text(
-                                                                              "取消",
-                                                                              style: TextStyle(fontSize: 18),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    });
-                                              },
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(10),
-                                              padding: EdgeInsets.symmetric(vertical: 10),
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
-                                                    "assets/icons/new_folder.png",
-                                                    width: 30,
-                                                  ),
-                                                  Text(
-                                                    "新建文件夹",
-                                                    style: TextStyle(fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: (MediaQuery.of(context).size.width - 100) / 4,
-                                            child: CupertinoButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                Navigator.of(context).push(CupertinoPageRoute(
-                                                    builder: (context) {
-                                                      return Share(
-                                                        paths: ["/" + paths.join("/")],
-                                                        fileRequest: true,
-                                                      );
-                                                    },
-                                                    settings: RouteSettings(name: "share")));
-                                              },
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(10),
-                                              padding: EdgeInsets.symmetric(vertical: 10),
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
-                                                    "assets/icons/upload.png",
-                                                    width: 30,
-                                                  ),
-                                                  Text(
-                                                    "创建文件请求",
-                                                    style: TextStyle(fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                        Container(
-                                          constraints: BoxConstraints(maxWidth: 112),
-                                          width: (MediaQuery.of(context).size.width - 100) / 4,
-                                          child: CupertinoButton(
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).push(CupertinoPageRoute(
-                                                  builder: (content) {
-                                                    return ShareManager();
-                                                  },
-                                                  settings: RouteSettings(name: "share_manager")));
-                                            },
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(10),
-                                            padding: EdgeInsets.symmetric(vertical: 10),
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  "assets/icons/link.png",
-                                                  width: 30,
-                                                ),
-                                                Text(
-                                                  "共享链接管理",
-                                                  style: TextStyle(fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          constraints: BoxConstraints(maxWidth: 112),
-                                          width: (MediaQuery.of(context).size.width - 100) / 4,
-                                          child: CupertinoButton(
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context)
-                                                  .push(CupertinoPageRoute(
-                                                      builder: (content) {
-                                                        return RemoteFolder();
-                                                      },
-                                                      settings: RouteSettings(name: "remote_folder")))
-                                                  .then((res) {
-                                                refresh();
-                                                getSmbFolder();
-                                              });
-                                            },
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(10),
-                                            padding: EdgeInsets.symmetric(vertical: 10),
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  "assets/icons/remote.png",
-                                                  width: 30,
-                                                ),
-                                                Text(
-                                                  "装载远程",
-                                                  style: TextStyle(fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        // if (paths.length > 0)
-                                        //   Container(
-                                        //     constraints: BoxConstraints(maxWidth: 112),
-                                        //     width: (MediaQuery.of(context).size.width - 100) / 4,
-                                        //     child: CupertinoButton(
-                                        //       onPressed: () async {
-                                        //         Navigator.of(context).pop();
-                                        //         Navigator.of(context)
-                                        //             .push(CupertinoPageRoute(
-                                        //                 builder: (content) {
-                                        //                   return Search("/" + paths.join("/"));
-                                        //                 },
-                                        //                 settings: RouteSettings(name: "search")))
-                                        //             .then((res) {
-                                        //           if (res != null) {
-                                        //             search(res['folders'], res['pattern'], res['search_content']);
-                                        //           }
-                                        //         });
-                                        //       },
-                                        //       decoration: BoxDecoration(
-                                        //         color: Theme.of(context).scaffoldBackgroundColor,
-                                        //         borderRadius: BorderRadius.circular(10),
-                                        //       ),
-                                        //
-                                        //       padding: EdgeInsets.symmetric(vertical: 10),
-                                        //       child: Column(
-                                        //         children: [
-                                        //           Image.asset(
-                                        //             "assets/icons/search.png",
-                                        //             width: 30,
-                                        //           ),
-                                        //           Text(
-                                        //             "搜索",
-                                        //             style: TextStyle(fontSize: 12),
-                                        //           ),
-                                        //         ],
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  CupertinoButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                    },
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(25),
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "取消",
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      return StatefulBuilder(
+                        builder: _buildSortMenu,
                       );
                     },
-                  );
+                  ).then((value) {
+                    refresh();
+                  });
                 },
                 child: Image.asset(
-                  "assets/icons/actions.png",
+                  "assets/icons/sort_down.png",
                   width: 20,
                   height: 20,
                 ),
+              ),
+            CupertinoButton(
+              key: moreActionKey,
+              // onPressed: () {
+              //   showCupertinoModalPopup(
+              //     context: context,
+              //     builder: (context) {
+              //       return Material(
+              //         color: Colors.transparent,
+              //         child: Container(
+              //           width: double.infinity,
+              //           decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+              //           child: SafeArea(
+              //             top: false,
+              //             child: Padding(
+              //               padding: EdgeInsets.all(20),
+              //               child: Column(
+              //                 mainAxisSize: MainAxisSize.min,
+              //                 children: <Widget>[
+              //                   Text(
+              //                     "选择操作",
+              //                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              //                   ),
+              //                   SizedBox(
+              //                     height: 12,
+              //                   ),
+              //                   Container(
+              //                     width: double.infinity,
+              //                     child: Wrap(
+              //                       runSpacing: 20,
+              //                       spacing: 20,
+              //                       children: [
+              //                         if (paths.length == 0) ...[
+              //                           Container(
+              //                             constraints: BoxConstraints(maxWidth: 112),
+              //                             width: (MediaQuery.of(context).size.width - 100) / 4,
+              //                             child: CupertinoButton(
+              //                               onPressed: () async {
+              //                                 Navigator.of(context).pop();
+              //                                 List volumes = await getVolumes();
+              //                                 if (volumes.length > 0) {
+              //                                   Navigator.of(context)
+              //                                       .push(CupertinoPageRoute(
+              //                                           builder: (context) {
+              //                                             return AddSharedFolders(volumes);
+              //                                           },
+              //                                           settings: RouteSettings(name: "add_shared_folders")))
+              //                                       .then((res) {
+              //                                     if (res != null && res) {
+              //                                       refresh();
+              //                                     }
+              //                                   });
+              //                                 } else {
+              //                                   Utils.toast("未获取到存储空间");
+              //                                 }
+              //                               },
+              //                               color: Theme.of(context).scaffoldBackgroundColor,
+              //                               borderRadius: BorderRadius.circular(10),
+              //                               padding: EdgeInsets.symmetric(vertical: 10),
+              //                               child: Column(
+              //                                 children: [
+              //                                   Image.asset(
+              //                                     "assets/icons/new_folder.png",
+              //                                     width: 30,
+              //                                   ),
+              //                                   Text(
+              //                                     "共享文件夹",
+              //                                     style: TextStyle(fontSize: 12),
+              //                                   ),
+              //                                 ],
+              //                               ),
+              //                             ),
+              //                           ),
+              //                         ],
+              //                         if (paths.length > 0) ...[
+              //                           Container(
+              //                             constraints: BoxConstraints(maxWidth: 112),
+              //                             width: (MediaQuery.of(context).size.width - 100) / 4,
+              //                             child: CupertinoButton(
+              //                               onPressed: () async {
+              //                                 Navigator.of(context).pop();
+              //                                 String name = "";
+              //                                 showCupertinoDialog(
+              //                                     context: context,
+              //                                     builder: (context) {
+              //                                       return Material(
+              //                                         color: Colors.transparent,
+              //                                         child: Column(
+              //                                           mainAxisAlignment: MainAxisAlignment.center,
+              //                                           children: [
+              //                                             Container(
+              //                                               width: double.infinity,
+              //                                               margin: EdgeInsets.symmetric(horizontal: 50),
+              //                                               decoration: BoxDecoration(
+              //                                                 color: Theme.of(context).scaffoldBackgroundColor,
+              //                                                 borderRadius: BorderRadius.circular(25),
+              //                                               ),
+              //                                               child: Padding(
+              //                                                 padding: EdgeInsets.all(20),
+              //                                                 child: Column(
+              //                                                   children: [
+              //                                                     Text(
+              //                                                       "新建文件夹",
+              //                                                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              //                                                     ),
+              //                                                     SizedBox(
+              //                                                       height: 16,
+              //                                                     ),
+              //                                                     Container(
+              //                                                       decoration: BoxDecoration(
+              //                                                         color: Theme.of(context).scaffoldBackgroundColor,
+              //                                                         borderRadius: BorderRadius.circular(20),
+              //                                                       ),
+              //                                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              //                                                       child: TextField(
+              //                                                         onChanged: (v) => name = v,
+              //                                                         decoration: InputDecoration(
+              //                                                           border: InputBorder.none,
+              //                                                           hintText: "请输入文件夹名",
+              //                                                           labelText: "文件夹名",
+              //                                                         ),
+              //                                                       ),
+              //                                                     ),
+              //                                                     SizedBox(
+              //                                                       height: 20,
+              //                                                     ),
+              //                                                     Row(
+              //                                                       children: [
+              //                                                         Expanded(
+              //                                                           child: CupertinoButton(
+              //                                                             onPressed: () async {
+              //                                                               if (name.trim() == "") {
+              //                                                                 Utils.toast("请输入文件夹名");
+              //                                                                 return;
+              //                                                               }
+              //                                                               Navigator.of(context).pop();
+              //                                                               String path = "/" + paths.join("/");
+              //                                                               var res = await Api.createFolder(path, name);
+              //                                                               if (res['success']) {
+              //                                                                 Utils.toast("文件夹创建成功");
+              //                                                                 refresh();
+              //                                                               } else {
+              //                                                                 if (res['error']['errors'] != null && res['error']['errors'].length > 0 && res['error']['errors'][0]['code'] == 414) {
+              //                                                                   Utils.toast("文件夹创建失败：指定的名称已存在");
+              //                                                                 } else {
+              //                                                                   Utils.toast("文件夹创建失败");
+              //                                                                 }
+              //                                                               }
+              //                                                             },
+              //                                                             color: Theme.of(context).scaffoldBackgroundColor,
+              //                                                             borderRadius: BorderRadius.circular(25),
+              //                                                             padding: EdgeInsets.symmetric(vertical: 10),
+              //                                                             child: Text(
+              //                                                               "确定",
+              //                                                               style: TextStyle(fontSize: 18),
+              //                                                             ),
+              //                                                           ),
+              //                                                         ),
+              //                                                         SizedBox(
+              //                                                           width: 16,
+              //                                                         ),
+              //                                                         Expanded(
+              //                                                           child: CupertinoButton(
+              //                                                             onPressed: () async {
+              //                                                               Navigator.of(context).pop();
+              //                                                             },
+              //                                                             color: Theme.of(context).scaffoldBackgroundColor,
+              //                                                             borderRadius: BorderRadius.circular(25),
+              //                                                             padding: EdgeInsets.symmetric(vertical: 10),
+              //                                                             child: Text(
+              //                                                               "取消",
+              //                                                               style: TextStyle(fontSize: 18),
+              //                                                             ),
+              //                                                           ),
+              //                                                         ),
+              //                                                       ],
+              //                                                     )
+              //                                                   ],
+              //                                                 ),
+              //                                               ),
+              //                                             ),
+              //                                           ],
+              //                                         ),
+              //                                       );
+              //                                     });
+              //                               },
+              //                               color: Theme.of(context).scaffoldBackgroundColor,
+              //                               borderRadius: BorderRadius.circular(10),
+              //                               padding: EdgeInsets.symmetric(vertical: 10),
+              //                               child: Column(
+              //                                 children: [
+              //                                   Image.asset(
+              //                                     "assets/icons/new_folder.png",
+              //                                     width: 30,
+              //                                   ),
+              //                                   Text(
+              //                                     "新建文件夹",
+              //                                     style: TextStyle(fontSize: 12),
+              //                                   ),
+              //                                 ],
+              //                               ),
+              //                             ),
+              //                           ),
+              //                           SizedBox(
+              //                             width: (MediaQuery.of(context).size.width - 100) / 4,
+              //                             child: CupertinoButton(
+              //                               onPressed: () async {
+              //                                 Navigator.of(context).pop();
+              //                                 Navigator.of(context).push(CupertinoPageRoute(
+              //                                     builder: (context) {
+              //                                       return Share(
+              //                                         paths: ["/" + paths.join("/")],
+              //                                         fileRequest: true,
+              //                                       );
+              //                                     },
+              //                                     settings: RouteSettings(name: "share")));
+              //                               },
+              //                               color: Theme.of(context).scaffoldBackgroundColor,
+              //                               borderRadius: BorderRadius.circular(10),
+              //                               padding: EdgeInsets.symmetric(vertical: 10),
+              //                               child: Column(
+              //                                 children: [
+              //                                   Image.asset(
+              //                                     "assets/icons/upload.png",
+              //                                     width: 30,
+              //                                   ),
+              //                                   Text(
+              //                                     "创建文件请求",
+              //                                     style: TextStyle(fontSize: 12),
+              //                                   ),
+              //                                 ],
+              //                               ),
+              //                             ),
+              //                           ),
+              //                         ],
+              //                         Container(
+              //                           constraints: BoxConstraints(maxWidth: 112),
+              //                           width: (MediaQuery.of(context).size.width - 100) / 4,
+              //                           child: CupertinoButton(
+              //                             onPressed: () async {
+              //                               Navigator.of(context).pop();
+              //                               Navigator.of(context).push(CupertinoPageRoute(
+              //                                   builder: (content) {
+              //                                     return ShareManager();
+              //                                   },
+              //                                   settings: RouteSettings(name: "share_manager")));
+              //                             },
+              //                             color: Theme.of(context).scaffoldBackgroundColor,
+              //                             borderRadius: BorderRadius.circular(10),
+              //                             padding: EdgeInsets.symmetric(vertical: 10),
+              //                             child: Column(
+              //                               children: [
+              //                                 Image.asset(
+              //                                   "assets/icons/link.png",
+              //                                   width: 30,
+              //                                 ),
+              //                                 Text(
+              //                                   "共享链接管理",
+              //                                   style: TextStyle(fontSize: 12),
+              //                                 ),
+              //                               ],
+              //                             ),
+              //                           ),
+              //                         ),
+              //                         Container(
+              //                           constraints: BoxConstraints(maxWidth: 112),
+              //                           width: (MediaQuery.of(context).size.width - 100) / 4,
+              //                           child: CupertinoButton(
+              //                             onPressed: () async {
+              //                               Navigator.of(context).pop();
+              //                               Navigator.of(context)
+              //                                   .push(CupertinoPageRoute(
+              //                                       builder: (content) {
+              //                                         return RemoteFolder();
+              //                                       },
+              //                                       settings: RouteSettings(name: "remote_folder")))
+              //                                   .then((res) {
+              //                                 refresh();
+              //                                 getSmbFolder();
+              //                               });
+              //                             },
+              //                             color: Theme.of(context).scaffoldBackgroundColor,
+              //                             borderRadius: BorderRadius.circular(10),
+              //                             padding: EdgeInsets.symmetric(vertical: 10),
+              //                             child: Column(
+              //                               children: [
+              //                                 Image.asset(
+              //                                   "assets/icons/remote.png",
+              //                                   width: 30,
+              //                                 ),
+              //                                 Text(
+              //                                   "装载远程",
+              //                                   style: TextStyle(fontSize: 12),
+              //                                 ),
+              //                               ],
+              //                             ),
+              //                           ),
+              //                         ),
+              //                         // if (paths.length > 0)
+              //                         //   Container(
+              //                         //     constraints: BoxConstraints(maxWidth: 112),
+              //                         //     width: (MediaQuery.of(context).size.width - 100) / 4,
+              //                         //     child: CupertinoButton(
+              //                         //       onPressed: () async {
+              //                         //         Navigator.of(context).pop();
+              //                         //         Navigator.of(context)
+              //                         //             .push(CupertinoPageRoute(
+              //                         //                 builder: (content) {
+              //                         //                   return Search("/" + paths.join("/"));
+              //                         //                 },
+              //                         //                 settings: RouteSettings(name: "search")))
+              //                         //             .then((res) {
+              //                         //           if (res != null) {
+              //                         //             search(res['folders'], res['pattern'], res['search_content']);
+              //                         //           }
+              //                         //         });
+              //                         //       },
+              //                         //       decoration: BoxDecoration(
+              //                         //         color: Theme.of(context).scaffoldBackgroundColor,
+              //                         //         borderRadius: BorderRadius.circular(10),
+              //                         //       ),
+              //                         //
+              //                         //       padding: EdgeInsets.symmetric(vertical: 10),
+              //                         //       child: Column(
+              //                         //         children: [
+              //                         //           Image.asset(
+              //                         //             "assets/icons/search.png",
+              //                         //             width: 30,
+              //                         //           ),
+              //                         //           Text(
+              //                         //             "搜索",
+              //                         //             style: TextStyle(fontSize: 12),
+              //                         //           ),
+              //                         //         ],
+              //                         //       ),
+              //                         //     ),
+              //                         //   ),
+              //                       ],
+              //                     ),
+              //                   ),
+              //                   SizedBox(
+              //                     height: 20,
+              //                   ),
+              //                   CupertinoButton(
+              //                     onPressed: () async {
+              //                       Navigator.of(context).pop();
+              //                     },
+              //                     color: Theme.of(context).scaffoldBackgroundColor,
+              //                     borderRadius: BorderRadius.circular(25),
+              //                     padding: EdgeInsets.symmetric(vertical: 10),
+              //                     child: Text(
+              //                       "取消",
+              //                       style: TextStyle(fontSize: 18),
+              //                     ),
+              //                   ),
+              //                   SizedBox(
+              //                     height: 8,
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   );
+              // },
+              onPressed: () {
+                showPopupWindow(
+                  context,
+                  gravity: KumiPopupGravity.leftBottom,
+                  //curve: Curves.elasticOut,
+                  bgColor: Colors.transparent,
+                  clickOutDismiss: true,
+                  clickBackDismiss: true,
+                  customAnimation: false,
+                  customPop: false,
+                  customPage: false,
+                  //targetRenderBox: (btnKey.currentContext.findRenderObject() as RenderBox),
+                  //needSafeDisplay: true,
+                  underStatusBar: false,
+                  underAppBar: false,
+                  offsetX: 40,
+                  offsetY: -40,
+                  duration: Duration(milliseconds: 200),
+                  targetRenderBox: moreActionKey.currentContext!.findRenderObject() as RenderBox,
+                  childFun: (pop) {
+                    return BackdropFilter(
+                      key: GlobalKey(),
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        width: 186,
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(23),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/file_grid.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("宫格视图"),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/file_list.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("列表视图"),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/remote.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("远程文件夹"),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/folder_plus.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("新建文件夹"),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/folder_plus.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("新建共享文件夹"),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/link.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("共享链接管理"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Image.asset(
+                "assets/icons/more_vertical.png",
+                width: 24,
+                height: 24,
               ),
             )
           ],
@@ -3119,141 +3212,154 @@ class FilesState extends State<Files> {
       ),
       body: Column(
         children: [
-          if (searchResult)
-            Container(
-              height: 45,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 20),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      child: Text(
-                        "搜索结果",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      searchTimer?.cancel();
-                      setState(() {
-                        searching = false;
-                        searchResult = false;
-                        refresh();
-                      });
+          SizedBox(
+            height: context.padding.top + 50,
+          ),
+          // if (searchResult)
+          //   Container(
+          //     height: 45,
+          //     color: Theme.of(context).scaffoldBackgroundColor,
+          //     alignment: Alignment.centerLeft,
+          //     child: Row(
+          //       children: [
+          //         Container(
+          //           margin: EdgeInsets.only(left: 20),
+          //           padding: const EdgeInsets.symmetric(vertical: 10),
+          //           child: Container(
+          //             decoration: BoxDecoration(
+          //               color: Theme.of(context).scaffoldBackgroundColor,
+          //               borderRadius: BorderRadius.circular(20),
+          //             ),
+          //             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          //             child: Text(
+          //               "搜索结果",
+          //               style: TextStyle(fontSize: 12),
+          //             ),
+          //           ),
+          //         ),
+          //         Spacer(),
+          //         GestureDetector(
+          //           onTap: () {
+          //             searchTimer?.cancel();
+          //             setState(() {
+          //               searching = false;
+          //               searchResult = false;
+          //               refresh();
+          //             });
+          //           },
+          //           child: Container(
+          //             margin: EdgeInsets.only(right: 20),
+          //             padding: const EdgeInsets.symmetric(vertical: 10),
+          //             child: Container(
+          //               decoration: BoxDecoration(
+          //                 color: Theme.of(context).scaffoldBackgroundColor,
+          //                 borderRadius: BorderRadius.circular(20),
+          //               ),
+          //               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          //               child: searching
+          //                   ? Row(
+          //                       children: [
+          //                         Text(
+          //                           "搜索中",
+          //                           style: TextStyle(fontSize: 12),
+          //                         ),
+          //                         SizedBox(
+          //                           width: 5,
+          //                         ),
+          //                         CupertinoActivityIndicator(
+          //                           radius: 6,
+          //                         ),
+          //                       ],
+          //                     )
+          //                   : Text(
+          //                       "退出搜索",
+          //                       style: TextStyle(fontSize: 12),
+          //                     ),
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   )
+          // else
+          Container(
+            height: 45,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+                  child: CupertinoButton(
+                    onPressed: () {
+                      goPath("");
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 20),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        child: searching
-                            ? Row(
-                                children: [
-                                  Text(
-                                    "搜索中",
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  CupertinoActivityIndicator(
-                                    radius: 6,
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                "退出搜索",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                      ),
+                    borderRadius: BorderRadius.circular(20),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    child: Image.asset(
+                      "assets/icons/home.png",
+                      width: 20,
+                      height: 20,
                     ),
                   ),
-                ],
-              ),
-            )
-          else
-            Container(
-              height: 45,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
+                ),
+                if (paths.length > 0)
                   Container(
-                    padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
-                    child: CupertinoButton(
-                      onPressed: () {
-                        goPath("");
-                      },
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(20),
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      child: Icon(
-                        CupertinoIcons.home,
-                        size: 16,
-                        color: Colors.black,
-                      ),
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    child: Icon(
+                      CupertinoIcons.right_chevron,
+                      size: 14,
+                      color: Colors.black,
                     ),
                   ),
-                  if (paths.length > 0)
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      child: Icon(
-                        CupertinoIcons.right_chevron,
-                        size: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  Expanded(
-                    child: ListView.separated(
-                      controller: _pathScrollController,
-                      itemBuilder: _buildPathItem,
-                      itemCount: paths.length,
-                      scrollDirection: Axis.horizontal,
-                      separatorBuilder: (context, i) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          child: Icon(
-                            CupertinoIcons.right_chevron,
-                            size: 14,
-                          ),
-                        );
-                      },
-                    ),
+                Expanded(
+                  child: ListView.separated(
+                    controller: _pathScrollController,
+                    itemBuilder: _buildPathItem,
+                    itemCount: paths.length,
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (context, i) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        child: Icon(
+                          CupertinoIcons.right_chevron,
+                          size: 14,
+                          color: Colors.black12,
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          if (backgroundProcess.isNotEmpty && showProcessList) _buildProcessList(),
+          ),
+          // if (backgroundProcess.isNotEmpty && showProcessList) _buildProcessList(),
           Expanded(
             child: success
                 ? Stack(
                     children: [
+                      // Navigator(
+                      //   onGenerateRoute: (settings) {
+                      //     if (settings.name == '/') {
+                      //       return MaterialPageRoute(
+                      //         settings: settings,
+                      //         builder: (context) => Files(),
+                      //       );
+                      //     }
+                      //   },
+                      // ),
                       listType == ListType.list
                           ? DraggableScrollbar.semicircle(
                               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                               scrollbarTimeToFade: Duration(seconds: 1),
                               controller: _fileScrollController,
                               child: ListView.builder(
+                                padding: EdgeInsets.zero,
                                 controller: _fileScrollController,
                                 // padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: selectedFiles.length > 0 ? 140 : 20),
                                 itemBuilder: (context, i) {
-                                  return _buildFileItem(files[i]);
+                                  return _buildFileItem(files.files![i]);
                                 },
-                                itemCount: files.length,
+                                itemCount: files.files!.length,
                               ),
                             )
                           : Container(
@@ -3269,7 +3375,7 @@ class FilesState extends State<Files> {
                                     Wrap(
                                       runSpacing: 20,
                                       spacing: 20,
-                                      children: files.map(_buildFileItem).toList(),
+                                      children: files.files!.map(_buildFileItem).toList(),
                                     )
                                   ],
                                 ),
@@ -3302,7 +3408,7 @@ class FilesState extends State<Files> {
                                     },
                                   ).then((folder) async {
                                     if (folder != null && folder.length == 1) {
-                                      List<String> files = selectedFiles.map((e) => e['path'] as String).toList();
+                                      List<String> files = selectedFiles.map((e) => e.path!).toList();
                                       var res = await Api.copyMoveTask(files, folder[0], true);
                                       if (res['success']) {
                                         setState(() {
@@ -3348,7 +3454,7 @@ class FilesState extends State<Files> {
                                     },
                                   ).then((folder) async {
                                     if (folder != null && folder.length == 1) {
-                                      List<String> files = selectedFiles.map((e) => e['path'] as String).toList();
+                                      List<String> files = selectedFiles.map((e) => e.path!).toList();
                                       var res = await Api.copyMoveTask(files, folder[0], false);
                                       if (res['success']) {
                                         setState(() {
@@ -3384,7 +3490,7 @@ class FilesState extends State<Files> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  compressFile(selectedFiles.map((e) => e['path'] as String).toList());
+                                  compressFile(selectedFiles.map((e) => e.path!).toList());
                                 },
                                 child: Column(
                                   children: [
@@ -3418,7 +3524,7 @@ class FilesState extends State<Files> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  deleteFile(selectedFiles.map((e) => e['path'] as String).toList());
+                                  deleteFile(selectedFiles.map((e) => e.path!).toList());
                                 },
                                 child: Column(
                                   children: [
@@ -3491,10 +3597,10 @@ class FilesState extends State<Files> {
       ),
       // drawer: Favorite(goPath),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.refresh),
-      //   onPressed: getBackgroundTask,
-      // ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.refresh),
+        onPressed: getShareList,
+      ),
     );
   }
 }

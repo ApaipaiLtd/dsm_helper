@@ -96,6 +96,7 @@ dependencies:
   just_audio: ^0.9.35
   rxdart: ^0.27.7
   flutter_floating: ^1.0.8
+  kumi_popup_window: ^2.0.1
 #  fplayer: ^1.0.4
   fplayer:
     path: fplayer
