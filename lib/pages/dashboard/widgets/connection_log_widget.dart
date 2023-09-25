@@ -62,7 +62,7 @@ class ConnectionLogWidget extends StatelessWidget {
                     ),
                     Text(
                       "${timeLong.hours.toString().padLeft(2, "0")}:${timeLong.minutes.toString().padLeft(2, "0")}:${timeLong.seconds.toString().padLeft(2, "0")}",
-                      style: TextStyle(fontSize: 16, color: Color(0xFF2A82E4)),
+                      style: TextStyle(fontSize: 16, color: AppTheme.of(context)?.primaryColor),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.right,
                     )

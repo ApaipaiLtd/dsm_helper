@@ -6,7 +6,6 @@ import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -195,7 +194,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                               value: (utilization.memory?.realUsage ?? 0).toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
-                              gradient: SweepGradient(colors: <Color>[Color(0xFF2A82E4), Color(0xFF75ACFF)]),
+                              gradient: SweepGradient(colors: <Color>[AppTheme.of(context)!.primaryColor!, Color(0xFF75ACFF)]),
                             ),
                             // MarkerPointer(
                             //   value: utilization.cpu!.totalLoad.toDouble() - 3,
@@ -385,7 +384,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                       markerSettings: const MarkerSettings(isVisible: false),
                       // color: Colors.lightBlue,
                       borderWidth: 2,
-                      borderColor: Color(0xFF2A82E4),
+                      borderColor: AppTheme.of(context)?.primaryColor,
                       gradient: LinearGradient(colors: [Colors.white, Color(0xFFD5E4F5)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
                     ),
                     AreaSeries<Network, num>(

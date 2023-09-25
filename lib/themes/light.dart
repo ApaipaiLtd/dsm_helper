@@ -7,7 +7,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     AppTheme(
       titleColor: Color(0xff121212),
       placeholderColor: Colors.black54,
-      primaryColor: Color(0xff333333),
+      primaryColor: Color(0xff2A82E4),
       progressColor: Color(0xfff4f4f4),
     ),
   ],

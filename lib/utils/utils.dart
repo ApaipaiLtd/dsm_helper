@@ -9,6 +9,7 @@ import 'package:dio/io.dart';
 import 'package:dsm_helper/models/Syno/Core/Notify/DsmNotifyStrings.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/download/download.dart';
+import 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/utils/api.dart';
 import 'package:dsm_helper/utils/log.dart';
@@ -27,25 +28,7 @@ export 'package:dsm_helper/utils/extensions/datetime_ext.dart';
 export 'package:dsm_helper/extensions/int.dart';
 export 'package:dsm_helper/extensions/string.dart';
 export 'package:dsm_helper/utils/api.dart';
-
-enum FileTypeEnum {
-  folder,
-  image,
-  movie,
-  music,
-  ps,
-  html,
-  word,
-  ppt,
-  excel,
-  text,
-  zip,
-  code,
-  other,
-  pdf,
-  apk,
-  iso,
-}
+export 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
 
 enum UploadStatus {
   running,
@@ -258,7 +241,7 @@ class Utils {
     List<String> excel = ["xls", "xlsx"];
     List<String> text = ["txt", "log"];
     List<String> zip = ["zip", "gz", "tar", "tgz", "tbz", "bz2", "rar", "7z"];
-    List<String> code = ["py", "php", "c", "java", "jsp", "js", "css", "sql", "nfo", "xml", "kt", "conf", "json", "md", "sh"];
+    List<String> code = ["py", "php", "c", "java", "jsp", "js", "ts", "css", "sql", "nfo", "xml", "kt", "conf", "json", "md", "sh"];
     List<String> pdf = ["pdf"];
     List<String> apk = ["apk"];
     List<String> iso = ["iso"];

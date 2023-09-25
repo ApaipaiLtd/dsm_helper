@@ -140,6 +140,7 @@ flutter:
   assets:
     - assets/tabbar/
     - assets/icons/
+    - assets/icons/file_icons/
     - assets/devices/
     - assets/applications/
     - assets/applications/6/

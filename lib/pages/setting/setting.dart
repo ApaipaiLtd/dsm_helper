@@ -805,7 +805,7 @@ class _SettingState extends State<Setting> {
               ),
               SettingButton(
                 name: "相册备份",
-                icon: "upload",
+                icon: "upload_cloud",
                 onPressed: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(

@@ -1,3 +1,4 @@
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class EmptyWidget extends StatelessWidget {
@@ -11,7 +12,10 @@ class EmptyWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset("assets/empty.png"),
-          Text(text ?? "暂无数据"),
+          Text(
+            text ?? "暂无数据",
+            style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
+          ),
         ],
       ),
     );

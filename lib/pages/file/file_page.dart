@@ -22,7 +22,7 @@ class _FilePageState extends State<FilePage> with AutomaticKeepAliveClientMixin 
         if (settings.name == '/') {
           return CupertinoPageRoute(
             settings: settings,
-            builder: (ctx) => Files(context),
+            builder: (context) => Files(),
           );
         }
       },
