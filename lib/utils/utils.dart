@@ -204,7 +204,10 @@ class Utils {
     return Color.fromRGBO(colors['r'] ?? 255, colors['g'] ?? 255, colors['b'] ?? 255, 1);
   }
 
-  static FileTypeEnum fileType(String name) {
+  static FileTypeEnum fileType(String? name) {
+    if (name == null) {
+      return FileTypeEnum.other;
+    }
     List<String> image = ["png", "jpg", "jpeg", "gif", "bmp", "ico", "tiff", "tif"];
     List<String> movie = [
       "3gp",
@@ -260,6 +263,7 @@ class Utils {
     List<String> apk = ["apk"];
     List<String> iso = ["iso"];
     String ext = name.split(".").last.toLowerCase();
+
     if (image.contains(ext)) {
       return FileTypeEnum.image;
     } else if (movie.contains(ext)) {
@@ -596,9 +600,9 @@ class Utils {
 
   static String formatSize(num size, {int format = 1024, int fixed = 2, bool showByte = false}) {
     if (size == 0) {
-      return "0${showByte ? 'Bytes' : ''}";
+      return "0${showByte ? 'B' : ''}";
     } else if (size < format) {
-      return "$size${showByte ? 'Bytes' : ''}";
+      return "$size${showByte ? 'B' : ''}";
     } else if (size < pow(format, 2)) {
       return "${(size / format).toStringAsFixed(fixed)}K";
     } else if (size < pow(format, 3)) {

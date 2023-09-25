@@ -1,19 +1,14 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'package:dsm_helper/models/Syno/Core/Notify.dart';
-import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
-import 'package:dsm_helper/utils/utils.dart' hide Api;
+import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/utils/strings.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
-import 'package:dsm_helper/widgets/page_body_widget.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:html/parser.dart';
 
 class Notify extends StatefulWidget {
   final DsmNotify notifies;

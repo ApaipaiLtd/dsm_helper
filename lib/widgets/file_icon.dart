@@ -5,6 +5,8 @@ import 'package:dsm_helper/widgets/cupertino_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:dsm_helper/apis/api.dart' as api;
+
 class FileIcon extends StatelessWidget {
   final FileTypeEnum fileType;
   final String? thumb;
@@ -36,7 +38,7 @@ class FileIcon extends StatelessWidget {
             )
           : network
               ? CupertinoExtendedImage(
-                  Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
+                  api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true",
                   width: width,
                   height: height,
                   fit: fit,
@@ -66,7 +68,7 @@ class FileIcon extends StatelessWidget {
             )
           : network
               ? CupertinoExtendedImage(
-                  Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
+                  api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true",
                   width: width,
                   height: height,
                   fit: fit,

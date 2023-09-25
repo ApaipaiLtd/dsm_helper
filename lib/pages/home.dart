@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/file/file.dart';
+import 'package:dsm_helper/pages/file/file_page.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
@@ -216,7 +217,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         body: IndexedStack(
           children: [
             Dashboard(key: _dashboardStateKey),
-            Files(key: _filesStateKey),
+            FilePage(key: _filesStateKey),
             Download(key: Utils.downloadKey),
             Setting(),
           ],

@@ -233,6 +233,17 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                         return Container();
                     }
                   },
+                  heroBuilderForSlidingPage: (Widget result) {
+                    return Hero(
+                      tag: widget.tag ?? item,
+                      child: result,
+                      flightShuttleBuilder: (BuildContext flightContext, Animation<double> animation, HeroFlightDirection flightDirection, BuildContext fromHeroContext, BuildContext toHeroContext) {
+                        final Hero hero = (flightDirection == HeroFlightDirection.pop ? fromHeroContext.widget : toHeroContext.widget) as Hero;
+
+                        return hero.child;
+                      },
+                    );
+                  },
                   // heroBuilderForSlidingPage: (Widget result) {
                   //   return Hero(
                   //     tag: widget.tag ?? item,
@@ -397,7 +408,7 @@ class _ImagePreviewState extends State<ImagePreview> with SingleTickerProviderSt
                               },
                               child: Image.asset(
                                 "assets/icons/wechat.png",
-                                width: 30,
+                                width: 24,
                               ),
                             )
                           ],
@@ -513,9 +524,6 @@ class MySwiperPlugin extends StatelessWidget {
                 Spacer(),
                 if (onDelete != null)
                   CupertinoButton(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onPressed: () {
                       onDelete?.call(data.data!);
                     },
@@ -528,8 +536,8 @@ class MySwiperPlugin extends StatelessWidget {
                   width: 10,
                 ),
                 Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
                   decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

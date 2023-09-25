@@ -18,7 +18,6 @@ class ResourceMonitorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
     Utilization utilization = utilizationProvider.utilization;
     List<Network> networks = utilizationProvider.networks;

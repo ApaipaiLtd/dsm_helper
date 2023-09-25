@@ -6,10 +6,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
+import 'package:dsm_helper/pages/file/widgets/file_grid_item_widget.dart';
+import 'package:dsm_helper/pages/file/widgets/file_list_item_widget.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter_floating/floating/listener/event_listener.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:just_audio/just_audio.dart' as ja;
@@ -47,10 +51,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sp_util/sp_util.dart';
 
-enum ListType { list, icon }
+import 'package:dsm_helper/apis/api.dart' as api;
+
+enum ListType { list, grid }
 
 class Files extends StatefulWidget {
-  Files({key}) : super(key: key);
+  final BuildContext context;
+  final String path;
+  Files(this.context, {this.path = '', super.key});
   @override
   FilesState createState({key}) => FilesState();
 }
@@ -69,7 +77,7 @@ class FilesState extends State<Files> {
   List favorites = [];
   bool success = true;
   String msg = "";
-  bool multiSelect = false;
+  bool multiSelectMode = false;
   List<FileItem> selectedFiles = [];
   ScrollController _pathScrollController = ScrollController();
   ScrollController _fileScrollController = ScrollController();
@@ -93,7 +101,23 @@ class FilesState extends State<Files> {
 
   @override
   void initState() {
-    getShareList();
+    String listTypeStr = SpUtil.getString("file_list_type", defValue: "")!;
+    setState(() {
+      if (listTypeStr == "grid") {
+        listType = ListType.grid;
+      } else {
+        listType = ListType.list;
+      }
+    });
+    setState(() {
+      paths = widget.path.isNotEmpty ? widget.path.split("/").sublist(1) : [];
+    });
+    if (widget.path.isEmpty) {
+      getShareList();
+    } else {
+      getFileList(widget.path);
+    }
+
     // getSmbFolder();
     // getFtpFolder();
     // getSftpFolder();
@@ -102,15 +126,15 @@ class FilesState extends State<Files> {
     //   getBackgroundTask();
     // });
 
-    _fileScrollController.addListener(() {
-      String path = "";
-      if (paths.length > 0) {
-        path = "/" + paths.join("/");
-      } else {
-        path = "/";
-      }
-      scrollPosition[path] = _fileScrollController.offset;
-    });
+    // _fileScrollController.addListener(() {
+    //   String path = "";
+    //   if (paths.length > 0) {
+    //     path = "/" + paths.join("/");
+    //   } else {
+    //     path = "/";
+    //   }
+    //   scrollPosition[path] = _fileScrollController.offset;
+    // });
     super.initState();
   }
 
@@ -444,15 +468,7 @@ class FilesState extends State<Files> {
   }
 
   refresh() {
-    String path = "";
-    if (paths.length > 0 && paths[0].contains("//")) {
-      debugPrint("远程");
-      path = paths.join("/");
-    } else {
-      debugPrint("本地");
-      path = (paths.length > 0 ? "/" : '') + paths.join("/");
-    }
-    goPath(path);
+    getFileList(widget.path);
   }
 
   bool get isDrawerOpen {
@@ -624,7 +640,7 @@ class FilesState extends State<Files> {
     }
 
     for (var file in files) {
-      String url = Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${Utils.sid}";
+      String url = api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${api.Api.dsm.sid!}";
       String filename = "";
       if (file['isdir']) {
         filename = file['name'] + ".zip";
@@ -697,20 +713,6 @@ class FilesState extends State<Files> {
   }
 
   getShareList() async {
-    String listTypeStr = SpUtil.getString("file_list_type", defValue: "")!;
-
-    setState(() {
-      if (listTypeStr.isNotBlank) {
-        if (listTypeStr == "list") {
-          listType = ListType.list;
-        } else {
-          listType = ListType.icon;
-        }
-      } else {
-        listType = ListType.list;
-      }
-      loading = true;
-    });
     try {
       files = await FileStationList.shareList(sortBy: sortBy, sortDirection: sortDirection);
       setState(() {
@@ -730,45 +732,42 @@ class FilesState extends State<Files> {
     setState(() {
       loading = true;
     });
-    var res = await Api.fileList(path, sortBy: sortBy, sortDirection: sortDirection);
-    setState(() {
-      loading = false;
-      success = res['success'];
-    });
-    if (res['success']) {
+    try {
+      files = await FileStationList.fileList(path: path, sortBy: sortBy, sortDirection: sortDirection);
       setState(() {
-        files = res['data']['files'];
-        print(files);
+        loading = false;
+        success = true;
       });
-    } else {
-      setState(() {
-        msg = res['msg'] ?? Utils.notReviewAccount ? '暂无文件' : "加载失败，code:${res['error']['code']}";
-      });
+    } catch (e) {
+      if (loading) {
+        setState(() {
+          // msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
+        });
+      }
     }
   }
 
-  goPath(String path) async {
-    debugPrint("path:$path");
+  goPath(String path, {bool isBack = false}) async {
     Utils.vibrate(FeedbackType.light);
-    setState(() {
-      success = true;
-    });
-    setPaths(path);
-    if (path == "/" || path == "") {
-      await getShareList();
+    if (path.isNotEmpty) {
+      if (isBack) {
+        context.popUntil((route) => route.settings.name == path);
+      } else {
+        context.push(Files(widget.context, path: path), settings: RouteSettings(name: path));
+      }
     } else {
-      await getFileList(path);
+      // context.pushNamed("/", replace: true);
+      if (widget.path.isNotEmpty) {
+        context.popUntil((route) => route.settings.name == "/");
+      }
     }
-    double offset = _pathScrollController.position.maxScrollExtent;
-    _pathScrollController.animateTo(offset, duration: Duration(milliseconds: 200), curve: Curves.ease);
-    _fileScrollController.jumpTo(scrollPosition[path] ?? 0);
   }
 
   openPlainFile(file) async {
     setState(() {
       loading = true;
     });
-    var res = await Utils.get(Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}", decode: false);
+    var res = await Utils.get(api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${api.Api.dsm.sid!}", decode: false);
     setState(() {
       loading = false;
     });
@@ -1246,7 +1245,7 @@ class FilesState extends State<Files> {
                             if (res['success']) {
                               setState(() {
                                 selectedFiles = [];
-                                multiSelect = false;
+                                multiSelectMode = false;
                               });
                               getProcessingTaskResult(res['data']['taskid']);
                             }
@@ -1356,7 +1355,7 @@ class FilesState extends State<Files> {
                           "type": 'compress',
                         };
                         setState(() {
-                          multiSelect = false;
+                          multiSelectMode = false;
                           selectedFiles = [];
                         });
                         getProcessingTaskResult(res['data']['taskid']);
@@ -1413,8 +1412,8 @@ class FilesState extends State<Files> {
     );
   }
 
-  openFile(file, {FileTypeEnum? fileType, bool remote = false}) async {
-    if (multiSelect) {
+  openFile(FileItem file, {FileTypeEnum? fileType, bool remote = false}) async {
+    if (multiSelectMode) {
       setState(() {
         if (selectedFiles.contains(file)) {
           selectedFiles.remove(file);
@@ -1423,11 +1422,11 @@ class FilesState extends State<Files> {
         }
       });
     } else {
-      if (file['isdir']) {
-        goPath(file['path']);
-        if (remote) {
-          Navigator.of(context).pop();
-        }
+      if (file.isdir!) {
+        goPath(file.path!);
+        // if (remote) {
+        //   Navigator.of(context).pop();
+        // }
       } else {
         switch (fileType) {
           case FileTypeEnum.image:
@@ -1437,18 +1436,18 @@ class FilesState extends State<Files> {
             List<String> names = [];
             List<String> paths = [];
             int index = 0;
-            // for (int i = 0; i < files.length; i++) {
-            //   if (Utils.fileType(files[i]['name']) == FileTypeEnum.image) {
-            //     images.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
-            //     thumbs.add(Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(files[i]['path'])}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true");
-            //     names.add(files[i]['name']);
-            //     paths.add(files[i]['path']);
-            //     if (files[i]['name'] == file['name']) {
-            //       index = images.length - 1;
-            //     }
-            //   }
-            // }
-            Navigator.of(context).push(TransparentPageRoute(
+            for (int i = 0; i < files.files!.length; i++) {
+              if (Utils.fileType(files.files![i].name!) == FileTypeEnum.image) {
+                images.add(api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(files.files![i].path!)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true");
+                thumbs.add(api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(files.files![i].path!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true");
+                names.add(files.files![i].name!);
+                paths.add(files.files![i].path!);
+                if (files.files![i].name! == file.name!) {
+                  index = images.length - 1;
+                }
+              }
+            }
+            Navigator.of(widget.context).push(TransparentPageRoute(
               pageBuilder: (context, _, __) {
                 return ImagePreview(
                   images,
@@ -1456,6 +1455,7 @@ class FilesState extends State<Files> {
                   thumbs: thumbs,
                   names: names,
                   paths: paths,
+                  tag: images[index],
                   onDelete: () {
                     refresh();
                   },
@@ -1465,8 +1465,8 @@ class FilesState extends State<Files> {
             break;
           case FileTypeEnum.movie:
             bool videoPlayer = SpUtil.getBool("video_player", defValue: false)!;
-            String url = Utils.baseUrl + "/fbdownload/${Uri.encodeComponent(file['name'])}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open";
-            // String url = Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open";
+            String url = api.Api.dsm.baseUrl! + "/fbdownload/${Uri.encodeComponent(file.name!)}?dlink=%22${Utils.utf8Encode(file.path!)}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open";
+            // String url = api.Api.dsm.baseUrl! + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open";
             // print(url);
             // 调用nplayer
             // launchUrlString("nplayer-http://${Uri.encodeComponent(url)}");
@@ -1525,11 +1525,11 @@ class FilesState extends State<Files> {
             if (audioPlayerFloating!.isShowing) {
               audioPlayerFloating!.close();
             }
-            String url = Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open";
+            String url = api.Api.dsm.baseUrl! + "/fbdownload/${Uri.encodeComponent(file.name!)}?dlink=%22${Utils.utf8Encode(file.path!)}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open";
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
               return AudioPlayer(
                 url: url,
-                name: file['name'],
+                name: file.name,
               );
             })).then((_) {
               AudioPlayerProvider audioPlayerProvider = context.read<AudioPlayerProvider>();
@@ -1541,7 +1541,7 @@ class FilesState extends State<Files> {
           // case FileType.music:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
+          //     data: api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${api.Api.dsm.sid!}",
           //     arguments: {},
           //     type: "audio/*",
           //   );
@@ -1550,7 +1550,7 @@ class FilesState extends State<Files> {
           // case FileType.word:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
+          //     data: api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${api.Api.dsm.sid!}",
           //     arguments: {},
           //     type: "application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           //   );
@@ -1559,7 +1559,7 @@ class FilesState extends State<Files> {
           // case FileType.excel:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
+          //     data: api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${api.Api.dsm.sid!}",
           //     arguments: {},
           //     type: "application/vnd.ms-excel|application/x-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           //   );
@@ -1568,7 +1568,7 @@ class FilesState extends State<Files> {
           // case FileType.ppt:
           //   AndroidIntent intent = AndroidIntent(
           //     action: 'action_view',
-          //     data: Utils.baseUrl + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${Utils.sid}",
+          //     data: api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file['path'])}&mode=open&_sid=${api.Api.dsm.sid!}",
           //     arguments: {},
           //     type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
           //   );
@@ -1582,13 +1582,13 @@ class FilesState extends State<Files> {
             break;
           case FileTypeEnum.pdf:
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return PdfViewer(Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open", file['name']);
+              return PdfViewer(api.Api.dsm.baseUrl! + "/fbdownload/${file.name!}?dlink=%22${Utils.utf8Encode(file.path!)}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open", file.name!);
             }));
             break;
           default:
             AndroidIntent intent = AndroidIntent(
               action: 'action_view',
-              data: Utils.baseUrl + "/fbdownload/${file['name']}?dlink=%22${Utils.utf8Encode(file['path'])}%22&_sid=%22${Utils.sid}%22&mode=open",
+              data: api.Api.dsm.baseUrl! + "/fbdownload/${file.name}?dlink=%22${Utils.utf8Encode(file.path!)}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open",
               arguments: {},
               // type: "application/vnd.ms-powerpoint|application/vnd.openxmlformats-officedocument.presentationml.presentation",
             );
@@ -1638,7 +1638,7 @@ class FilesState extends State<Files> {
                                   Navigator.of(context).pop();
                                   setState(() {
                                     selectedFiles.add(file);
-                                    multiSelect = true;
+                                    multiSelectMode = true;
                                   });
                                 },
                                 child: Row(
@@ -2124,9 +2124,9 @@ class FilesState extends State<Files> {
   }
 
   Widget _buildFileItem(FileItem file, {bool remote = false}) {
-    FileTypeEnum fileType = Utils.fileType(file.name!);
+    FileTypeEnum fileType = Utils.fileType(file.name);
     String path = file.path!;
-    Widget actionButton = multiSelect
+    Widget actionButton = multiSelectMode
         ? Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -2155,22 +2155,22 @@ class FilesState extends State<Files> {
             ),
           );
     return Container(
-      constraints: listType == ListType.icon && !remote ? BoxConstraints(maxWidth: 112) : null,
-      width: listType == ListType.icon && !remote ? (MediaQuery.of(context).size.width - 80) / 3 : double.infinity,
+      constraints: listType == ListType.grid && !remote ? BoxConstraints(maxWidth: 112) : null,
+      width: listType == ListType.grid && !remote ? (MediaQuery.of(context).size.width - 80) / 3 : double.infinity,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () {
           Utils.vibrate(FeedbackType.light);
           fileAction(file, remote: remote);
-          // if (paths.length > 1) {
-          //   Utils.vibrate(FeedbackType.light);
-          //   setState(() {
-          //     multiSelect = true;
-          //     selectedFiles.add(file);
-          //   });
-          // } else {
-          //   Utils.vibrate(FeedbackType.warning);
-          // }
+          if (paths.length > 1) {
+            Utils.vibrate(FeedbackType.light);
+            setState(() {
+              multiSelectMode = true;
+              selectedFiles.add(file);
+            });
+          } else {
+            Utils.vibrate(FeedbackType.warning);
+          }
         },
         onTap: () {
           openFile(file, fileType: fileType, remote: remote);
@@ -2184,7 +2184,7 @@ class FilesState extends State<Files> {
                       width: 10,
                     ),
                     Hero(
-                      tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
+                      tag: api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true",
                       child: FileIcon(
                         file.isdir == true ? FileTypeEnum.folder : fileType,
                         thumb: file.path!,
@@ -2252,7 +2252,7 @@ class FilesState extends State<Files> {
                       child: Column(
                         children: [
                           Hero(
-                            tag: Utils.baseUrl + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Utils.sid}&animate=true",
+                            tag: api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(path)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true",
                             child: FileIcon(
                               file.isdir == true ? FileTypeEnum.folder : fileType,
                               thumb: file.path!,
@@ -2275,7 +2275,7 @@ class FilesState extends State<Files> {
                       ),
                     ),
                   ),
-                  if (multiSelect)
+                  if (multiSelectMode)
                     Align(
                       alignment: Alignment.topRight,
                       child: Padding(
@@ -2289,40 +2289,40 @@ class FilesState extends State<Files> {
     );
   }
 
-  Widget _buildPathItem(BuildContext context, int index) {
+  Widget _buildPathItem(BuildContext context, int index, {bool isLast = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: CupertinoButton(
         onPressed: () {
-          String path = "";
-          List<String> items = [];
-          if (paths.length > 1 && paths[0].contains("//")) {
-            debugPrint("远程");
-            items = paths.getRange(0, index + 1).toList().cast<String>();
-            path = items.join("/");
-            goPath(path);
-          } else {
-            debugPrint("本地");
-            items = paths.getRange(0, index + 1).toList().cast<String>();
-            path = "/" + items.join("/");
+          if (!isLast) {
+            String path = "";
+            List<String> items = [];
+            if (paths.length > 1 && paths[0].contains("//")) {
+              debugPrint("远程");
+              items = paths.getRange(0, index + 1).toList().cast<String>();
+              path = items.join("/");
+              goPath(path);
+            } else {
+              debugPrint("本地");
+              items = paths.getRange(0, index + 1).toList().cast<String>();
+              path = "/" + items.join("/");
+            }
+            goPath(path, isBack: true);
           }
-          goPath(path);
         },
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: Text(
           paths[index],
-          style: TextStyle(fontSize: 12, color: Colors.black),
+          style: TextStyle(fontSize: 16, color: isLast ? Color(0xff2A82E4) : Colors.black54),
         ),
       ),
     );
   }
 
   Future<bool> onWillPop() {
-    if (multiSelect) {
+    if (multiSelectMode) {
       setState(() {
-        multiSelect = false;
+        multiSelectMode = false;
         selectedFiles = [];
       });
     } else if (searchResult) {
@@ -2439,9 +2439,9 @@ class FilesState extends State<Files> {
           children: [
             CupertinoButton(
               onPressed: () async {
-                if (multiSelect) {
+                if (multiSelectMode) {
                   setState(() {
-                    multiSelect = false;
+                    multiSelectMode = false;
                     selectedFiles = [];
                   });
                 } else {
@@ -2460,7 +2460,7 @@ class FilesState extends State<Files> {
                   }
                 }
               },
-              child: multiSelect
+              child: multiSelectMode
                   ? Icon(Icons.close)
                   : Image.asset(
                       "assets/icons/star.png",
@@ -2578,28 +2578,22 @@ class FilesState extends State<Files> {
                 height: 24,
               ),
             ),
-            if (Utils.notReviewAccount && paths.length > 0 && !multiSelect)
-              Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 8),
-                child: CupertinoButton(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  padding: EdgeInsets.all(10),
-                  onPressed: () async {
-                    Navigator.of(context)
-                        .push(CupertinoPageRoute(
-                            builder: (context) {
-                              return Upload("/" + paths.join("/"));
-                            },
-                            settings: RouteSettings(name: "upload")))
-                        .then((value) {
-                      refresh();
-                    });
-                  },
-                  child: Image.asset(
-                    "assets/icons/upload.png",
-                    width: 20,
-                  ),
+            if (Utils.notReviewAccount && paths.length > 0 && !multiSelectMode)
+              CupertinoButton(
+                onPressed: () async {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(
+                          builder: (context) {
+                            return Upload("/" + paths.join("/"));
+                          },
+                          settings: RouteSettings(name: "upload")))
+                      .then((value) {
+                    refresh();
+                  });
+                },
+                child: Image.asset(
+                  "assets/icons/upload_cloud.png",
+                  width: 24,
                 ),
               ),
             if (backgroundProcess.isNotEmpty)
@@ -2616,43 +2610,37 @@ class FilesState extends State<Files> {
                   },
                   child: Image.asset(
                     "assets/icons/bgtask.gif",
-                    width: 20,
+                    width: 24,
                   ),
                 ),
               ),
             Spacer(),
             if (paths.length > 0)
-              Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 8),
-                child: CupertinoButton(
-                  onPressed: () async {
-                    Navigator.of(context)
-                        .push(CupertinoPageRoute(
-                            builder: (content) {
-                              return Search("/" + paths.join("/"));
-                            },
-                            settings: RouteSettings(name: "search")))
-                        .then((res) {
-                      if (res != null) {
-                        search(res['folders'], res['pattern'], res['search_content']);
-                      }
-                    });
-                  },
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  padding: EdgeInsets.all(10),
-                  child: Image.asset(
-                    "assets/icons/search.png",
-                    width: 20,
-                  ),
+              CupertinoButton(
+                onPressed: () async {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(
+                          builder: (content) {
+                            return Search("/" + paths.join("/"));
+                          },
+                          settings: RouteSettings(name: "search")))
+                      .then((res) {
+                    if (res != null) {
+                      search(res['folders'], res['pattern'], res['search_content']);
+                    }
+                  });
+                },
+                child: Image.asset(
+                  "assets/icons/search.png",
+                  width: 24,
                 ),
               ),
             CupertinoButton(
               onPressed: () {
                 setState(() {
-                  listType = listType == ListType.list ? ListType.icon : ListType.list;
+                  listType = listType == ListType.list ? ListType.grid : ListType.list;
                 });
-                SpUtil.putString("file_list_type", listType == ListType.list ? "list" : "icon");
+                SpUtil.putString("file_list_type", listType == ListType.list ? "list" : "grid");
               },
               child: Image.asset(
                 listType == ListType.list ? "assets/icons/file_list.png" : "assets/icons/file_grid.png",
@@ -2660,7 +2648,7 @@ class FilesState extends State<Files> {
                 height: 24,
               ),
             ),
-            if (multiSelect)
+            if (multiSelectMode)
               CupertinoButton(
                 onPressed: () {
                   if (selectedFiles.length == files.files!.length) {
@@ -3283,47 +3271,47 @@ class FilesState extends State<Files> {
           //   )
           // else
           Container(
-            height: 45,
+            height: 55,
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                Container(
-                  padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
-                  child: CupertinoButton(
-                    onPressed: () {
-                      goPath("");
-                    },
-                    borderRadius: BorderRadius.circular(20),
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    child: Image.asset(
-                      "assets/icons/home.png",
-                      width: 20,
-                      height: 20,
-                    ),
+                CupertinoButton(
+                  onPressed: () {
+                    goPath("");
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                  child: Image.asset(
+                    "assets/icons/home.png",
+                    width: 20,
+                    height: 20,
+                    color: widget.path.isEmpty ? Color(0xFF2A82E4) : null,
                   ),
                 ),
                 if (paths.length > 0)
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                    padding: EdgeInsets.symmetric(vertical: 21),
                     child: Icon(
                       CupertinoIcons.right_chevron,
-                      size: 14,
-                      color: Colors.black,
+                      size: 16,
+                      color: Colors.black54,
                     ),
                   ),
                 Expanded(
                   child: ListView.separated(
                     controller: _pathScrollController,
-                    itemBuilder: _buildPathItem,
+                    itemBuilder: (context, i) {
+                      return _buildPathItem(context, i, isLast: i == paths.length - 1);
+                    },
                     itemCount: paths.length,
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, i) {
                       return Container(
-                        padding: EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 21),
                         child: Icon(
                           CupertinoIcons.right_chevron,
-                          size: 14,
-                          color: Colors.black12,
+                          size: 16,
+                          color: Colors.black54,
                         ),
                       );
                     },
@@ -3334,273 +3322,296 @@ class FilesState extends State<Files> {
           ),
           // if (backgroundProcess.isNotEmpty && showProcessList) _buildProcessList(),
           Expanded(
-            child: success
-                ? Stack(
-                    children: [
-                      // Navigator(
-                      //   onGenerateRoute: (settings) {
-                      //     if (settings.name == '/') {
-                      //       return MaterialPageRoute(
-                      //         settings: settings,
-                      //         builder: (context) => Files(),
-                      //       );
-                      //     }
-                      //   },
-                      // ),
-                      listType == ListType.list
-                          ? DraggableScrollbar.semicircle(
-                              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                              scrollbarTimeToFade: Duration(seconds: 1),
-                              controller: _fileScrollController,
-                              child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                controller: _fileScrollController,
-                                // padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: selectedFiles.length > 0 ? 140 : 20),
-                                itemBuilder: (context, i) {
-                                  return _buildFileItem(files.files![i]);
-                                },
-                                itemCount: files.files!.length,
-                              ),
-                            )
-                          : Container(
-                              width: double.infinity,
-                              child: DraggableScrollbar.semicircle(
-                                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                                scrollbarTimeToFade: Duration(seconds: 1),
-                                controller: _fileScrollController,
-                                child: ListView(
+            child: loading
+                ? LoadingWidget(
+                    size: 30,
+                  )
+                : success
+                    ? Stack(
+                        children: [
+                          listType == ListType.list
+                              ? DraggableScrollbar.arrows(
+                                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                  scrollbarTimeToFade: Duration(seconds: 1),
                                   controller: _fileScrollController,
-                                  // padding: EdgeInsets.all(20),
-                                  children: [
-                                    Wrap(
-                                      runSpacing: 20,
-                                      spacing: 20,
-                                      children: files.files!.map(_buildFileItem).toList(),
-                                    )
-                                  ],
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    controller: _fileScrollController,
+                                    // padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: selectedFiles.length > 0 ? 140 : 20),
+                                    itemBuilder: (context, i) {
+                                      return FileListItemWidget(
+                                        files.files![i],
+                                        multiSelectMode: multiSelectMode,
+                                        onTap: () {
+                                          openFile(files.files![i]);
+                                        },
+                                      );
+                                    },
+                                    itemCount: files.files!.length,
+                                  ),
+                                )
+                              : DraggableScrollbar.arrows(
+                                  scrollbarTimeToFade: Duration(seconds: 1),
+                                  controller: _fileScrollController,
+                                  backgroundColor: Colors.black54,
+                                  child: GridView.builder(
+                                    padding: EdgeInsets.zero,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+                                    itemBuilder: (context, i) {
+                                      return FileGridItemWidget(
+                                        files.files![i],
+                                        multiSelectMode: multiSelectMode,
+                                        onTap: () {
+                                          openFile(files.files![i]);
+                                        },
+                                      );
+                                    },
+                                    itemCount: files.files!.length,
+                                  ),
+                                  // child: ListView(
+                                  //   padding: EdgeInsets.zero,
+                                  //   controller: _fileScrollController,
+                                  //   // padding: EdgeInsets.all(20),
+                                  //   children: [
+                                  //     Container(
+                                  //       width: double.infinity,
+                                  //       child: Wrap(
+                                  //         runSpacing: 20,
+                                  //         spacing: 20,
+                                  //         children: files.files!
+                                  //             .map((file) => FileGridItemWidget(
+                                  //                   file,
+                                  //                   multiSelectMode: multiSelectMode,
+                                  //                   onTap: () {
+                                  //                     openFile(file);
+                                  //                   },
+                                  //                 ))
+                                  //             .toList(),
+                                  //       ),
+                                  //     )
+                                  //   ],
+                                  // ),
                                 ),
-                              ),
+                          // if (selectedFiles.length > 0)
+                          // AnimatedPositioned(
+                          //   bottom: selectedFiles.length > 0 ? 0 : -100,
+                          //   duration: Duration(milliseconds: 200),
+                          //   child: Container(
+                          //     width: MediaQuery.of(context).size.width - 40,
+                          //     margin: EdgeInsets.all(20),
+                          //     padding: EdgeInsets.all(10),
+                          //     height: 62,
+                          //     decoration: BoxDecoration(
+                          //       color: Theme.of(context).scaffoldBackgroundColor,
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child: Row(
+                          //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          //       children: [
+                          //         GestureDetector(
+                          //           onTap: () {
+                          //             showCupertinoModalPopup(
+                          //               context: context,
+                          //               builder: (context) {
+                          //                 return SelectFolder(
+                          //                   multi: false,
+                          //                 );
+                          //               },
+                          //             ).then((folder) async {
+                          //               if (folder != null && folder.length == 1) {
+                          //                 List<String> files = selectedFiles.map((e) => e.path!).toList();
+                          //                 var res = await Api.copyMoveTask(files, folder[0], true);
+                          //                 if (res['success']) {
+                          //                   setState(() {
+                          //                     selectedFiles = [];
+                          //                     multiSelect = false;
+                          //                     backgroundProcess[res['data']['taskid']] = {
+                          //                       "timer": null,
+                          //                       "data": {
+                          //                         "dest_folder_path": folder[0],
+                          //                         "progress": 0,
+                          //                       },
+                          //                       "type": 'move',
+                          //                       "path": files,
+                          //                     };
+                          //                   });
+                          //                   //获取移动进度
+                          //                   getProcessingTaskResult(res['data']['taskid']);
+                          //                 }
+                          //               }
+                          //             });
+                          //           },
+                          //           child: Column(
+                          //             children: [
+                          //               Image.asset(
+                          //                 "assets/icons/move.png",
+                          //                 width: 25,
+                          //               ),
+                          //               Text(
+                          //                 "移动到",
+                          //                 style: TextStyle(fontSize: 12),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //         GestureDetector(
+                          //           onTap: () {
+                          //             showCupertinoModalPopup(
+                          //               context: context,
+                          //               builder: (context) {
+                          //                 return SelectFolder(
+                          //                   multi: false,
+                          //                 );
+                          //               },
+                          //             ).then((folder) async {
+                          //               if (folder != null && folder.length == 1) {
+                          //                 List<String> files = selectedFiles.map((e) => e.path!).toList();
+                          //                 var res = await Api.copyMoveTask(files, folder[0], false);
+                          //                 if (res['success']) {
+                          //                   setState(() {
+                          //                     selectedFiles = [];
+                          //                     multiSelect = false;
+                          //                     backgroundProcess[res['data']['taskid']] = {
+                          //                       "timer": null,
+                          //                       "data": {
+                          //                         "dest_folder_path": folder[0],
+                          //                         "progress": 0,
+                          //                       },
+                          //                       "type": "copy",
+                          //                       "path": files,
+                          //                     };
+                          //                   });
+                          //                   getProcessingTaskResult(res['data']['taskid']);
+                          //                 }
+                          //               }
+                          //             });
+                          //           },
+                          //           child: Column(
+                          //             children: [
+                          //               Image.asset(
+                          //                 "assets/icons/copy.png",
+                          //                 width: 25,
+                          //               ),
+                          //               Text(
+                          //                 "复制到",
+                          //                 style: TextStyle(fontSize: 12),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //         GestureDetector(
+                          //           onTap: () {
+                          //             compressFile(selectedFiles.map((e) => e.path!).toList());
+                          //           },
+                          //           child: Column(
+                          //             children: [
+                          //               Image.asset(
+                          //                 "assets/icons/archive.png",
+                          //                 width: 25,
+                          //               ),
+                          //               Text(
+                          //                 "压缩",
+                          //                 style: TextStyle(fontSize: 12),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //         GestureDetector(
+                          //           onTap: () {
+                          //             downloadFiles(selectedFiles);
+                          //           },
+                          //           child: Column(
+                          //             children: [
+                          //               Image.asset(
+                          //                 "assets/icons/download.png",
+                          //                 width: 25,
+                          //               ),
+                          //               Text(
+                          //                 "下载",
+                          //                 style: TextStyle(fontSize: 12),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //         GestureDetector(
+                          //           onTap: () {
+                          //             deleteFile(selectedFiles.map((e) => e.path!).toList());
+                          //           },
+                          //           child: Column(
+                          //             children: [
+                          //               Image.asset(
+                          //                 "assets/icons/delete.png",
+                          //                 width: 25,
+                          //               ),
+                          //               Text(
+                          //                 "删除",
+                          //                 style: TextStyle(fontSize: 12),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+                          // if (loading)
+                          //   Container(
+                          //     width: MediaQuery.of(context).size.width,
+                          //     height: MediaQuery.of(context).size.height,
+                          //     color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
+                          //     child: Center(
+                          //       child: Container(
+                          //         padding: EdgeInsets.all(50),
+                          //         decoration: BoxDecoration(
+                          //           color: Theme.of(context).scaffoldBackgroundColor,
+                          //           borderRadius: BorderRadius.circular(20),
+                          //         ),
+                          //         child: CupertinoActivityIndicator(
+                          //           radius: 14,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                        ],
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "$msg",
+                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                             ),
-                      // if (selectedFiles.length > 0)
-                      AnimatedPositioned(
-                        bottom: selectedFiles.length > 0 ? 0 : -100,
-                        duration: Duration(milliseconds: 200),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width - 40,
-                          margin: EdgeInsets.all(20),
-                          padding: EdgeInsets.all(10),
-                          height: 62,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (context) {
-                                      return SelectFolder(
-                                        multi: false,
-                                      );
-                                    },
-                                  ).then((folder) async {
-                                    if (folder != null && folder.length == 1) {
-                                      List<String> files = selectedFiles.map((e) => e.path!).toList();
-                                      var res = await Api.copyMoveTask(files, folder[0], true);
-                                      if (res['success']) {
-                                        setState(() {
-                                          selectedFiles = [];
-                                          multiSelect = false;
-                                          backgroundProcess[res['data']['taskid']] = {
-                                            "timer": null,
-                                            "data": {
-                                              "dest_folder_path": folder[0],
-                                              "progress": 0,
-                                            },
-                                            "type": 'move',
-                                            "path": files,
-                                          };
-                                        });
-                                        //获取移动进度
-                                        getProcessingTaskResult(res['data']['taskid']);
-                                      }
-                                    }
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/move.png",
-                                      width: 25,
-                                    ),
-                                    Text(
-                                      "移动到",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (context) {
-                                      return SelectFolder(
-                                        multi: false,
-                                      );
-                                    },
-                                  ).then((folder) async {
-                                    if (folder != null && folder.length == 1) {
-                                      List<String> files = selectedFiles.map((e) => e.path!).toList();
-                                      var res = await Api.copyMoveTask(files, folder[0], false);
-                                      if (res['success']) {
-                                        setState(() {
-                                          selectedFiles = [];
-                                          multiSelect = false;
-                                          backgroundProcess[res['data']['taskid']] = {
-                                            "timer": null,
-                                            "data": {
-                                              "dest_folder_path": folder[0],
-                                              "progress": 0,
-                                            },
-                                            "type": "copy",
-                                            "path": files,
-                                          };
-                                        });
-                                        getProcessingTaskResult(res['data']['taskid']);
-                                      }
-                                    }
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/copy.png",
-                                      width: 25,
-                                    ),
-                                    Text(
-                                      "复制到",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  compressFile(selectedFiles.map((e) => e.path!).toList());
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/archive.png",
-                                      width: 25,
-                                    ),
-                                    Text(
-                                      "压缩",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  downloadFiles(selectedFiles);
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/download.png",
-                                      width: 25,
-                                    ),
-                                    Text(
-                                      "下载",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  deleteFile(selectedFiles.map((e) => e.path!).toList());
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/delete.png",
-                                      width: 25,
-                                    ),
-                                    Text(
-                                      "删除",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (loading)
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.all(50),
-                              decoration: BoxDecoration(
+                            SizedBox(
+                              height: 20,
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: CupertinoButton(
+                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: CupertinoActivityIndicator(
-                                radius: 14,
+                                onPressed: () {
+                                  refresh();
+                                },
+                                child: Text(
+                                  ' 刷新 ',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                    ],
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "$msg",
-                          style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: 200,
-                          child: CupertinoButton(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                            onPressed: () {
-                              refresh();
-                            },
-                            child: Text(
-                              ' 刷新 ',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
           ),
         ],
       ),
       // drawer: Favorite(goPath),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.refresh),
-        onPressed: getShareList,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.refresh),
+      //   onPressed: getShareList,
+      // ),
     );
   }
 }
