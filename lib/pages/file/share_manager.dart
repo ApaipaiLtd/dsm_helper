@@ -1,11 +1,16 @@
+import 'package:dsm_helper/models/Syno/FileStation/Sharing.dart';
+import 'package:dsm_helper/pages/file/enums/share_link_status_enums.dart';
 import 'package:dsm_helper/pages/file/share.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 
 class ShareManager extends StatefulWidget {
   @override
@@ -13,8 +18,8 @@ class ShareManager extends StatefulWidget {
 }
 
 class _ShareManagerState extends State<ShareManager> {
-  List links = [];
   bool loading = true;
+  Sharing sharing = Sharing();
   @override
   void initState() {
     getData();
@@ -22,60 +27,38 @@ class _ShareManagerState extends State<ShareManager> {
   }
 
   getData() async {
-    var res = await Api.listShare();
-    print(res);
-    if (res['success']) {
-      setState(() {
-        loading = false;
-        links = res['data']['links'];
-      });
-    }
+    // try {
+    sharing = await Sharing.list();
+    setState(() {
+      loading = false;
+    });
+    // } catch (e) {
+    //   print(e);
+    // }
   }
 
-  Widget _buildLinkItem(link) {
-    FileTypeEnum fileType = Utils.fileType(link['path']);
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: CupertinoButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(CupertinoPageRoute(
-                  builder: (context) {
-                    return Share(
-                      link: link,
-                    );
-                  },
-                  settings: RouteSettings(name: "share")))
-              .then((res) {
-            setState(() {
-              loading = true;
-            });
-            getData();
-          });
-        },
-        padding: EdgeInsets.all(22),
-
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(22),
+  Widget _buildLinkItem(ShareLinks link) {
+    return GestureDetector(
+      onTap: () {
+        context.push(Share(shareLink: link), name: "share");
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                link['isFolder']
-                    ? Image.asset(
-                        "assets/icons/folder.png",
-                        width: 20,
-                      )
-                    : FileIcon(
-                        fileType,
-                        thumb: link['path'],
-                      ),
+                FileIcon(
+                  link.fileType,
+                  thumb: link.path!,
+                ),
                 SizedBox(
                   width: 5,
                 ),
                 Text(
-                  link['name'],
+                  link.name!,
                   style: TextStyle(fontSize: 16),
                 ),
               ],
@@ -86,18 +69,17 @@ class _ShareManagerState extends State<ShareManager> {
             Row(
               children: [
                 Label(
-                    link['status'] == "valid"
-                        ? "有效"
-                        : link['status'] == "expired"
-                            ? "过期"
-                            : link['status'] == "inactive"
-                                ? "未生效"
-                                : link['status'],
-                    link['status'] == "valid" ? Colors.green : Colors.red),
+                  link.statusEnum.label,
+                  link.statusEnum == ShareLinkStatusEnum.valid
+                      ? Colors.green
+                      : link.statusEnum == ShareLinkStatusEnum.expired
+                          ? Colors.red
+                          : Colors.grey,
+                ),
                 SizedBox(
                   width: 5,
                 ),
-                link['enable_upload']
+                link.enableUpload!
                     ? Label(
                         "文件请求",
                         Colors.lightBlueAccent,
@@ -118,34 +100,19 @@ class _ShareManagerState extends State<ShareManager> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-
-        title: Text(
-          "共享链接管理",
-        ),
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("共享链接管理"),
       ),
       body: loading
           ? Center(
-              child: Container(
-                padding: EdgeInsets.all(50),
-                
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-
-                child: CupertinoActivityIndicator(
-                  radius: 14,
-                ),
-              ),
+              child: LoadingWidget(size: 30),
             )
           : ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               itemBuilder: (context, i) {
-                return _buildLinkItem(links[i]);
+                return _buildLinkItem(sharing.links![i]);
               },
-              itemCount: links.length,
+              itemCount: sharing.links!.length,
             ),
     );
   }

@@ -1,5 +1,8 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
+import 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
+import 'package:dsm_helper/pages/file/enums/share_link_status_enums.dart';
+import 'package:dsm_helper/utils/utils.dart' hide Api;
 
 /// links : [{"app":{"enable_upload":false,"is_folder":true},"date_available":"","date_expired":"","enable_upload":false,"expire_times":0,"has_password":false,"id":"EFNYhSJyD","isFolder":true,"limit_size":0,"link_owner":"yaoshuwei","name":"动漫","path":"/影视/动漫","project_name":"SYNO.SDS.App.FileStation3.Instance","protect_groups":[],"protect_type":"none","protect_users":[],"qrcode":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJMAAACTAQMAAACwK7lWAAAABlBMVEUAAAD///+l2Z/dAAAAAnRSTlP//8i138cAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAIBSURBVEiJ3ZaxjfQgEIXHIiCzG0CiDTJashuw1w2sWyKjDSQasDMC5LnH7Z7+lf4LmPQsgt3PEmIeb+aZ+P+H/jQ7iZaYH86sZK9Ag4RdXBc2E9dR1yXir4QFswT78DQ7y5EWIVspP13mgP3kTBvS6ih8SBnXmdQV6+jM9q+2Lvatn3mvT007GJ4rqr1gP/txl30smFmjlLzHfFMdJOzU+Qh1Jd7ZDMVsIuYSwSklbSHf/u21TnYVdfo0FRpxdZx3CTt1Ip8fWGRvlxYJ42gh3hDaWoplCTu9mZ0ZAgoyo37feSe72ynq6mgI+JEPCbsizT4/PU3BkKuLjKmdFY5/unxqI2K3h7XhF5oJwr/uvJs5yI8iUH0a/Uu/XnZFMwW0CJHng9UuYdhvh01CGrBfc6uAXSGtVKcACfOtM4tYUQfDp3XDCryLGCqgSqSOAAl/NOhjqOOICkZbvRk4yxgZnGIptGEAw+8y1kbIVOzp+EFZxDA1V19nnWYMoZgmGUNAWSgxEkr50aWTYdZidEWETFqCkjFud3W1oFAc333ZzTB3UT3v0cz06o9e9upIDmkKFu8HCUPOrC1q8AbZaFnCkG9bwUFaU74Gg4C1PG9T8O1WKWvfERjYSHVmKSttjF0hn2QPEWN4TT01oTWHKGPf+iFU0Z0IyQ9NO9hv32t/l30BMYVcmi9DrzwAAAAASUVORK5CYII=","request_info":"","request_name":"","status":"valid","uid":1026,"url":"http://pan.apaipai.top:5000/sharing/EFNYhSJyD"}]
 /// offset : 0
@@ -31,17 +34,17 @@ class Sharing {
     if (json['links'] != null) {
       links = [];
       json['links'].forEach((v) {
-        links?.add(Links.fromJson(v));
+        links?.add(ShareLinks.fromJson(v));
       });
     }
     offset = json['offset'];
     total = json['total'];
   }
-  List<Links>? links;
+  List<ShareLinks>? links;
   num? offset;
   num? total;
   Sharing copyWith({
-    List<Links>? links,
+    List<ShareLinks>? links,
     num? offset,
     num? total,
   }) =>
@@ -84,8 +87,8 @@ class Sharing {
 /// uid : 1026
 /// url : "http://pan.apaipai.top:5000/sharing/EFNYhSJyD"
 
-class Links {
-  Links({
+class ShareLinks {
+  ShareLinks({
     this.app,
     this.dateAvailable,
     this.dateExpired,
@@ -110,7 +113,7 @@ class Links {
     this.url,
   });
 
-  Links.fromJson(dynamic json) {
+  ShareLinks.fromJson(dynamic json) {
     app = json['app'] != null ? App.fromJson(json['app']) : null;
     dateAvailable = json['date_available'];
     dateExpired = json['date_expired'];
@@ -125,11 +128,11 @@ class Links {
     path = json['path'];
     projectName = json['project_name'];
     if (json['protect_groups'] != null) {
-      protectGroups = json['protect_groups'];
+      protectGroups = json['protect_groups'].cast<String>();
     }
     protectType = json['protect_type'];
     if (json['protect_users'] != null) {
-      protectUsers = json['protect_users'];
+      protectUsers = json['protect_users'].cast<String>();
     }
     qrcode = json['qrcode'];
     requestInfo = json['request_info'];
@@ -160,7 +163,18 @@ class Links {
   String? status;
   int? uid;
   String? url;
-  Links copyWith({
+
+  ShareLinkStatusEnum get statusEnum => ShareLinkStatusEnum.fromValue(status ?? 'unknown');
+
+  FileTypeEnum get fileType {
+    if (isFolder == true) {
+      return FileTypeEnum.folder;
+    } else {
+      return Utils.fileType(path!);
+    }
+  }
+
+  ShareLinks copyWith({
     App? app,
     String? dateAvailable,
     String? dateExpired,
@@ -184,7 +198,7 @@ class Links {
     int? uid,
     String? url,
   }) =>
-      Links(
+      ShareLinks(
         app: app ?? this.app,
         dateAvailable: dateAvailable ?? this.dateAvailable,
         dateExpired: dateExpired ?? this.dateExpired,
