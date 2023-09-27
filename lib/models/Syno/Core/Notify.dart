@@ -16,11 +16,16 @@ class DsmNotify {
   });
 
   static Future<DsmNotify> notify() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.Core.DSMNotify", "notify", post: true, parser: DsmNotify.fromJson, data: {
-      "action": "load",
-      "lastRead": DateTime.now().secondsSinceEpoch,
-      "lastSeen": DateTime.now().secondsSinceEpoch,
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.DSMNotify",
+      "notify",
+      parser: DsmNotify.fromJson,
+      data: {
+        "action": "load",
+        "lastRead": DateTime.now().secondsSinceEpoch,
+        "lastSeen": DateTime.now().secondsSinceEpoch,
+      },
+    );
     return res.data;
   }
 

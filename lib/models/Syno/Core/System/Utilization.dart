@@ -20,7 +20,6 @@ class Utilization {
     DsmResponse res = await Api.dsm.entry(
       "SYNO.Core.System.Utilization",
       "get",
-      post: true,
       parser: Utilization.fromJson,
       data: {
         "type": "current",

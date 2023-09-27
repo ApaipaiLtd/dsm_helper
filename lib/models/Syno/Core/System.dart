@@ -56,7 +56,12 @@ class System extends BaseModel {
   });
 
   static Future<System> info() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.Core.System", "info", version: 1, post: true, parser: System.fromJson);
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.System",
+      "info",
+      version: 1,
+      parser: System.fromJson,
+    );
     return res.data;
   }
 

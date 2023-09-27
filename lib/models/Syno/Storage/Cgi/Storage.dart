@@ -31,7 +31,6 @@ class Storage extends BaseModel {
     DsmResponse res = await Api.dsm.entry(
       "SYNO.Storage.CGI.Storage",
       "load_info",
-      post: true,
       parser: Storage.fromJson,
     );
     return res.data;

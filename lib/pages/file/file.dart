@@ -2043,15 +2043,14 @@ class FilesState extends State<Files> {
                             text: "暂无文件",
                           )
                         : listType == ListType.list
-                            ? DraggableScrollbar.arrows(
-                                backgroundColor: AppTheme.of(context)?.placeholderColor ?? Colors.black54,
-                                scrollbarTimeToFade: Duration(seconds: 1),
-                                controller: _fileScrollController,
-                                child: ListView.builder(
-                                  padding: EdgeInsets.zero,
+                              ? DraggableScrollbar.arrows(
+                                  backgroundColor: AppTheme.of(context)?.placeholderColor ?? Colors.black54,
+                                  scrollbarTimeToFade: Duration(seconds: 1),
                                   controller: _fileScrollController,
-                                  // padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: selectedFiles.length > 0 ? 140 : 20),
-                                  itemBuilder: (context, i) {
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    controller: _fileScrollController,
+                                    itemBuilder: (context, i) {
                                     FileItem file = files.files![i];
                                     return FileListItemWidget(
                                       file,
@@ -2089,34 +2088,11 @@ class FilesState extends State<Files> {
                                       selected: selectedFiles.contains(file),
                                       onLongPress: () {
                                         onFileLongPress(file);
-                                      },
-                                    );
-                                  },
-                                  itemCount: files.files!.length,
-                                ),
-                                // child: ListView(
-                                //   padding: EdgeInsets.zero,
-                                //   controller: _fileScrollController,
-                                //   // padding: EdgeInsets.all(20),
-                                //   children: [
-                                //     Container(
-                                //       width: double.infinity,
-                                //       child: Wrap(
-                                //         runSpacing: 20,
-                                //         spacing: 20,
-                                //         children: files.files!
-                                //             .map((file) => FileGridItemWidget(
-                                //                   file,
-                                //                   multiSelectMode: multiSelectMode,
-                                //                   onTap: () {
-                                //                     openFile(file);
-                                //                   },
-                                //                 ))
-                                //             .toList(),
-                                //       ),
-                                //     )
-                                //   ],
-                                // ),
+                                        },
+                                      );
+                                    },
+                                    itemCount: files.files!.length,
+                                  ),
                               )
                     : Center(
                         child: Column(

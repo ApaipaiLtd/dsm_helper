@@ -9,15 +9,17 @@ class SynoClientStatus {
   });
 
   static Future<SynoClientStatus> get() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.Core.SyslogClient.Status", "latestlog_get",
-        post: true,
-        data: {
-          "start": 0,
-          "limit": 50,
-          "widget": true,
-          "dir": "desc",
-        },
-        parser: SynoClientStatus.fromJson);
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.SyslogClient.Status",
+      "latestlog_get",
+      data: {
+        "start": 0,
+        "limit": 50,
+        "widget": true,
+        "dir": "desc",
+      },
+      parser: SynoClientStatus.fromJson,
+    );
     return res.data;
   }
 

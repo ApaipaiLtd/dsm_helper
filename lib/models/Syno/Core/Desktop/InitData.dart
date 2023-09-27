@@ -21,12 +21,14 @@ class InitDataModel {
   });
 
   static Future<InitDataModel> get() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.Core.Desktop.Initdata", "get",
-        post: true,
-        data: {
-          "launch_app": "null",
-        },
-        parser: InitDataModel.fromJson);
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.Desktop.Initdata",
+      "get",
+      data: {
+        "launch_app": "null",
+      },
+      parser: InitDataModel.fromJson,
+    );
     return res.data;
   }
 

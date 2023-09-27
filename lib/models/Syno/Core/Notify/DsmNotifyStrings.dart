@@ -13,7 +13,7 @@ class DsmNotifyStrings {
   });
 
   static Future<Map<String, DsmNotifyStrings>> get() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.Core.DSMNotify.Strings", "get", post: true, data: {"lang": "chs", "pkgName": ""}, parser: (data) {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.DSMNotify.Strings", "get", data: {"lang": "chs", "pkgName": ""}, parser: (data) {
       Map<String, DsmNotifyStrings> strings = {};
       for (String key in data.keys) {
         strings[key] = DsmNotifyStrings.fromJson(data[key]);

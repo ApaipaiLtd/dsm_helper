@@ -84,11 +84,15 @@ class _LoginState extends State<Login> {
         "enable_device_token": rememberDevice ? "yes" : "no",
         "enable_sync_token": "yes",
       };
-      DsmResponse res = await Api.dsm.entry<Auth>("SYNO.API.Auth", "login", post: true, data: data, parameters: {
-        "api": "SYNO.API.Auth",
-      }, parser: (json) {
-        return Auth.fromJson(json);
-      });
+      DsmResponse res = await Api.dsm.entry<Auth>(
+        "SYNO.API.Auth",
+        "login",
+        data: data,
+        parameters: {
+          "api": "SYNO.API.Auth",
+        },
+        parser: Auth.fromJson,
+      );
       if (res.success ?? false) {
         Auth authModel = res.data;
         Account acc = await DbUtils.db.into(DbUtils.db.accounts).insertReturning(

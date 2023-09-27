@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dsm_helper/models/Syno/FileStation/DirSize.dart';
+import 'package:dsm_helper/models/Syno/FileStation/FileMd5.dart';
 import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
@@ -21,38 +22,82 @@ class FileDetail extends StatefulWidget {
 }
 
 class _FileDetailState extends State<FileDetail> {
-  Timer? timer;
-  bool dirSizeLoading = true;
-  int size = 0;
-  int folderCount = 0;
-  int fileCount = 0;
-  DirSize dirSize = DirSize();
+  Timer? dirSizeTimer;
+  Timer? md5Timer;
+  bool dirSizeLoading = false;
+  bool diskSizeLoading = false;
+  bool md5Loading = false;
+  int? diskSize;
+  FileMd5? md5;
+  DirSize? dirSize;
   @override
   void initState() {
     if (widget.file.isdir == true) {
       getDirSize();
     } else {
-      // getDiskSize();
+      getDiskSize();
     }
     super.initState();
   }
 
   @override
   dispose() {
-    timer?.cancel();
+    dirSizeTimer?.cancel();
+    md5Timer?.cancel();
     super.dispose();
   }
 
   getDirSize() async {
+    setState(() {
+      dirSizeLoading = true;
+    });
     String taskId = await widget.file.dirSize();
     if (taskId.isNotEmpty) {
-      timer = Timer.periodic(Duration(seconds: 2), (timer) async {
+      dirSizeTimer = Timer.periodic(Duration(seconds: 2), (timer) async {
         dirSize = await DirSize.result(taskId);
-        setState(() {
-          dirSizeLoading = false;
-        });
-        if (dirSize.finished == true) {
-          timer.cancel();
+
+        if (dirSize!.finished == true) {
+          setState(() {
+            dirSizeLoading = false;
+          });
+          dirSizeTimer?.cancel();
+        }
+      });
+    }
+  }
+
+  getDiskSize() async {
+    setState(() {
+      diskSizeLoading = true;
+    });
+    diskSize = await widget.file.diskSize();
+    setState(() {
+      diskSizeLoading = false;
+    });
+  }
+
+  getFileMd5() async {
+    setState(() {
+      md5Loading = true;
+    });
+    String taskId = await widget.file.md5();
+    if (taskId.isNotEmpty) {
+      md5Timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+        try {
+          md5 = await FileMd5.result(taskId);
+
+          if (md5!.finished == true) {
+            setState(() {
+              md5Loading = false;
+            });
+            md5Timer?.cancel();
+          }
+        } catch (e) {
+          Utils.toast("获取MD5失败");
+          setState(() {
+            md5Loading = false;
+          });
+          md5Timer?.cancel();
         }
       });
     }
@@ -118,7 +163,7 @@ class _FileDetailState extends State<FileDetail> {
                               style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                             ),
                             Text(
-                              widget.file.path!,
+                              "${widget.file.additional?.realPath}",
                               style: TextStyle(fontSize: 16),
                             ),
                           ],
@@ -139,20 +184,58 @@ class _FileDetailState extends State<FileDetail> {
                     ],
                   ),
                   Divider(indent: 0, endIndent: 0, height: 20),
-                  Text(
-                    "大小",
-                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "大小",
+                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                            ),
+                            if (widget.file.isdir == true)
+                              Text(
+                                "${Utils.formatSize(dirSize?.totalSize ?? 0, showByte: true)}；${dirSize?.numDir ?? 0}个目录；${dirSize?.numFile ?? 0}个文件",
+                                style: TextStyle(fontSize: 16),
+                              )
+                            else
+                              Text(
+                                "${Utils.formatSize(widget.file.additional!.size!, showByte: true)}",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (dirSizeLoading)
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: LoadingWidget(
+                            size: 20,
+                          ),
+                        ),
+                    ],
                   ),
-                  if (widget.file.isdir == true)
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  if (!widget.file.isdir!) ...[
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            "${Utils.formatSize(dirSize.totalSize ?? 0, showByte: true)}；${dirSize.numDir ?? 0}个目录；${dirSize.numFile ?? 0}个文件",
-                            style: TextStyle(fontSize: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "磁盘容量",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                              ),
+                              Text(
+                                "${diskSize == null ? '--' : Utils.formatSize(diskSize!, showByte: true)}",
+                                style: TextStyle(fontSize: 16),
+                              )
+                            ],
                           ),
                         ),
-                        if (dirSizeLoading)
+                        if (diskSizeLoading)
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 12),
                             child: LoadingWidget(
@@ -160,22 +243,9 @@ class _FileDetailState extends State<FileDetail> {
                             ),
                           ),
                       ],
-                    )
-                  else
-                    Text(
-                      "${Utils.formatSize(widget.file.additional!.size!, showByte: true)}",
-                      style: TextStyle(fontSize: 16),
                     ),
-                  Divider(indent: 0, endIndent: 0, height: 20),
-                  Text(
-                    "磁盘容量",
-                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                  ),
-                  Text(
-                    "--",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Divider(indent: 0, endIndent: 0, height: 20),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                  ],
                   Text(
                     "创建日期",
                     style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
@@ -193,15 +263,57 @@ class _FileDetailState extends State<FileDetail> {
                     "${DateTime.fromMillisecondsSinceEpoch((widget.file.additional?.time?.mtime ?? 0) * 1000).format("Y-m-d H:i:s")}",
                     style: TextStyle(fontSize: 16),
                   ),
-                  Divider(indent: 0, endIndent: 0, height: 20),
-                  Text(
-                    "MD5",
-                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                  ),
-                  Text(
-                    "--",
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  if (!widget.file.isdir!) ...[
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "MD5",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                              ),
+                              Text(
+                                "${md5?.md5 ?? '--'}",
+                                style: TextStyle(fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
+                        if (md5Loading)
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: LoadingWidget(
+                              size: 20,
+                            ),
+                          )
+                        else if (md5 == null)
+                          CupertinoButton(
+                            child: Icon(
+                              Icons.refresh,
+                              size: 20,
+                            ),
+                            padding: EdgeInsets.zero,
+                            onPressed: getFileMd5,
+                          )
+                        else
+                          CupertinoButton(
+                            onPressed: () async {
+                              ClipboardData data = new ClipboardData(text: md5!.md5!);
+                              Clipboard.setData(data);
+                              Utils.toast("已复制到剪贴板");
+                            },
+                            padding: EdgeInsets.zero,
+                            child: Image.asset(
+                              "assets/icons/copy.png",
+                              width: 20,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

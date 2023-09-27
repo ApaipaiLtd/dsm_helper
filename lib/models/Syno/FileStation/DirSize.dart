@@ -15,7 +15,13 @@ class DirSize {
   });
 
   static Future<DirSize> result(String taskId) async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.DirSize", "status", version: 2, data: {"taskid": taskId}, post: true, parser: DirSize.fromJson);
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.DirSize",
+      "status",
+      version: 2,
+      data: {"taskid": taskId},
+      parser: DirSize.fromJson,
+    );
     return res.data;
   }
 

@@ -20,7 +20,7 @@ class DsmApi extends HttpUtil {
   Future<DsmResponse> entry<T>(
     String api,
     String method, {
-    bool post = false,
+    bool post = true,
     dynamic data,
     int? version,
     Map<String, dynamic>? parameters,

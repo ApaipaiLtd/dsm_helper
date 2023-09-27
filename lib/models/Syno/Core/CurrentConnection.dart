@@ -16,7 +16,6 @@ class CurrentConnection {
     DsmResponse res = await Api.dsm.entry(
       "SYNO.Core.CurrentConnection",
       "get",
-      post: true,
       parser: CurrentConnection.fromJson,
       version: 1,
       data: {

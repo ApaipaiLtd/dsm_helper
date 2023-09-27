@@ -15,7 +15,6 @@ class TaskScheduler extends BaseModel {
     DsmResponse res = await Api.dsm.entry(
       "SYNO.Core.TaskScheduler",
       "list",
-      post: true,
       parser: TaskScheduler.fromJson,
       version: 1,
       data: {

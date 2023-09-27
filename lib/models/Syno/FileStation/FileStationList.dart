@@ -20,7 +20,6 @@ class FileStationList {
       "SYNO.FileStation.List",
       '"list_share"',
       version: 2,
-      post: true,
       data: {
         "offset": 0,
         "limit": 100,
@@ -38,7 +37,6 @@ class FileStationList {
       "SYNO.FileStation.List",
       '"list"',
       version: 2,
-      post: true,
       data: {
         "offset": 0,
         "limit": 100,
@@ -58,7 +56,6 @@ class FileStationList {
       "SYNO.FileStation.Favorite",
       '"list"',
       version: 2,
-      post: true,
       data: {
         "offset": 0,
         "limit": 1000,
@@ -74,7 +71,6 @@ class FileStationList {
       "SYNO.FileStation.VirtualFolder",
       '"list"',
       version: 2,
-      post: true,
       data: {
         "sort_by": "name",
         "type": type,
@@ -154,7 +150,7 @@ class FileItem {
 
   // 添加收藏
   Future<DsmResponse> addFavorite() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Favorite", "add", version: 2, post: true, data: {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Favorite", "add", version: 2, data: {
       "name": "${name!} - ${path!.split("/")[1]}",
       "path": path!,
     });
@@ -166,7 +162,6 @@ class FileItem {
       "SYNO.FileStation.Favorite",
       '"edit"',
       version: 2,
-      post: true,
       data: {
         "name": name,
         "path": path!,
@@ -180,7 +175,6 @@ class FileItem {
       "SYNO.FileStation.Favorite",
       '"delete"',
       version: 2,
-      post: true,
       data: {
         "path": path!,
       },
@@ -191,10 +185,15 @@ class FileItem {
 
   // 删除文件
   static Future<String> deleteFiles(List<FileItem> files) async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Delete", "start", version: 2, post: true, data: {
-      "path": json.encode(files.map((e) => e.path!).toList()),
-      "accurate_progress": "true",
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Delete",
+      "start",
+      version: 2,
+      data: {
+        "path": json.encode(files.map((e) => e.path!).toList()),
+        "accurate_progress": "true",
+      },
+    );
     if (res.success!) {
       return res.data['taskid'];
     } else {
@@ -205,15 +204,20 @@ class FileItem {
   // 压缩文件
 
   static Future<String> compress(List<FileItem> files, {required String destFolderPath, String level = "normal", String mode = "replace", String format = "zip", String codepage = "chs", String? password}) async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Compress", "start", version: 2, post: true, data: {
-      "path": json.encode(files.map((e) => e.path!).toList()),
-      "dest_file_path": "$destFolderPath",
-      "level": "$level",
-      "mode": "$mode",
-      "format": "$format",
-      "password": password,
-      "codepage": codepage,
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Compress",
+      "start",
+      version: 2,
+      data: {
+        "path": json.encode(files.map((e) => e.path!).toList()),
+        "dest_file_path": "$destFolderPath",
+        "level": "$level",
+        "mode": "$mode",
+        "format": "$format",
+        "password": password,
+        "codepage": codepage,
+      },
+    );
     if (res.success!) {
       return res.data['taskid'];
     } else {
@@ -223,14 +227,19 @@ class FileItem {
 
   // 解压文件
   Future<String> extract({required String destFolderPath, bool createSubfolder = false}) async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Extract", "start", version: 2, post: true, data: {
-      "overwrite": "false",
-      "file_path": path,
-      "dest_folder_path": destFolderPath ?? ownerPath,
-      "keep_dir": "true",
-      "create_subfolder": createSubfolder,
-      "codepage": "chs",
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Extract",
+      "start",
+      version: 2,
+      data: {
+        "overwrite": "false",
+        "file_path": path,
+        "dest_folder_path": destFolderPath ?? ownerPath,
+        "keep_dir": "true",
+        "create_subfolder": createSubfolder,
+        "codepage": "chs",
+      },
+    );
     if (res.success!) {
       return res.data['taskid'];
     } else {
@@ -240,12 +249,17 @@ class FileItem {
 
   // 新建文件夹
   static Future<bool> createFolder(String path, String name) async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.CreateFolder", "create", version: 2, post: true, data: {
-      "force_parent": "false",
-      "folder_path": '"$path"',
-      "name": '"$name"',
-      "_sid": Utils.sid,
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.CreateFolder",
+      "create",
+      version: 2,
+      data: {
+        "force_parent": "false",
+        "folder_path": '"$path"',
+        "name": '"$name"',
+        "_sid": Utils.sid,
+      },
+    );
     if (res.success == true) {
       return true;
     } else if (res.error != null) {
@@ -260,11 +274,16 @@ class FileItem {
 
   // 重命名
   Future<bool> rename(String path, String name) async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Rename", "rename", version: 2, post: true, data: {
-      "path": '"$path"',
-      "name": '"$name"',
-      "_sid": Utils.sid,
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Rename",
+      "rename",
+      version: 2,
+      data: {
+        "path": '"$path"',
+        "name": '"$name"',
+        "_sid": Utils.sid,
+      },
+    );
     if (res.success == true) {
       return true;
     } else if (res.error != null) {
@@ -279,13 +298,52 @@ class FileItem {
 
   // 获取文件夹大小
   Future<String> dirSize() async {
-    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.DirSize", "start", version: 2, post: true, data: {
-      "path": path!,
-    });
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.DirSize",
+      "start",
+      version: 2,
+      data: {
+        "path": path!,
+      },
+    );
     if (res.success!) {
       return res.data['taskid'];
     } else {
       return "";
+    }
+  }
+
+  // 获取文件MD5
+  Future<String> md5() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.MD5",
+      "start",
+      version: 2,
+      data: {
+        "file_path": path!,
+      },
+    );
+    if (res.success!) {
+      return res.data['taskid'];
+    } else {
+      return "";
+    }
+  }
+
+  // 获取文件磁盘大小
+  Future<int?> diskSize() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Property.CompressSize",
+      "get",
+      version: 1,
+      data: {
+        "file": additional?.realPath,
+      },
+    );
+    if (res.success!) {
+      return int.parse(res.data['diskSize']);
+    } else {
+      return null;
     }
   }
 
