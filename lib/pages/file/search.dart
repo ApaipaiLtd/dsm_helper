@@ -1,3 +1,5 @@
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,8 +28,8 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text("搜索文件"),
       ),
       body: GestureDetector(
@@ -35,20 +37,12 @@ class _SearchState extends State<Search> {
           FocusScope.of(context).unfocus();
         },
         child: ListView(
-          padding: EdgeInsets.all(20),
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: TextField(
-                onChanged: (v) => pattern = v,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: '关键字',
-                ),
+            TextField(
+              onChanged: (v) => pattern = v,
+              decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: '关键字',
               ),
             ),
             SizedBox(

@@ -52,11 +52,11 @@ class SystemHealthWidget extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
+            Container(
               height: 30,
-              child: VerticalDivider(
-                color: Color(0xF000000),
-              ),
+              width: 1,
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              color: Theme.of(context).dividerTheme.color,
             ),
             Expanded(
               child: Row(

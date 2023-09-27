@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dsm_helper/pages/applications/applications.dart';
 import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/file/file.dart';
 import 'package:dsm_helper/pages/file/file_page.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
+import 'package:dsm_helper/utils/overlay_util.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,7 +33,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _currentIndex = 0;
   DateTime? lastPopTime;
 
-  GlobalKey<FilesState> _filesStateKey = GlobalKey<FilesState>();
+  GlobalKey<FilePageState> _filesStateKey = GlobalKey<FilePageState>();
   GlobalKey<DashboardState> _dashboardStateKey = GlobalKey<DashboardState>();
   //判断是否需要启动密码
   bool launchAuth = false;
@@ -41,6 +43,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<SharedFile> _sharedFiles = [];
   @override
   void initState() {
+    OverlayUtil.init(context);
     WidgetsBinding.instance.addObserver(this);
     getData();
     SpUtil.putBool("agreement", true);
@@ -185,11 +188,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         return Future.value(false);
       }
     } else if (_currentIndex == 1) {
-      if (_filesStateKey.currentState?.isDrawerOpen ?? false) {
-        _filesStateKey.currentState?.closeDrawer();
-        return Future.value(false);
+      bool canPop = _filesStateKey.currentState?.navigatorKey.currentState?.canPop() ?? false;
+      if (canPop) {
+        _filesStateKey.currentState!.navigatorKey.currentState!.pop();
       }
-      value = _filesStateKey.currentState?.onWillPop() ?? Future.value(true);
+      value = Future.value(!canPop);
+      // value = _filesStateKey.currentState?.onWillPop() ?? Future.value(true);
     } else if (_currentIndex == 2) {
       // value = Utils.downloadKey.currentState?.onWillPop() ?? Future.value(true);
     }
@@ -218,6 +222,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           children: [
             Dashboard(key: _dashboardStateKey),
             FilePage(key: _filesStateKey),
+            Applications(),
             Download(key: Utils.downloadKey),
             Setting(),
           ],
@@ -255,10 +260,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
+                AssetImage("assets/tabbar/application.png"),
+                size: 24,
+              ),
+              label: "应用",
+            ),
+            BottomNavigationBarItem(
+              icon: ImageIcon(
                 AssetImage("assets/tabbar/download.png"),
                 size: 24,
               ),
-              label: "下载",
+              label: "传输",
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(

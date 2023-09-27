@@ -211,7 +211,10 @@ class _SelectServerState extends State<SelectServer> {
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: Text("提示"),
+                                          title: Text(
+                                            "删除服务器",
+                                            textAlign: TextAlign.center,
+                                          ),
                                           content: Text("确定删除此服务器？"),
                                           actionsOverflowDirection: VerticalDirection.up,
                                           actions: [
@@ -368,8 +371,11 @@ class _SelectServerState extends State<SelectServer> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text("提示"),
-                      content: Text("确定删除此账号？"),
+                      title: Text(
+                        "删除账号",
+                        textAlign: TextAlign.center,
+                      ),
+                      content: Text("确定删除账号：${account.account}？"),
                       actionsOverflowDirection: VerticalDirection.up,
                       actions: [
                         Row(

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -309,11 +311,9 @@ class _ShareState extends State<Share> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "共享文件",
-        ),
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text(widget.fileRequest ? "创建文件请求" : "共享文件"),
       ),
       body: GestureDetector(
         onTap: () {

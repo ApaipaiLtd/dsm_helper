@@ -241,7 +241,7 @@ class Utils {
     List<String> excel = ["xls", "xlsx"];
     List<String> text = ["txt", "log"];
     List<String> zip = ["zip", "gz", "tar", "tgz", "tbz", "bz2", "rar", "7z"];
-    List<String> code = ["py", "php", "c", "java", "jsp", "js", "ts", "css", "sql", "nfo", "xml", "kt", "conf", "json", "md", "sh"];
+    List<String> code = ["py", "php", "c", "java", "jsp", "js", "ts", "css", "sql", "nfo", "xml", "kt", "conf", "json", "md", "sh", "vbs", "vmoptions"];
     List<String> pdf = ["pdf"];
     List<String> apk = ["apk"];
     List<String> iso = ["iso"];
@@ -280,7 +280,7 @@ class Utils {
     }
   }
 
-  static Future<dynamic> get(String url, {Map<String, dynamic>? data, bool login = true, String? host, Map<String, dynamic>? headers, CancelToken? cancelToken, bool? checkSsl, String? cookie, int timeout = 20, bool decode = true}) async {
+  static Future<dynamic> get(String url, {Map<String, dynamic>? data, bool login = true, String? host, Map<String, dynamic>? headers, CancelToken? cancelToken, bool? checkSsl, String? cookie, int timeout = 20, bool decode = true, ResponseType? responseType}) async {
     headers = headers ?? {};
     headers['Cookie'] = cookie ?? Utils.cookie;
 
@@ -291,6 +291,8 @@ class Utils {
       BaseOptions(
         baseUrl: url.startsWith("http") ? "" : ((host ?? baseUrl) + "/webapi/"),
         headers: headers,
+        responseType: responseType,
+        // responseDecoder:
         // connectTimeout: timeout,
       ),
     );
@@ -316,6 +318,7 @@ class Utils {
     Response response;
     try {
       response = await dio.get(url, queryParameters: data, cancelToken: cancelToken);
+      print(response.headers);
       if (url == "auth.cgi") {
         if (response.headers.map['set-cookie'] != null && response.headers.map['set-cookie']!.length > 0) {
           List cookies = [];

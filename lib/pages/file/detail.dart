@@ -1,13 +1,20 @@
 import 'dart:async';
 
+import 'package:dsm_helper/models/Syno/FileStation/DirSize.dart';
+import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FileDetail extends StatefulWidget {
-  final Map file;
+  final FileItem file;
   FileDetail(this.file);
   @override
   _FileDetailState createState() => _FileDetailState();
@@ -15,13 +22,18 @@ class FileDetail extends StatefulWidget {
 
 class _FileDetailState extends State<FileDetail> {
   Timer? timer;
-  bool loadingSize = true;
+  bool dirSizeLoading = true;
   int size = 0;
   int folderCount = 0;
   int fileCount = 0;
+  DirSize dirSize = DirSize();
   @override
   void initState() {
-    getDirSize();
+    if (widget.file.isdir == true) {
+      getDirSize();
+    } else {
+      // getDiskSize();
+    }
     super.initState();
   }
 
@@ -32,19 +44,15 @@ class _FileDetailState extends State<FileDetail> {
   }
 
   getDirSize() async {
-    var task = await Api.dirSizeTask(widget.file['path']);
-    if (task['success']) {
-      timer = Timer.periodic(Duration(seconds: 1), (timer) async {
-        var result = await Api.dirSizeResult(task['data']['taskid']);
-        print(result);
-        if (result['success'] && result['data']['finished']) {
+    String taskId = await widget.file.dirSize();
+    if (taskId.isNotEmpty) {
+      timer = Timer.periodic(Duration(seconds: 2), (timer) async {
+        dirSize = await DirSize.result(taskId);
+        setState(() {
+          dirSizeLoading = false;
+        });
+        if (dirSize.finished == true) {
           timer.cancel();
-          setState(() {
-            loadingSize = false;
-            size = result['data']['total_size'];
-            folderCount = result['data']['num_dir'];
-            fileCount = result['data']['num_file'];
-          });
         }
       });
     }
@@ -52,153 +60,169 @@ class _FileDetailState extends State<FileDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text(
-          widget.file['name'],
+          widget.file.name!,
         ),
       ),
       body: ListView(
         children: [
-          SizedBox(
-            height: 30,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Text("名称："),
-                Expanded(
-                  child: Text(widget.file['name']),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Row(
+          WidgetCard(
+            title: "常规",
+            body: Container(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("位置："),
-                  Expanded(
-                    child: Text(
-                      widget.file['path'],
-                    ),
-                  ),
-                  CupertinoButton(
-                    onPressed: () async {
-                      ClipboardData data = new ClipboardData(text: widget.file['path']);
-                      Clipboard.setData(data);
-                      Utils.toast("已复制到剪贴板");
-                    },
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: Icon(
-                        Icons.copy,
-                        color: Color(0xffff9813),
-                        size: 16,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "名称",
+                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                            ),
+                            Text(
+                              widget.file.name!,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
+                      CupertinoButton(
+                        onPressed: () async {
+                          ClipboardData data = new ClipboardData(text: widget.file.name!);
+                          Clipboard.setData(data);
+                          Utils.toast("已复制到剪贴板");
+                        },
+                        padding: EdgeInsets.zero,
+                        child: Image.asset(
+                          "assets/icons/copy.png",
+                          width: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "位置",
+                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                            ),
+                            Text(
+                              widget.file.path!,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      CupertinoButton(
+                        onPressed: () async {
+                          ClipboardData data = new ClipboardData(text: widget.file.path!);
+                          Clipboard.setData(data);
+                          Utils.toast("已复制到剪贴板");
+                        },
+                        padding: EdgeInsets.zero,
+                        child: Image.asset(
+                          "assets/icons/copy.png",
+                          width: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  Text(
+                    "大小",
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                  ),
+                  if (widget.file.isdir == true)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "${Utils.formatSize(dirSize.totalSize ?? 0, showByte: true)}；${dirSize.numDir ?? 0}个目录；${dirSize.numFile ?? 0}个文件",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        if (dirSizeLoading)
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: LoadingWidget(
+                              size: 20,
+                            ),
+                          ),
+                      ],
+                    )
+                  else
+                    Text(
+                      "${Utils.formatSize(widget.file.additional!.size!, showByte: true)}",
+                      style: TextStyle(fontSize: 16),
                     ),
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  Text(
+                    "磁盘容量",
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                  ),
+                  Text(
+                    "--",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  Text(
+                    "创建日期",
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                  ),
+                  Text(
+                    "${DateTime.fromMillisecondsSinceEpoch((widget.file.additional?.time?.ctime ?? 0) * 1000).format("Y-m-d H:i:s")}",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  Text(
+                    "修改日期",
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                  ),
+                  Text(
+                    "${DateTime.fromMillisecondsSinceEpoch((widget.file.additional?.time?.mtime ?? 0) * 1000).format("Y-m-d H:i:s")}",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Divider(indent: 0, endIndent: 0, height: 20),
+                  Text(
+                    "MD5",
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                  ),
+                  Text(
+                    "--",
+                    style: TextStyle(fontSize: 16),
                   ),
                 ],
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Row(
+          WidgetCard(
+            title: "拥有者",
+            body: SizedBox(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("路径："),
-                  Expanded(
-                    child: Text(
-                      "${widget.file['additional']['real_path']}",
-                    ),
+                  Text(
+                    "拥有者",
+                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                   ),
-                  CupertinoButton(
-                    onPressed: () async {
-                      ClipboardData data = new ClipboardData(text: widget.file['additional']['real_path']);
-                      Clipboard.setData(data);
-                      Utils.toast("已复制到剪贴板");
-                    },
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                    padding: EdgeInsets.all(5),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: Icon(
-                        Icons.copy,
-                        color: Color(0xffff9813),
-                        size: 16,
-                      ),
-                    ),
+                  Text(
+                    "${widget.file.additional?.owner?.user ?? '--'}",
+                    style: TextStyle(fontSize: 16),
                   ),
                 ],
               ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [Text("大小："), loadingSize ? CupertinoActivityIndicator() : Text(Utils.formatSize(size))],
-            ),
-          ),
-          if (widget.file['isdir'])
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [Text("包含："), loadingSize ? CupertinoActivityIndicator() : Text("$folderCount个文件夹，$fileCount个文件")],
-              ),
-            ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [Text("创建时间："), Text(DateTime.fromMillisecondsSinceEpoch(widget.file['additional']['time']['ctime'] * 1000).format("Y-m-d H:i:s"))],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [Text("修改时间："), Text(DateTime.fromMillisecondsSinceEpoch(widget.file['additional']['time']['mtime'] * 1000).format("Y-m-d H:i:s"))],
             ),
           ),
         ],

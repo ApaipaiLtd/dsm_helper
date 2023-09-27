@@ -6,16 +6,23 @@ class FilePage extends StatefulWidget {
   const FilePage({super.key});
 
   @override
-  State<FilePage> createState() => _FilePageState();
+  State<FilePage> createState() => FilePageState();
 }
 
-class _FilePageState extends State<FilePage> with AutomaticKeepAliveClientMixin {
+class FilePageState extends State<FilePage> with AutomaticKeepAliveClientMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   push() {
     // navigatorKey.currentState.push(route);
   }
+  pop() {}
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Navigator(
       key: navigatorKey,
       onGenerateRoute: (settings) {

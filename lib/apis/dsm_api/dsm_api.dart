@@ -25,7 +25,7 @@ class DsmApi extends HttpUtil {
     int? version,
     Map<String, dynamic>? parameters,
     Options? options,
-    required T Function(dynamic) parser,
+    T Function(dynamic)? parser,
   }) async {
     late Response response;
 
@@ -42,7 +42,6 @@ class DsmApi extends HttpUtil {
     } else {
       response = await dio!.get("/webapi/entry.cgi", queryParameters: parameters, options: options);
     }
-
     DsmResponse res = DsmResponse.fromJson(response.data, parser);
     return res;
   }

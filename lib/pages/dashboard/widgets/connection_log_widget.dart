@@ -21,7 +21,7 @@ class ConnectionLogWidget extends StatelessWidget {
       // ),
       body: connectedUsers.items != null && connectedUsers.items!.length > 0
           ? Column(
-              children: children.expand((element) => [element, if (element != children.last) Container(margin: EdgeInsets.symmetric(horizontal: 16), color: Colors.black12, height: 0.5)]).toList(),
+              children: children.expand((element) => [element, if (element != children.last) Container(color: Colors.black12, height: 0.5)]).toList(),
             )
           : Center(
               child: Text(
@@ -37,7 +37,6 @@ class ConnectionLogWidget extends StatelessWidget {
     DateTime currentTime = DateTime.now();
     var timeLong = Utils.timeLong(currentTime.difference(loginTime).inSeconds);
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
@@ -55,14 +54,14 @@ class ConnectionLogWidget extends StatelessWidget {
                     Text(
                       "${user.type}",
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16, color: Colors.black45),
+                      style: TextStyle(fontSize: 14, color: Colors.black45),
                     ),
                     SizedBox(
                       width: 10,
                     ),
                     Text(
                       "${timeLong.hours.toString().padLeft(2, "0")}:${timeLong.minutes.toString().padLeft(2, "0")}:${timeLong.seconds.toString().padLeft(2, "0")}",
-                      style: TextStyle(fontSize: 16, color: AppTheme.of(context)?.primaryColor),
+                      style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.primaryColor),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.right,
                     )

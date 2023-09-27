@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
@@ -14,8 +16,10 @@ class TextEditor extends StatefulWidget {
 class _TextEditorState extends State<TextEditor> {
   ScrollController _scrollController = ScrollController();
   String? language;
+  String content = "";
   @override
   void initState() {
+    content = utf8.decode(utf8.encode(widget.content));
     String ext = widget.fileName.split(".").last;
     switch (ext) {
       case "py":
@@ -79,7 +83,7 @@ class _TextEditorState extends State<TextEditor> {
           children: [
             HighlightView(
               // The original code to be highlighted
-              widget.content,
+              content,
 
               // Specify language
               // It is recommended to give it a value for performance

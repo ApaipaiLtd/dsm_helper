@@ -7,11 +7,13 @@ Future<T?> showCustomDialog<T>({
   required BuildContext context,
   bool barrierDismissible = true,
   required WidgetBuilder builder,
+  bool useRootNavigator = true,
   ThemeData? theme,
 }) {
   final ThemeData themeData = Theme.of(context);
   return showGeneralDialog(
     context: context,
+    useRootNavigator: useRootNavigator,
     pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
       final Widget pageChild = Builder(builder: builder);
       return Builder(builder: (BuildContext context) {

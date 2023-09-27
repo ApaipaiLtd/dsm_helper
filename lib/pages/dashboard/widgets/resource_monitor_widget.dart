@@ -5,6 +5,7 @@ import 'package:dsm_helper/pages/resource_monitor/performance.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,7 @@ class ResourceMonitorWidget extends StatelessWidget {
     List<Network> networks = utilizationProvider.networks;
     return WidgetCard(
       onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-          return ResourceMonitor();
-        }));
+        context.push(ResourceMonitor(), name: "resource_monitor");
       },
       // icon: Image.asset(
       //   "assets/icons/resources.png",
@@ -42,16 +41,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                   height: 120,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) {
-                            return Performance(
-                              tabIndex: 2,
-                            );
-                          },
-                          settings: RouteSettings(name: "performance"),
-                        ),
-                      );
+                      context.push(Performance(tabIndex: 2), name: "performance");
                     },
                     behavior: HitTestBehavior.opaque,
                     child: SfRadialGauge(
@@ -128,16 +118,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                   height: 120,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) {
-                            return Performance(
-                              tabIndex: 2,
-                            );
-                          },
-                          settings: RouteSettings(name: "performance"),
-                        ),
-                      );
+                      context.push(Performance(tabIndex: 2), name: "performance");
                     },
                     behavior: HitTestBehavior.opaque,
                     child: SfRadialGauge(
@@ -211,137 +192,39 @@ class ResourceMonitorWidget extends StatelessWidget {
               // Expanded(child: SizedBox()),
             ],
           ),
-          // GestureDetector(
-          //   onTap: () {
-          //     Navigator.of(context).push(
-          //       CupertinoPageRoute(
-          //         builder: (context) {
-          //           return Performance(
-          //             tabIndex: 1,
-          //           );
-          //         },
-          //         settings: RouteSettings(name: "performance"),
-          //       ),
-          //     );
-          //   },
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(horizontal: 20),
-          //     child: Row(
-          //       children: [
-          //         SizedBox(
-          //           width: 60,
-          //           child: Text("CPU："),
-          //         ),
-          //         Expanded(
-          //           child: Container(
-          //             decoration: BoxDecoration(
-          //               color: Theme.of(context).scaffoldBackgroundColor,
-          //               borderRadius: BorderRadius.circular(8),
-          //             ),
-          //             child: FAProgressBar(
-          //               backgroundColor: Colors.transparent,
-          //               changeColorValue: 90,
-          //               changeProgressColor: Colors.red,
-          //               progressColor: Colors.blue,
-          //               displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
-          //               currentValue: utilization.cpu!.totalLoad,
-          //               displayText: '%',
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(
-          //   height: 10,
-          // ),
-          // GestureDetector(
-          //   onTap: () {
-          //     Navigator.of(context).push(
-          //       CupertinoPageRoute(
-          //         builder: (context) {
-          //           return Performance(
-          //             tabIndex: 2,
-          //           );
-          //         },
-          //         settings: RouteSettings(name: "performance"),
-          //       ),
-          //     );
-          //   },
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(horizontal: 20),
-          //     child: Row(
-          //       children: [
-          //         SizedBox(width: 60, child: Text("RAM：")),
-          //         Expanded(
-          //           child: Container(
-          //             decoration: BoxDecoration(
-          //               color: Theme.of(context).scaffoldBackgroundColor,
-          //               borderRadius: BorderRadius.circular(8),
-          //             ),
-          //             child: FAProgressBar(
-          //               backgroundColor: Colors.transparent,
-          //               changeColorValue: 90,
-          //               changeProgressColor: Colors.red,
-          //               progressColor: Colors.blue,
-          //               displayTextStyle: TextStyle(color: AppTheme.of(context)?.progressColor, fontSize: 12),
-          //               currentValue: utilization.memory!.realUsage!.toInt(),
-          //               displayText: '%',
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-
           Divider(
-            indent: 16,
-            endIndent: 16,
-            color: Color(0xF000000),
+            indent: 0,
+            endIndent: 0,
           ),
           SizedBox(
             height: 10,
           ),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return Performance(
-                      tabIndex: 3,
-                    );
-                  },
-                  settings: RouteSettings(name: "performance"),
-                ),
-              );
+              context.push(Performance(tabIndex: 3), name: "performance");
             },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/icons/arrow_down.png",
-                    width: 20,
-                    height: 20,
-                  ),
-                  Text(
-                    utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.tx!) + "/S",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  Spacer(),
-                  Image.asset(
-                    "assets/icons/arrow_up.png",
-                    width: 20,
-                    height: 20,
-                  ),
-                  Text(
-                    utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.rx!) + "/S",
-                    style: TextStyle(color: Colors.green),
-                  ),
-                ],
-              ),
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/icons/arrow_down.png",
+                  width: 20,
+                  height: 20,
+                ),
+                Text(
+                  utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.tx!) + "/S",
+                  style: TextStyle(color: Colors.blue),
+                ),
+                Spacer(),
+                Image.asset(
+                  "assets/icons/arrow_up.png",
+                  width: 20,
+                  height: 20,
+                ),
+                Text(
+                  utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.rx!) + "/S",
+                  style: TextStyle(color: Colors.green),
+                ),
+              ],
             ),
           ),
           SizedBox(
@@ -349,21 +232,12 @@ class ResourceMonitorWidget extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return Performance(
-                      tabIndex: 3,
-                    );
-                  },
-                  settings: RouteSettings(name: "performance"),
-                ),
-              );
+              context.push(Performance(tabIndex: 3), name: "performance");
             },
             child: AspectRatio(
               aspectRatio: 2.2,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: SfCartesianChart(
                   plotAreaBorderWidth: 0,
                   primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift, isVisible: false, interval: 1, majorGridLines: const MajorGridLines(width: 0)),
@@ -407,51 +281,6 @@ class ResourceMonitorWidget extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/icons/resources.png",
-                    width: 26,
-                    height: 26,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "资源监控",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
-            if (utilization != null) ...[
-              SizedBox(
-                height: 10,
-              ),
-            ] else
-              SizedBox(
-                height: 300,
-                child: Center(child: Text("数据加载失败")),
-              ),
-          ],
-        ),
       ),
     );
   }

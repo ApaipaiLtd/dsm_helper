@@ -86,114 +86,111 @@ class StorageUsageWidget extends StatelessWidget {
   }
 
   Widget _buildVolumeItem(BuildContext context, Volumes volume, {bool isLast = false}) {
-    return Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              "${volume.displayName}",
+              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            volume.status == "normal"
+                ? Label(
+                    "正常",
+                    Colors.green,
+                    fill: true,
+                  )
+                : volume.status == "background"
+                    ? Label(
+                        "正在检查硬盘",
+                        Colors.lightBlueAccent,
+                        fill: true,
+                      )
+                    : volume.status == "attention"
+                        ? Label(
+                            "注意",
+                            Colors.orangeAccent,
+                            fill: true,
+                          )
+                        : Label(
+                            volume.status!,
+                            Colors.red,
+                            fill: true,
+                          ),
+          ],
+        ),
+        Text(
+          "${volume.size!.usedPercent.toStringAsFixed(1)}%",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        Row(
+          children: [
+            Expanded(
+              flex: volume.size!.used!,
+              child: Container(
+                height: 6,
+                decoration: BoxDecoration(
+                  color: volume.size!.usedPercent > 80 ? Colors.red : Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                constraints: BoxConstraints(
+                  minWidth: 10,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 3,
+            ),
+            Expanded(
+              flex: volume.size!.free!,
+              child: Container(
+                height: 6,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                constraints: BoxConstraints(
+                  minWidth: 10,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        DefaultTextStyle(
+          style: TextStyle(fontSize: 12),
+          child: Row(
             children: [
               Text(
-                "${volume.displayName}",
-                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey),
+                "已用 ${Utils.formatSize(volume.size!.used!)} ",
+                style: TextStyle(color: volume.size!.usedPercent > 80 ? Colors.red : Colors.blueAccent),
               ),
-              SizedBox(
-                width: 5,
+              Text(
+                "/ ${Utils.formatSize(volume.size!.total!)}",
+                style: TextStyle(color: Colors.grey),
               ),
-              volume.status == "normal"
-                  ? Label(
-                      "正常",
-                      Colors.green,
-                      fill: true,
-                    )
-                  : volume.status == "background"
-                      ? Label(
-                          "正在检查硬盘",
-                          Colors.lightBlueAccent,
-                          fill: true,
-                        )
-                      : volume.status == "attention"
-                          ? Label(
-                              "注意",
-                              Colors.orangeAccent,
-                              fill: true,
-                            )
-                          : Label(
-                              volume.status!,
-                              Colors.red,
-                              fill: true,
-                            ),
-            ],
-          ),
-          Text(
-            "${volume.size!.usedPercent.toStringAsFixed(1)}%",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Row(
-            children: [
-              Expanded(
-                flex: volume.size!.used!,
-                child: Container(
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: volume.size!.usedPercent > 80 ? Colors.red : Colors.blueAccent,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 10,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 3,
-              ),
-              Expanded(
-                flex: volume.size!.free!,
-                child: Container(
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 10,
-                  ),
-                ),
+              Spacer(),
+              Text(
+                "可用：${Utils.formatSize(volume.size!.free!)}",
+                style: TextStyle(color: Colors.green),
               ),
             ],
           ),
+        ),
+        if (!isLast)
           SizedBox(
-            height: 5,
+            height: 20,
           ),
-          DefaultTextStyle(
-            style: TextStyle(fontSize: 12),
-            child: Row(
-              children: [
-                Text(
-                  "已用 ${Utils.formatSize(volume.size!.used!)} ",
-                  style: TextStyle(color: volume.size!.usedPercent > 80 ? Colors.red : Colors.blueAccent),
-                ),
-                Text(
-                  "/ ${Utils.formatSize(volume.size!.total!)}",
-                  style: TextStyle(color: Colors.grey),
-                ),
-                Spacer(),
-                Text(
-                  "可用：${Utils.formatSize(volume.size!.free!)}",
-                  style: TextStyle(color: Colors.green),
-                ),
-              ],
-            ),
-          ),
-          if (!isLast)
-            SizedBox(
-              height: 20,
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';
@@ -24,12 +25,7 @@ class FileIcon extends StatelessWidget {
               width: width,
               height: height,
               fit: fit,
-              placeholder: Container(
-                width: 40,
-                height: 60,
-                alignment: Alignment.center,
-                child: Image.asset(fileType.icon, width: 40, height: 60),
-              ),
+              placeholder: Image.asset(fileType.icon, width: min(40, height), height: min(40, height)),
             )
           : ExtendedImage.file(
               File(thumb!),
@@ -44,16 +40,11 @@ class FileIcon extends StatelessWidget {
               width: width,
               height: height,
               fit: fit,
-              placeholder: Container(
-                width: 40,
-                height: 60,
-                alignment: Alignment.center,
-                child: Image.asset(fileType.icon, width: 40, height: 60),
-              ),
+              placeholder: Image.asset(fileType.icon, width: min(40, height), height: min(40, height)),
             )
           : ExtendedImage.file(File(thumb!), width: width, height: height, fit: fit);
     } else {
-      return Image.asset(fileType.icon, width: 40, height: 60);
+      return Image.asset(fileType.icon, width: width, height: height);
     }
   }
 }

@@ -53,6 +53,39 @@ class FileStationList {
     return res.data;
   }
 
+  static Future<FileStationList> favoriteList({List<String> additional = const ["perm", "time", "size", "real_path"]}) async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Favorite",
+      '"list"',
+      version: 2,
+      post: true,
+      data: {
+        "offset": 0,
+        "limit": 1000,
+        "additional": jsonEncode(additional),
+      },
+      parser: FileStationList.fromJson,
+    );
+    return res.data;
+  }
+
+  static Future<FileStationList> virtualFolder({required String type, required String node, List<String> additional = const ["real_path", "owner", "time", "perm", "mount_point_type"]}) async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.VirtualFolder",
+      '"list"',
+      version: 2,
+      post: true,
+      data: {
+        "sort_by": "name",
+        "type": type,
+        "node": node,
+        "additional": jsonEncode(additional),
+      },
+      parser: FileStationList.fromJson,
+    );
+    return res.data;
+  }
+
   FileStationList.fromJson(dynamic json) {
     if (json['files'] != null) {
       files = [];
@@ -63,6 +96,19 @@ class FileStationList {
     if (json['shares'] != null) {
       files = [];
       json['shares'].forEach((v) {
+        files?.add(FileItem.fromJson(v));
+      });
+    }
+
+    if (json['favorites'] != null) {
+      files = [];
+      json['favorites'].forEach((v) {
+        files?.add(FileItem.fromJson(v));
+      });
+    }
+    if (json['folders'] != null) {
+      files = [];
+      json['folders'].forEach((v) {
         files?.add(FileItem.fromJson(v));
       });
     }
@@ -106,6 +152,143 @@ class FileItem {
     this.path,
   });
 
+  // 添加收藏
+  Future<DsmResponse> addFavorite() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Favorite", "add", version: 2, post: true, data: {
+      "name": "${name!} - ${path!.split("/")[1]}",
+      "path": path!,
+    });
+    return res;
+  }
+
+  Future<DsmResponse> renameFavorite(String name) async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Favorite",
+      '"edit"',
+      version: 2,
+      post: true,
+      data: {
+        "name": name,
+        "path": path!,
+      },
+    );
+    return res;
+  }
+
+  Future<bool?> deleteFavorite() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Favorite",
+      '"delete"',
+      version: 2,
+      post: true,
+      data: {
+        "path": path!,
+      },
+      parser: FileStationList.fromJson,
+    );
+    return res.success;
+  }
+
+  // 删除文件
+  static Future<String> deleteFiles(List<FileItem> files) async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Delete", "start", version: 2, post: true, data: {
+      "path": json.encode(files.map((e) => e.path!).toList()),
+      "accurate_progress": "true",
+    });
+    if (res.success!) {
+      return res.data['taskid'];
+    } else {
+      return "";
+    }
+  }
+
+  // 压缩文件
+
+  static Future<String> compress(List<FileItem> files, {required String destFolderPath, String level = "normal", String mode = "replace", String format = "zip", String codepage = "chs", String? password}) async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Compress", "start", version: 2, post: true, data: {
+      "path": json.encode(files.map((e) => e.path!).toList()),
+      "dest_file_path": "$destFolderPath",
+      "level": "$level",
+      "mode": "$mode",
+      "format": "$format",
+      "password": password,
+      "codepage": codepage,
+    });
+    if (res.success!) {
+      return res.data['taskid'];
+    } else {
+      return "";
+    }
+  }
+
+  // 解压文件
+  Future<String> extract({required String destFolderPath, bool createSubfolder = false}) async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Extract", "start", version: 2, post: true, data: {
+      "overwrite": "false",
+      "file_path": path,
+      "dest_folder_path": destFolderPath ?? ownerPath,
+      "keep_dir": "true",
+      "create_subfolder": createSubfolder,
+      "codepage": "chs",
+    });
+    if (res.success!) {
+      return res.data['taskid'];
+    } else {
+      return "";
+    }
+  }
+
+  // 新建文件夹
+  static Future<bool> createFolder(String path, String name) async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.CreateFolder", "create", version: 2, post: true, data: {
+      "force_parent": "false",
+      "folder_path": '"$path"',
+      "name": '"$name"',
+      "_sid": Utils.sid,
+    });
+    if (res.success == true) {
+      return true;
+    } else if (res.error != null) {
+      if (res.error!['errors'] != null && res.error!['errors'].length > 0 && res.error!['errors'][0]['code'] == 414) {
+        throw FormatException("新建文件夹失败：“${res.error!['errors'][0]['path']}”已存在");
+      }
+      throw FormatException("新建文件夹失败");
+    } else {
+      throw FormatException("新建文件夹失败");
+    }
+  }
+
+  // 重命名
+  Future<bool> rename(String path, String name) async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.Rename", "rename", version: 2, post: true, data: {
+      "path": '"$path"',
+      "name": '"$name"',
+      "_sid": Utils.sid,
+    });
+    if (res.success == true) {
+      return true;
+    } else if (res.error != null) {
+      if (res.error!['errors'] != null && res.error!['errors'].length > 0 && res.error!['errors'][0]['code'] == 414) {
+        throw FormatException("重命名文件夹失败：“${res.error!['errors'][0]['path']}”已存在");
+      }
+      throw FormatException("重命名文件夹失败");
+    } else {
+      throw FormatException("重命名文件夹失败");
+    }
+  }
+
+  // 获取文件夹大小
+  Future<String> dirSize() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.FileStation.DirSize", "start", version: 2, post: true, data: {
+      "path": path!,
+    });
+    if (res.success!) {
+      return res.data['taskid'];
+    } else {
+      return "";
+    }
+  }
+
   FileItem.fromJson(dynamic json) {
     additional = json['additional'] != null ? FileAdditional.fromJson(json['additional']) : null;
     isdir = json['isdir'];
@@ -116,7 +299,49 @@ class FileItem {
   bool? isdir;
   String? name;
   String? path;
-  FileTypeEnum get fileType => Utils.fileType(name!);
+  String get ext {
+    if (isdir == true) {
+      return "";
+    } else {
+      List<String> names = name!.split(".");
+      if (names.length > 1) {
+        return names.last;
+      } else {
+        return "";
+      }
+    }
+  }
+
+  FileTypeEnum get fileType => isdir == true ? FileTypeEnum.folder : Utils.fileType(name!);
+  String? get ownerPath {
+    if (path == null) {
+      return null;
+    } else {
+      List<String> paths = path!.split("/");
+      return paths.sublist(0, paths.length - 1).join("/");
+    }
+  }
+
+  String? get lastPath {
+    if (path == null) {
+      return null;
+    } else {
+      List<String> paths = path!.split("/");
+      return paths.last;
+    }
+  }
+
+  String? get fileName {
+    if (name == null) {
+      return null;
+    } else if (isdir == true) {
+      return name;
+    } else {
+      List<String> names = name!.split(".");
+      return names.sublist(0, names.length - 1).join(".");
+    }
+  }
+
   FileItem copyWith({
     FileAdditional? additional,
     bool? isdir,

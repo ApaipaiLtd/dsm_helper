@@ -2,7 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 extension NavigatorExt on BuildContext {
-  Future<T?> push<T extends Object?>(Widget page, {RouteSettings? settings, bool replace = false}) async {
+  Future<T?> push<T extends Object?>(Widget page, {RouteSettings? settings, String? name, bool replace = false, bool rootNavigator = false}) async {
+    if (name != null) {
+      if (settings == null) {
+        settings = RouteSettings(name: name);
+      } else {
+        settings = RouteSettings(name: name, arguments: settings.arguments);
+      }
+    }
     Route<T> router = CupertinoPageRoute<T>(
       builder: (context) {
         return page;
@@ -10,9 +17,9 @@ extension NavigatorExt on BuildContext {
       settings: settings,
     );
     if (replace) {
-      return await Navigator.of(this).pushAndRemoveUntil(router, (e) => false);
+      return await Navigator.of(this, rootNavigator: rootNavigator).pushAndRemoveUntil(router, (e) => false);
     } else {
-      return await Navigator.of(this).push(router);
+      return await Navigator.of(this, rootNavigator: rootNavigator).push(router);
     }
   }
 

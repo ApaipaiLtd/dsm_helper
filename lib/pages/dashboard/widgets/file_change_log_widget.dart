@@ -23,7 +23,7 @@ class FileChangeLogWidget extends StatelessWidget {
         child: fileLogs.items != null && fileLogs.items!.isNotEmpty
             ? CupertinoScrollbar(
                 child: Timeline.tileBuilder(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   theme: TimelineThemeData(
                     nodePosition: 0,
                     color: Color(0xff989898),

@@ -159,15 +159,16 @@ class DashboardState extends State<Dashboard> {
     setState(() {});
     await Future.delayed(Duration(seconds: 10));
 
-    initUtilizationTask();
+    // initUtilizationTask();
   }
 
   initNotifyTask({bool loop = true}) async {
     dsmNotify = await DsmNotify.notify();
     setState(() {});
-    await Future.delayed(Duration(seconds: 30));
+
     if (loop) {
-      initNotifyTask();
+      await Future.delayed(Duration(seconds: 30));
+      // initNotifyTask();
     }
   }
 

@@ -9,11 +9,13 @@ class AppTheme extends ThemeExtension<AppTheme> {
   final Color? placeholderColor;
   final Color? titleColor;
   final Color? progressColor;
+  final Color? errorColor;
   AppTheme({
     this.primaryColor,
     this.placeholderColor,
     this.titleColor,
     this.progressColor,
+    this.errorColor,
   });
 
   @override
@@ -21,11 +23,15 @@ class AppTheme extends ThemeExtension<AppTheme> {
     Color? primaryColor,
     Color? placeholderColor,
     Color? titleColor,
+    Color? progressColor,
+    Color? errorColor,
   }) {
     return AppTheme(
       primaryColor: primaryColor ?? this.primaryColor,
-      placeholderColor: primaryColor ?? this.placeholderColor,
-      titleColor: primaryColor ?? this.titleColor,
+      placeholderColor: placeholderColor ?? this.placeholderColor,
+      titleColor: titleColor ?? this.titleColor,
+      progressColor: progressColor ?? this.progressColor,
+      errorColor: errorColor ?? this.errorColor,
     );
   }
 

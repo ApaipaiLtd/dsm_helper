@@ -36,7 +36,7 @@ class RecentLogWidget extends StatelessWidget {
             child: latestLog.logs != null && latestLog.logs!.length > 0
                 ? CupertinoScrollbar(
                     child: Timeline.tileBuilder(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       theme: TimelineThemeData(
                         nodePosition: 0,
                         color: Color(0xff989898),

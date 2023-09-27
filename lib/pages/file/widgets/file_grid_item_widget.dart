@@ -12,6 +12,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 class FileGridItemWidget extends StatelessWidget {
   final FileItem file;
   final bool remote;
+  final bool shareFolder;
   final bool multiSelectMode;
   final bool selected;
   final Function()? onLongPress;
@@ -21,6 +22,7 @@ class FileGridItemWidget extends StatelessWidget {
     this.remote = false,
     this.multiSelectMode = false,
     this.selected = false,
+    this.shareFolder = false,
     this.onLongPress,
     this.onTap,
     super.key,
@@ -50,7 +52,7 @@ class FileGridItemWidget extends StatelessWidget {
                   ),
                   Text(
                     file.name!,
-                    maxLines: 1,
+                    maxLines: 2,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
@@ -59,14 +61,26 @@ class FileGridItemWidget extends StatelessWidget {
                 ],
               ),
             ),
-            // if (multiSelectMode)
-            //   Align(
-            //     alignment: Alignment.topRight,
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(10.0),
-            //       child: actionButton,
-            //     ),
-            //   ),
+            if (multiSelectMode)
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: selected ? AppTheme.of(context)?.primaryColor : Colors.black12,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  width: 20,
+                  height: 20,
+                  alignment: Alignment.center,
+                  child: selected
+                      ? Image.asset(
+                          "assets/icons/check.png",
+                          width: 13,
+                          height: 13,
+                        )
+                      : null,
+                ),
+              ),
           ],
         ),
       ),
