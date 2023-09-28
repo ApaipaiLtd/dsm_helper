@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/pages/file/widgets/file_list_item_widget.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -88,7 +89,13 @@ class _FavoriteFolderState extends State<FavoriteFolder> {
                           children: [
                             if (favorites.files != null && favorites.files!.isNotEmpty)
                               ...favorites.files!.map((folder) {
-                                return FileListItemWidget(folder, favorite: true);
+                                return FileListItemWidget(
+                                  folder,
+                                  favorite: true,
+                                  onTap: () {
+                                    context.pop(folder);
+                                  },
+                                );
                               }).toList()
                             else
                               EmptyWidget(
@@ -130,8 +137,8 @@ class _FavoriteFolderState extends State<FavoriteFolder> {
 }
 
 class FavoritePopup {
-  static show({required BuildContext context}) {
-    showCupertinoModalPopup(
+  static Future<FileItem?> show({required BuildContext context}) async {
+    return await showCupertinoModalPopup(
       context: context,
       // barrierColor: Colors.black12,
       filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),

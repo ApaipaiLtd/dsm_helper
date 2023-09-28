@@ -18,6 +18,7 @@ class CreateFolderDialog {
           title: Text("新建文件夹"),
           content: TextField(
             onChanged: (v) => name = v,
+            autofocus: true,
             decoration: InputDecoration(
               border: UnderlineInputBorder(),
               hintText: "请输入文件夹名",

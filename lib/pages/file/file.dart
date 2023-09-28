@@ -745,10 +745,10 @@ class FilesState extends State<Files> {
     }
   }
 
-  goPath(String path, {bool isBack = false}) async {
+  goPath(String path) async {
     Utils.vibrate(FeedbackType.light);
     if (path.isNotEmpty) {
-      if (isBack) {
+      if (widget.path.startsWith(path) && Navigator.of(context).canPop()) {
         context.popUntil((route) => route.settings.name == path);
       } else {
         context.push(Files(path: path), settings: RouteSettings(name: path));
@@ -1476,16 +1476,13 @@ class FilesState extends State<Files> {
             String path = "";
             List<String> items = [];
             if (paths.length > 1 && paths[0].contains("//")) {
-              debugPrint("远程");
               items = paths.getRange(0, index + 1).toList().cast<String>();
               path = items.join("/");
-              goPath(path);
             } else {
-              debugPrint("本地");
               items = paths.getRange(0, index + 1).toList().cast<String>();
               path = "/" + items.join("/");
             }
-            goPath(path, isBack: true);
+            goPath(path);
           }
         },
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -1625,7 +1622,11 @@ class FilesState extends State<Files> {
                 children: [
                   CupertinoButton(
                     onPressed: () async {
-                      FavoritePopup.show(context: context);
+                      FavoritePopup.show(context: context).then((res) {
+                        if (res != null) {
+                          goPath(res.path!);
+                        }
+                      });
                     },
                     child: Image.asset("assets/icons/star.png", width: 24),
                   ),
@@ -1836,25 +1837,26 @@ class FilesState extends State<Files> {
                                       ],
                                     ),
                                   ),
-                                  PopupMenuItem(
-                                    onTap: () {
-                                      context.push(Share(paths: [widget.path], fileRequest: true), name: "share", rootNavigator: true);
-                                    },
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/icons/upload_cloud.png",
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text("文件请求"),
-                                      ],
+                                  if (widget.path.isNotEmpty)
+                                    PopupMenuItem(
+                                      onTap: () {
+                                        context.push(Share(paths: [widget.path], fileRequest: true), name: "share", rootNavigator: true);
+                                      },
+                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            "assets/icons/upload_cloud.png",
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text("文件请求"),
+                                        ],
+                                      ),
                                     ),
-                                  ),
                                   PopupMenuItem(
                                     onTap: () {
                                       context.push(RemoteFolder(), name: "remote_folder", rootNavigator: true);
@@ -1870,7 +1872,7 @@ class FilesState extends State<Files> {
                                         SizedBox(
                                           width: 10,
                                         ),
-                                        Text("装载远程"),
+                                        Text("挂载远程"),
                                       ],
                                     ),
                                   ),
@@ -2043,14 +2045,14 @@ class FilesState extends State<Files> {
                             text: "暂无文件",
                           )
                         : listType == ListType.list
-                              ? DraggableScrollbar.arrows(
-                                  backgroundColor: AppTheme.of(context)?.placeholderColor ?? Colors.black54,
-                                  scrollbarTimeToFade: Duration(seconds: 1),
+                            ? DraggableScrollbar.arrows(
+                                backgroundColor: AppTheme.of(context)?.placeholderColor ?? Colors.black54,
+                                scrollbarTimeToFade: Duration(seconds: 1),
+                                controller: _fileScrollController,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
                                   controller: _fileScrollController,
-                                  child: ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    controller: _fileScrollController,
-                                    itemBuilder: (context, i) {
+                                  itemBuilder: (context, i) {
                                     FileItem file = files.files![i];
                                     return FileListItemWidget(
                                       file,
@@ -2088,11 +2090,11 @@ class FilesState extends State<Files> {
                                       selected: selectedFiles.contains(file),
                                       onLongPress: () {
                                         onFileLongPress(file);
-                                        },
-                                      );
-                                    },
-                                    itemCount: files.files!.length,
-                                  ),
+                                      },
+                                    );
+                                  },
+                                  itemCount: files.files!.length,
+                                ),
                               )
                     : Center(
                         child: Column(
