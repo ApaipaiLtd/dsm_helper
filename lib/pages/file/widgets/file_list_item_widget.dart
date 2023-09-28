@@ -243,6 +243,9 @@ class FileListItemWidget extends StatelessWidget {
                                 ),
                                 if (file.isdir == true)
                                   PopupMenuItem(
+                                    onTap: () {
+                                      context.push(Share(paths: [file.path!], fileRequest: true), name: "share", rootNavigator: true);
+                                    },
                                     child: Row(
                                       children: [
                                         Image.asset(

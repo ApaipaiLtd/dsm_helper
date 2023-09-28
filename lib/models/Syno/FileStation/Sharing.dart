@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
+import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
 import 'package:dsm_helper/pages/file/enums/share_link_status_enums.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
@@ -25,6 +28,34 @@ class Sharing {
         "limit": 50,
         "filter_type": "SYNO.SDS.App.FileStation3.Instance,SYNO.SDS.App.SharingUpload.Application",
       },
+      parser: Sharing.fromJson,
+    );
+    return res.data;
+  }
+
+  static Future<bool?> clearInvalid() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Sharing",
+      "clear_invalid",
+      version: 2,
+    );
+    return res.success;
+  }
+
+  static Future<Sharing> create({required List<String> paths, bool fileRequest = false, String? requestName, String? requestInfo}) async {
+    Map<String, dynamic> data = {
+      "path": jsonEncode(paths),
+    };
+    if (fileRequest) {
+      data['file_request'] = true;
+      data['request_name'] = requestName!;
+      data['request_info'] = requestInfo!;
+    }
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Sharing",
+      "create",
+      version: 3,
+      data: data,
       parser: Sharing.fromJson,
     );
     return res.data;
@@ -112,6 +143,54 @@ class ShareLinks {
     this.uid,
     this.url,
   });
+
+  Future<bool?> edit({DateTime? dateExpired, DateTime? dateAvailable, String? expireTimes, String? requestName, String? requestInfo}) async {
+    Map<String, dynamic> data = {
+      "url": jsonEncode([url]),
+      "protect_type_enable": '"false"',
+      "start_at_enable": '"${dateAvailable == null}"',
+      "expire_at_enable": '"${dateExpired == null}"',
+      "expire_times_enable": '"${expireTimes!.isNotEmpty}"',
+      "expire_times": expireTimes,
+      "protect_type": "none",
+      "app": "{}",
+      "project_name": '""',
+      "sharing_id": null,
+      "redirect_type": null,
+      "redirect_uri": null,
+      "auto_gc": null,
+      "enable_match_ip": null,
+      "enabled": null,
+      "path": jsonEncode([path]),
+      "id": jsonEncode([id]),
+      "date_expired": dateExpired == null ? "" : '"${dateExpired.format("Y-m-d H:i:s")}"',
+      "date_available": dateAvailable == null ? "" : '"${dateAvailable.format("Y-m-d H:i:s")}"',
+    };
+    if (enableUpload == true) {
+      data['file_request'] = true;
+      data['request_name'] = requestName!;
+      data['request_info'] = requestInfo!;
+    }
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Sharing",
+      "edit",
+      version: 3,
+      data: data,
+    );
+    return res.success;
+  }
+
+  Future<bool?> delete() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.FileStation.Sharing",
+      "delete",
+      version: 3,
+      data: {
+        "id": jsonEncode([id]),
+      },
+    );
+    return res.success;
+  }
 
   ShareLinks.fromJson(dynamic json) {
     app = json['app'] != null ? App.fromJson(json['app']) : null;

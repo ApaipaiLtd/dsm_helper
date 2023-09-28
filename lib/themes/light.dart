@@ -38,15 +38,16 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       color: Colors.grey,
     ),
     border: UnderlineInputBorder(
-      borderSide: BorderSide(color: Colors.black12),
+      borderSide: BorderSide(color: Color(0xF000000)),
     ),
     enabledBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: Colors.black12),
+      borderSide: BorderSide(color: Color(0xF000000)),
     ),
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Color(0xff2A82E4)),
     ),
   ),
+  buttonTheme: ButtonThemeData(),
   appBarTheme: AppBarTheme(
     centerTitle: true,
     elevation: 0,

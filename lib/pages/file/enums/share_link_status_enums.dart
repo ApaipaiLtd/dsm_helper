@@ -5,7 +5,8 @@ enum ShareLinkStatusEnum {
   ),
   expired(label: "过期", value: "valid"),
   inactive(label: "未生效", value: "inactive"),
-  unknown(label: "未知", value: "unknown");
+  unknown(label: "未知", value: "unknown"),
+  broken(label: "坏链", value: "broken");
 
   final String label;
   final String value;
