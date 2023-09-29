@@ -1,8 +1,13 @@
 import 'dart:io';
+import 'package:dsm_helper/models/Syno/FileStation/Sharing.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -35,8 +40,8 @@ class _AboutState extends State<About> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text(
           "关于${Utils.appName}",
         ),
@@ -47,111 +52,33 @@ class _AboutState extends State<About> {
             child: ListView(
               children: <Widget>[
                 SizedBox(
-                  height: 30,
+                  height: 70,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(60),
-                      ),
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage(
-                          "assets/logo.png",
-                        ),
-                        radius: 40,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        "assets/logo.png",
+                        width: 80,
                       ),
                     ),
                     SizedBox(
-                      width: 20,
+                      height: 20,
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          "${Utils.appName}",
-                          style: TextStyle(fontSize: 32),
-                        ),
-                        if (packageInfo != null)
-                          Text(
-                            "v${packageInfo!.version} build:${packageInfo!.buildNumber}",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 18,
-                            ),
-                          ),
-                      ],
-                    )
+                    Text(
+                      "${Utils.appName}",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${packageInfo!.version} build:${packageInfo!.buildNumber}",
+                      style: TextStyle(
+                        color: AppTheme.of(context)?.placeholderColor,
+                        fontSize: 16,
+                      ),
+                    ),
                   ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Image.asset(
-                              "assets/icons/apaipai.png",
-                              width: 20,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "青岛阿派派软件有限公司版权所有",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "用户协议",
-                                style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
-                                recognizer: _licenseRecognizer
-                                  ..onTap = () {
-                                    FocusScope.of(context).unfocus();
-                                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                      return License();
-                                    }));
-                                  },
-                              ),
-                              TextSpan(text: "    "),
-                              TextSpan(
-                                text: "隐私政策",
-                                style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
-                                recognizer: _privacyRecognizer
-                                  ..onTap = () {
-                                    FocusScope.of(context).unfocus();
-                                    Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                      return Browser(
-                                        url: '${Utils.appUrl}/privacy',
-                                        title: "隐私政策",
-                                      );
-                                    }));
-                                  },
-                              ),
-                            ],
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
                 if (Utils.notReviewAccount) ...[
                   SizedBox(
@@ -426,39 +353,81 @@ class _AboutState extends State<About> {
               ],
             ),
           ),
-          if (Platform.isAndroid)
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: CupertinoButton(
-                onPressed: () async {
-                  if (checking) {
-                    return;
-                  }
-                  setState(() {
-                    checking = true;
-                  });
-                  await Utils.checkUpdate(true, context, force: true);
-                  setState(() {
-                    checking = false;
-                  });
-                },
-                // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 20),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-
-                child: checking
-                    ? Center(
-                        child: CupertinoActivityIndicator(
-                          radius: 13,
-                        ),
-                      )
-                    : Text(
-                        "检查更新",
-                        style: TextStyle(fontSize: 18),
-                      ),
+          Column(
+            children: [
+              Text(
+                "©2020-${DateTime.now().year} 青岛阿派派软件有限公司",
+                style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
               ),
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      context.push(License(), name: "license");
+                    },
+                    child: Text(
+                      "用户协议",
+                      style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
+                    ),
+                  ),
+                  Container(
+                    height: 10,
+                    width: 1,
+                    color: AppTheme.of(context)?.placeholderColor,
+                    margin: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      context.push(
+                          Browser(
+                            url: '${Utils.appUrl}/privacy',
+                            title: "隐私政策",
+                          ),
+                          name: "license");
+                    },
+                    child: Text(
+                      "隐私政策",
+                      style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
+                    ),
+                  ),
+                ],
+              ),
+              if (Platform.isAndroid)
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CupertinoButton(
+                    onPressed: () async {
+                      if (checking) {
+                        return;
+                      }
+                      setState(() {
+                        checking = true;
+                      });
+                      await Utils.checkUpdate(true, context, force: true);
+                      setState(() {
+                        checking = false;
+                      });
+                    },
+                    // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+
+                    child: checking
+                        ? Center(
+                            child: CupertinoActivityIndicator(
+                              radius: 13,
+                            ),
+                          )
+                        : Text(
+                            "检查更新",
+                            style: TextStyle(fontSize: 18, color: AppTheme.of(context)?.primaryColor),
+                          ),
+                  ),
+                ),
+            ],
+          )
         ],
       ),
     );

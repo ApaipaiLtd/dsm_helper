@@ -144,7 +144,7 @@ class _ShareManagerState extends State<ShareManager> {
             flex: 2,
             backgroundColor: AppTheme.of(context)?.errorColor ?? Colors.red,
             foregroundColor: Colors.white,
-            icon: Icons.save,
+            icon: Icons.delete_outline_outlined,
             label: '删除',
           ),
         ],

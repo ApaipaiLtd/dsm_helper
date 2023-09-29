@@ -8,6 +8,8 @@ import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/utils/neu_picker.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -75,12 +77,11 @@ class _HelperSettingState extends State<HelperSetting> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text("助手设置"),
       ),
       body: ListView(
-        padding: EdgeInsets.all(20),
         children: [
           GestureDetector(
             onTap: () {

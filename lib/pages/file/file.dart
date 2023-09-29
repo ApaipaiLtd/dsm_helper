@@ -23,6 +23,7 @@ import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/utils/overlay_util.dart';
+import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -279,7 +280,7 @@ class FilesState extends State<Files> {
                                             return;
                                           }
                                           Navigator.of(context).pop();
-                                          extractFile(result['data']['path'], password: password);
+                                          // extractFile(result['data']['path'], password: password);
                                         },
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(25),
@@ -471,16 +472,6 @@ class FilesState extends State<Files> {
     }
   }
 
-  bool get isDrawerOpen {
-    return _scaffoldKey.currentState!.isDrawerOpen;
-  }
-
-  closeDrawer() {
-    if (_scaffoldKey.currentState!.isDrawerOpen) {
-      Navigator.of(context).pop();
-    }
-  }
-
   setPaths(String path) {
     setState(() {
       searchResult = false;
@@ -518,11 +509,11 @@ class FilesState extends State<Files> {
     });
     var res = await Api.searchTask(folders, pattern, searchContent: searchContent);
     if (res['success']) {
-      bool r = await result(res['data']['taskid']);
+      bool r = await getSearchTaakResult(res['data']['taskid']);
       if (r == false) {
         //搜索未结束
         searchTimer = Timer.periodic(Duration(seconds: 2), (timer) {
-          result(res['data']['taskid']);
+          getSearchTaakResult(res['data']['taskid']);
         });
       }
     } else {
@@ -651,7 +642,7 @@ class FilesState extends State<Files> {
     // Utils.downloadKey.currentState?.getData();
   }
 
-  Future<bool> result(String taskId) async {
+  Future<bool> getSearchTaakResult(String taskId) async {
     var res = await Api.searchResult(taskId);
     if (res['success']) {
       if (res['data']['finished']) {
@@ -762,14 +753,6 @@ class FilesState extends State<Files> {
   }
 
   openPlainFile(FileItem file) async {
-    // List<int> gbkCodes = gbk_bytes.encode("你好，世界");
-    // print(gbkCodes);
-    // String hex = '';
-    // gbkCodes.forEach((i) {
-    //   hex += i.toRadixString(16) + ' ';
-    // });
-    // print(hex);
-    // return;
     var hide = showWeuiLoadingToast(context: context, message: Text("文件加载中"));
     var res = await Utils.get(
       api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=1&method=download&path=${Uri.encodeComponent(file.path!)}&mode=open&_sid=${api.Api.dsm.sid!}",
@@ -793,142 +776,78 @@ class FilesState extends State<Files> {
     // print(result);
   }
 
-  deleteFile(List<FileItem> files) async {
-    String? taskId = await DeleteFileDialog.show(context: context, files: files);
-    if (taskId != null) {
-      backgroundProcess[taskId] = {
-        "timer": null,
-        "data": {
-          "progress": 0,
-        },
-        "type": 'delete',
-        "path": files,
-      };
-      getProcessingTaskResult(taskId);
-      setState(() {
-        selectedFiles = [];
-        multiSelectMode = false;
-      });
-    }
-  }
-
-  extractFile(file, {String? password}) async {
-    var res = await Api.extractTask(file['path'], "/" + paths.join("/"), password: password);
-    if (res['success']) {
-      backgroundProcess[res['data']['taskid']] = {
-        "timer": null,
-        "data": null,
-        "type": 'extract',
-        "path": [file['path']],
-      };
-      getProcessingTaskResult(res['data']['taskid']);
-    }
-  }
-
-  compressFile(List<String> file) {
+  compressFile() {
     String zipName = "";
     String destPath = "";
-    if (file.length == 1) {
-      zipName = file[0].split("/").last + ".zip";
+    if (selectedFiles.length == 1) {
+      zipName = selectedFiles.first.fileName! + ".zip";
     } else {
       zipName = paths.last + ".zip";
     }
     destPath = "/" + paths.join("/") + "/" + zipName;
-    showCupertinoModalPopup(
+    showCustomDialog(
       context: context,
       builder: (context) {
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(22),
-            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "压缩文件",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    "确认要压缩到$zipName？",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 22,
-                  ),
-                  CupertinoButton(
+        return AlertDialog(
+          title: Text(
+            "压缩文件",
+            textAlign: TextAlign.center,
+          ),
+          content: Text("确认要压缩到“$zipName？”"),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: CupertinoButton(
                     onPressed: () async {
+                      var hide = showWeuiLoadingToast(context: context);
+                      String taskId = await FileItem.compress(selectedFiles, destFolderPath: destPath);
+                      hide();
                       Navigator.of(context).pop();
-                      var res = await Api.compressTask(file, destPath);
-                      if (res['success']) {
-                        backgroundProcess[res['data']['taskid']] = {
-                          "timer": null,
-                          "data": {
-                            "dest_folder_path": destPath,
-                            "progress": 0,
-                          },
-                          "path": [file],
-                          "type": 'compress',
-                        };
-                        setState(() {
-                          multiSelectMode = false;
-                          selectedFiles = [];
-                        });
-                        getProcessingTaskResult(res['data']['taskid']);
-                      }
+                      // backgroundProcess[res['data']['taskid']] = {
+                      //   "timer": null,
+                      //   "data": {
+                      //     "dest_folder_path": destPath,
+                      //     "progress": 0,
+                      //   },
+                      //   "path": [file],
+                      //   "type": 'compress',
+                      // };
+                      // setState(() {
+                      //   multiSelectMode = false;
+                      //   selectedFiles = [];
+                      // });
+                      // getProcessingTaskResult(res['data']['taskid']);
                     },
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(25),
+                    color: AppTheme.of(context)?.primaryColor,
+                    borderRadius: BorderRadius.circular(15),
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "开始压缩",
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  CupertinoButton(
-                    onPressed: () async {
-                      // Navigator.of(context).pop();
-                      Utils.toast("敬请期待");
-                    },
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(25),
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "更多选项",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  CupertinoButton(
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: CupertinoButton(
                     onPressed: () async {
                       Navigator.of(context).pop();
                     },
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(25),
+                    color: Theme.of(context).disabledColor,
+                    borderRadius: BorderRadius.circular(15),
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "取消",
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
+          ],
         );
       },
     );
@@ -1160,32 +1079,6 @@ class FilesState extends State<Files> {
                         runSpacing: 20,
                         spacing: 20,
                         children: [
-                          if (paths.length > 1 && !remote && !remote && file['path'].startsWith("/"))
-                            Container(
-                              constraints: BoxConstraints(maxWidth: 112),
-                              width: (MediaQuery.of(context).size.width - 100) / 4,
-                              child: CupertinoButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                  compressFile([file['path']]);
-                                },
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(10),
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/archive.png",
-                                      width: 30,
-                                    ),
-                                    Text(
-                                      "压缩",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
                           if (file['additional']['mount_point_type'] == "remote" && file['path'].startsWith("/"))
                             Container(
                               constraints: BoxConstraints(maxWidth: 112),
@@ -1254,24 +1147,6 @@ class FilesState extends State<Files> {
                             ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    CupertinoButton(
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                      },
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(25),
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "取消",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
                     ),
                   ],
                 ),
@@ -1400,7 +1275,7 @@ class FilesState extends State<Files> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        compressFile(selectedFiles.map((e) => e.path!).toList());
+                        compressFile();
                       },
                       child: Column(
                         children: [
@@ -1435,7 +1310,7 @@ class FilesState extends State<Files> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        deleteFile(selectedFiles);
+                        DeleteFileDialog.show(context: context, files: selectedFiles);
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
