@@ -75,6 +75,10 @@ class Database extends _$Database {
     return update(servers).replace(server);
   }
 
+  Future updateAccount(Account account) {
+    return update(accounts).replace(account);
+  }
+
   Future deleteServer(Server server) {
     return delete(servers).delete(server);
   }

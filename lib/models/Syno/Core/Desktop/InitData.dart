@@ -1584,6 +1584,7 @@ class Desktop {
     // }
     rememberWindowState = json['rememberWindowState'];
     validAppviewOrder = json['valid_appview_order'] != null ? json['valid_appview_order'].cast<String>() : [];
+    appviewOrder = json['appview_order'] != null ? json['appview_order'].cast<String>() : [];
     wallpaper = json['wallpaper'] != null ? Wallpaper.fromJson(json['wallpaper']) : null;
   }
   List<ShortcutItems>? shortcutItems;
@@ -1596,6 +1597,7 @@ class Desktop {
   List<dynamic>? newAppList;
   bool? rememberWindowState;
   List<String>? validAppviewOrder;
+  List<String>? appviewOrder;
   Wallpaper? wallpaper;
   Desktop copyWith({
     List<ShortcutItems>? shortcutItems,

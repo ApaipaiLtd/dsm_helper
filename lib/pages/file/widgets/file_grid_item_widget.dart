@@ -1,13 +1,10 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/file_icon.dart';
-import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class FileGridItemWidget extends StatelessWidget {
   final FileItem file;

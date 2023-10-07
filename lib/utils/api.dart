@@ -52,20 +52,6 @@ class Api {
 //    var res = await Utils.post("base/update", data: {"platform": Platform.isAndroid ? "android" : "ios", "build": buildNumber});
   }
 
-  static Future api() async {
-    var res = await Utils.post("query.cgi", data: {
-      "query": "all",
-      "api": "SYNO.API.Info",
-      "method": "query",
-      "version": 1,
-    });
-    if (res is String) {
-      return jsonDecode(res) as Map;
-    } else if (res is Map) {
-      return res;
-    }
-  }
-
   static Future<Map> login({String? host, String? account, String? password, String otpCode = "", CancelToken? cancelToken, bool rememberDevice = false, String? cookie}) async {
     var data = {
       "account": account,
@@ -317,55 +303,6 @@ class Api {
     });
   }
 
-  static Future<Map> favoriteList() async {
-    return await Utils.post("entry.cgi", data: {
-      "api": '"SYNO.FileStation.Favorite"',
-      "method": '"list"',
-      "version": 2,
-      "_sid": Utils.sid,
-      "offset": 0,
-      "limit": 1000,
-      // "status_filter": '"all"',
-      "additional": '["perm", "time", "size","real_path"]',
-    });
-  }
-
-  static Future<Map> favoriteAdd(String name, String path) async {
-    return await Utils.post("entry.cgi", data: {
-      "api": '"SYNO.FileStation.Favorite"',
-      "method": '"add"',
-      "version": 2,
-      "_sid": Utils.sid,
-      "name": name,
-      "path": path,
-      "index": -1,
-    });
-  }
-
-  static Future<Map> favoriteRename(String path, String name) async {
-    var data = {
-      "api": '"SYNO.FileStation.Favorite"',
-      "method": '"edit"',
-      "version": 2,
-      "path": path,
-      "name": name,
-      "index": -1,
-      "_sid": Utils.sid,
-    };
-    var result = await Utils.get("entry.cgi", data: data);
-    return result;
-  }
-
-  static Future<Map> favoriteDelete(String path) async {
-    return await Utils.post("entry.cgi", data: {
-      "api": '"SYNO.FileStation.Favorite"',
-      "method": '"delete"',
-      "version": 2,
-      "_sid": Utils.sid,
-      "path": path,
-    });
-  }
-
   ///webapi/FileStation/file_delete.cgi?api=SYNO.FileStation.Delete&version=1&method=start&path=%2Fvideo%2Fdel_folder
   static Future<Map> deleteTask(List<String> path) async {
     var data = {
@@ -425,31 +362,6 @@ class Api {
       "method": '"list"',
       "version": 2,
       "_sid": Utils.sid,
-    };
-    return await Utils.post("entry.cgi", data: data);
-  }
-
-  static Future<Map> compressTask(
-    List<String> path,
-    String destPath, {
-    String level = "normal",
-    String mode = "replace",
-    String format = "zip",
-    String? password,
-    String? codepage,
-  }) async {
-    var data = {
-      "api": '"SYNO.FileStation.Compress"',
-      "method": '"start"',
-      "version": 3,
-      "_sid": Utils.sid,
-      "path": json.encode(path),
-      "dest_file_path": "$destPath",
-      "level": "$level",
-      "mode": "$mode",
-      "format": "$format",
-      "password": password,
-      "codepage": codepage,
     };
     return await Utils.post("entry.cgi", data: data);
   }
@@ -1180,23 +1092,6 @@ class Api {
       "_sid": Utils.sid,
     };
     return await Utils.post("entry.cgi", data: data);
-  }
-
-  static Future<Map> dockerContainerInfo() async {
-    List apis = [
-      {"api": "SYNO.Docker.Container", "method": "list", "version": 1, "limit": -1, "offset": 0, "type": "all"},
-      {"api": "SYNO.Docker.Container.Resource", "method": "get", "version": 1},
-      {"api": "SYNO.Core.System.Utilization", "method": "get", "version": 1},
-    ];
-    var result = await Utils.post("entry.cgi", data: {
-      "api": 'SYNO.Entry.Request',
-      "method": 'request',
-      "mode": '"parallel"',
-      "compound": jsonEncode(apis),
-      "version": 1,
-      "_sid": Utils.sid,
-    });
-    return result;
   }
 
   static Future<Map> dockerImageInfo() async {

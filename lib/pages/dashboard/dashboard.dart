@@ -80,11 +80,7 @@ class DashboardState extends State<Dashboard> {
   String msg = "";
   @override
   void initState() {
-    // getGroups();
     getNotifyStrings();
-    // ApiModel.fetch().then((apis) {
-    //   Api.apiList = apis;
-    // });
     initData();
     getData(init: true);
     super.initState();
@@ -97,19 +93,9 @@ class DashboardState extends State<Dashboard> {
     setState(() {});
   }
 
-  bool get isDrawerOpen {
-    return _scaffoldKey.currentState!.isDrawerOpen;
-  }
-
   getGroups() async {
     Utils.groups = await GroupsModel.fetch();
     FirstLaunchDialog.show(context);
-  }
-
-  closeDrawer() {
-    if (_scaffoldKey.currentState!.isDrawerOpen) {
-      Navigator.of(context).pop();
-    }
   }
 
   getNotifyStrings() async {

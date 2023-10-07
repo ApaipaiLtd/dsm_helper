@@ -4,15 +4,21 @@ import 'dart:ui';
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_exception.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/database/table_extention.dart';
 import 'package:dsm_helper/database/tables.dart';
+import 'package:dsm_helper/models/Syno/Api/auth.dart';
+import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/login_new.dart';
 import 'package:dsm_helper/pages/server/add_server.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
+import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/button.dart';
 import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
@@ -21,7 +27,8 @@ import 'package:dsm_helper/widgets/page_body_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:kumi_popup_window/kumi_popup_window.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class SelectServer extends StatefulWidget {
   const SelectServer({super.key});
@@ -101,6 +108,7 @@ class _SelectServerState extends State<SelectServer> {
   }
 
   Widget _buildServerItem(Server server) {
+    GlobalKey actionButtonKey = GlobalKey();
     double width = context.width - 32;
     double height = width / 16 * 9;
     List<Account> serverAccounts = accounts.where((account) => account.serverId == server.id).toList();
@@ -109,12 +117,7 @@ class _SelectServerState extends State<SelectServer> {
       // padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 2), blurRadius: 10, spreadRadius: -2),
-          // BoxShadow(color: Colors.black.withOpacity(0.12), offset: Offset(0, 1), blurRadius: 10),
-          // BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 3), blurRadius: 2, spreadRadius: -2),
-        ],
+        borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,13 +128,13 @@ class _SelectServerState extends State<SelectServer> {
                 ExtendedImage.network(
                   server.backgroundImage!,
                   shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
                   width: width,
                   height: height,
                   fit: BoxFit.cover,
                 ),
               ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                   child: Container(
@@ -153,7 +156,7 @@ class _SelectServerState extends State<SelectServer> {
                                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white),
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                   ],
                                   Row(
@@ -179,159 +182,359 @@ class _SelectServerState extends State<SelectServer> {
                                 ],
                               ),
                             ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    context.push(AddServer(
-                                      server: server,
-                                    ));
-                                  },
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    var hide = showWeuiLoadingToast(context: context);
-                                    Api.dsm = DsmApi(baseUrl: server.url);
-                                    ApiModel.apiInfo = await ApiModel.info();
-                                    hide();
-                                    context.push(Login(server));
-                                  },
-                                  icon: Icon(
-                                    Icons.add_circle_outline,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    showCustomDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(
-                                            "删除服务器",
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          content: Text("确定删除此服务器？"),
-                                          actionsOverflowDirection: VerticalDirection.up,
-                                          actions: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Button(
-                                                    color: Colors.red,
-                                                    child: Text("删除"),
-                                                    onPressed: () {
-                                                      DbUtils.db.deleteServer(server);
-                                                      // 删除服务器下关联账户
-                                                      DbUtils.db.deleteAccountByServerId(server.id);
-                                                      Navigator.of(context).pop();
-                                                    },
+                            CupertinoButton(
+                              key: actionButtonKey,
+                              onPressed: () {
+                                showPopupWindow(
+                                  context,
+                                  gravity: KumiPopupGravity.leftBottom,
+                                  bgColor: Colors.transparent,
+                                  clickOutDismiss: true,
+                                  clickBackDismiss: true,
+                                  customAnimation: false,
+                                  customPop: false,
+                                  customPage: false,
+                                  underStatusBar: true,
+                                  underAppBar: true,
+                                  needSafeDisplay: true,
+                                  offsetX: 30,
+                                  offsetY: -80,
+                                  // curve: Curves.easeInSine,
+                                  duration: Duration(milliseconds: 200),
+                                  targetRenderBox: actionButtonKey.currentContext!.findRenderObject() as RenderBox,
+                                  childFun: (pop) {
+                                    return BackdropFilter(
+                                      key: GlobalKey(),
+                                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                      child: Container(
+                                        width: 220,
+                                        padding: EdgeInsets.symmetric(vertical: 8),
+                                        margin: EdgeInsets.only(top: 50),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(23),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            PopupMenuItem(
+                                              onTap: () {
+                                                context.push(AddServer(
+                                                  server: server,
+                                                ));
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(
+                                                    "assets/icons/pencil.png",
+                                                    width: 20,
+                                                    height: 20,
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Button(
-                                                    child: Text("取消"),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
+                                                  SizedBox(
+                                                    width: 10,
                                                   ),
-                                                ),
-                                              ],
-                                            )
+                                                  Text("编辑"),
+                                                ],
+                                              ),
+                                            ),
+                                            PopupMenuItem(
+                                              onTap: () async {
+                                                var hide = showWeuiLoadingToast(context: context);
+                                                Api.dsm = DsmApi(baseUrl: server.url);
+                                                ApiModel.apiInfo = await ApiModel.info();
+                                                hide();
+                                                context.push(Login(server));
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(
+                                                    "assets/icons/plus_circle.png",
+                                                    width: 20,
+                                                    height: 20,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text("添加用户"),
+                                                ],
+                                              ),
+                                            ),
+                                            PopupMenuItem(
+                                              onTap: () async {
+                                                showCustomDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                        "删除服务器",
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                      content: Text("确定删除此服务器？"),
+                                                      actionsOverflowDirection: VerticalDirection.up,
+                                                      actions: [
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Button(
+                                                                color: Colors.red,
+                                                                child: Text("删除"),
+                                                                onPressed: () {
+                                                                  DbUtils.db.deleteServer(server);
+                                                                  // 删除服务器下关联账户
+                                                                  DbUtils.db.deleteAccountByServerId(server.id);
+                                                                  Navigator.of(context).pop();
+                                                                },
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Expanded(
+                                                              child: Button(
+                                                                child: Text("取消"),
+                                                                onPressed: () {
+                                                                  Navigator.of(context).pop();
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(
+                                                    "assets/icons/delete.png",
+                                                    width: 20,
+                                                    height: 20,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    "删除服务器",
+                                                    style: TextStyle(color: AppTheme.of(context)?.errorColor),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ],
-                                        );
-                                      },
+                                        ),
+                                      ),
                                     );
                                   },
-                                  icon: Icon(
-                                    Icons.remove_circle,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
+                                );
+                              },
+                              minSize: 0,
+                              child: Image.asset(
+                                "assets/icons/more_vertical.png",
+                                width: 20,
+                                height: 20,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         Row(
                           children: [
-                            Stack(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white30,
-                                      borderRadius: BorderRadius.circular(100.0),
-                                      border: Border.all(width: 4, color: Color(0xFF2633C5).withOpacity(0.2)),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: CustomPaint(
-                                    painter: CurvePainter(
-                                      colors: [
-                                        Color(0xFF8A98E8),
-                                        Color(0xFF8A98E8),
-                                        Color(0xFF2633C5),
-                                      ],
-                                      angle: 300,
-                                    ),
-                                    child: SizedBox(
-                                      width: 88,
-                                      height: 88,
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
+                            Expanded(
+                              child: SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: SfRadialGauge(
+                                  animationDuration: 1000,
+                                  enableLoadingAnimation: true,
+                                  axes: <RadialAxis>[
+                                    RadialAxis(
+                                      showLabels: false,
+                                      showTicks: false,
+                                      // radiusFactor: 0.8,
+                                      maximum: 100,
+                                      axisLineStyle: AxisLineStyle(cornerStyle: CornerStyle.bothCurve, thickness: 8),
+                                      annotations: <GaugeAnnotation>[
+                                        GaugeAnnotation(
+                                          angle: 90,
+                                          positionFactor: 0.4,
+                                          widget: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Image.asset(
+                                                "assets/icons/cpu_line.png",
+                                                width: 24,
+                                                height: 24,
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text.rich(
                                                 TextSpan(
-                                                  text: "50",
+                                                  children: [
+                                                    TextSpan(
+                                                      text: '50',
+                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
+                                                    ),
+                                                    TextSpan(
+                                                      text: '%',
+                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white54),
+                                                    ),
+                                                  ],
                                                 ),
-                                                TextSpan(text: "%", style: TextStyle(fontSize: 12)),
-                                              ],
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 24,
-                                              letterSpacing: 0.0,
-                                              color: Colors.white,
-                                            ),
+                                              ),
+                                              Text(
+                                                "CPU",
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white54),
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            'CPU',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.white54,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                              letterSpacing: 0.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
+                                      pointers: <GaugePointer>[
+                                        RangePointer(
+                                          enableAnimation: true,
+                                          animationDuration: 1000,
+                                          value: 50.toDouble(),
+                                          width: 8,
+                                          cornerStyle: CornerStyle.bothCurve,
+                                          gradient: SweepGradient(colors: <Color>[Color(0xFF00BAAD), Color(0xFF4BD6CD)]),
+                                        ),
+                                        // MarkerPointer(
+                                        //   value: utilization.cpu!.totalLoad.toDouble() - 3,
+                                        //   color: Colors.white,
+                                        //   markerType: MarkerType.circle,
+                                        // ),
+                                      ],
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            )
+                              ),
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: SfRadialGauge(
+                                  animationDuration: 1000,
+                                  enableLoadingAnimation: true,
+                                  axes: <RadialAxis>[
+                                    RadialAxis(
+                                      showLabels: false,
+                                      showTicks: false,
+                                      // radiusFactor: 0.8,
+                                      maximum: 100,
+                                      axisLineStyle: AxisLineStyle(cornerStyle: CornerStyle.bothCurve, thickness: 8),
+                                      annotations: <GaugeAnnotation>[
+                                        GaugeAnnotation(
+                                          angle: 90,
+                                          positionFactor: 0.4,
+                                          widget: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Image.asset(
+                                                "assets/icons/memory.png",
+                                                width: 24,
+                                                height: 24,
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text.rich(
+                                                TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: '50',
+                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
+                                                    ),
+                                                    TextSpan(
+                                                      text: '%',
+                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white54),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Text(
+                                                "RAM",
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white54),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                      pointers: <GaugePointer>[
+                                        RangePointer(
+                                          enableAnimation: true,
+                                          animationDuration: 1000,
+                                          value: 50.toDouble(),
+                                          width: 8,
+                                          cornerStyle: CornerStyle.bothCurve,
+                                          gradient: SweepGradient(colors: <Color>[AppTheme.of(context)!.primaryColor!, Color(0xFF75ACFF)]),
+                                        ),
+                                        // MarkerPointer(
+                                        //   value: utilization.cpu!.totalLoad.toDouble() - 3,
+                                        //   color: Colors.white,
+                                        //   markerType: MarkerType.circle,
+                                        // ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 90,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/arrow_down.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        Utils.formatSize(10000) + "/S",
+                                        style: TextStyle(color: AppTheme.of(context)?.primaryColor),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/arrow_up.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        Utils.formatSize(10000) + "/S",
+                                        style: TextStyle(color: Color(0xFF1BB357)),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/temperature.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        "50℃",
+                                        style: TextStyle(color: Color(0xFF43CF7C)),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -339,7 +542,12 @@ class _SelectServerState extends State<SelectServer> {
               ),
             ],
           ),
-          ...serverAccounts.map((account) => _buildAccountItem(account, server)).toList(),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              children: serverAccounts.map((account) => _buildAccountItem(account, server)).toList(),
+            ),
+          ),
         ],
       ),
     );
@@ -352,20 +560,61 @@ class _SelectServerState extends State<SelectServer> {
         var hide = showWeuiLoadingToast(context: context);
         Api.dsm = DsmApi(baseUrl: server.url, deviceId: account.deviceId, sid: account.sid);
         ApiModel.apiInfo = await ApiModel.info();
-        hide();
-        context.push(Home(), replace: true);
+        try {
+          await FileStationList.shareList();
+          hide();
+          context.push(Home(), replace: true);
+        } on DsmException catch (e) {
+          if (e.code == 119) {
+            // 重新登录
+            Map<String, dynamic> data = {
+              "account": account.account,
+              "passwd": account.password,
+              "otp_code": "",
+              "version": 4,
+              "api": "SYNO.API.Auth",
+              "method": "login",
+              "session": "FileStation",
+              "enable_device_token": "yes",
+              "enable_sync_token": "yes",
+            };
+            DsmResponse res = await Api.dsm.entry<Auth>(
+              "SYNO.API.Auth",
+              "login",
+              data: data,
+              parameters: {
+                "api": "SYNO.API.Auth",
+              },
+              parser: Auth.fromJson,
+            );
+            if (res.success ?? false) {
+              Auth authModel = res.data;
+              DbUtils.db.updateAccount(account.copyWith(
+                sid: authModel.sid!,
+              ));
+              await Api.dsm.init(server.url, deviceId: authModel.deviceId, sid: authModel.sid);
+              hide();
+              context.push(Home(), replace: true);
+            } else if (res.error?['code'] == 400) {
+              Utils.toast("用户名/密码有误");
+            } else if (res.error?['code'] == 403) {
+            } else if (res.error?['code'] == 404) {
+              Utils.toast("错误的验证代码。请再试一次。");
+            } else if (res.error?['code'] == 414) {
+              // 需要二次验证
+            }
+          }
+        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                account.account,
-                style: TextStyle(),
-              ),
+              child: Text(account.account),
             ),
-            IconButton(
+            CupertinoButton(
+              minSize: 0,
               onPressed: () {
                 showCustomDialog(
                   context: context,
@@ -408,10 +657,8 @@ class _SelectServerState extends State<SelectServer> {
                   },
                 );
               },
-              icon: Icon(
-                Icons.remove_circle,
-                color: Colors.red,
-              ),
+              padding: EdgeInsets.zero,
+              child: Image.asset("assets/icons/remove_circle_fill.png", width: 20),
             ),
           ],
         ),

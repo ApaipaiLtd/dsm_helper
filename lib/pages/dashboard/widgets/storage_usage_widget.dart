@@ -1,10 +1,13 @@
 import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
+import 'package:dsm_helper/pages/dashboard/enums/volume_status_enum.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/line_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,11 +37,8 @@ class StorageUsageWidget extends StatelessWidget {
               if (storage.volumes != null)
                 ...storage.volumes!.map((volume) => _buildVolumeItem(context, volume, isLast: storage.volumes!.last == volume)).toList()
               else
-                Center(
-                  child: Text(
-                    "暂无存储空间",
-                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                  ),
+                EmptyWidget(
+                  text: "暂无存储空间",
                 ),
             ],
           ),
@@ -98,29 +98,17 @@ class StorageUsageWidget extends StatelessWidget {
             SizedBox(
               width: 5,
             ),
-            volume.status == "normal"
+            volume.statusEnum != VolumeStatusEnum.unknown
                 ? Label(
-                    "正常",
-                    Colors.green,
+                    volume.statusEnum.label,
+                    volume.statusEnum.color,
                     fill: true,
                   )
-                : volume.status == "background"
-                    ? Label(
-                        "正在检查硬盘",
-                        Colors.lightBlueAccent,
-                        fill: true,
-                      )
-                    : volume.status == "attention"
-                        ? Label(
-                            "注意",
-                            Colors.orangeAccent,
-                            fill: true,
-                          )
-                        : Label(
-                            volume.status!,
-                            Colors.red,
-                            fill: true,
-                          ),
+                : Label(
+                    volume.status!,
+                    Colors.red,
+                    fill: true,
+                  ),
           ],
         ),
         Text(
@@ -130,39 +118,7 @@ class StorageUsageWidget extends StatelessWidget {
         SizedBox(
           height: 5,
         ),
-        Row(
-          children: [
-            Expanded(
-              flex: volume.size!.used!,
-              child: Container(
-                height: 6,
-                decoration: BoxDecoration(
-                  color: volume.size!.usedPercent > 80 ? Colors.red : Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                constraints: BoxConstraints(
-                  minWidth: 10,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 3,
-            ),
-            Expanded(
-              flex: volume.size!.free!,
-              child: Container(
-                height: 6,
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                constraints: BoxConstraints(
-                  minWidth: 10,
-                ),
-              ),
-            ),
-          ],
-        ),
+        LineProgressBar(value: volume.size!.usedPercent),
         SizedBox(
           height: 5,
         ),

@@ -1,12 +1,11 @@
-import 'package:dsm_helper/pages/docker/detail.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/animation_progress_bar.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'container_page.dart';
 
 class Docker extends StatefulWidget {
   final String title;
@@ -27,83 +26,39 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
-    getContainer();
-    getImage();
+    // getImage();
     super.initState();
   }
 
-  getContainer() async {
-    var res = await Api.dockerContainerInfo();
-    setState(() {
-      containerLoading = false;
-    });
-    if (res['success']) {
-      List result = res['data']['result'];
-      result.forEach((item) {
-        if (item['success'] == true) {
-          switch (item['api']) {
-            case "SYNO.Core.System.Utilization":
-              setState(() {
-                utilization = item['data'];
-              });
-              break;
-            case "SYNO.Docker.Container":
-              setState(() {
-                containers = item['data']['containers'];
-                containers.sort((a, b) {
-                  return a['name'].compareTo(b['name']);
-                });
-              });
-              break;
-            case "SYNO.Docker.Container.Resource":
-              List resources = item['data']['resources'];
-              resources.forEach((resource) {
-                containers.forEach((container) {
-                  if (resource['name'] == container['name']) {
-                    setState(() {
-                      container['cpu'] = resource['cpu'];
-                      container['memory'] = resource['memory'];
-                      container['memoryPercent'] = resource['memoryPercent'];
-                    });
-                  }
-                });
-              });
-              break;
-          }
-        }
-      });
-    }
-  }
-
-  getImage() async {
-    var res = await Api.dockerImageInfo();
-    Log.logger.info(res);
-    setState(() {
-      imageLoading = false;
-    });
-    if (res['success']) {
-      List result = res['data']['result'];
-      result.forEach((item) {
-        if (item['success'] == true) {
-          switch (item['api']) {
-            case "SYNO.Docker.Image":
-              setState(() {
-                images = item['data']['images'];
-                images.sort((a, b) {
-                  return a['repository'].compareTo(b['repository']);
-                });
-              });
-              break;
-            case "SYNO.Docker.Registry":
-              setState(() {
-                registries = item['data']['registries'];
-              });
-              break;
-          }
-        }
-      });
-    }
-  }
+  // getImage() async {
+  //   var res = await Api.dockerImageInfo();
+  //   Log.logger.info(res);
+  //   setState(() {
+  //     imageLoading = false;
+  //   });
+  //   if (res['success']) {
+  //     List result = res['data']['result'];
+  //     result.forEach((item) {
+  //       if (item['success'] == true) {
+  //         switch (item['api']) {
+  //           case "SYNO.Docker.Image":
+  //             setState(() {
+  //               images = item['data']['images'];
+  //               images.sort((a, b) {
+  //                 return a['repository'].compareTo(b['repository']);
+  //               });
+  //             });
+  //             break;
+  //           case "SYNO.Docker.Registry":
+  //             setState(() {
+  //               registries = item['data']['registries'];
+  //             });
+  //             break;
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
 
   power(container, String action, {bool? preserveProfile}) async {
     if (action == "signal" || action == "delete") {
@@ -151,7 +106,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                               var res = await Api.dockerPower(container['name'], action, preserveProfile: preserveProfile);
                               if (res['success']) {
                                 Utils.toast("请求发送成功");
-                                getContainer();
+                                // getContainer();
                               } else {
                                 Utils.toast("请求发送失败，代码：${res['error']['code']}");
                               }
@@ -204,7 +159,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
       var res = await Api.dockerPower(container['name'], action);
       if (res['success']) {
         Utils.toast("请求发送成功");
-        getContainer();
+        // getContainer();
       } else {
         Utils.toast("请求发送失败，代码：${res['error']['code']}");
       }
@@ -212,311 +167,6 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
         powerLoading[container['id']] = false;
       });
     }
-  }
-
-  Widget _buildContainerItem(container) {
-    if (powerLoading[container['id']] == null) {
-      powerLoading[container['id']] = false;
-    }
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (context) {
-              return ContainerDetail(container['name']);
-            },
-            settings: RouteSettings(name: "docker_container_detail")));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        margin: EdgeInsets.only(bottom: 20),
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              container['name'],
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                            Spacer(),
-                            container['status'] == "running"
-                                ? Label("运行中", Colors.green)
-                                : container['status'] == "stopped"
-                                    ? Label("已停止", Colors.red)
-                                    : Label(container['status'], Colors.orange),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                container['image'],
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            if (container['status'] == "running")
-                              Text(
-                                DateTime.fromMillisecondsSinceEpoch(container['up_time'] * 1000).timeAgo,
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (powerLoading[container['id']] == null || powerLoading[container['id']]!) {
-                        return;
-                      }
-
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return Material(
-                            color: Colors.transparent,
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(22),
-                              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                              child: SafeArea(
-                                top: false,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                      "选择操作",
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    if (container['status'] == "stopped") ...[
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          power(container, "start");
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "启动",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 22,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          power(container, "delete", preserveProfile: true);
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "清除",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 22,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          power(container, "delete", preserveProfile: false);
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "删除",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          power(container, "stop");
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "停止",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 22,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          power(container, "signal");
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "强制停止",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 22,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          power(container, "restart");
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "重新启动",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
-                                      ),
-                                    ],
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      // padding: EdgeInsets.symmetric(vertical: 20),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: powerLoading[container['id']] == null || powerLoading[container['id']]!
-                          ? CupertinoActivityIndicator()
-                          : Image.asset(
-                              "assets/icons/shutdown.png",
-                              width: 20,
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-              if (container['status'] == "running") ...[
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text("CPU"),
-                              Spacer(),
-                              Text(
-                                "${container['cpu'].toStringAsFixed(2)}%",
-                                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: FAProgressBar(
-                              backgroundColor: Colors.transparent,
-                              changeColorValue: 90,
-                              changeProgressColor: Colors.red,
-                              progressColor: Colors.blue,
-                              size: 20,
-                              displayText: "%",
-                              currentValue: (container['cpu']).ceil(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text("内存"),
-                              Spacer(),
-                              Text(
-                                "${Utils.formatSize(container['memory'], fixed: 0)}",
-                                style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: FAProgressBar(
-                              backgroundColor: Colors.transparent,
-                              changeColorValue: 90,
-                              changeProgressColor: Colors.red,
-                              progressColor: Colors.green,
-                              size: 20,
-                              displayText: "%",
-                              currentValue: container['memoryPercent'].ceil(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildImageItem(image) {
@@ -615,131 +265,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-                containerLoading
-                    ? Center(
-                        child: Container(
-                          padding: EdgeInsets.all(50),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: CupertinoActivityIndicator(
-                            radius: 14,
-                          ),
-                        ),
-                      )
-                    : ListView(
-                        padding: EdgeInsets.all(20),
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              "assets/icons/cpu.png",
-                                              width: 50,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              "CPU",
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: FAProgressBar(
-                                            backgroundColor: Colors.transparent,
-                                            changeColorValue: 90,
-                                            changeProgressColor: Colors.red,
-                                            progressColor: Colors.blue,
-                                            currentValue: utilization!['cpu']['user_load'] + utilization!['cpu']['system_load'],
-                                            displayText: '%',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              "assets/icons/ram.png",
-                                              width: 50,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              "内存",
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: FAProgressBar(
-                                            backgroundColor: Colors.transparent,
-                                            changeColorValue: 90,
-                                            changeProgressColor: Colors.red,
-                                            progressColor: Colors.blue,
-                                            currentValue: utilization!['memory']['real_usage'],
-                                            displayText: '%',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ...containers.map(_buildContainerItem).toList(),
-                        ],
-                      ),
+                ContainerPage(),
                 imageLoading
                     ? Center(
                         child: Container(

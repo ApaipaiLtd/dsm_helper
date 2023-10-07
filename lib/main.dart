@@ -2,11 +2,21 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cool_ui/cool_ui.dart';
+import 'package:dsm_helper/pages/control_panel/control_panel.dart';
+import 'package:dsm_helper/pages/docker/docker.dart';
+import 'package:dsm_helper/pages/download_station/download_station.dart';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
 import 'package:dsm_helper/pages/login/login.dart';
+import 'package:dsm_helper/pages/moments/moments.dart';
+import 'package:dsm_helper/pages/packages/packages.dart';
+import 'package:dsm_helper/pages/photos/photos.dart';
+import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
+import 'package:dsm_helper/pages/security_scan/security_scan.dart';
 import 'package:dsm_helper/pages/splash/splash.dart';
+import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
+import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
 import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
@@ -221,6 +231,17 @@ class _DsmHelperState extends State<DsmHelper> {
                 "/login": (BuildContext context) => Login(),
                 "/home": (BuildContext context) => Home(),
                 "/accounts": (BuildContext context) => Accounts(),
+                "/control_panel": (BuildContext context) => ControlPanel(),
+                "/package_center": (BuildContext context) => Packages(),
+                "/resource_monitor": (BuildContext context) => ResourceMonitor(),
+                "/storage_manager": (BuildContext context) => StorageManager(),
+                "/security_scan": (BuildContext context) => SecurityScan(),
+                "/docker": (BuildContext context) => Docker(title: "Docker"),
+                "/container_manager": (BuildContext context) => Docker(title: "Container Manager"),
+                "/download_station": (BuildContext context) => DownloadStation(),
+                "/moments": (BuildContext context) => Moments(),
+                "/synology_photos": (BuildContext context) => Photos(),
+                "/virtual_machine": (BuildContext context) => VirtualMachine(),
               },
             ),
           ),

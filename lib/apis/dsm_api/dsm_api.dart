@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_exception.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/models/base_model.dart';
@@ -42,8 +43,12 @@ class DsmApi extends HttpUtil {
     } else {
       response = await dio!.get("/webapi/entry.cgi", queryParameters: parameters, options: options);
     }
-    DsmResponse res = DsmResponse.fromJson(response.data, parser);
-    return res;
+    if (response.data['success']) {
+      DsmResponse res = DsmResponse.fromJson(response.data, parser);
+      return res;
+    } else {
+      throw DsmException(response.data['error']['code']);
+    }
   }
 
   Future<List<DsmResponse>> batch({

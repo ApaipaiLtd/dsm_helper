@@ -182,12 +182,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Future<bool> onWillPop() {
     Utils.vibrate(FeedbackType.light);
     Future<bool> value = Future.value(true);
-    if (_currentIndex == 0) {
-      if (_dashboardStateKey.currentState?.isDrawerOpen ?? false) {
-        _dashboardStateKey.currentState?.closeDrawer();
-        return Future.value(false);
-      }
-    } else if (_currentIndex == 1) {
+    if (_currentIndex == 1) {
       bool canPop = _filesStateKey.currentState?.navigatorKey.currentState?.canPop() ?? false;
       if (canPop) {
         _filesStateKey.currentState!.navigatorKey.currentState!.pop();
