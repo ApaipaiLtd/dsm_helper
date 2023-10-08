@@ -9,6 +9,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       placeholderColor: Colors.black54,
       primaryColor: Color(0xff2A82E4),
       progressColor: Color(0xfff4f4f4),
+      successColor: Color(0xFF25B85F),
       errorColor: Color(0xffFF5733),
     ),
   ],
@@ -48,6 +49,15 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     ),
   ),
   buttonTheme: ButtonThemeData(),
+  tabBarTheme: TabBarTheme(
+    indicatorColor: Color(0xff2A82E4),
+    indicatorSize: TabBarIndicatorSize.label,
+    dividerColor: Colors.transparent,
+    unselectedLabelColor: Colors.black,
+    labelColor: Color(0xff2A82E4),
+  ),
+  splashFactory: NoSplash.splashFactory,
+  highlightColor: Colors.transparent,
   appBarTheme: AppBarTheme(
     centerTitle: true,
     elevation: 0,

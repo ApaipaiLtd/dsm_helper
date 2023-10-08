@@ -1,5 +1,11 @@
+import 'package:dsm_helper/pages/docker/image_page.dart';
+import 'package:dsm_helper/pages/docker/log_page.dart';
+import 'package:dsm_helper/pages/docker/network_page.dart';
+import 'package:dsm_helper/pages/docker/repository_page.dart';
+import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,16 +22,9 @@ class Docker extends StatefulWidget {
 
 class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List containers = [];
-  List images = [];
-  List registries = [];
-  Map<String, bool> powerLoading = {};
-  Map? utilization;
-  bool containerLoading = true;
-  bool imageLoading = true;
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     // getImage();
     super.initState();
   }
@@ -101,7 +100,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                             onPressed: () async {
                               Navigator.of(context).pop();
                               setState(() {
-                                powerLoading[container['id']] = true;
+                                // powerLoading[container['id']] = true;
                               });
                               var res = await Api.dockerPower(container['name'], action, preserveProfile: preserveProfile);
                               if (res['success']) {
@@ -111,7 +110,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
                                 Utils.toast("请求发送失败，代码：${res['error']['code']}");
                               }
                               setState(() {
-                                powerLoading[container['id']] = false;
+                                // powerLoading[container['id']] = false;
                               });
                             },
                             color: Theme.of(context).scaffoldBackgroundColor,
@@ -154,7 +153,7 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
       );
     } else {
       setState(() {
-        powerLoading[container['id']] = true;
+        // powerLoading[container['id']] = true;
       });
       var res = await Api.dockerPower(container['name'], action);
       if (res['success']) {
@@ -164,139 +163,61 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
         Utils.toast("请求发送失败，代码：${res['error']['code']}");
       }
       setState(() {
-        powerLoading[container['id']] = false;
+        // powerLoading[container['id']] = false;
       });
     }
   }
 
-  Widget _buildImageItem(image) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Flexible(
-                  child: ExtendedText(
-                    "${image['repository']}:${image['tags'].join(",")}",
-                    maxLines: 1,
-                    overflowWidget: TextOverflowWidget(
-                      position: TextOverflowPosition.middle,
-                      align: TextOverflowAlign.right,
-                      child: Text(
-                        "…",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Label(Utils.formatSize(image['size'], fixed: 0, format: 1000), Theme.of(context).primaryColor),
-              ],
-            ),
-            if (image['description'] != null || image['description'] != '') ...[
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "${image['description']}",
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-              )
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text(widget.title),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: TabBar(
-              isScrollable: false,
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicator: BubbleTabIndicator(
-                indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+              color: Colors.transparent,
+              child: TabBar(
+                isScrollable: true,
+                controller: _tabController,
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  Tab(
+                    child: Text("容器"),
+                  ),
+                  Tab(
+                    child: Text("镜像"),
+                  ),
+                  Tab(
+                    child: Text("注册表"),
+                  ),
+                  Tab(
+                    child: Text("网络"),
+                  ),
+                  Tab(
+                    child: Text("日志"),
+                  ),
+                ],
               ),
-              tabs: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("容器"),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("镜像"),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("注册表"),
-                ),
-              ],
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                ContainerPage(),
-                imageLoading
-                    ? Center(
-                        child: Container(
-                          padding: EdgeInsets.all(50),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: CupertinoActivityIndicator(
-                            radius: 14,
-                          ),
-                        ),
-                      )
-                    : ListView.separated(
-                        padding: EdgeInsets.all(20),
-                        itemBuilder: (context, i) {
-                          return _buildImageItem(images[i]);
-                        },
-                        separatorBuilder: (context, i) {
-                          return SizedBox(
-                            height: 20,
-                          );
-                        },
-                        itemCount: images.length),
-                Center(
-                  child: Text("开发中"),
-                ),
-              ],
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  ContainerPage(),
+                  ImagePage(),
+                  RepositoryPage(),
+                  NetworkPage(),
+                  LogPage(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

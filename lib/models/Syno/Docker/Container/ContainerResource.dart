@@ -60,14 +60,14 @@ class Resources {
     memoryPercent = json['memoryPercent'];
     name = json['name'];
   }
-  double? cpu;
+  num? cpu;
   int? memory;
-  double? memoryPercent;
+  num? memoryPercent;
   String? name;
   Resources copyWith({
-    double? cpu,
+    num? cpu,
     int? memory,
-    double? memoryPercent,
+    num? memoryPercent,
     String? name,
   }) =>
       Resources(

@@ -1,3 +1,4 @@
+import 'package:dsm_helper/models/Syno/Docker/Container/ContainerResource.dart';
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/pages/docker/enums/docker_status_enum.dart';
 
@@ -21,6 +22,11 @@ class DockerContainer extends BaseModel {
   String? api = "SYNO.Docker.Container";
   String? method = "list";
   int? version = 1;
+  Map<String, dynamic>? data = {
+    "limit": -1,
+    "offset": 0,
+    "type": 'all',
+  };
 
   DockerContainer.fromJson(dynamic json) {
     if (json['containers'] != null) {
@@ -37,6 +43,7 @@ class DockerContainer extends BaseModel {
   int? limit;
   int? offset;
   int? total;
+
   DockerContainer copyWith({
     List<Containers>? containers,
     int? limit,
@@ -129,6 +136,7 @@ class Containers {
   DockerStatusEnum get statusEnum => DockerStatusEnum.fromValue(status!);
   String? upStatus;
   int? upTime;
+  Resources? resource;
   Containers copyWith({
     State? state,
     String? cmd,
