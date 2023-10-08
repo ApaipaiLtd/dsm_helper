@@ -65,7 +65,7 @@ class _ContainerPageState extends State<ContainerPage> with AutomaticKeepAliveCl
             size: 30,
           )
         : ListView(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             children: [
               Row(
                 children: [

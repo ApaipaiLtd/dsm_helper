@@ -173,49 +173,39 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
     return GlassScaffold(
       appBar: GlassAppBar(
         title: Text(widget.title),
+        bottom: TabBar(
+          padding: EdgeInsets.zero,
+          isScrollable: true,
+          controller: _tabController,
+          indicatorSize: TabBarIndicatorSize.label,
+          tabs: [
+            Tab(
+              child: Text("容器"),
+            ),
+            Tab(
+              child: Text("镜像"),
+            ),
+            Tab(
+              child: Text("注册表"),
+            ),
+            Tab(
+              child: Text("网络"),
+            ),
+            Tab(
+              child: Text("日志"),
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
-        child: Column(
+        child: TabBarView(
+          controller: _tabController,
           children: [
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-              color: Colors.transparent,
-              child: TabBar(
-                isScrollable: true,
-                controller: _tabController,
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: [
-                  Tab(
-                    child: Text("容器"),
-                  ),
-                  Tab(
-                    child: Text("镜像"),
-                  ),
-                  Tab(
-                    child: Text("注册表"),
-                  ),
-                  Tab(
-                    child: Text("网络"),
-                  ),
-                  Tab(
-                    child: Text("日志"),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  ContainerPage(),
-                  ImagePage(),
-                  RepositoryPage(),
-                  NetworkPage(),
-                  LogPage(),
-                ],
-              ),
-            ),
+            ContainerPage(),
+            ImagePage(),
+            RepositoryPage(),
+            NetworkPage(),
+            LogPage(),
           ],
         ),
       ),

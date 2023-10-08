@@ -10,6 +10,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
   final Color? titleColor;
   final Color? progressColor;
   final Color? successColor;
+  final Color? warningColor;
   final Color? errorColor;
   AppTheme({
     this.primaryColor,
@@ -17,6 +18,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
     this.titleColor,
     this.progressColor,
     this.successColor,
+    this.warningColor,
     this.errorColor,
   });
 
@@ -34,6 +36,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
       titleColor: titleColor ?? this.titleColor,
       progressColor: progressColor ?? this.progressColor,
       successColor: progressColor ?? this.successColor,
+      warningColor: warningColor ?? this.warningColor,
       errorColor: errorColor ?? this.errorColor,
     );
   }

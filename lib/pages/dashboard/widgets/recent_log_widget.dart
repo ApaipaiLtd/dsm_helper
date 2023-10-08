@@ -2,6 +2,7 @@ import 'package:dsm_helper/models/Syno/Core/SyslogClient/Status.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
@@ -78,7 +79,7 @@ class RecentLogWidget extends StatelessWidget {
                         connectorBuilder: (_, index, ___) => DashedLineConnector(
                           color: Color(0x3C3C3C43),
                         ),
-                        itemCount: 10,
+                        itemCount: latestLog.logs!.length,
                       ),
                     ),
                     // child: ListView.builder(
@@ -88,11 +89,8 @@ class RecentLogWidget extends StatelessWidget {
                     //   itemCount: latestLog.logs!.length,
                     // ),
                   )
-                : Center(
-                    child: Text(
-                      "暂无日志",
-                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                    ),
+                : EmptyWidget(
+                    text: "暂无日志",
                   ),
           ),
         ],

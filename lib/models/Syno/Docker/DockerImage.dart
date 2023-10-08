@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 
@@ -86,6 +88,18 @@ class Images {
     this.tags,
     this.virtualSize,
   });
+
+  Future<DsmResponse> delete() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Docker.Image",
+      "delete",
+      version: 1,
+      data: {
+        "images": jsonEncode([this]),
+      },
+    );
+    return res;
+  }
 
   Images.fromJson(dynamic json) {
     created = json['created'];

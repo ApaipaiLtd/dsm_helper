@@ -4,6 +4,8 @@ import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 
+import 'dialogs/registry_tag_popup.dart';
+
 class RepositoryPage extends StatefulWidget {
   const RepositoryPage({super.key});
 
@@ -32,28 +34,34 @@ class _RepositoryPageState extends State<RepositoryPage> with AutomaticKeepAlive
     super.build(context);
     return loading
         ? LoadingWidget(size: 30)
-        : SafeArea(
-            top: false,
-            child: ListView.separated(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              itemCount: dockerRegistry.data!.length,
-              itemBuilder: (context, i) {
-                return _buildImageItem(dockerRegistry.data![i]);
-              },
-              separatorBuilder: (context, i) {
-                return SizedBox(height: 10);
-              },
-            ),
+        : ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            itemCount: dockerRegistry.data!.length,
+            itemBuilder: (context, i) {
+              return _buildImageItem(dockerRegistry.data![i]);
+            },
+            separatorBuilder: (context, i) {
+              return SizedBox(height: 10);
+            },
           );
   }
 
   Widget _buildImageItem(DockerRegistryData registry) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
+    return GestureDetector(
+      onTap: () async {
+        String? tag = await SelectRegistryTagPopup.show(context: context, registry: registry);
+        if (tag != null && tag.isNotEmpty) {
+          registry.pullStart(tag);
+        }
+        // var hide = showWeuiLoadingToast(context: context);
+        // List<RegistryTag> tags = await RegistryTag.tags(repo: registry.name!);
+        // hide();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

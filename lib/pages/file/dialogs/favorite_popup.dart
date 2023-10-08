@@ -41,7 +41,7 @@ class _FavoriteFolderState extends State<FavoriteFolder> {
       color: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: 14),
         child: SafeArea(
           top: false,
           child: Column(
@@ -65,7 +65,8 @@ class _FavoriteFolderState extends State<FavoriteFolder> {
                       onPressed: () async {
                         getFavorites();
                       },
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                      minSize: 0,
                       child: Icon(
                         Icons.refresh,
                         size: 24,
@@ -76,7 +77,7 @@ class _FavoriteFolderState extends State<FavoriteFolder> {
                 ],
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Container(
                 height: context.height * 0.7,
@@ -84,27 +85,24 @@ class _FavoriteFolderState extends State<FavoriteFolder> {
                     ? Center(
                         child: LoadingWidget(),
                       )
-                    : SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            if (favorites.files != null && favorites.files!.isNotEmpty)
-                              ...favorites.files!.map((folder) {
-                                return FileListItemWidget(
-                                  folder,
-                                  favorite: true,
-                                  onTap: () {
-                                    context.pop(folder);
-                                  },
-                                );
-                              }).toList()
-                            else
-                              EmptyWidget(
-                                size: 150,
-                                text: "暂无收藏文件夹",
-                              ),
-                          ],
-                        ),
-                      ),
+                    : favorites.files != null && favorites.files!.isNotEmpty
+                        ? ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: favorites.files!.length,
+                            itemBuilder: (context, i) {
+                              return FileListItemWidget(
+                                favorites.files![i],
+                                favorite: true,
+                                onTap: () {
+                                  context.pop(favorites.files![i]);
+                                },
+                              );
+                            },
+                          )
+                        : EmptyWidget(
+                            size: 150,
+                            text: "暂无收藏文件夹",
+                          ),
               ),
               SizedBox(
                 height: 16,

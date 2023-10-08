@@ -95,6 +95,31 @@ class DockerRegistryData {
     this.starCount,
   });
 
+  Future<DsmResponse> pullStart(String tag) async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Docker.Image",
+      "pull_start",
+      version: 1,
+      data: {
+        "tag": '"$tag"',
+        "repository": '"$name"',
+      },
+    );
+    return res;
+  }
+
+  Future<DsmResponse> pullStatus(String taskId) async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Docker.Image",
+      "pull_status",
+      version: 1,
+      data: {
+        "taskid": '"$taskId"',
+      },
+    );
+    return res;
+  }
+
   DockerRegistryData.fromJson(dynamic json) {
     description = json['description'];
     downloads = json['downloads'];
