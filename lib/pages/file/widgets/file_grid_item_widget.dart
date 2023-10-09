@@ -3,6 +3,7 @@ import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/file_icon.dart';
+import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 
 class FileGridItemWidget extends StatelessWidget {
@@ -42,14 +43,22 @@ class FileGridItemWidget extends StatelessWidget {
                     child: FileIcon(
                       file.isdir == true ? FileTypeEnum.folder : file.fileType,
                       thumb: file.path!,
-                      width: 60,
-                      height: 60,
+                      size: 40,
+                      thumbSize: 60,
                     ),
                   ),
-                  Text(
+                  ExtendedText(
                     file.name!,
                     maxLines: 2,
                     textAlign: TextAlign.center,
+                    overflowWidget: TextOverflowWidget(
+                      position: TextOverflowPosition.middle,
+                      align: TextOverflowAlign.right,
+                      child: Text(
+                        "…",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
                     style: TextStyle(
                       fontSize: 12,
                     ),

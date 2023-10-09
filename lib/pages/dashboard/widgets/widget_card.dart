@@ -9,7 +9,9 @@ class WidgetCard extends StatelessWidget {
 
   final Function()? onTap;
 
-  const WidgetCard({this.icon, this.title, this.body, this.onTap, super.key});
+  final EdgeInsets? padding;
+
+  const WidgetCard({this.icon, this.title, this.body, this.onTap, this.padding, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class WidgetCard extends StatelessWidget {
             if (body != null)
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                padding: padding ?? EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),

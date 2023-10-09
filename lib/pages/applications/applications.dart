@@ -24,15 +24,18 @@ class _ApplicationsState extends State<Applications> {
       appBar: GlassAppBar(
         title: Text("应用"),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 80, childAspectRatio: 0.95),
-        itemBuilder: (context, i) {
-          String application = applications[i];
-          return ApplicationItemWidget(
-            application,
-          );
-        },
-        itemCount: applications.length,
+      body: Padding(
+        padding: EdgeInsets.all(8),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 120, childAspectRatio: 0.95),
+          itemBuilder: (context, i) {
+            String application = applications[i];
+            return ApplicationItemWidget(
+              application,
+            );
+          },
+          itemCount: applications.length,
+        ),
       ),
     );
   }

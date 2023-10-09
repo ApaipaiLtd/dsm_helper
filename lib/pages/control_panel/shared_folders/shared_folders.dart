@@ -152,7 +152,7 @@ class _SharedFoldersState extends State<SharedFolders> {
               folder.encryption == null || folder.encryption == 0
                   ? FileIcon(
                       FileTypeEnum.folder,
-                      width: 30,
+                      size: 30,
                     )
                   : Image.asset(
                       "assets/icons/folder_locked.png",
@@ -217,7 +217,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                             children: [
                               PopupMenuItem(
                                 onTap: () {
-                                  context.push(AddSharedFolders([], folder: folder), name: "add_shared_folders");
+                                  context.push(AddSharedFolders(volume.volumes!, folder: folder), name: "add_shared_folders");
                                 },
                                 child: Row(
                                   children: [
@@ -235,13 +235,11 @@ class _SharedFoldersState extends State<SharedFolders> {
                               ),
                               if (folder.supportSnapshot!)
                                 PopupMenuItem(
-                                  onTap: () async {
-                                    Navigator.of(context).pop();
-                                  },
+                                  onTap: () async {},
                                   child: Row(
                                     children: [
                                       Image.asset(
-                                        "assets/icons/delete.png",
+                                        "assets/icons/copy.png",
                                         width: 20,
                                         height: 20,
                                       ),
@@ -401,13 +399,16 @@ class _SharedFoldersState extends State<SharedFolders> {
         actions: [
           CupertinoButton(
             onPressed: () async {
-              context.push(AddSharedFolders([]), name: "add_shared_folders").then((res) {
+              context.push(AddSharedFolders(volume.volumes!), name: "add_shared_folders").then((res) {
                 if (res == true) {
                   getShares();
                 }
               });
             },
-            child: Icon(Icons.add),
+            child: Image.asset(
+              "assets/icons/plus_circle.png",
+              width: 24,
+            ),
           )
         ],
       ),

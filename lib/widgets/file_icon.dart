@@ -12,39 +12,29 @@ class FileIcon extends StatelessWidget {
   final FileTypeEnum fileType;
   final String? thumb;
   final bool network;
-  final double width;
-  final double height;
+  final double size;
+  final double thumbSize;
   final BoxFit fit;
-  FileIcon(this.fileType, {this.thumb, this.network = true, this.width = 40, this.height = 40, this.fit = BoxFit.contain});
+  FileIcon(this.fileType, {this.thumb, this.network = true, this.size = 40, this.thumbSize = 40, this.fit = BoxFit.contain});
   @override
   Widget build(BuildContext context) {
-    if (fileType == FileTypeEnum.movie && thumb != null) {
-      return network
-          ? CupertinoExtendedImage(
-              api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=medium&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true",
-              width: width,
-              height: height,
-              fit: fit,
-              placeholder: Image.asset(fileType.icon, width: min(40, height), height: min(40, height)),
-            )
-          : ExtendedImage.file(
-              File(thumb!),
-              width: width,
-              height: height,
-              fit: fit,
-            );
-    } else if (fileType == FileTypeEnum.image && thumb != null) {
+    if ([FileTypeEnum.movie, FileTypeEnum.image].contains(fileType) && thumb != null) {
       return network
           ? CupertinoExtendedImage(
               api.Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(thumb!)}&size=small&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${api.Api.dsm.sid!}&animate=true",
-              width: width,
-              height: height,
+              width: thumbSize,
+              height: thumbSize,
               fit: fit,
-              placeholder: Image.asset(fileType.icon, width: min(40, height), height: min(40, height)),
+              placeholder: Container(width: thumbSize, height: thumbSize, alignment: Alignment.center, child: Image.asset(fileType.icon, width: size, height: size)),
             )
-          : ExtendedImage.file(File(thumb!), width: width, height: height, fit: fit);
+          : ExtendedImage.file(
+              File(thumb!),
+              width: thumbSize,
+              height: thumbSize,
+              fit: fit,
+            );
     } else {
-      return Image.asset(fileType.icon, width: width, height: height);
+      return Container(width: thumbSize, height: thumbSize, alignment: Alignment.center, child: Image.asset(fileType.icon, width: size, height: size));
     }
   }
 }

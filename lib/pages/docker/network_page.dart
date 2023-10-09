@@ -12,7 +12,7 @@ class NetworkPage extends StatefulWidget {
   State<NetworkPage> createState() => _NetworkPageState();
 }
 
-class _NetworkPageState extends State<NetworkPage> {
+class _NetworkPageState extends State<NetworkPage> with AutomaticKeepAliveClientMixin {
   bool loading = true;
   DockerNetwork dockerNetwork = DockerNetwork();
   @override
@@ -30,6 +30,7 @@ class _NetworkPageState extends State<NetworkPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return loading
         ? LoadingWidget(
             size: 30,
@@ -126,4 +127,7 @@ class _NetworkPageState extends State<NetworkPage> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

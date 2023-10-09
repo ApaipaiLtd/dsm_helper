@@ -38,15 +38,17 @@ class _ImagePageState extends State<ImagePage> with AutomaticKeepAliveClientMixi
         ? LoadingWidget(
             size: 30,
           )
-        : ListView.separated(
+        : Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            itemCount: dockerImage.images!.length,
-            itemBuilder: (context, i) {
-              return _buildImageItem(dockerImage.images![i]);
-            },
-            separatorBuilder: (context, i) {
-              return SizedBox(height: 10);
-            },
+            child: ListView.separated(
+              itemCount: dockerImage.images!.length,
+              itemBuilder: (context, i) {
+                return _buildImageItem(dockerImage.images![i]);
+              },
+              separatorBuilder: (context, i) {
+                return SizedBox(height: 10);
+              },
+            ),
           );
   }
 

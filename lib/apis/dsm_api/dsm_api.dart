@@ -80,6 +80,7 @@ class DsmApi extends HttpUtil {
     List<DsmResponse> res = [];
     if (response.data['success']) {
       for (int i = 0; i < apis.length; i++) {
+        print(response.data['data']['result'][i]);
         res.add(DsmResponse.fromJson(response.data['data']['result'][i], apis[i].fromJson));
       }
     }

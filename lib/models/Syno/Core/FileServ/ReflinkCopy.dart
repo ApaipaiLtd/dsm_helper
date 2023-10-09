@@ -1,9 +1,15 @@
+import 'package:dsm_helper/models/base_model.dart';
+
 /// reflink_copy_enable : false
 
-class ReflinkCopy {
+class ReflinkCopy extends BaseModel {
   ReflinkCopy({
     this.reflinkCopyEnable,
   });
+
+  String? api = "SYNO.Core.FileServ.ReflinkCopy";
+  String? method = "get";
+  int? version = 1;
 
   ReflinkCopy.fromJson(dynamic json) {
     reflinkCopyEnable = json['reflink_copy_enable'];
@@ -19,5 +25,10 @@ class ReflinkCopy {
     final map = <String, dynamic>{};
     map['reflink_copy_enable'] = reflinkCopyEnable;
     return map;
+  }
+
+  @override
+  fromJson(json) {
+    return ReflinkCopy.fromJson(json);
   }
 }

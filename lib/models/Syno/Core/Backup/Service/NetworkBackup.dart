@@ -1,9 +1,11 @@
+import 'package:dsm_helper/models/base_model.dart';
+
 /// enable : false
 /// enable_custom_config : false
 /// enable_rsync_account : false
 /// rsync_sshd_port : "22"
 
-class NetworkBackup {
+class NetworkBackup extends BaseModel {
   NetworkBackup({
     this.enable,
     this.enableCustomConfig,
@@ -17,6 +19,11 @@ class NetworkBackup {
     enableRsyncAccount = json['enable_rsync_account'];
     rsyncSshdPort = json['rsync_sshd_port'];
   }
+
+  String? api = "SYNO.Backup.Service.NetworkBackup";
+  String? method = "get";
+  int? version = 1;
+
   bool? enable;
   bool? enableCustomConfig;
   bool? enableRsyncAccount;
@@ -40,5 +47,10 @@ class NetworkBackup {
     map['enable_rsync_account'] = enableRsyncAccount;
     map['rsync_sshd_port'] = rsyncSshdPort;
     return map;
+  }
+
+  @override
+  fromJson(json) {
+    return NetworkBackup.fromJson(json);
   }
 }

@@ -67,7 +67,7 @@ class FileTransfer extends BaseModel {
 
   @override
   fromJson(json) {
-    FileTransfer.fromJson(json);
+    return FileTransfer.fromJson(json);
   }
 
   @override

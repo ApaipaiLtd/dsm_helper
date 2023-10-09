@@ -8,6 +8,7 @@ import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -52,7 +53,7 @@ class _AboutState extends State<About> {
             child: ListView(
               children: <Widget>[
                 SizedBox(
-                  height: 70,
+                  height: 50,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,7 +73,7 @@ class _AboutState extends State<About> {
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${packageInfo!.version} build:${packageInfo!.buildNumber}",
+                      "${packageInfo?.version} build:${packageInfo?.buildNumber}",
                       style: TextStyle(
                         color: AppTheme.of(context)?.placeholderColor,
                         fontSize: 16,
@@ -87,7 +88,7 @@ class _AboutState extends State<About> {
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Padding(
@@ -111,13 +112,17 @@ class _AboutState extends State<About> {
                                   ),
                                   Spacer(),
                                   CupertinoButton(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                    color: AppTheme.of(context)?.primaryColor,
+                                    borderRadius: BorderRadius.circular(15),
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    minSize: 0,
                                     onPressed: () {
                                       launchUrlString(channel.key!, mode: LaunchMode.externalApplication);
                                     },
-                                    child: Text("加入"),
+                                    child: Text(
+                                      "加入",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -131,7 +136,7 @@ class _AboutState extends State<About> {
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Padding(
@@ -155,13 +160,17 @@ class _AboutState extends State<About> {
                                   ),
                                   Spacer(),
                                   CupertinoButton(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                    color: AppTheme.of(context)?.primaryColor,
+                                    borderRadius: BorderRadius.circular(15),
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    minSize: 0,
                                     onPressed: () {
                                       launchUrlString('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D${qq.key}');
                                     },
-                                    child: Text("加群"),
+                                    child: Text(
+                                      "加群",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -175,7 +184,7 @@ class _AboutState extends State<About> {
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Padding(
@@ -199,15 +208,19 @@ class _AboutState extends State<About> {
                                 ),
                                 Spacer(),
                                 CupertinoButton(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                  color: AppTheme.of(context)?.primaryColor,
+                                  borderRadius: BorderRadius.circular(15),
+                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  minSize: 0,
                                   onPressed: () {
                                     ClipboardData data = new ClipboardData(text: wechat.name!);
                                     Clipboard.setData(data);
                                     Utils.toast("已复制到剪贴板");
                                   },
-                                  child: Text("复制"),
+                                  child: Text(
+                                    "复制",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
                                 ),
                               ],
                             ),
@@ -223,7 +236,7 @@ class _AboutState extends State<About> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
@@ -243,9 +256,10 @@ class _AboutState extends State<About> {
                         ),
                         Spacer(),
                         CupertinoButton(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          color: AppTheme.of(context)?.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          minSize: 0,
                           onPressed: () {
                             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                               return Browser(
@@ -253,7 +267,10 @@ class _AboutState extends State<About> {
                               );
                             }));
                           },
-                          child: Text("查看"),
+                          child: Text(
+                            "查看",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
                     ),
@@ -265,7 +282,7 @@ class _AboutState extends State<About> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
@@ -284,20 +301,17 @@ class _AboutState extends State<About> {
                         ),
                         Spacer(),
                         CupertinoButton(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          color: AppTheme.of(context)?.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          minSize: 0,
                           onPressed: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(builder: (context) {
-                                return Browser(
-                                  title: "Flutter官网",
-                                  url: "https://flutter.dev",
-                                );
-                              }),
-                            );
+                            context.push(Browser(title: "Flutter官网", url: "https://flutter.dev"), name: "open_source");
                           },
-                          child: Text("官网"),
+                          child: Text(
+                            "官网",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
                     ),
@@ -309,7 +323,7 @@ class _AboutState extends State<About> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
@@ -329,19 +343,17 @@ class _AboutState extends State<About> {
                         ),
                         Spacer(),
                         CupertinoButton(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          color: AppTheme.of(context)?.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          minSize: 0,
                           onPressed: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                  builder: (context) {
-                                    return OpenSource();
-                                  },
-                                  settings: RouteSettings(name: "open_source")),
-                            );
+                            context.push(OpenSource(), name: "open_source");
                           },
-                          child: Text("详情"),
+                          child: Text(
+                            "详情",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
                     ),
@@ -353,80 +365,100 @@ class _AboutState extends State<About> {
               ],
             ),
           ),
-          Column(
-            children: [
-              Text(
-                "©2020-${DateTime.now().year} 青岛阿派派软件有限公司",
-                style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      context.push(License(), name: "license");
-                    },
-                    child: Text(
-                      "用户协议",
-                      style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
-                    ),
-                  ),
-                  Container(
-                    height: 10,
-                    width: 1,
-                    color: AppTheme.of(context)?.placeholderColor,
-                    margin: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      context.push(
-                          Browser(
-                            url: '${Utils.appUrl}/privacy',
-                            title: "隐私政策",
-                          ),
-                          name: "license");
-                    },
-                    child: Text(
-                      "隐私政策",
-                      style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
-                    ),
-                  ),
-                ],
-              ),
-              if (Platform.isAndroid)
-                Padding(
-                  padding: EdgeInsets.all(20),
-                  child: CupertinoButton(
-                    onPressed: () async {
-                      if (checking) {
-                        return;
-                      }
-                      setState(() {
-                        checking = true;
-                      });
-                      await Utils.checkUpdate(true, context, force: true);
-                      setState(() {
-                        checking = false;
-                      });
-                    },
-                    // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-
-                    child: checking
-                        ? Center(
-                            child: CupertinoActivityIndicator(
-                              radius: 13,
-                            ),
-                          )
-                        : Text(
-                            "检查更新",
-                            style: TextStyle(fontSize: 18, color: AppTheme.of(context)?.primaryColor),
-                          ),
+          SizedBox(height: 10),
+          SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Text(
+                  "Copyright © 2020-${DateTime.now().year} 青岛阿派派软件有限公司",
+                  style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
+                ),
+                SizedBox(height: 5),
+                GestureDetector(
+                  onTap: () {
+                    context.push(Browser(url: "https://beian.miit.gov.cn/"));
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "ICP备案号：鲁ICP备2021022006号-4A",
+                        style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
+                      ),
+                      Icon(
+                        CupertinoIcons.right_chevron,
+                        size: 12,
+                        color: AppTheme.of(context)?.placeholderColor,
+                      ),
+                    ],
                   ),
                 ),
-            ],
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        context.push(License(), name: "license");
+                      },
+                      child: Text(
+                        "用户协议",
+                        style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
+                      ),
+                    ),
+                    Container(
+                      height: 10,
+                      width: 1,
+                      color: AppTheme.of(context)?.placeholderColor,
+                      margin: EdgeInsets.symmetric(horizontal: 14),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        context.push(
+                            Browser(
+                              url: '${Utils.appUrl}/privacy',
+                              title: "隐私政策",
+                            ),
+                            name: "license");
+                      },
+                      child: Text(
+                        "隐私政策",
+                        style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
+                      ),
+                    ),
+                  ],
+                ),
+                if (Platform.isAndroid)
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    margin: EdgeInsets.only(top: 10),
+                    child: CupertinoButton(
+                      onPressed: () async {
+                        if (checking) {
+                          return;
+                        }
+                        setState(() {
+                          checking = true;
+                        });
+                        await Utils.checkUpdate(true, context, force: true);
+                        setState(() {
+                          checking = false;
+                        });
+                      },
+                      color: AppTheme.of(context)?.primaryColor,
+                      borderRadius: BorderRadius.circular(15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [if (checking) LoadingWidget(), Text("检查更新")],
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 14),
+              ],
+            ),
           )
         ],
       ),

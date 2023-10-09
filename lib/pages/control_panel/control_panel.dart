@@ -79,14 +79,14 @@ class _ControlPanelState extends State<ControlPanel> {
                     icon: 'groups',
                     width: width,
                   ),
-                ControlPanelItemWidget(
-                  onTap: () {
-                    // context.push(UserGroups(), name: 'ldap');
-                  },
-                  title: "域/LDAP",
-                  icon: "ldap",
-                  width: width,
-                ),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(UserGroups(), name: 'ldap');
+                //   },
+                //   title: "域/LDAP",
+                //   icon: "ldap",
+                //   width: width,
+                // ),
               ],
             ),
           ),

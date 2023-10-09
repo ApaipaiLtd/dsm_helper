@@ -1,3 +1,5 @@
+import 'package:dsm_helper/models/base_model.dart';
+
 /// enable_avahi : true
 /// enable_custom_domain : false
 /// enable_hsts : false
@@ -15,7 +17,7 @@
 /// server_header : "nginx"
 /// support_reuseport : true
 
-class Dsm {
+class Dsm extends BaseModel {
   Dsm({
     this.enableAvahi,
     this.enableCustomDomain,
@@ -34,6 +36,10 @@ class Dsm {
     this.serverHeader,
     this.supportReuseport,
   });
+
+  String? api = "SYNO.Core.Web.DSM";
+  String? method = "get";
+  int? version = 2;
 
   Dsm.fromJson(dynamic json) {
     enableAvahi = json['enable_avahi'];
@@ -126,6 +132,11 @@ class Dsm {
     map['server_header'] = serverHeader;
     map['support_reuseport'] = supportReuseport;
     return map;
+  }
+
+  @override
+  fromJson(json) {
+    return Dsm.fromJson(json);
   }
 }
 

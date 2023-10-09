@@ -11,7 +11,7 @@ class LogPage extends StatefulWidget {
   State<LogPage> createState() => _LogPageState();
 }
 
-class _LogPageState extends State<LogPage> {
+class _LogPageState extends State<LogPage> with AutomaticKeepAliveClientMixin {
   bool loading = true;
   DockerLog dockerLog = DockerLog();
   @override
@@ -29,57 +29,64 @@ class _LogPageState extends State<LogPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return loading
         ? LoadingWidget(size: 30)
         : dockerLog.logs != null && dockerLog.logs!.isNotEmpty
-            ? Timeline.tileBuilder(
+            ? Padding(
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                theme: TimelineThemeData(
-                  nodePosition: 0,
-                  color: Color(0xff989898),
-                  indicatorTheme: IndicatorThemeData(
-                    position: 0,
-                    size: 14.0,
-                  ),
-                  connectorTheme: ConnectorThemeData(
-                    thickness: 1,
-                  ),
-                ),
-                builder: TimelineTileBuilder.connected(
-                  connectionDirection: ConnectionDirection.before,
-                  contentsAlign: ContentsAlign.basic,
-                  contentsBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(left: 14.0, bottom: 18),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${dockerLog.logs![index].time}",
-                          style: TextStyle(fontSize: 16, height: 1),
-                        ),
-                        SizedBox(
-                          height: 3,
-                        ),
-                        Text(
-                          "${dockerLog.logs![index].event}",
-                          style: TextStyle(fontSize: 13, color: Colors.black54),
-                        ),
-                      ],
+                child: Timeline.tileBuilder(
+                  // padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  theme: TimelineThemeData(
+                    nodePosition: 0,
+                    color: Color(0xff989898),
+                    indicatorTheme: IndicatorThemeData(
+                      position: 0,
+                      size: 14.0,
+                    ),
+                    connectorTheme: ConnectorThemeData(
+                      thickness: 1,
                     ),
                   ),
-                  indicatorBuilder: (_, index) {
-                    return DotIndicator(
-                      color: dockerLog.logs![index].levelEnum.color,
-                    );
-                  },
-                  connectorBuilder: (_, index, ___) => DashedLineConnector(
-                    color: Color(0x3C3C3C43),
+                  builder: TimelineTileBuilder.connected(
+                    connectionDirection: ConnectionDirection.before,
+                    contentsAlign: ContentsAlign.basic,
+                    contentsBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(left: 14.0, bottom: 18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${dockerLog.logs![index].time}",
+                            style: TextStyle(fontSize: 16, height: 1),
+                          ),
+                          SizedBox(
+                            height: 3,
+                          ),
+                          Text(
+                            "${dockerLog.logs![index].event}",
+                            style: TextStyle(fontSize: 13, color: Colors.black54),
+                          ),
+                        ],
+                      ),
+                    ),
+                    indicatorBuilder: (_, index) {
+                      return DotIndicator(
+                        color: dockerLog.logs![index].levelEnum.color,
+                      );
+                    },
+                    connectorBuilder: (_, index, ___) => DashedLineConnector(
+                      color: Color(0x3C3C3C43),
+                    ),
+                    itemCount: dockerLog.logs!.length,
                   ),
-                  itemCount: dockerLog.logs!.length,
                 ),
               )
             : EmptyWidget(
                 text: "暂无日志",
               );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

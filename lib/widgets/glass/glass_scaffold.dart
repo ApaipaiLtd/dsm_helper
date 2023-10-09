@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class GlassScaffold extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? body;
+  final List<Widget>? persistentFooterButtons;
 
   final Widget? floatingActionButton;
   const GlassScaffold({
     this.appBar,
     this.body,
     this.floatingActionButton,
+    this.persistentFooterButtons,
     super.key,
   });
 
@@ -18,6 +20,8 @@ class GlassScaffold extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: appBar,
       floatingActionButton: floatingActionButton,
+      persistentFooterButtons: persistentFooterButtons,
+      persistentFooterAlignment: AlignmentDirectional.center,
       body: Stack(
         children: [
           Positioned(

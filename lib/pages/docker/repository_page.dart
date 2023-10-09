@@ -34,15 +34,17 @@ class _RepositoryPageState extends State<RepositoryPage> with AutomaticKeepAlive
     super.build(context);
     return loading
         ? LoadingWidget(size: 30)
-        : ListView.separated(
+        : Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            itemCount: dockerRegistry.data!.length,
-            itemBuilder: (context, i) {
-              return _buildImageItem(dockerRegistry.data![i]);
-            },
-            separatorBuilder: (context, i) {
-              return SizedBox(height: 10);
-            },
+            child: ListView.separated(
+              itemCount: dockerRegistry.data!.length,
+              itemBuilder: (context, i) {
+                return _buildImageItem(dockerRegistry.data![i]);
+              },
+              separatorBuilder: (context, i) {
+                return SizedBox(height: 10);
+              },
+            ),
           );
   }
 

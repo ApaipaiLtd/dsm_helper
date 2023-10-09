@@ -165,47 +165,47 @@ class KeyboardDismisser extends StatelessWidget {
         excludeFromSemantics: excludeFromSemantics,
         dragStartBehavior: dragStartBehavior,
         behavior: behavior,
-        onTap: gestures.contains(GestureType.onTap) ? () => _unfocus(context) : null,
-        onTapDown: gestures.contains(GestureType.onTapDown) ? (_) => _unfocus(context) : null,
-        onPanUpdate: gestures.contains(GestureType.onPanUpdateAnyDirection) ? (_) => _unfocus(context) : null,
-        onTapUp: gestures.contains(GestureType.onTapUp) ? (_) => _unfocus(context) : null,
-        onTapCancel: gestures.contains(GestureType.onTapCancel) ? () => _unfocus(context) : null,
-        onSecondaryTapDown: gestures.contains(GestureType.onSecondaryTapDown) ? (_) => _unfocus(context) : null,
-        onSecondaryTapUp: gestures.contains(GestureType.onSecondaryTapUp) ? (_) => _unfocus(context) : null,
-        onSecondaryTapCancel: gestures.contains(GestureType.onSecondaryTapCancel) ? () => _unfocus(context) : null,
-        onDoubleTap: gestures.contains(GestureType.onDoubleTap) ? () => _unfocus(context) : null,
-        onLongPress: gestures.contains(GestureType.onLongPress) ? () => _unfocus(context) : null,
-        onLongPressStart: gestures.contains(GestureType.onLongPressStart) ? (_) => _unfocus(context) : null,
-        onLongPressMoveUpdate: gestures.contains(GestureType.onLongPressMoveUpdate) ? (_) => _unfocus(context) : null,
-        onLongPressUp: gestures.contains(GestureType.onLongPressUp) ? () => _unfocus(context) : null,
-        onLongPressEnd: gestures.contains(GestureType.onLongPressEnd) ? (_) => _unfocus(context) : null,
-        onVerticalDragDown: gestures.contains(GestureType.onVerticalDragDown) ? (_) => _unfocus(context) : null,
-        onVerticalDragStart: gestures.contains(GestureType.onVerticalDragStart) ? (_) => _unfocus(context) : null,
-        onVerticalDragUpdate: _gesturesContainsDirectionalPanUpdate() ? (details) => _unfocusWithDetails(context, details) : null,
-        onVerticalDragEnd: gestures.contains(GestureType.onVerticalDragEnd) ? (_) => _unfocus(context) : null,
-        onVerticalDragCancel: gestures.contains(GestureType.onVerticalDragCancel) ? () => _unfocus(context) : null,
-        onHorizontalDragDown: gestures.contains(GestureType.onHorizontalDragDown) ? (_) => _unfocus(context) : null,
-        onHorizontalDragStart: gestures.contains(GestureType.onHorizontalDragStart) ? (_) => _unfocus(context) : null,
-        onHorizontalDragUpdate: _gesturesContainsDirectionalPanUpdate() ? (details) => _unfocusWithDetails(context, details) : null,
-        onHorizontalDragEnd: gestures.contains(GestureType.onHorizontalDragEnd) ? (_) => _unfocus(context) : null,
-        onHorizontalDragCancel: gestures.contains(GestureType.onHorizontalDragCancel) ? () => _unfocus(context) : null,
-        onForcePressStart: gestures.contains(GestureType.onForcePressStart) ? (_) => _unfocus(context) : null,
-        onForcePressPeak: gestures.contains(GestureType.onForcePressPeak) ? (_) => _unfocus(context) : null,
-        onForcePressUpdate: gestures.contains(GestureType.onForcePressUpdate) ? (_) => _unfocus(context) : null,
-        onForcePressEnd: gestures.contains(GestureType.onForcePressEnd) ? (_) => _unfocus(context) : null,
-        onPanDown: gestures.contains(GestureType.onPanDown) ? (_) => _unfocus(context) : null,
-        onPanStart: gestures.contains(GestureType.onPanStart) ? (_) => _unfocus(context) : null,
-        onPanEnd: gestures.contains(GestureType.onPanEnd) ? (_) => _unfocus(context) : null,
-        onPanCancel: gestures.contains(GestureType.onPanCancel) ? () => _unfocus(context) : null,
-        onScaleStart: gestures.contains(GestureType.onScaleStart) ? (_) => _unfocus(context) : null,
-        onScaleUpdate: gestures.contains(GestureType.onScaleUpdate) ? (_) => _unfocus(context) : null,
-        onScaleEnd: gestures.contains(GestureType.onScaleEnd) ? (_) => _unfocus(context) : null,
+        onTap: gestures.contains(GestureType.onTap) ? () => _unFocus(context) : null,
+        onTapDown: gestures.contains(GestureType.onTapDown) ? (_) => _unFocus(context) : null,
+        onPanUpdate: gestures.contains(GestureType.onPanUpdateAnyDirection) ? (_) => _unFocus(context) : null,
+        onTapUp: gestures.contains(GestureType.onTapUp) ? (_) => _unFocus(context) : null,
+        onTapCancel: gestures.contains(GestureType.onTapCancel) ? () => _unFocus(context) : null,
+        onSecondaryTapDown: gestures.contains(GestureType.onSecondaryTapDown) ? (_) => _unFocus(context) : null,
+        onSecondaryTapUp: gestures.contains(GestureType.onSecondaryTapUp) ? (_) => _unFocus(context) : null,
+        onSecondaryTapCancel: gestures.contains(GestureType.onSecondaryTapCancel) ? () => _unFocus(context) : null,
+        onDoubleTap: gestures.contains(GestureType.onDoubleTap) ? () => _unFocus(context) : null,
+        onLongPress: gestures.contains(GestureType.onLongPress) ? () => _unFocus(context) : null,
+        onLongPressStart: gestures.contains(GestureType.onLongPressStart) ? (_) => _unFocus(context) : null,
+        onLongPressMoveUpdate: gestures.contains(GestureType.onLongPressMoveUpdate) ? (_) => _unFocus(context) : null,
+        onLongPressUp: gestures.contains(GestureType.onLongPressUp) ? () => _unFocus(context) : null,
+        onLongPressEnd: gestures.contains(GestureType.onLongPressEnd) ? (_) => _unFocus(context) : null,
+        onVerticalDragDown: gestures.contains(GestureType.onVerticalDragDown) ? (_) => _unFocus(context) : null,
+        onVerticalDragStart: gestures.contains(GestureType.onVerticalDragStart) ? (_) => _unFocus(context) : null,
+        onVerticalDragUpdate: _gesturesContainsDirectionalPanUpdate() ? (details) => _unFocusWithDetails(context, details) : null,
+        onVerticalDragEnd: gestures.contains(GestureType.onVerticalDragEnd) ? (_) => _unFocus(context) : null,
+        onVerticalDragCancel: gestures.contains(GestureType.onVerticalDragCancel) ? () => _unFocus(context) : null,
+        onHorizontalDragDown: gestures.contains(GestureType.onHorizontalDragDown) ? (_) => _unFocus(context) : null,
+        onHorizontalDragStart: gestures.contains(GestureType.onHorizontalDragStart) ? (_) => _unFocus(context) : null,
+        onHorizontalDragUpdate: _gesturesContainsDirectionalPanUpdate() ? (details) => _unFocusWithDetails(context, details) : null,
+        onHorizontalDragEnd: gestures.contains(GestureType.onHorizontalDragEnd) ? (_) => _unFocus(context) : null,
+        onHorizontalDragCancel: gestures.contains(GestureType.onHorizontalDragCancel) ? () => _unFocus(context) : null,
+        onForcePressStart: gestures.contains(GestureType.onForcePressStart) ? (_) => _unFocus(context) : null,
+        onForcePressPeak: gestures.contains(GestureType.onForcePressPeak) ? (_) => _unFocus(context) : null,
+        onForcePressUpdate: gestures.contains(GestureType.onForcePressUpdate) ? (_) => _unFocus(context) : null,
+        onForcePressEnd: gestures.contains(GestureType.onForcePressEnd) ? (_) => _unFocus(context) : null,
+        onPanDown: gestures.contains(GestureType.onPanDown) ? (_) => _unFocus(context) : null,
+        onPanStart: gestures.contains(GestureType.onPanStart) ? (_) => _unFocus(context) : null,
+        onPanEnd: gestures.contains(GestureType.onPanEnd) ? (_) => _unFocus(context) : null,
+        onPanCancel: gestures.contains(GestureType.onPanCancel) ? () => _unFocus(context) : null,
+        onScaleStart: gestures.contains(GestureType.onScaleStart) ? (_) => _unFocus(context) : null,
+        onScaleUpdate: gestures.contains(GestureType.onScaleUpdate) ? (_) => _unFocus(context) : null,
+        onScaleEnd: gestures.contains(GestureType.onScaleEnd) ? (_) => _unFocus(context) : null,
         child: child,
       );
 
-  void _unfocus(BuildContext context) => WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+  void _unFocus(BuildContext context) => WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
 
-  void _unfocusWithDetails(
+  void _unFocusWithDetails(
     BuildContext context,
     DragUpdateDetails details,
   ) {
@@ -213,13 +213,13 @@ class KeyboardDismisser extends StatelessWidget {
     final dx = details.delta.dx;
     final isDragMainlyHorizontal = dx.abs() - dy.abs() > 0;
     if (gestures.contains(GestureType.onPanUpdateDownDirection) && dy > 0 && !isDragMainlyHorizontal) {
-      _unfocus(context);
+      _unFocus(context);
     } else if (gestures.contains(GestureType.onPanUpdateUpDirection) && dy < 0 && !isDragMainlyHorizontal) {
-      _unfocus(context);
+      _unFocus(context);
     } else if (gestures.contains(GestureType.onPanUpdateRightDirection) && dx > 0 && isDragMainlyHorizontal) {
-      _unfocus(context);
+      _unFocus(context);
     } else if (gestures.contains(GestureType.onPanUpdateLeftDirection) && dx < 0 && isDragMainlyHorizontal) {
-      _unfocus(context);
+      _unFocus(context);
     }
   }
 

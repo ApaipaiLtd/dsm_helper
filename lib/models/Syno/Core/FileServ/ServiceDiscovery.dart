@@ -1,15 +1,21 @@
+import 'package:dsm_helper/models/base_model.dart';
+
 /// enable_afp_time_machine : false
 /// enable_smb_time_machine : false
 /// time_machine_disable_shares : []
 /// time_machine_shares : []
 
-class ServiceDiscovery {
+class ServiceDiscovery extends BaseModel {
   ServiceDiscovery({
     this.enableAfpTimeMachine,
     this.enableSmbTimeMachine,
     this.timeMachineDisableShares,
     this.timeMachineShares,
   });
+
+  String? api = "SYNO.Core.FileServ.ServiceDiscovery";
+  String? method = "get";
+  int? version = 1;
 
   ServiceDiscovery.fromJson(dynamic json) {
     enableAfpTimeMachine = json['enable_afp_time_machine'];
@@ -54,5 +60,10 @@ class ServiceDiscovery {
       map['time_machine_shares'] = timeMachineShares?.map((v) => v.toJson()).toList();
     }
     return map;
+  }
+
+  @override
+  fromJson(json) {
+    return ServiceDiscovery.fromJson(json);
   }
 }

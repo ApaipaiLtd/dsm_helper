@@ -174,10 +174,8 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
       appBar: GlassAppBar(
         title: Text(widget.title),
         bottom: TabBar(
-          padding: EdgeInsets.zero,
           isScrollable: true,
           controller: _tabController,
-          indicatorSize: TabBarIndicatorSize.label,
           tabs: [
             Tab(
               child: Text("容器"),
@@ -197,17 +195,15 @@ class _DockerState extends State<Docker> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      body: SafeArea(
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            ContainerPage(),
-            ImagePage(),
-            RepositoryPage(),
-            NetworkPage(),
-            LogPage(),
-          ],
-        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          ContainerPage(),
+          ImagePage(),
+          RepositoryPage(),
+          NetworkPage(),
+          LogPage(),
+        ],
       ),
     );
   }

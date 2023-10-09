@@ -455,32 +455,26 @@ class FileListItemWidget extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onLongPress: onLongPress,
       onTap: onTap,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 10,
-          ),
-          Hero(
-            tag: Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(file.path!)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Api.dsm.sid!}&animate=true",
-            child: FileIcon(
-              file.fileType,
-              thumb: file.path!,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        child: Row(
+          children: [
+            Hero(
+              tag: Api.dsm.baseUrl! + "/webapi/entry.cgi?path=${Uri.encodeComponent(file.path!)}&size=original&api=SYNO.FileStation.Thumb&method=get&version=2&_sid=${Api.dsm.sid!}&animate=true",
+              child: FileIcon(file.fileType, thumb: file.path!, size: 30, thumbSize: 40),
             ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: fileInfo,
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          actionButton,
-          SizedBox(
-            width: 5,
-          ),
-        ],
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: fileInfo,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            actionButton,
+          ],
+        ),
       ),
     );
   }

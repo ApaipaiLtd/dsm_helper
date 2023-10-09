@@ -1,4 +1,5 @@
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -58,6 +59,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     unselectedLabelColor: Colors.black,
     labelColor: Color(0xff2A82E4),
   ),
+  cupertinoOverrideTheme: CupertinoThemeData(primaryColor: Color(0xff2A82E4), applyThemeToAll: true),
   splashFactory: NoSplash.splashFactory,
   highlightColor: Colors.transparent,
   appBarTheme: AppBarTheme(
