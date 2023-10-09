@@ -1,10 +1,22 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:dsm_helper/models/Syno/Core/Share.dart';
+import 'package:dsm_helper/models/Syno/Core/Storage/Volume.dart';
+import 'package:dsm_helper/models/Syno/FileStation/Sharing.dart';
 import 'package:dsm_helper/pages/control_panel/shared_folders/add_shared_folder.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kumi_popup_window/kumi_popup_window.dart';
 
 class SharedFolders extends StatefulWidget {
   @override
@@ -13,10 +25,8 @@ class SharedFolders extends StatefulWidget {
 
 class _SharedFoldersState extends State<SharedFolders> {
   bool loading = true;
-  bool success = true;
-  String msg = "";
-  List folders = [];
-  List volumes = [];
+  Share share = Share();
+  Volume volume = Volume();
   Timer? timer;
   @override
   void initState() {
@@ -25,59 +35,21 @@ class _SharedFoldersState extends State<SharedFolders> {
   }
 
   getVolumes() async {
-    var res = await Api.volumes();
-    if (res['success']) {
-      setState(() {
-        volumes = res['data']['volumes'];
-      });
-      getData();
-    }
-  }
-
-  getData() async {
     setState(() {
       loading = true;
     });
-    var res = await Api.shareCore(additional: [
-      "hidden",
-      "encryption",
-      "is_aclmode",
-      "unite_permission",
-      "is_support_acl",
-      "is_sync_share",
-      "is_force_readonly",
-      "force_readonly_reason",
-      "recyclebin",
-      "is_share_moving",
-      "is_cluster_share",
-      "is_exfat_share",
-      "support_snapshot",
-      "share_quota",
-      "enable_share_compress",
-      "enable_share_cow",
-    ]);
+    volume = await Volume.list();
+    getShares();
+  }
+
+  getShares() async {
+    share = await Share.list();
     setState(() {
       loading = false;
-      success = res['success'];
     });
-    if (res['success']) {
-      folders = res['data']['shares'];
-      folders.forEach((folder) {
-        volumes.forEach((volume) {
-          if (volume['volume_path'] == folder['vol_path']) {
-            folder['volume_name'] = volume['display_name'];
-            folder['volume_desc'] = volume['description'];
-          }
-        });
-      });
-      setState(() {});
-    } else {
-      if (loading) {
-        setState(() {
-          msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
-        });
-      }
-    }
+    share.shares!.forEach((folder) {
+      folder.volume = volume.volumes!.firstWhere((element) => element.volumePath == folder.volPath);
+    });
   }
 
   deleteFolder(String folder) {
@@ -119,7 +91,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                             print(res);
                             if (res['success']) {
                               Utils.toast("共享文件夹删除成功");
-                              getData();
+                              getShares();
                             } else {
                               Utils.toast("共享文件夹删除出错");
                             }
@@ -164,30 +136,28 @@ class _SharedFoldersState extends State<SharedFolders> {
     );
   }
 
-  Widget _buildFolderItem(folder) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-      child: Opacity(
-        opacity: 1,
-        child: CupertinoButton(
-          onPressed: () async {},
-          // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          padding: EdgeInsets.symmetric(vertical: 20),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-          child: Row(
+  Widget _buildFolderItem(Shares folder) {
+    GlobalKey actionButtonKey = GlobalKey();
+    return Container(
+      margin: EdgeInsets.only(top: 16.0, left: 16, right: 14),
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
-              folder['encryption'] == null || folder['encryption'] == 0
+              folder.encryption == null || folder.encryption == 0
                   ? FileIcon(
                       FileTypeEnum.folder,
+                      width: 30,
                     )
                   : Image.asset(
                       "assets/icons/folder_locked.png",
-                      width: 40,
-                      height: 40,
+                      width: 30,
+                      height: 30,
                     ),
               SizedBox(
                 width: 10,
@@ -197,69 +167,215 @@ class _SharedFoldersState extends State<SharedFolders> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      folder['name'],
+                      folder.name!,
                       style: TextStyle(
                         fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    SizedBox(
-                      height: 5,
                     ),
                     Text(
-                      "${folder['volume_name']}${folder['volume_desc'] != "" ? "(${folder['volume_desc']})" : ""}",
-                      style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
+                      "${folder.volume?.displayName}${folder.volume?.description ?? ""}",
+                      style: TextStyle(fontSize: 12, color: AppTheme.of(context)?.placeholderColor),
                     ),
-                    if (folder['unite_permission'] != null) ...[
+                  ],
+                ),
+              ),
+              CupertinoButton(
+                key: actionButtonKey,
+                onPressed: () {
+                  showPopupWindow(
+                    context,
+                    gravity: KumiPopupGravity.leftBottom,
+                    bgColor: Colors.transparent,
+                    clickOutDismiss: true,
+                    clickBackDismiss: true,
+                    customAnimation: false,
+                    customPop: false,
+                    customPage: false,
+                    underStatusBar: true,
+                    underAppBar: true,
+                    needSafeDisplay: true,
+                    offsetX: 0,
+                    offsetY: -70,
+                    // curve: Curves.easeInSine,
+                    duration: Duration(milliseconds: 200),
+                    targetRenderBox: actionButtonKey.currentContext!.findRenderObject() as RenderBox,
+                    childFun: (pop) {
+                      return BackdropFilter(
+                        key: GlobalKey(),
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                          width: 220,
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          margin: EdgeInsets.only(top: 50),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(23),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              PopupMenuItem(
+                                onTap: () {
+                                  context.push(AddSharedFolders([], folder: folder), name: "add_shared_folders");
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/pencil.png",
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text("编辑"),
+                                  ],
+                                ),
+                              ),
+                              if (folder.supportSnapshot!)
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/delete.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "克隆",
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (folder.enableRecycleBin == true)
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    Api.cleanRecycleBin(folder.name!).then((res) {
+                                      if (res['success']) {
+                                        Utils.toast("请求已发送");
+                                      }
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/delete.png",
+                                        width: 20,
+                                        height: 20,
+                                        color: AppTheme.of(context)?.warningColor,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "清空回收站",
+                                        style: TextStyle(color: AppTheme.of(context)?.warningColor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              PopupMenuItem(
+                                onTap: () async {
+                                  deleteFolder(folder.name!);
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/delete.png",
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      "删除",
+                                      style: TextStyle(color: AppTheme.of(context)?.errorColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                padding: EdgeInsets.zero,
+                minSize: 0,
+                child: Image.asset(
+                  "assets/icons/more_vertical.png",
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (folder.unitePermission != null) ...[
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        "高级权限：${folder['unite_permission'] ? "已启动" : "已停用"}",
+                        "高级权限：${folder.unitePermission! ? "已启动" : "已停用"}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
-                    if (folder['enable_recycle_bin'] != null) ...[
+                    if (folder.enableRecycleBin != null) ...[
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        "回收站：${folder['enable_recycle_bin'] ? "已启动" : "已停用"}",
+                        "回收站：${folder.enableRecycleBin! ? "已启动" : "已停用"}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
-                    if (folder['quota_value'] != null) ...[
+                    if (folder.quotaValue != null) ...[
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        "共享文件夹配额：${folder['quota_value'] > 0 ? Utils.formatSize(folder['quota_value'] * 1024 * 1024) : "已停用"}",
+                        "共享文件夹配额：${folder.quotaValue! > 0 ? Utils.formatSize(folder.quotaValue! * 1024 * 1024) : "已停用"}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
-                    if (folder['share_quota_used'] != null) ...[
+                    if (folder.shareQuotaUsed != null) ...[
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        "共享文件夹大小：${Utils.formatSize(folder['share_quota_used'] * 1024 * 1024)}",
+                        "共享文件夹大小：${Utils.formatSize(folder.shareQuotaUsed! * 1024 * 1024)}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
-                    if (folder['enable_share_compress'] != null) ...[
+                    if (folder.enableShareCompress != null) ...[
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        "文件压缩：${folder['enable_share_compress'] ? "已启动" : "已禁用"}",
+                        "文件压缩：${folder.enableShareCompress! ? "已启动" : "已禁用"}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
-                    if (folder['enable_share_cow'] != null) ...[
+                    if (folder.enableShareCow != null) ...[
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        "数据完整性保护：${folder['enable_share_cow'] ? "已启动" : "已禁用"}",
+                        "数据完整性保护：${folder.enableShareCow! ? "已启动" : "已禁用"}",
                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.headlineSmall?.color),
                       ),
                     ],
@@ -269,229 +385,48 @@ class _SharedFoldersState extends State<SharedFolders> {
               SizedBox(
                 width: 10,
               ),
-              folder['is_share_moving']
-                  ? Text("移动中")
-                  : CupertinoButton(
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) {
-                            return Material(
-                              color: Colors.transparent,
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(22),
-                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                child: SafeArea(
-                                  top: false,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text(
-                                        "选择操作",
-                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      if (folder['support_snapshot']) ...[
-                                        CupertinoButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                          },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Text(
-                                            "克隆",
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                      ],
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context)
-                                              .push(CupertinoPageRoute(
-                                                  builder: (context) {
-                                                    return AddSharedFolders(volumes, folder: folder);
-                                                  },
-                                                  settings: RouteSettings(name: "add_shared_folders")))
-                                              .then((res) {
-                                            if (res != null && res) {
-                                              getData();
-                                            }
-                                          });
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "编辑",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 16,
-                                      ),
-                                      if (folder['enable_recycle_bin']) ...[
-                                        CupertinoButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            Api.cleanRecycleBin(folder['name']).then((res) {
-                                              if (res['success']) {
-                                                Utils.toast("请求已发送");
-                                              }
-                                            });
-                                          },
-                                          color: Theme.of(context).scaffoldBackgroundColor,
-                                          borderRadius: BorderRadius.circular(25),
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          child: Text(
-                                            "清空回收站",
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                      ],
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          deleteFolder(folder['name']);
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "删除",
-                                          style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      padding: EdgeInsets.only(left: 5, right: 3, top: 4, bottom: 4),
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Icon(
-                        CupertinoIcons.right_chevron,
-                        size: 18,
-                      ),
-                    ),
-              SizedBox(
-                width: 20,
-              ),
+              if (folder.isShareMoving == true) Text("移动中")
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "共享文件夹",
-        ),
-        actions: volumes.length > 0
-            ? [
-                Padding(
-                  padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-                  child: CupertinoButton(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                    padding: EdgeInsets.all(10),
-                    onPressed: () async {
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(
-                              builder: (context) {
-                                return AddSharedFolders(volumes);
-                              },
-                              settings: RouteSettings(name: "add_shared_folders")))
-                          .then((res) {
-                        if (res != null && res) {
-                          getData();
-                        }
-                      });
-                    },
-                    child: Icon(Icons.add),
-                  ),
-                )
-              ]
-            : null,
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("共享文件夹"),
+        actions: [
+          CupertinoButton(
+            onPressed: () async {
+              context.push(AddSharedFolders([]), name: "add_shared_folders").then((res) {
+                if (res == true) {
+                  getShares();
+                }
+              });
+            },
+            child: Icon(Icons.add),
+          )
+        ],
       ),
-      body: success
-          ? Stack(
-              children: [
-                ListView.builder(
-                  padding: EdgeInsets.only(bottom: 20),
-                  itemBuilder: (context, i) {
-                    return _buildFolderItem(folders[i]);
-                  },
-                  itemCount: folders.length,
-                ),
-                // if (selectedFiles.length > 0)
-                if (loading)
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.all(50),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: CupertinoActivityIndicator(
-                          radius: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            )
-          : Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("$msg"),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: 200,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(20),
-                      onPressed: () {
-                        getData();
-                      },
-                      child: Text(
-                        ' 刷新 ',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ],
+      body: loading
+          ? Center(
+              child: LoadingWidget(
+                size: 30,
               ),
-            ),
+            )
+          : share.shares != null && share.shares!.length > 0
+              ? ListView.builder(
+                  itemBuilder: (context, i) {
+                    return _buildFolderItem(share.shares![i]);
+                  },
+                  itemCount: share.shares!.length,
+                )
+              : EmptyWidget(
+                  text: "暂无共享文件夹",
+                ),
     );
   }
 }

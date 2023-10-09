@@ -1,6 +1,7 @@
 import 'package:dsm_helper/pages/applications/application_enums.dart';
 import 'package:dsm_helper/pages/applications/widgets/application_item_widget.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
+import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _ApplicationsState extends State<Applications> {
         title: Text("应用"),
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, childAspectRatio: 0.95),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 80, childAspectRatio: 0.95),
         itemBuilder: (context, i) {
           String application = applications[i];
           return ApplicationItemWidget(

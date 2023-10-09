@@ -12,6 +12,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
       progressColor: Color(0xffd3d3d3),
     ),
   ],
+  platform: TargetPlatform.iOS,
   scaffoldBackgroundColor: Color(0xff121212),
   textTheme: TextTheme(
     bodyLarge: TextStyle(

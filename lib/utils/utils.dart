@@ -49,7 +49,7 @@ class Utils {
       GroupModel(name: "QQ频道", no: "群晖助手交流反馈", key: "https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&biz=ka&businessType=5&from=246611&inviteCode=206Vc8vi4fl&mainSourceId=qr_code&subSourceId=pic4&jumpsource=shorturl#/out", status: ""),
     ],
     wechat: [
-      GroupModel(name: "群晖助手", no: "", key: "", status: "受限"),
+      GroupModel(name: "群晖助手", no: "", key: "", status: ""),
       GroupModel(name: "群晖助手APP", no: "", key: "", status: ""),
     ],
   );

@@ -10,9 +10,11 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       primaryColor: Color(0xFF2A82E4),
       progressColor: Color(0xFFf4f4f4),
       successColor: Color(0xFF25B85F),
+      warningColor: Colors.orangeAccent,
       errorColor: Color(0xFFFF5733),
     ),
   ],
+  platform: TargetPlatform.iOS,
   primaryColor: Colors.black,
   disabledColor: Colors.black12,
   textTheme: TextTheme(

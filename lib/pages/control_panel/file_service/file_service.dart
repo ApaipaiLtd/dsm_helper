@@ -1,8 +1,23 @@
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Core/Backup/Service/NetworkBackup.dart';
+import 'package:dsm_helper/models/Syno/Core/BandwidthControl/Protocol.dart';
+import 'package:dsm_helper/models/Syno/Core/ExternalDevice/Printer/BonjourSharing.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/Afp.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/Ftp.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/Nfs.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/ServiceDiscovery.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/Sftp.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/Smb.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/WSTransfer.dart';
+import 'package:dsm_helper/models/Syno/Core/SyslogClient/FileTransfer.dart';
+import 'package:dsm_helper/models/Syno/Core/Tftp.dart';
 import 'package:dsm_helper/pages/control_panel/file_service/log_setting.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
-import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/utils/neu_picker.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,18 +36,18 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
   List<String> utf8Modes = ['禁用', '自动', '强制'];
   bool loading = true;
   late TabController _tabController;
-  Map? smb;
-  Map? afp;
-  Map? nfs;
-  Map? ftp;
-  Map? sftp;
-  Map? bandwidth;
-  Map? tftp;
-  Map? backup;
-  Map? serviceDiscovery;
-  Map? bonjourSharing;
-  Map? syslogClient;
-  bool? enableWstransfer;
+  Smb smb = Smb();
+  Afp afp = Afp();
+  Nfs nfs = Nfs();
+  Ftp ftp = Ftp();
+  Sftp sftp = Sftp();
+  BandwidthProtocol? bandwidth;
+  Tftp? tftp;
+  NetworkBackup? networkBackup;
+  ServiceDiscovery? serviceDiscovery;
+  BonjourSharing? bonjourSharing;
+  FileTransfer fileTransferLog = FileTransfer();
+  WsTransfer? wsTransfer;
   bool saving = false;
   @override
   void initState() {
@@ -42,154 +57,96 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
   }
 
   getData() async {
-    var res = await Api.fileService();
-    print(res);
-    if (res['success']) {
-      setState(() {
-        loading = false;
-      });
-      if (res['data']['has_fail']) {
-        Utils.toast("加载失败");
-        Navigator.of(context).pop();
-        return;
+    // var res = await Api.fileService();
+    var batchRes = await Api.dsm.batch(apis: [
+      Smb(),
+      Afp(),
+      Nfs(),
+      Ftp(),
+      Sftp(),
+      FileTransfer(),
+    ]);
+    setState(() {
+      loading = false;
+    });
+    batchRes.forEach((res) {
+      print(res.data);
+      switch (res.data.runtimeType.toString()) {
+        case "Smb":
+          smb = res.data;
+          _workgroupController.value = TextEditingValue(text: smb.workgroup ?? "");
+          break;
+        case "Afp":
+          afp = res.data;
+          break;
+        case "Nfs":
+          nfs = res.data;
+          _nfsv4Controller.value = TextEditingValue(text: nfs.nfsV4Domain ?? "");
+          break;
+        case "Ftp":
+          ftp = res.data;
+          _timeoutController.value = TextEditingValue(text: "${ftp.timeout ?? ''}");
+          _ftpPortController.value = TextEditingValue(text: "${ftp.portnum ?? ''}");
+          break;
+        case "Sftp":
+          sftp = res.data;
+          _sftpPortController.value = TextEditingValue(text: "${sftp.portnum ?? ''}");
+          break;
+        case "FileTransfer":
+          fileTransferLog = res.data;
+          break;
+        case "BandwidthProtocol":
+          bandwidth = res.data;
+          break;
+        case "NetworkBackup":
+          networkBackup = res.data;
+          break;
+        case "BonjourSharing":
+          bonjourSharing = res.data;
+          break;
+        case "ServiceDiscovery":
+          serviceDiscovery = res.data;
+          break;
+        case "WsTransfer":
+          wsTransfer = res.data;
+          break;
       }
-      List result = res['data']['result'];
-      result.forEach((item) {
-        if (item['success'] == true) {
-          switch (item['api']) {
-            case "SYNO.Core.FileServ.SMB":
-              setState(() {
-                smb = item['data'];
-                _workgroupController.value = TextEditingValue(text: smb?['workgroup'] ?? "");
-              });
-              break;
-            case "SYNO.Core.FileServ.AFP":
-              setState(() {
-                afp = item['data'];
-              });
-              break;
-            case "SYNO.Core.FileServ.NFS":
-              setState(() {
-                nfs = item['data'];
-              });
-              _nfsv4Controller.value = TextEditingValue(text: nfs?['nfs_v4_domain'] ?? "");
-              break;
-            case "SYNO.Core.FileServ.FTP":
-              setState(() {
-                ftp = item['data'];
-                _timeoutController.value = TextEditingValue(text: "${ftp?['timeout']}");
-                _ftpPortController.value = TextEditingValue(text: "${ftp?['portnum']}");
-              });
-              break;
-            case "SYNO.Core.FileServ.FTP.SFTP":
-              setState(() {
-                sftp = item['data'];
-                print(sftp);
-                _sftpPortController.value = TextEditingValue(text: "${sftp?['portnum']}");
-              });
-              break;
-            case "SYNO.Core.BandwidthControl.Protocol":
-              setState(() {
-                bandwidth = item['data'];
-              });
-              break;
-            case "SYNO.Core.TFTP":
-              setState(() {
-                tftp = item['data'];
-              });
-              break;
-            case "SYNO.Backup.Service.NetworkBackup":
-              setState(() {
-                backup = item['data'];
-              });
-              break;
-            case "SYNO.Core.ExternalDevice.Printer.BonjourSharing":
-              setState(() {
-                bonjourSharing = item['data'];
-              });
-              break;
-            case "SYNO.Core.FileServ.ServiceDiscovery":
-              setState(() {
-                serviceDiscovery = item['data'];
-              });
-              break;
-            case "SYNO.Core.SyslogClient.FileTransfer":
-              setState(() {
-                syslogClient = item['data'];
-              });
-              break;
-            case "SYNO.Core.FileServ.ServiceDiscovery.WSTransfer":
-              setState(() {
-                enableWstransfer = item['data']['enable_wstransfer'];
-              });
-              break;
-          }
-        }
-      });
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("文件服务"),
-      ),
+    return GlassScaffold(
+      appBar: GlassAppBar(title: Text("文件服务")),
       body: loading
-          ? Center(
-              child: Container(
-                padding: EdgeInsets.all(50),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: CupertinoActivityIndicator(
-                  radius: 14,
-                ),
-              ),
-            )
+          ? Center(child: LoadingWidget(size: 30))
           : Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: TabBar(
-                    isScrollable: true,
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicator: BubbleTabIndicator(
-                      indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                TabBar(
+                  isScrollable: true,
+                  controller: _tabController,
+                  tabs: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      child: Text("SMB/AFP/NFS"),
                     ),
-                    tabs: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("SMB/AFP/NFS"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("FTP"),
-                      ),
-                      // Padding(
-                      //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      //   child: Text("TFTP"),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      //   child: Text("rsync"),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      //   child: Text("高级设置"),
-                      // ),
-                    ],
-                  ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      child: Text("FTP"),
+                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    //   child: Text("TFTP"),
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    //   child: Text("rsync"),
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    //   child: Text("高级设置"),
+                    // ),
+                  ],
                 ),
                 Expanded(
                   child: TabBarView(
@@ -219,7 +176,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        smb?['enable_samba'] = !smb?['enable_samba'];
+                                        smb.enableSamba = !smb.enableSamba!;
                                       });
                                     },
                                     child: Container(
@@ -236,7 +193,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用SMB服务",
                                             ),
                                           ),
-                                          if (smb != null && smb?['enable_samba'])
+                                          if (smb.enableSamba!)
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -245,7 +202,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (smb != null && smb?['enable_samba']) ...[
+                                  if (smb.enableSamba!) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -257,7 +214,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _workgroupController,
-                                        onChanged: (v) => smb!['workgroup'] = v,
+                                        onChanged: (v) => smb.workgroup = v,
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           labelText: '工作群组',
@@ -270,7 +227,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          smb?['disable_shadow_copy'] = !smb?['disable_shadow_copy'];
+                                          smb.disableShadowCopy = !smb.disableShadowCopy!;
                                         });
                                       },
                                       child: Container(
@@ -287,7 +244,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "不可访问以前版本",
                                               ),
                                             ),
-                                            if (smb!['disable_shadow_copy'])
+                                            if (smb.disableShadowCopy!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -302,9 +259,9 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          syslogClient?['cifs'] = !syslogClient?['cifs'];
+                                          fileTransferLog.cifs = !fileTransferLog.cifs!;
                                         });
-                                        if (syslogClient?['cifs']) {
+                                        if (fileTransferLog.cifs!) {
                                           Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                             return LogSetting("cifs");
                                           }));
@@ -324,7 +281,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启动传输日志",
                                               ),
                                             ),
-                                            if (syslogClient!['cifs'])
+                                            if (fileTransferLog.cifs!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -333,7 +290,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                         ),
                                       ),
                                     ),
-                                    if (syslogClient != null && syslogClient!['cifs']) ...[
+                                    if (fileTransferLog.cifs!) ...[
                                       SizedBox(
                                         height: 20,
                                       ),
@@ -342,7 +299,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                           Expanded(
                                             child: CupertinoButton(
                                               onPressed: () {
-                                                if (syslogClient!['cifs']) {
+                                                if (fileTransferLog.cifs!) {
                                                   Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
                                                     return LogSetting("cifs");
                                                   }));
@@ -404,7 +361,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        afp!['enable_afp'] = !afp!['enable_afp'];
+                                        afp.enableAfp = !afp.enableAfp!;
                                       });
                                     },
                                     child: Container(
@@ -421,7 +378,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用AFP服务",
                                             ),
                                           ),
-                                          if (afp!['enable_afp'])
+                                          if (afp.enableAfp!)
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -430,14 +387,14 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (afp!['enable_afp']) ...[
+                                  if (afp.enableAfp!) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          syslogClient!['afp'] = !syslogClient!['afp'];
+                                          fileTransferLog.afp = !fileTransferLog.afp!;
                                         });
                                       },
                                       child: Container(
@@ -454,7 +411,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启动传输日志",
                                               ),
                                             ),
-                                            if (syslogClient!['afp'])
+                                            if (fileTransferLog.afp!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -492,7 +449,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        nfs!['enable_nfs'] = !nfs!['enable_nfs'];
+                                        nfs.enableNfs = !nfs.enableNfs!;
                                       });
                                     },
                                     child: Container(
@@ -509,7 +466,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用NFS服务",
                                             ),
                                           ),
-                                          if (nfs!['enable_nfs'])
+                                          if (nfs.enableNfs!)
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -518,14 +475,14 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (nfs!['enable_nfs']) ...[
+                                  if (nfs.enableNfs!) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          nfs!['enable_nfs_v4'] = !nfs!['enable_nfs_v4'];
+                                          nfs.enableNfsV4 = !nfs.enableNfsV4!;
                                         });
                                       },
                                       child: Container(
@@ -542,7 +499,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启用 NFSv4.1 支持",
                                               ),
                                             ),
-                                            if (nfs!['enable_nfs_v4'])
+                                            if (nfs.enableNfsV4!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -552,7 +509,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ],
-                                  if (nfs!['enable_nfs'] && nfs!['enable_nfs_v4']) ...[
+                                  if (nfs.enableNfsV4! && nfs.enableNfsV4!) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -564,7 +521,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                       child: TextField(
                                         controller: _nfsv4Controller,
-                                        onChanged: (v) => nfs!['nfs_v4_domain'] = v,
+                                        onChanged: (v) => nfs.nfsV4Domain = v,
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           labelText: 'NFSv4 域',
@@ -605,7 +562,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        ftp!['enable_ftp'] = !ftp!['enable_ftp'];
+                                        ftp.enableFtp = !ftp.enableFtp!;
                                       });
                                     },
                                     child: Container(
@@ -622,7 +579,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用FTP服务",
                                             ),
                                           ),
-                                          if (ftp!['enable_ftp'])
+                                          if (ftp.enableFtp!)
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -637,7 +594,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        ftp!['enable_ftps'] = !ftp!['enable_ftps'];
+                                        ftp.enableFtps = !ftp.enableFtps!;
                                       });
                                     },
                                     child: Container(
@@ -654,7 +611,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用 FTP SSL/TLS 加密服务（FTPS）",
                                             ),
                                           ),
-                                          if (ftp!['enable_ftps'])
+                                          if (ftp.enableFtps!)
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -663,7 +620,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       ),
                                     ),
                                   ),
-                                  if (ftp!['enable_ftps']) ...[
+                                  if (ftp.enableFtps!) ...[
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -677,7 +634,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                         controller: _timeoutController,
                                         onChanged: (v) {
                                           try {
-                                            ftp!['timeout'] = int.parse(v);
+                                            ftp.timeout = int.parse(v);
                                           } catch (e) {
                                             print("error");
                                           }
@@ -705,7 +662,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                         controller: _ftpPortController,
                                         onChanged: (v) {
                                           try {
-                                            ftp!['portnum'] = int.parse(v);
+                                            ftp.portnum = int.parse(v);
                                           } catch (e) {
                                             print("error");
                                           }
@@ -726,7 +683,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          ftp!['enable_fxp'] = !ftp!['enable_fxp'];
+                                          ftp.enableFxp = !ftp.enableFxp!;
                                         });
                                       },
                                       child: Container(
@@ -743,7 +700,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启用 FXP",
                                               ),
                                             ),
-                                            if (ftp!['enable_fxp'])
+                                            if (ftp.enableFxp!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -758,7 +715,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          ftp!['enable_fips'] = !ftp!['enable_fips'];
+                                          ftp.enableFips = !ftp.enableFips!;
                                         });
                                       },
                                       child: Container(
@@ -775,7 +732,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "启用 FIPS 加密模块",
                                               ),
                                             ),
-                                            if (ftp!['enable_fips'])
+                                            if (ftp.enableFips!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -790,7 +747,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          ftp!['enable_ascii'] = !ftp!['enable_ascii'];
+                                          ftp.enableAscii = !ftp.enableAscii!;
                                         });
                                       },
                                       child: Container(
@@ -807,7 +764,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                                 "支持 ASCII 传送模式",
                                               ),
                                             ),
-                                            if (ftp!['enable_ascii'])
+                                            if (ftp.enableAscii!)
                                               Icon(
                                                 CupertinoIcons.checkmark_alt,
                                                 color: Color(0xffff9813),
@@ -827,10 +784,10 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                           builder: (context) {
                                             return NeuPicker(
                                               utf8Modes,
-                                              value: ftp!['utf8_mode'],
+                                              value: ftp.utf8Mode!,
                                               onConfirm: (v) {
                                                 setState(() {
-                                                  ftp!['utf8_mode'] = v;
+                                                  ftp.utf8Mode = v;
                                                 });
                                               },
                                             );
@@ -847,7 +804,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                           children: [
                                             Text("UTF-8 编码:"),
                                             Spacer(),
-                                            Text("${utf8Modes[ftp!['utf8_mode']]}"),
+                                            Text("${utf8Modes[ftp.utf8Mode!]}"),
                                           ],
                                         ),
                                       ),
@@ -881,7 +838,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        sftp!['enable'] = !sftp!['enable'];
+                                        sftp.enable = !sftp.enable!;
                                       });
                                     },
                                     child: Container(
@@ -898,7 +855,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                               "启用SFTP服务",
                                             ),
                                           ),
-                                          if (sftp!['enable'])
+                                          if (sftp.enable!)
                                             Icon(
                                               CupertinoIcons.checkmark_alt,
                                               color: Color(0xffff9813),
@@ -920,7 +877,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                                       controller: _sftpPortController,
                                       onChanged: (v) {
                                         try {
-                                          sftp!['portnum'] = int.parse(v);
+                                          sftp.portnum = int.parse(v);
                                         } catch (e) {
                                           print("error");
                                         }
@@ -961,15 +918,15 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                         setState(() {
                           saving = true;
                         });
-                        var res = await Api.fileServiceSave(smb, syslogClient, afp, nfs, ftp, sftp);
-
-                        if (res['success']) {
-                          setState(() {
-                            saving = false;
-                          });
-                          Utils.toast("保存成功");
-                          getData();
-                        }
+                        // var res = await Api.fileServiceSave(smb, fileTransferLog, afp, nfs, ftp, sftp);
+                        //
+                        // if (res['success']) {
+                        //   setState(() {
+                        //     saving = false;
+                        //   });
+                        //   Utils.toast("保存成功");
+                        //   getData();
+                        // }
                       },
                       child: saving
                           ? Row(

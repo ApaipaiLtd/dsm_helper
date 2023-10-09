@@ -1952,7 +1952,7 @@ class FilesState extends State<Files> {
                                 child: GridView.builder(
                                   controller: _fileScrollController,
                                   padding: EdgeInsets.zero,
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 80),
                                   itemBuilder: (context, i) {
                                     FileItem file = files.files![i];
                                     return FileGridItemWidget(

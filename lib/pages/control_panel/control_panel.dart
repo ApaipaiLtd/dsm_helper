@@ -9,8 +9,13 @@ import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dar
 import 'package:dsm_helper/pages/control_panel/update_reset/update_reset.dart';
 import 'package:dsm_helper/pages/control_panel/user_groups/user_group.dart';
 import 'package:dsm_helper/pages/control_panel/users/users.dart';
-import 'package:dsm_helper/utils/badge.dart';
+import 'package:dsm_helper/pages/control_panel/widgets/control_panel_item_widget.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'shared_folders/shared_folders.dart';
 import 'package:dsm_helper/pages/control_panel/info/info.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,1039 +34,275 @@ class ControlPanel extends StatefulWidget {
 class _ControlPanelState extends State<ControlPanel> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "控制面板",
-        ),
+    int count = (context.width - 64) ~/ 80;
+    double width = (context.width - 64) / count;
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("控制面板"),
       ),
       body: ListView(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          WidgetCard(
+            title: "文件共享",
+            body: Wrap(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
-                  child: Text(
-                    "文件共享",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
+                ControlPanelItemWidget(
+                  title: "共享文件夹",
+                  icon: "shared_folders",
+                  width: width,
+                  onTap: () {
+                    context.push(SharedFolders(), name: 'share_folders');
+                  },
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (content) {
-                                return SharedFolders();
-                              },
-                              settings: RouteSettings(name: "share_folders")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/shared_folders.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "共享文件夹",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return FileService();
-                              },
-                              settings: RouteSettings(name: "file_service")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/file_services.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "文件服务",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return Users();
-                              },
-                              settings: RouteSettings(name: "users")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/users.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                Utils.version < 7 ? "用户账户" : "用户与群组",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (Utils.version < 7)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (context) {
-                                  return UserGroups();
-                                },
-                                settings: RouteSettings(name: "user_groups")));
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 120) / 3,
-                            height: (MediaQuery.of(context).size.width - 120) / 3,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/control_panel/${Utils.version}/groups.png",
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.contain,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "用户群组",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      // Container(
-                      //   width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //   decoration: BoxDecoration(
-                      //     color: Theme.of(context).scaffoldBackgroundColor,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Image.asset(
-                      //         "assets/control_panel/${Utils.version}/ldap.png",
-                      //         height: 30,
-                      //         width: 30,
-                      //         fit: BoxFit.contain,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Text(
-                      //         "域/LDAP",
-                      //         style: TextStyle(fontSize: 12),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                    ],
-                  ),
+                ControlPanelItemWidget(
+                  title: "文件服务",
+                  icon: "file_services",
+                  width: width,
+                  onTap: () {
+                    context.push(FileService(), name: 'file_service');
+                  },
                 ),
-                SizedBox(
-                  height: 20,
+                ControlPanelItemWidget(
+                  title: Utils.version < 7 ? "用户账户" : "用户与群组",
+                  icon: "users",
+                  width: width,
+                  onTap: () {
+                    context.push(Users(), name: 'users');
+                  },
+                ),
+                if (Utils.version < 7)
+                  ControlPanelItemWidget(
+                    onTap: () {
+                      context.push(UserGroups(), name: 'user_groups');
+                    },
+                    title: "用户群组",
+                    icon: 'groups',
+                    width: width,
+                  ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    // context.push(UserGroups(), name: 'ldap');
+                  },
+                  title: "域/LDAP",
+                  icon: "ldap",
+                  width: width,
                 ),
               ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          WidgetCard(
+            title: "连接性",
+            body: Wrap(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
-                  child: Text(
-                    "连接性",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(UserGroups(), name: 'ldap');
+                //   },
+                //   title: "Quick Connect",
+                //   icon: "quickconnect",
+                //   width: width,
+                // ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(PublicAccess(), name: 'public_access');
+                  },
+                  title: "外部访问",
+                  icon: "public_access",
+                  width: width,
+                ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(Network(), name: 'network');
+                  },
+                  title: "网络",
+                  icon: "network",
+                  width: width,
+                ),
+                // if (Utils.version < 7)
+                //   ControlPanelItemWidget(
+                //     onTap: () {
+                //       // context.push(Network(), name: 'dhcp_server');
+                //     },
+                //     title: "DHCP Server",
+                //     icon: "dhcp_server",
+                //     width: width,
+                //   ),
+                // if (Utils.version < 7)
+                //   ControlPanelItemWidget(
+                //     onTap: () {
+                //       // context.push(Network(), name: 'wireless');
+                //     },
+                //     title: "无线",
+                //     icon: "wireless",
+                //     width: width,
+                //   ),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(Network(), name: 'security');
+                //   },
+                //   title: "安全性",
+                //   icon: "security",
+                //   width: width,
+                // ),
+                if (Utils.version >= 7)
+                  ControlPanelItemWidget(
+                    onTap: () {
+                      context.push(SshSetting(), name: 'ssh_setting');
+                    },
+                    title: "终端机和SNMP",
+                    icon: "terminal_and_SNMP",
+                    width: width,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: [
-                      // if (Utils.version < 7)
-                      //   Container(
-                      //     width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     curveType: CurveType.convex,
-                      //     decoration: BoxDecoration(
-                      //       color: Theme.of(context).scaffoldBackgroundColor,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           "assets/control_panel/${Utils.version}/quickconnect.png",
-                      //           height: 30,
-                      //           width: 30,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 5,
-                      //         ),
-                      //         Text(
-                      //           "Quick Connect",
-                      //           style: TextStyle(fontSize: 12),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return PublicAccess();
-                              },
-                              settings: RouteSettings(name: "public_access")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/public_access.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "外部访问",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return Network();
-                              },
-                              settings: RouteSettings(name: "network")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/network.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "网络",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // if (Utils.version < 7)
-                      //   Container(
-                      //     width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     curveType: CurveType.convex,
-                      //     decoration: BoxDecoration(
-                      //       color: Theme.of(context).scaffoldBackgroundColor,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           "assets/control_panel/${Utils.version}/dhcp_server.png",
-                      //           height: 30,
-                      //           width: 30,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 5,
-                      //         ),
-                      //         Text(
-                      //           "DHCP Server",
-                      //           style: TextStyle(fontSize: 12),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // if (Utils.version < 7)
-                      //   Container(
-                      //     width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     curveType: CurveType.convex,
-                      //     decoration: BoxDecoration(
-                      //       color: Theme.of(context).scaffoldBackgroundColor,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           "assets/control_panel/6/wireless.png",
-                      //           height: 30,
-                      //           width: 30,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 5,
-                      //         ),
-                      //         Text(
-                      //           "无线",
-                      //           style: TextStyle(fontSize: 12),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // Container(
-                      //   width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   curveType: CurveType.convex,
-                      //   decoration: BoxDecoration(
-                      //     color: Theme.of(context).scaffoldBackgroundColor,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Image.asset(
-                      //         "assets/control_panel/${Utils.version}/security.png",
-                      //         height: 30,
-                      //         width: 30,
-                      //         fit: BoxFit.contain,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Text(
-                      //         "安全性",
-                      //         style: TextStyle(fontSize: 12),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      if (Utils.version >= 7)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (content) {
-                                  return SshSetting();
-                                },
-                                settings: RouteSettings(name: "ssh_setting")));
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 120) / 3,
-                            height: (MediaQuery.of(context).size.width - 120) / 3,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/control_panel/${Utils.version}/terminal_and_SNMP.png",
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.contain,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "终端机和SNMP",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
               ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          WidgetCard(
+            title: "系统",
+            body: Wrap(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
-                  child: Text(
-                    "系统",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(SystemInfo(0), name: 'system_info_all');
+                  },
+                  title: "信息中心",
+                  icon: "info_center",
+                  width: width,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (content) {
-                                return SystemInfo(0);
-                              },
-                              settings: RouteSettings(name: "system_info_all")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/info_center.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "信息中心",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Container(
-                      //   width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //   decoration: BoxDecoration(
-                      //     color: Theme.of(context).scaffoldBackgroundColor,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Image.asset(
-                      //         "assets/control_panel/${Utils.version}/login_style.png",
-                      //         height: 30,
-                      //         width: 30,
-                      //         fit: BoxFit.contain,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Text(
-                      //         Utils.version < 7 ? "主题样式" : "登录门户",
-                      //         style: TextStyle(fontSize: 12),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // Container(
-                      //   width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //   decoration: BoxDecoration(
-                      //     color: Theme.of(context).scaffoldBackgroundColor,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Image.asset(
-                      //         "assets/control_panel/${Utils.version}/region.png",
-                      //         height: 30,
-                      //         width: 30,
-                      //         fit: BoxFit.contain,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Text(
-                      //         "区域选项",
-                      //         style: TextStyle(fontSize: 12),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // Container(
-                      //   width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //   decoration: BoxDecoration(
-                      //     color: Theme.of(context).scaffoldBackgroundColor,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Image.asset(
-                      //         "assets/control_panel/${Utils.version}/notifications.png",
-                      //         height: 30,
-                      //         width: 30,
-                      //         fit: BoxFit.contain,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Text(
-                      //         "通知设置",
-                      //         style: TextStyle(fontSize: 12),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      if (Utils.version < 7)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (context) {
-                                  return TaskSchedulerManage();
-                                },
-                                settings: RouteSettings(name: "task_scheduler")));
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 120) / 3,
-                            height: (MediaQuery.of(context).size.width - 120) / 3,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/control_panel/${Utils.version}/task_scheduler.png",
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.contain,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "任务计划",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return Power();
-                              },
-                              settings: RouteSettings(name: "power")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/hardware_and_power.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "硬件和电源",
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return ExternalDevice();
-                              },
-                              settings: RouteSettings(name: "external_device")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/external_devices.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "外接设备",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                            return UpdateReset();
-                          }));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/control_panel/${Utils.version}/update_and_reset.png",
-                                      height: 30,
-                                      width: 30,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      "更新和还原",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.clip,
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (widget.notify != null && widget.notify['SYNO.SDS.AdminCenter.Update_Reset.Main'] != null && widget.notify['SYNO.SDS.AdminCenter.Update_Reset.Main']['unread'] != null)
-                                Positioned(
-                                  top: 6,
-                                  right: 6,
-                                  child: Badge(
-                                    widget.notify['SYNO.SDS.AdminCenter.Update_Reset.Main']['unread'],
-                                    size: 20,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(SystemInfo(0), name: 'login_style');
+                //   },
+                //   title: Utils.version < 7 ? "主题样式" : "登录门户",
+                //   icon: "login_style",
+                //   width: width,
+                // ),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(SystemInfo(0), name: 'region');
+                //   },
+                //   title: "区域选项",
+                //   icon: "region",
+                //   width: width,
+                // ),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(SystemInfo(0), name: 'notifications');
+                //   },
+                //   title: "通知设置",
+                //   icon: "notifications",
+                //   width: width,
+                // ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(TaskSchedulerManage(), name: 'task_scheduler');
+                  },
+                  title: "任务计划",
+                  icon: "task_scheduler",
+                  width: width,
                 ),
-                SizedBox(
-                  height: 20,
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(Power(), name: 'power');
+                  },
+                  title: "硬件和电源",
+                  icon: "hardware_and_power",
+                  width: width,
                 ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(ExternalDevice(), name: 'external_device');
+                  },
+                  title: "外接设备",
+                  icon: "external_devices",
+                  width: width,
+                ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(UpdateReset(), name: 'update_reset');
+                  },
+                  title: "更新和还原",
+                  icon: "update_and_reset",
+                  width: width,
+                ),
+                // if (widget.notify != null && widget.notify['SYNO.SDS.AdminCenter.Update_Reset.Main'] != null && widget.notify['SYNO.SDS.AdminCenter.Update_Reset.Main']['unread'] != null)
+                //   Positioned(
+                //     top: 6,
+                //     right: 6,
+                //     child: Badge(
+                //       widget.notify['SYNO.SDS.AdminCenter.Update_Reset.Main']['unread'],
+                //       size: 20,
+                //     ),
+                //   ),
               ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          WidgetCard(
+            title: "应用程序",
+            body: Wrap(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
-                  child: Text(
-                    "应用程序",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                // if (Utils.version >= 7)
+                //   ControlPanelItemWidget(
+                //     onTap: () {
+                //       // context.push(UpdateReset(), name: 'synology_account');
+                //     },
+                //     title: "Synology 账户",
+                //     icon: "synology_account",
+                //     width: width,
+                //   ),
+                // ControlPanelItemWidget(
+                //   onTap: () {
+                //     // context.push(UpdateReset(), name: 'privilege');
+                //   },
+                //   title: Utils.version < 7 ? "权限" : "应用程序权限",
+                //   icon: "privilege",
+                //   width: width,
+                // ),
+                // if (Utils.version < 7)
+                //   ControlPanelItemWidget(
+                //     onTap: () {
+                //       // context.push(UpdateReset(), name: 'portal');
+                //     },
+                //     title: "应用程序门户",
+                //     icon: "portal",
+                //     width: width,
+                //   ),
+                ControlPanelItemWidget(
+                  onTap: () {
+                    context.push(MediaIndex(), name: 'media_index');
+                  },
+                  title: "索引服务",
+                  icon: "file_index",
+                  width: width,
+                ),
+                if (Utils.version < 7)
+                  ControlPanelItemWidget(
+                    onTap: () {
+                      // context.push(UpdateReset(), name: 'share_folder_sync');
+                    },
+                    title: "共享文件夹同步",
+                    icon: "share_folder_sync",
+                    width: width,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: [
-                      // if (Utils.version >= 7)
-                      //   Container(
-                      //     width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //     decoration: BoxDecoration(
-                      //       color: Theme.of(context).scaffoldBackgroundColor,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           "assets/control_panel/${Utils.version}/synology_account.png",
-                      //           height: 30,
-                      //           width: 30,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 5,
-                      //         ),
-                      //         Text(
-                      //           "Synology 账户",
-                      //           maxLines: 1,
-                      //           overflow: TextOverflow.clip,
-                      //           style: TextStyle(fontSize: 12),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // Container(
-                      //   width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //   height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //   decoration: BoxDecoration(
-                      //     color: Theme.of(context).scaffoldBackgroundColor,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Image.asset(
-                      //         "assets/control_panel/${Utils.version}/privilege.png",
-                      //         height: 30,
-                      //         width: 30,
-                      //         fit: BoxFit.contain,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Text(
-                      //         Utils.version < 7 ? "权限" : "应用程序权限",
-                      //         style: TextStyle(fontSize: 12),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // if (Utils.version < 7)
-                      //   Container(
-                      //     width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //     decoration: BoxDecoration(
-                      //       color: Theme.of(context).scaffoldBackgroundColor,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           "assets/control_panel/${Utils.version}/portal.png",
-                      //           height: 30,
-                      //           width: 30,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 5,
-                      //         ),
-                      //         Text(
-                      //           "应用程序门户",
-                      //           maxLines: 1,
-                      //           overflow: TextOverflow.clip,
-                      //           style: TextStyle(fontSize: 12),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) {
-                                return MediaIndex();
-                              },
-                              settings: RouteSettings(name: "media_index")));
-                        },
-                        child: Container(
-                          width: (MediaQuery.of(context).size.width - 120) / 3,
-                          height: (MediaQuery.of(context).size.width - 120) / 3,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/control_panel/${Utils.version}/file_index.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "索引服务",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // if (Utils.version < 7)
-                      //   Container(
-                      //     width: (MediaQuery.of(context).size.width - 120) / 3,
-                      //     height: (MediaQuery.of(context).size.width - 120) / 3,
-                      //
-                      //     decoration: BoxDecoration(
-                      //       color: Theme.of(context).scaffoldBackgroundColor,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           "assets/control_panel/${Utils.version}/share_folder_sync.png",
-                      //           height: 30,
-                      //           width: 30,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 5,
-                      //         ),
-                      //         Text(
-                      //           "共享文件夹同步",
-                      //           maxLines: 1,
-                      //           overflow: TextOverflow.clip,
-                      //           style: TextStyle(fontSize: 12),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      if (Utils.version < 7)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (content) {
-                                  return SshSetting();
-                                },
-                                settings: RouteSettings(name: "ssh_setting")));
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 120) / 3,
-                            height: (MediaQuery.of(context).size.width - 120) / 3,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/control_panel/${Utils.version}/terminal_and_SNMP.png",
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.contain,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "终端机和SNMP",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      if (Utils.version >= 7)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                builder: (context) {
-                                  return TaskSchedulerManage();
-                                },
-                                settings: RouteSettings(name: "task_scheduler")));
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 120) / 3,
-                            height: (MediaQuery.of(context).size.width - 120) / 3,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/control_panel/${Utils.version}/task_scheduler.png",
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.contain,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "任务计划",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
+                if (Utils.version < 7)
+                  ControlPanelItemWidget(
+                    onTap: () {
+                      context.push(SshSetting(), name: 'ssh_setting');
+                    },
+                    title: "终端机和SNMP",
+                    icon: "terminal_and_SNMP",
+                    width: width,
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                if (Utils.version >= 7)
+                  ControlPanelItemWidget(
+                    onTap: () {
+                      context.push(TaskSchedulerManage(), name: 'task_scheduler');
+                    },
+                    title: "任务计划",
+                    icon: "task_scheduler",
+                    width: width,
+                  ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 40,
           ),
         ],
       ),

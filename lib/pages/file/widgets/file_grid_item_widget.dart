@@ -3,7 +3,6 @@ import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/file_icon.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FileGridItemWidget extends StatelessWidget {

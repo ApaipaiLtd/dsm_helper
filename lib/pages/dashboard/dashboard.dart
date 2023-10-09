@@ -90,6 +90,7 @@ class DashboardState extends State<Dashboard> {
     InitDataModel initData = await InitDataModel.get();
     InitDataProvider initDataProvider = context.read<InitDataProvider>();
     initDataProvider.setInitData(initData);
+    Utils.version = int.parse(initData.session!.majorversion!);
     setState(() {});
   }
 

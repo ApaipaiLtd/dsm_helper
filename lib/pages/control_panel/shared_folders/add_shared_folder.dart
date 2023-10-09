@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dsm_helper/models/Syno/Core/Share.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/services.dart';
 
 class AddSharedFolders extends StatefulWidget {
   final List volumes;
-  final Map? folder;
+  final Shares? folder;
   AddSharedFolders(this.volumes, {this.folder});
   @override
   _AddSharedFoldersState createState() => _AddSharedFoldersState();
@@ -44,7 +45,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
   @override
   void initState() {
     if (widget.folder != null) {
-      getFolderDetail(widget.folder!['name']);
+      getFolderDetail(widget.folder!.name!);
     }
 
     volumeController.text = "${widget.volumes[selectedVolumeIndex]['display_name']}(可用容量：${Utils.formatSize(int.parse(widget.volumes[selectedVolumeIndex]['size_free_byte']))}) - ${widget.volumes[selectedVolumeIndex]['fs_type']}";

@@ -35,18 +35,16 @@ class WidgetCard extends StatelessWidget {
                   ],
                 ),
               ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+            if (body != null)
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: body,
               ),
-              child: Column(
-                children: [
-                  if (body != null) body!,
-                ],
-              ),
-            ),
           ],
         ),
       ),

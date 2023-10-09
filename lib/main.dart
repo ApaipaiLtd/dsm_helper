@@ -31,6 +31,7 @@ import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/widgets/keyboard_dismisser.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -220,6 +221,8 @@ class _DsmHelperState extends State<DsmHelper> {
               ],
               home: Splash(),
               theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: ThemeMode.system,
               // home: widget.authPage
               //     ? AuthPage(
               //         launchAccountPage: widget.launchAccountPage,
