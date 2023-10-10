@@ -9,12 +9,12 @@ import 'package:sp_util/sp_util.dart';
 import 'add_server.dart';
 import 'ssh.dart';
 
-class SelectServer extends StatefulWidget {
+class SelectTerminalServer extends StatefulWidget {
   @override
-  _SelectServerState createState() => _SelectServerState();
+  _SelectTerminalServerState createState() => _SelectTerminalServerState();
 }
 
-class _SelectServerState extends State<SelectServer> {
+class _SelectTerminalServerState extends State<SelectTerminalServer> {
   bool loading = true;
   List servers = [];
   @override

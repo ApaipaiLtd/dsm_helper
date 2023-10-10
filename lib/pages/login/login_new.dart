@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:drift/drift.dart' as drift;
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_exception.dart';
 import 'package:dsm_helper/database/table_extension.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/Syno/Api/auth.dart';
 import 'package:dsm_helper/models/Syno/SDS/Session/SessionData.dart';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
@@ -14,6 +16,7 @@ import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/button.dart';
 import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -60,9 +63,12 @@ class _LoginState extends State<Login> {
         sessionDataModel = SessionDataModel.fromJson(jsonDecode(sessionDataString!));
       });
       // 将hostname和backgroundImage存入Servers
-      DbUtils.db.updateServer(widget.server.copyWith(
-          backgroundImage: drift.Value("${widget.server.url}/${(sessionDataModel?.loginBackgroundEnable ?? false) ? "webman/login_background${sessionDataModel?.loginBackgroundExt}" : "webman/resources/images/2x/default_login_background/dsm7_01.jpg?v=1685410415"}"),
-          hostname: drift.Value(sessionDataModel?.hostname)));
+      DbUtils.db.updateServer(
+        widget.server.copyWith(
+          backgroundImage: drift.Value("${widget.server.url}/${(sessionDataModel?.loginBackgroundEnable ?? false) ? "webman/login_background${sessionDataModel?.loginBackgroundExt}" : "webman/resources/images/2x/default_login_background/dsm7_01.jpg?v=${DateTime.now().secondsSinceEpoch}"}"),
+          hostname: drift.Value(sessionDataModel?.hostname),
+        ),
+      );
     } catch (e) {}
   }
 
@@ -72,29 +78,9 @@ class _LoginState extends State<Login> {
     });
 
     try {
-      Map<String, dynamic> data = {
-        "account": account,
-        "passwd": password,
-        "otp_code": otpCode,
-        "version": 4,
-        "api": "SYNO.API.Auth",
-        "method": "login",
-        "session": "FileStation",
-        "enable_device_token": rememberDevice ? "yes" : "no",
-        "enable_sync_token": "yes",
-      };
-      DsmResponse res = await Api.dsm.entry<Auth>(
-        "SYNO.API.Auth",
-        "login",
-        data: data,
-        parameters: {
-          "api": "SYNO.API.Auth",
-        },
-        parser: Auth.fromJson,
-      );
-      if (res.success ?? false) {
-        Auth authModel = res.data;
-        Account acc = await DbUtils.db.into(DbUtils.db.accounts).insertReturning(
+      try {
+        Auth authModel = await Auth.login(account: account, password: password, optCode: otpCode);
+        await DbUtils.db.into(DbUtils.db.accounts).insertReturning(
               AccountsCompanion.insert(
                 account: account,
                 serverId: widget.server.id,
@@ -111,22 +97,17 @@ class _LoginState extends State<Login> {
             );
         await Api.dsm.init(widget.server.url, deviceId: authModel.deviceId, sid: authModel.sid);
         context.push(Home(), replace: true);
-      } else if (res.error?['code'] == 400) {
-        Utils.toast("用户名/密码有误");
-      } else if (res.error?['code'] == 403) {
-        showOptCodeDialog("xx");
-      } else if (res.error?['code'] == 404) {
-        showOptCodeDialog("xx");
-        Utils.toast("错误的验证代码。请再试一次。");
-      } else if (res.error?['code'] == 414) {
-        // 需要二次验证
-        showOptCodeDialog("为确认这是您本人登录，系统已将验证码发送到${res.error?['errors']['email']}，请查看您的邮箱，并在5分钟内输入验证码");
+      } on DsmException catch (e) {
+        if (e.code == 400) {
+          Utils.toast("用户名/密码有误");
+        } else if (e.code == 403) {
+        } else if (e.code == 404) {
+          Utils.toast("错误的验证代码。请再试一次。");
+        } else if (e.code == 414) {
+          // 需要二次验证
+          showOptCodeDialog("为确认这是您本人登录，系统已将验证码发送到${e.source?['errors']['email']}，请查看您的邮箱，并在5分钟内输入验证码");
+        }
       }
-      // var res = await Api.dsm.post('/webapi/entry.cgi', parameters: {"api": "SYNO.API.Auth"}, data: data);
-      // print(res);
-      // var shares = await Api.dsm.post('/webapi/entry.cgi', data: {"api": "SYNO.Core.Desktop.Initdata", "version": 1, "method": "get"});
-      // print(shares);
-      // context.push(Index());
     } finally {
       setState(() {
         loading = false;
@@ -271,7 +252,7 @@ class _LoginState extends State<Login> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                 ),
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -298,7 +279,7 @@ class _LoginState extends State<Login> {
                     ),
                     Text(
                       sessionDataModel?.hostname ?? '账号登录',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                       strutStyle: StrutStyle(
                         forceStrutHeight: true,
                       ),
@@ -323,9 +304,12 @@ class _LoginState extends State<Login> {
                         hintText: "账号",
                         iconColor: Colors.red,
                         suffixIcon: account.isNotEmpty
-                            ? GestureDetector(
-                                child: Icon(Icons.highlight_remove),
-                                onTap: () {
+                            ? CupertinoButton(
+                                child: Image.asset(
+                                  "assets/icons/close_circle.png",
+                                  width: 20,
+                                ),
+                                onPressed: () {
                                   setState(() {
                                     account = '';
                                     _accountController.clear();
@@ -353,9 +337,14 @@ class _LoginState extends State<Login> {
                             ? Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  GestureDetector(
-                                    child: Icon(Icons.password),
-                                    onTap: () {
+                                  CupertinoButton(
+                                    child: Image.asset(
+                                      "assets/icons/eye${showPassword ? '' : '_slash'}.png",
+                                      width: 20,
+                                    ),
+                                    padding: EdgeInsets.all(5),
+                                    minSize: 0,
+                                    onPressed: () {
                                       setState(() {
                                         showPassword = !showPassword;
                                       });
@@ -364,17 +353,17 @@ class _LoginState extends State<Login> {
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  GestureDetector(
-                                    child: Icon(Icons.highlight_remove),
-                                    onTap: () {
+                                  CupertinoButton(
+                                    child: Image.asset(
+                                      "assets/icons/close_circle.png",
+                                      width: 20,
+                                    ),
+                                    onPressed: () {
                                       _passwordController.clear();
                                       setState(() {
                                         password = '';
                                       });
                                     },
-                                  ),
-                                  SizedBox(
-                                    width: 15,
                                   ),
                                 ],
                               )
