@@ -33,7 +33,7 @@ class _NotifyState extends State<Notify> {
       List<String> msgContent = [];
       String title = "";
       List<String> titles = notify.title!.split(":");
-      if (true) {
+      if (Utils.version >= 7) {
         if (Utils.notifyStrings[notify.title!] != null) {
           // print(Utils.notifyStrings[notify['title']]);
           title = Utils.notifyStrings[notify.title]!.title!;

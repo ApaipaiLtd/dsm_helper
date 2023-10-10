@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum ApplicationEnum {
   controlPanel(name: "控制中心", packageName: "SYNO.SDS.AdminCenter.Application", icon: "control_panel"),
   packageCenter(name: "套件中心", packageName: "SYNO.SDS.PkgManApp.Instance", icon: "package_center"),

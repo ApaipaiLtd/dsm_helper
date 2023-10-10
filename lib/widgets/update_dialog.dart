@@ -1,5 +1,4 @@
 import 'package:dsm_helper/pages/update/update.dart';
-import 'package:dsm_helper/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';

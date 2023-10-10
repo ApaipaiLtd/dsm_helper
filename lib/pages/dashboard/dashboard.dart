@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
@@ -38,10 +37,8 @@ import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
-import 'package:dsm_helper/widgets/page_body_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:dsm_helper/apis/api.dart' as api;
 
@@ -101,7 +98,6 @@ class DashboardState extends State<Dashboard> {
 
   getNotifyStrings() async {
     Utils.notifyStrings = await DsmNotifyStrings.get();
-    print("xx");
   }
 
   getExternalDevice() async {
@@ -146,7 +142,7 @@ class DashboardState extends State<Dashboard> {
     setState(() {});
     await Future.delayed(Duration(seconds: 10));
 
-    // initUtilizationTask();
+    initUtilizationTask();
   }
 
   initNotifyTask({bool loop = true}) async {
@@ -155,7 +151,7 @@ class DashboardState extends State<Dashboard> {
 
     if (loop) {
       await Future.delayed(Duration(seconds: 30));
-      // initNotifyTask();
+      initNotifyTask();
     }
   }
 

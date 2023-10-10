@@ -1,12 +1,11 @@
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
-import 'package:dsm_helper/database/table_extention.dart';
+import 'package:dsm_helper/database/table_extension.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/models/synology/qcid_model.dart' hide Server;
 import 'package:dsm_helper/pages/login/login_new.dart';
-import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/datetime_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';

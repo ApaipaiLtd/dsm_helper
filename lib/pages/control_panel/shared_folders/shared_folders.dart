@@ -3,12 +3,12 @@ import 'dart:ui';
 
 import 'package:dsm_helper/models/Syno/Core/Share.dart';
 import 'package:dsm_helper/models/Syno/Core/Storage/Volume.dart';
-import 'package:dsm_helper/models/Syno/FileStation/Sharing.dart';
 import 'package:dsm_helper/pages/control_panel/shared_folders/add_shared_folder.dart';
+import 'package:dsm_helper/pages/control_panel/shared_folders/dialogs/clean_recycle_bin_dialog.dart';
+import 'package:dsm_helper/pages/control_panel/shared_folders/dialogs/delete_share_folder_dialog.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
@@ -52,88 +52,11 @@ class _SharedFoldersState extends State<SharedFolders> {
     });
   }
 
-  deleteFolder(String folder) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(22),
-            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "删除共享文件夹",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    "我已了解所选共享文件夹及其快照将被永久删除并无法恢复",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: Colors.red),
-                  ),
-                  SizedBox(
-                    height: 22,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CupertinoButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            var res = await Api.deleteSharedFolder([folder]);
-                            print(res);
-                            if (res['success']) {
-                              Utils.toast("共享文件夹删除成功");
-                              getShares();
-                            } else {
-                              Utils.toast("共享文件夹删除出错");
-                            }
-                          },
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "确认删除",
-                            style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                        child: CupertinoButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                          },
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(25),
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "取消",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+  deleteFolder(Shares folder) async {
+    bool? res = await DeleteShareFolderDialog.show(context: context, share: folder);
+    if (res == true) {
+      getShares();
+    }
   }
 
   Widget _buildFolderItem(Shares folder) {
@@ -235,7 +158,16 @@ class _SharedFoldersState extends State<SharedFolders> {
                               ),
                               if (folder.supportSnapshot!)
                                 PopupMenuItem(
-                                  onTap: () async {},
+                                  onTap: () async {
+                                    context.push(
+                                      AddSharedFolders(
+                                        volume.volumes!,
+                                        folder: folder,
+                                        nameOrg: folder.name,
+                                      ),
+                                      name: "add_shared_folders",
+                                    );
+                                  },
                                   child: Row(
                                     children: [
                                       Image.asset(
@@ -255,11 +187,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                               if (folder.enableRecycleBin == true)
                                 PopupMenuItem(
                                   onTap: () async {
-                                    Api.cleanRecycleBin(folder.name!).then((res) {
-                                      if (res['success']) {
-                                        Utils.toast("请求已发送");
-                                      }
-                                    });
+                                    CleanRecycleBinDialog.show(context: context, share: folder);
                                   },
                                   child: Row(
                                     children: [
@@ -281,7 +209,7 @@ class _SharedFoldersState extends State<SharedFolders> {
                                 ),
                               PopupMenuItem(
                                 onTap: () async {
-                                  deleteFolder(folder.name!);
+                                  deleteFolder(folder);
                                 },
                                 child: Row(
                                   children: [

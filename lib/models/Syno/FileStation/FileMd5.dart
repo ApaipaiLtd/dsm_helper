@@ -1,5 +1,4 @@
 import 'package:dsm_helper/apis/api.dart';
-import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 
 /// finished : true
 /// md5 : "b9af29de56d8a8d4f4abec843e1e5bd9"

@@ -6,6 +6,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:dsm_helper/pages/common/video_player.dart';
 import 'package:dsm_helper/pages/download/download_setting.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/transparent_router.dart';
 import 'package:dsm_helper/pages/common/image_preview.dart';
@@ -37,10 +38,30 @@ class Download extends StatefulWidget {
   DownloadState createState() => DownloadState();
 }
 
-class DownloadState extends State<Download> {
+class DownloadState extends State<Download> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  @override
+  void initState() {
+    _tabController = TabController(length: 3, vsync: this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GlassScaffold();
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("传输"),
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: [
+            Tab(text: "下载"),
+            Tab(text: "上传"),
+            Tab(text: "备份"),
+          ],
+        ),
+      ),
+    );
   }
   // List<DownloadInfo> tasks = [];
   // bool loading = true;

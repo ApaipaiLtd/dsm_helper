@@ -2003,6 +2003,10 @@ class FilesState extends State<Files> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: getBackgroundTask,
+        child: Icon(Icons.refresh),
+      ),
     );
   }
 }

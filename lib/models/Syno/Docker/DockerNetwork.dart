@@ -1,5 +1,4 @@
 import 'package:dsm_helper/apis/api.dart';
-import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 
 /// network : [{"containers":["emby","qbittorrent","qinglong","ChatGPT","chinesesubfinder","moviepilot","sonarr","jackett","radarr","ShellngnPro","clash","nas-tools","webssh","jellyfin","yunzai-bot","redis"],"driver":"bridge","enable_ipv6":false,"gateway":"172.17.0.1","id":"53dd2cab2cb028a9c7d00d6d2922fdb63cc34fb1b1d1e6c6a5ff8be00f83203e","iprange":"","name":"bridge","subnet":"172.17.0.0/16"}]
 

@@ -9,6 +9,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.automaticallyImplyLeading = true,
     this.titleSpacing,
     this.leadingWidth,
+    this.leading,
     this.bottom,
     this.actions,
     super.key,
@@ -20,6 +21,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final double? titleSpacing;
 
+  final Widget? leading;
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
 
@@ -29,6 +31,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: title,
+      leading: leading,
       toolbarHeight: toolbarHeight,
       leadingWidth: leadingWidth,
       automaticallyImplyLeading: automaticallyImplyLeading,

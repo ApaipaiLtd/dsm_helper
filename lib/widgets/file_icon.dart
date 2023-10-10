@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
 import 'package:dsm_helper/widgets/cupertino_image.dart';

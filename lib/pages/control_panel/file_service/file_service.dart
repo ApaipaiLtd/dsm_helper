@@ -18,7 +18,6 @@ import 'package:dsm_helper/pages/control_panel/file_service/log_setting.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/utils/neu_picker.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -201,9 +200,6 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                             ],
                           ),
                           if (smb.enableSamba!) ...[
-                            SizedBox(
-                              height: 20,
-                            ),
                             TextField(
                               controller: _workgroupController,
                               onChanged: (v) => smb.workgroup = v,
@@ -1055,41 +1051,40 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
           color: AppTheme.of(context)?.primaryColor,
           borderRadius: BorderRadius.circular(15),
           padding: EdgeInsets.symmetric(vertical: 10),
-          onPressed: () async {
-            if (saving) {
-              return;
-            }
-            setState(() {
-              saving = true;
-            });
-            // var res = await Api.fileServiceSave(smb, fileTransferLog, afp, nfs, ftp, sftp);
-            //
-            // if (res['success']) {
-            //   setState(() {
-            //     saving = false;
-            //   });
-            //   Utils.toast("保存成功");
-            //   getData();
-            // }
-          },
-          child: saving
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CupertinoActivityIndicator(),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      ' 保存中 ',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  ],
-                )
-              : Text(
-                  ' 保存 ',
-                  style: TextStyle(fontSize: 18),
+          onPressed: saving
+              ? null
+              : () async {
+                  setState(() {
+                    saving = true;
+                  });
+                  // var res = await Api.fileServiceSave(smb, fileTransferLog, afp, nfs, ftp, sftp);
+                  //
+                  // if (res['success']) {
+                  //   setState(() {
+                  //     saving = false;
+                  //   });
+                  //   Utils.toast("保存成功");
+                  //   getData();
+                  // }
+                },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (saving) ...[
+                LoadingWidget(
+                  size: 16,
+                  color: AppTheme.of(context)?.placeholderColor,
                 ),
+                SizedBox(
+                  width: 20,
+                ),
+              ],
+              Text(
+                '保存',
+                style: TextStyle(fontSize: 18),
+              )
+            ],
+          ),
         )
       ],
     );

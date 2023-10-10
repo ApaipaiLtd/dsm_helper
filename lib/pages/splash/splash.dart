@@ -2,7 +2,6 @@ import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/api_model.dart';
-import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';

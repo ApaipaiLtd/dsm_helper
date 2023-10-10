@@ -2,12 +2,9 @@ import 'package:dsm_helper/pages/docker/image_page.dart';
 import 'package:dsm_helper/pages/docker/log_page.dart';
 import 'package:dsm_helper/pages/docker/network_page.dart';
 import 'package:dsm_helper/pages/docker/repository_page.dart';
-import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
-import 'package:dsm_helper/widgets/label.dart';
-import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

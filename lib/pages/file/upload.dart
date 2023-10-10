@@ -46,7 +46,7 @@ class _UploadState extends State<Upload> {
   @override
   void initState() {
     setState(() {
-      savePath = widget.path ?? "";
+      savePath = widget.path;
     });
     if (widget.selectedFilesPath != null) {
       uploads = widget.selectedFilesPath!.map((filePath) {

@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
 import 'package:flutter/material.dart';
 
