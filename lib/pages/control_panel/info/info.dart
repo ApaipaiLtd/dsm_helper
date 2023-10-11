@@ -1,5 +1,7 @@
+import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -375,6 +377,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     System system = context.read<SystemInfoProvider>().systemInfo;
+    InitDataModel initData = context.watch<InitDataProvider>().initData;
     return GlassScaffold(
       appBar: GlassAppBar(
         title: Text("信息中心"),
@@ -407,6 +410,31 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
             children: [
               WidgetCard(
                 title: "基本信息",
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "系统名称",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${initData.session?.hostname}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "DSM版本",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${system.firmwareVer}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              WidgetCard(
+                title: "硬件信息",
                 body: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -465,24 +493,6 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                     ),
                     Divider(indent: 0, endIndent: 0, height: 20),
                     Text(
-                      "系统时间",
-                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                    ),
-                    Text(
-                      "${system.time}",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Divider(indent: 0, endIndent: 0, height: 20),
-                    Text(
-                      "运行时间",
-                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                    ),
-                    Text(
-                      "${Utils.parseOpTime(system.upTime!)}",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Divider(indent: 0, endIndent: 0, height: 20),
-                    Text(
                       "散热状态",
                       style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
@@ -513,6 +523,24 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                     ),
                     Text(
                       "${system.timeZoneDesc}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "系统时间",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${system.time}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "运行时间",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${Utils.parseOpTime(system.upTime!)}",
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
