@@ -1,9 +1,14 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/disk_overview_status_enum.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/disk_smart_status_enum.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/disk_status_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/smart.dart';
+import 'package:dsm_helper/pages/storage_manager/widgets/disk_card_item_widget.dart';
 import 'package:dsm_helper/pages/storage_manager/widgets/storage_pool_item_widget.dart';
 import 'package:dsm_helper/pages/storage_manager/widgets/volume_item_widget.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/dashed_decoration.dart';
@@ -142,14 +147,10 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
     );
   }
 
-  Widget _buildDiskItem(disk, {bool full = false}) {
+  Widget _buildDiskItem(Disks disk, {bool full = false}) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (context) {
-              return Smart(disk);
-            },
-            settings: RouteSettings(name: "disk_smart")));
+        context.push(DiskSmart(disk), name: "disk_smart");
       },
       child: Container(
         decoration: BoxDecoration(
@@ -169,7 +170,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                     // color: Colors.red,
                   ),
                   child: Image.asset(
-                    disk['isSsd'] ? "assets/icons/ssd.png" : "assets/icons/hdd.png",
+                    disk.isSsd == true ? "assets/icons/ssd.png" : "assets/icons/hdd.png",
                     width: 40,
                   ),
                 ),
@@ -183,23 +184,23 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                       Row(
                         children: [
                           Text(
-                            "${disk['longName'].replaceAll("Cache device", "缓存设备")}",
+                            "${disk.longName!.replaceAll("Cache device", "缓存设备")}",
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 5,
                           ),
                           Label(
-                            disk['overview_status'] == "normal" ? "正常" : disk['overview_status'],
-                            disk['overview_status'] == "normal" ? Colors.green : Colors.red,
+                            disk.overviewStatusEnum != DiskOverviewStatusEnum.unknown ? disk.overviewStatusEnum.label : disk.overviewStatus ?? '',
+                            disk.overviewStatusEnum != DiskOverviewStatusEnum.unknown ? disk.overviewStatusEnum.color : Colors.red,
                             fill: true,
                           ),
                           SizedBox(
                             width: 5,
                           ),
-                          if (disk['temp'] != null && disk['temp'] > -1)
+                          if (disk.temp != null && disk.temp! > -1)
                             Label(
-                              "${disk['temp']}℃",
+                              "${disk.temp}℃",
                               Colors.lightBlueAccent,
                               height: 23,
                             ),
@@ -208,11 +209,11 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                       SizedBox(
                         height: 5,
                       ),
-                      Text("${disk['vendor'].trim()} ${disk['model'].trim()}"),
+                      Text("${disk.vendor?.trim()} ${disk.model?.trim()}"),
                       SizedBox(
                         height: 5,
                       ),
-                      Text("${Utils.formatSize(int.parse(disk['size_total']))}"),
+                      Text("${Utils.formatSize(int.parse(disk.sizeTotal!))}"),
                     ],
                   ),
                 )
@@ -232,7 +233,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
-                        Text("${disk['container']['str']}"),
+                        Text("${disk.container?.str}"),
                       ],
                     ),
                     SizedBox(
@@ -247,7 +248,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
-                        Text("${disk['diskType']}"),
+                        Text("${disk.diskType}"),
                       ],
                     ),
                     SizedBox(
@@ -262,10 +263,10 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
-                        if (storagePools.where((pool) => pool['id'] == disk['used_by']).toList().length > 0)
-                          Text("存储池 ${storagePools.where((pool) => pool['id'] == disk['used_by']).toList()[0]['num_id']}")
-                        else if (ssdCaches.where((ssd) => ssd['id'] == disk['used_by']).toList().length > 0)
-                          Text("${ssdCaches.where((ssd) => ssd['id'] == disk['used_by']).toList()[0]['id'].toString().replaceFirst("ssd_", "SSD 缓存 ")}")
+                        if (storage.storagePools!.where((pool) => pool.id == disk.usedBy).toList().length > 0)
+                          Text("存储池 ${storage.storagePools!.where((pool) => pool.id == disk.usedBy).first.numId}")
+                        else if (storage.ssdCaches!.where((ssd) => ssd.id == disk.usedBy).toList().length > 0)
+                          Text("${storage.ssdCaches!.where((ssd) => ssd.id == disk.usedBy).toList().first.displayName}")
                         else
                           Text("-"),
                       ],
@@ -283,8 +284,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                           ),
                         ),
                         Text(
-                          "${disk['status'] == "normal" ? "正常" : disk['status'] == "not_use" ? "未初始化" : disk['status'] == "sys_partition_normal" ? "已初始化" : "${disk['status']}"}",
-                          style: TextStyle(color: disk['status'] == "normal" ? Colors.green : Colors.red),
+                          "${disk.statusEnum != DiskStatusEnum.unknown ? disk.statusEnum.label : disk.status}",
+                          style: TextStyle(color: disk.statusEnum.color),
                         ),
                       ],
                     ),
@@ -301,15 +302,15 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                           ),
                         ),
                         Text(
-                          "${disk['smart_status'] == "normal" ? "正常" : disk['smart_status']}",
-                          style: TextStyle(color: disk['smart_status'] == "normal" ? Colors.green : Colors.red),
+                          "${disk.smartStatusEnum != DiskSmartStatusEnum.unknown ? disk.smartStatusEnum.label : disk.smartStatus}",
+                          style: TextStyle(color: disk.smartStatusEnum.color),
                         ),
                       ],
                     ),
                     SizedBox(
                       height: 5,
                     ),
-                    if (disk['remain_life'] != null) ...[
+                    if (disk.remainLife != null) ...[
                       Row(
                         children: [
                           SizedBox(
@@ -319,14 +320,14 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Text("${disk['remain_life'] == -1 ? "-" : disk['remain_life']}"),
+                          Text("${disk.remainLife == -1 ? "-" : disk.remainLife}"),
                         ],
                       ),
                       SizedBox(
                         height: 5,
                       ),
                     ],
-                    if (disk['unc'] != null && disk['unc'] > -1) ...[
+                    if (disk.unc != null && disk.unc! > -1) ...[
                       Row(
                         children: [
                           SizedBox(
@@ -336,14 +337,14 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Text("${disk['unc']}"),
+                          Text("${disk.unc}"),
                         ],
                       ),
                       SizedBox(
                         height: 5,
                       ),
                     ],
-                    if (disk['temp'] != null) ...[
+                    if (disk.temp != null) ...[
                       Row(
                         children: [
                           SizedBox(
@@ -353,14 +354,14 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Text("${disk['temp'] > -1 ? "${disk['temp']} ℃" : "-"}"),
+                          Text("${disk.temp! > -1 ? "${disk.temp} ℃" : "-"}"),
                         ],
                       ),
                       SizedBox(
                         height: 5,
                       ),
                     ],
-                    if (disk['serial'] != null) ...[
+                    if (disk.serial != null) ...[
                       Row(
                         children: [
                           SizedBox(
@@ -370,14 +371,14 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Text("${disk['serial']}"),
+                          Text("${disk.serial}"),
                         ],
                       ),
                       SizedBox(
                         height: 5,
                       ),
                     ],
-                    if (disk['firm'] != null) ...[
+                    if (disk.firm != null) ...[
                       Row(
                         children: [
                           SizedBox(
@@ -387,14 +388,14 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Text("${disk['firm']}"),
+                          Text("${disk.firm}"),
                         ],
                       ),
                       SizedBox(
                         height: 5,
                       ),
                     ],
-                    if (disk['is4Kn'] != null)
+                    if (disk.is4Kn != null)
                       Row(
                         children: [
                           SizedBox(
@@ -404,7 +405,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Text("${disk['is4Kn'] ? "是" : "否"}"),
+                          Text("${disk.is4Kn == true ? "是" : "否"}"),
                         ],
                       ),
                   ],
@@ -527,7 +528,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                       "硬盘信息",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    ...disks.where((e) => pool['disks'].contains(e['id'])).map(_buildDiskItem).toList(),
+                    // ...disks.where((e) => pool['disks'].contains(e['id'])).map(_buildDiskItem).toList(),
                   ],
                 ),
               ),
@@ -632,59 +633,66 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                           children: storage.volumes!.map((volume) => VolumeItemWidget(volume, isLast: storage.volumes!.last == volume)).toList(),
                         ),
                       ),
-                    WidgetCard(
-                      title: "硬盘信息",
-                      body: Wrap(
-                        runSpacing: 5,
-                        spacing: 5,
-                        children: [
-                          for (int i = 0; i < (storage.env?.bayNumber != null ? int.parse(storage.env!.bayNumber!) : 8); i++)
-                            Container(
-                              height: 20,
-                              width: 40,
-                              decoration: DashedDecoration(
-                                color: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? Colors.blue : Colors.transparent,
-                                dashedColor: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? Colors.blue : Colors.grey,
-                                gap: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? 0.1 : 2,
+                    if (storage.disks != null)
+                      WidgetCard(
+                        title: "硬盘信息",
+                        body: Wrap(
+                          runSpacing: 5,
+                          spacing: 5,
+                          children: [
+                            for (int i = 0; i < (storage.env?.bayNumber != null ? int.parse(storage.env!.bayNumber!) : 8); i++)
+                              Container(
+                                height: 20,
+                                width: 40,
+                                decoration: storage.disks!.any((disk) => disk.numId == i + 1)
+                                    ? BoxDecoration(
+                                        color: AppTheme.of(context)?.primaryColor,
+                                        border: Border.all(color: AppTheme.of(context)?.primaryColor ?? Colors.blue, width: 1),
+                                      )
+                                    : DashedDecoration(
+                                        color: Colors.transparent,
+                                        dashedColor: AppTheme.of(context)?.placeholderColor,
+                                        gap: 2,
+                                      ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 storage.storagePools != null && storage.storagePools!.length > 0
-                    ? ListView.separated(
-                        itemBuilder: (context, i) {
-                          var pool = storage.storagePools![i];
-                          return StoragePoolItemWidget(
-                            pool,
-                            volumes: [],
-                            disks: storage.disks!.where((disk) => pool.disks!.contains(disk.id)).toList(),
-                          );
-                        },
-                        itemCount: storage.storagePools!.length,
-                        separatorBuilder: (context, i) {
-                          return SizedBox(
-                            height: 20,
-                          );
-                        },
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        child: ListView.separated(
+                          itemBuilder: (context, i) {
+                            var pool = storage.storagePools![i];
+                            return StoragePoolItemWidget(
+                              pool,
+                              volumes: storage.volumes!.where((volumes) => volumes.poolPath == pool.id).toList(),
+                              disks: storage.disks!.where((disk) => pool.disks!.contains(disk.id)).toList(),
+                            );
+                          },
+                          itemCount: storage.storagePools!.length,
+                          separatorBuilder: (context, i) {
+                            return SizedBox(height: 10);
+                          },
+                        ),
                       )
                     : EmptyWidget(
                         text: "无存储池",
                       ),
-                disks.length > 0
-                    ? ListView.separated(
-                        padding: EdgeInsets.all(20),
-                        itemBuilder: (context, i) {
-                          return _buildDiskItem(disks[i], full: true);
-                        },
-                        itemCount: disks.length,
-                        separatorBuilder: (context, i) {
-                          return SizedBox(
-                            height: 20,
-                          );
-                        },
+                storage.disks != null && storage.disks!.length > 0
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        child: ListView.separated(
+                          itemBuilder: (context, i) {
+                            return DiskCardItemWidget(storage.disks![i]);
+                          },
+                          itemCount: storage.disks!.length,
+                          separatorBuilder: (context, i) {
+                            return SizedBox(height: 10);
+                          },
+                        ),
                       )
                     : EmptyWidget(
                         text: "无HDD/SSD",
@@ -699,7 +707,8 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                             height: 20,
                           );
                         },
-                        itemCount: ssdCaches.length)
+                        itemCount: ssdCaches.length,
+                      )
                     : EmptyWidget(
                         text: "无SSD缓存",
                       ),

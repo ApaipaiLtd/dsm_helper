@@ -38,16 +38,15 @@ class ApplicationItemWidget extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                   SizedBox(
-                    height: 5,
-                  ),
-                  SizedBox(
                     height: 32,
-                    child: Text(
-                      applicationEnum.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12),
+                    child: Center(
+                      child: Text(
+                        applicationEnum.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
                   ),
                 ],

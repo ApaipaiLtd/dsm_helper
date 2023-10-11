@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 enum VolumeStatusEnum {
   normal(label: "良好", color: Color(0xFF25B85F)),
-  background(label: "正在检查硬盘", color: Colors.lightBlueAccent),
-  attention(label: "警告", color: Colors.orangeAccent),
+  background(label: "正在检查硬盘", color: Colors.black54),
+  attention(label: "警告", color: Color(0xFFFF8D1A)),
+  background_scrubbing(label: "正在运行数据清理", color: Color(0xFF2A82E4)),
   unknown(label: "未知", color: Color(0xFFFF5733));
 
   final String label;

@@ -97,7 +97,7 @@ class _TaskSchedulerItemState extends State<TaskSchedulerItem> {
             child: widget.task.running
                 ? CupertinoActivityIndicator()
                 : Image.asset(
-                    "assets/icons/play_fill.png",
+                    "assets/icons/play_circle_fill.png",
                     width: 30,
                     height: 30,
                   ),

@@ -489,17 +489,6 @@ class Api {
     return result;
   }
 
-  static Future<Map> initData() async {
-    var result = await Utils.post("entry.cgi", data: {
-      "launch_app": "null",
-      "api": '"SYNO.Core.Desktop.Initdata"',
-      "method": '"get"',
-      "version": 1,
-      "_sid": Utils.sid,
-    });
-    return result;
-  }
-
   static Future<Map> networkInfo() async {
     var result = await Utils.post("entry.cgi", data: {
       "api": '"SYNO.Core.System"',

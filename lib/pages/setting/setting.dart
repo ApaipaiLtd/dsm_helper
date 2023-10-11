@@ -6,6 +6,7 @@ import 'package:dsm_helper/models/Syno/Core/Terminal.dart';
 import 'package:dsm_helper/pages/backup/backup.dart';
 import 'package:dsm_helper/pages/login/confirm_logout.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
+import 'package:dsm_helper/pages/setting/dialogs/feedback_dialog.dart';
 import 'package:dsm_helper/pages/setting/dialogs/shutdown_dialog.dart';
 import 'package:dsm_helper/pages/setting/dialogs/ssh_dialog.dart';
 import 'package:dsm_helper/pages/setting/vip.dart';
@@ -537,18 +538,7 @@ class _SettingState extends State<Setting> {
                     name: "会员中心",
                     icon: "vip",
                     onPressed: () async {
-                      Navigator.of(context)
-                          .push(
-                        CupertinoPageRoute(
-                          builder: (context) {
-                            return Vip();
-                          },
-                          settings: RouteSettings(name: "vip"),
-                        ),
-                      )
-                          .then((value) {
-                        setState(() {});
-                      });
+                      context.push(Vip(), name: "vip");
                     },
                   ),
                 SettingItem(name: "主题", icon: "theme", onPressed: onTheme),
@@ -556,13 +546,7 @@ class _SettingState extends State<Setting> {
                   name: "终端",
                   icon: "terminal",
                   onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                          builder: (context) {
-                            return SelectTerminalServer();
-                          },
-                          settings: RouteSettings(name: "select_server")),
-                    );
+                    context.push(SelectTerminalServer(), name: "select_server");
                   },
                 ),
                 SettingItem(
@@ -583,79 +567,9 @@ class _SettingState extends State<Setting> {
                   icon: "feedback",
                   onPressed: () async {
                     if (Utils.notReviewAccount) {
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return Material(
-                            color: Colors.transparent,
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                              child: SafeArea(
-                                top: false,
-                                child: Padding(
-                                  padding: EdgeInsets.all(20),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text(
-                                        "您将进入“阿派派软件”微信小程序进行问题反馈。是否确定要继续？",
-                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: 22,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: CupertinoButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                Fluwx().open(target: MiniProgram(username: "gh_6c07712ef0fb"));
-                                              },
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(25),
-                                              padding: EdgeInsets.symmetric(vertical: 10),
-                                              child: Text(
-                                                "进入小程序",
-                                                style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 16,
-                                          ),
-                                          Expanded(
-                                            child: CupertinoButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                              },
-                                              color: Theme.of(context).scaffoldBackgroundColor,
-                                              borderRadius: BorderRadius.circular(25),
-                                              padding: EdgeInsets.symmetric(vertical: 10),
-                                              child: Text(
-                                                "取消",
-                                                style: TextStyle(fontSize: 18),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
+                      FeedbackDialog.show(context: context);
                     } else {
-                      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                        return Feedback();
-                      }));
+                      context.push(Feedback(), name: "feedback");
                     }
                   },
                 ),
@@ -663,10 +577,6 @@ class _SettingState extends State<Setting> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.refresh),
-        onPressed: getTerminalInfo,
       ),
     );
   }

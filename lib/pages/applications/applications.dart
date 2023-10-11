@@ -27,7 +27,7 @@ class _ApplicationsState extends State<Applications> {
       body: Padding(
         padding: EdgeInsets.all(8),
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 120, childAspectRatio: 0.95),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 120),
           itemBuilder: (context, i) {
             String application = applications[i];
             return ApplicationItemWidget(application);

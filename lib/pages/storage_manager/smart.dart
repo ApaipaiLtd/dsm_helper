@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
@@ -8,15 +9,14 @@ import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
-class Smart extends StatefulWidget {
-  final Map disk;
-  Smart(this.disk);
+class DiskSmart extends StatefulWidget {
+  final Disks disk;
+  DiskSmart(this.disk);
   @override
-  _SmartState createState() => _SmartState();
+  _DiskSmartState createState() => _DiskSmartState();
 }
 
-class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
+class _DiskSmartState extends State<DiskSmart> with SingleTickerProviderStateMixin {
   Timer? timer;
   late TabController _tabController;
   bool loading = true;
@@ -57,7 +57,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
     if (timer != null) {
       return;
     }
-    var res = await Api.doSmartTest(widget.disk['device'], type);
+    var res = await Api.doSmartTest(widget.disk.device!, type);
     if (res['success']) {
       getSmartLog();
       timer = Timer.periodic(Duration(seconds: 4), (timer) {
@@ -72,7 +72,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
   }
 
   getLog() async {
-    var res = await Api.diskTestLog(widget.disk['device']);
+    var res = await Api.diskTestLog(widget.disk.device!);
     if (res['success']) {
       setState(() {
         logLoading = false;
@@ -82,7 +82,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
   }
 
   getData() async {
-    var res = await Api.smart(widget.disk['device']);
+    var res = await Api.smart(widget.disk.device!);
     if (res['success']) {
       setState(() {
         loading = false;
@@ -96,7 +96,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
   }
 
   getSmartLog() async {
-    var res = await Api.smartTestLog(widget.disk['device']);
+    var res = await Api.smartTestLog(widget.disk.device!);
     print(res);
     if (res['success']) {
       setState(() {
@@ -115,12 +115,10 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
   Widget _buildSmartItem(smart) {
     return Container(
       padding: EdgeInsets.all(20),
-      
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-
       child: Column(
         children: [
           Row(
@@ -200,12 +198,10 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
   Widget _buildLogItem(log) {
     return Container(
       padding: EdgeInsets.all(20),
-      
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -235,19 +231,16 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        title: Text("${widget.disk['name']} 状况信息"),
+        title: Text("${widget.disk.name} 状况信息"),
       ),
       body: loading
           ? Center(
               child: Container(
                 padding: EdgeInsets.all(50),
-                
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
-
                 child: CupertinoActivityIndicator(
                   radius: 14,
                 ),
@@ -262,8 +255,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  
-
                   child: TabBar(
                     isScrollable: true,
                     controller: _tabController,
@@ -302,8 +293,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                         children: [
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            
-
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -314,12 +303,12 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                 children: [
                                   CircleAvatar(
                                     child: Icon(
-                                      widget.disk['overview_status'] == "normal" ? Icons.check : Icons.clear,
+                                      widget.disk.overviewStatus == "normal" ? Icons.check : Icons.clear,
                                       color: Colors.white,
                                       size: 40,
                                     ),
                                     radius: 30,
-                                    backgroundColor: widget.disk['overview_status'] == "normal" ? Colors.green : Colors.red,
+                                    backgroundColor: widget.disk.overviewStatus == "normal" ? Colors.green : Colors.red,
                                   ),
                                   SizedBox(
                                     width: 20,
@@ -329,13 +318,13 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${widget.disk['overview_status'] == "normal" ? "正常" : widget.disk['overview_status']}",
-                                          style: TextStyle(fontSize: 20, color: widget.disk['overview_status'] == "normal" ? Colors.green : Colors.red),
+                                          "${widget.disk.overviewStatus == "normal" ? "正常" : widget.disk.overviewStatus}",
+                                          style: TextStyle(fontSize: 20, color: widget.disk.overviewStatus == "normal" ? Colors.green : Colors.red),
                                         ),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("${widget.disk['overview_status'] == "normal" ? "此硬盘的运行状况正常" : widget.disk['overview_status']}"),
+                                        Text("${widget.disk.overviewStatus == "normal" ? "此硬盘的运行状况正常" : widget.disk.overviewStatus}"),
                                       ],
                                     ),
                                   ),
@@ -345,8 +334,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                           ),
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            
-
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -364,7 +351,7 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                           style: TextStyle(fontWeight: FontWeight.w600),
                                         ),
                                       ),
-                                      Text("${widget.disk['temp']} 摄氏度"),
+                                      Text("${widget.disk.temp} 摄氏度"),
                                     ],
                                   ),
                                   SizedBox(
@@ -458,8 +445,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                         padding: EdgeInsets.all(20),
                         children: [
                           Container(
-                            
-
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -535,8 +520,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                             height: 20,
                           ),
                           Container(
-                            
-
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -561,8 +544,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                   ),
                                   if (testing) ...[
                                     Container(
-                                      
-
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -581,10 +562,9 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                               onPressed: () async {
                                                 doSmartTest("stop");
                                               },
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(10),
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(10),
                                               padding: EdgeInsets.all(5),
-
                                               child: SizedBox(
                                                 width: 20,
                                                 height: 20,
@@ -601,8 +581,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                     ),
                                   ] else ...[
                                     Container(
-                                      
-
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -630,10 +608,9 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                               onPressed: () async {
                                                 doSmartTest("quick");
                                               },
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(10),
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(10),
                                               padding: EdgeInsets.all(5),
-
                                               child: SizedBox(
                                                 width: 20,
                                                 height: 20,
@@ -652,8 +629,6 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                       height: 20,
                                     ),
                                     Container(
-                                      
-
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -681,10 +656,9 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                                               onPressed: () async {
                                                 doSmartTest("extend");
                                               },
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(10),
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(10),
                                               padding: EdgeInsets.all(5),
-
                                               child: SizedBox(
                                                 width: 20,
                                                 height: 20,
@@ -723,12 +697,10 @@ class _SmartState extends State<Smart> with SingleTickerProviderStateMixin {
                               child: Center(
                                 child: Container(
                                   padding: EdgeInsets.all(50),
-                                  
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-
                                   child: CupertinoActivityIndicator(
                                     radius: 14,
                                   ),

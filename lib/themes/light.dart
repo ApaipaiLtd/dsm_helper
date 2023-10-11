@@ -11,7 +11,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       primaryColor: Color(0xFF2A82E4),
       progressColor: Color(0xFFf4f4f4),
       successColor: Color(0xFF25B85F),
-      warningColor: Colors.orangeAccent,
+      warningColor: Color(0xFFFF8D1A),
       errorColor: Color(0xFFFF5733),
     ),
   ],

@@ -1,7 +1,8 @@
 import 'package:dsm_helper/models/Syno/Core/System.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -403,326 +404,116 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
         controller: _tabController,
         children: [
           ListView(
-            padding: EdgeInsets.symmetric(vertical: 20),
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: Column(
+              WidgetCard(
+                title: "基本信息",
+                body: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 20, left: 20),
-                      child: Text(
-                        "基本信息",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
+                    Text(
+                      "产品序列号",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "产品序列号",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.serial}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      "${system.serial ?? '-'}",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "产品型号",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.model}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "产品型号",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "CPU",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.cpuVendor} ${system.cpuFamily} ${system.cpuSeries}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      "${system.model ?? '-'}",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "CPU核心",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.cpuCores}核 @ ${(system.cpuClockSpeed! / 1000).toStringAsFixed(2)}GHz",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "CPU",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "物理内存",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.ramSize}MB",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      "${system.cpuVendor} ${system.cpuFamily} ${system.cpuSeries}",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "DSM版本",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.firmwareVer}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "CPU核心",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "系统时间",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.time}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      "${system.cpuCores}核 @ ${(system.cpuClockSpeed! / 1000).toStringAsFixed(2)}GHz",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "运行时间",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${Utils.parseOpTime(system.upTime!)}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "物理内存",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    if (system.sysTemp != null)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "散热状态",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "${system.sysTemp}℃ ${system.temperatureWarning == null ? (system.sysTemp! > 80 ? "警告" : "正常") : (system.temperatureWarning! ? "警告" : "正常")}",
-                                style: TextStyle(color: system.temperatureWarning == null ? (system.sysTemp! > 80 ? Colors.red : Colors.green) : (system.temperatureWarning! ? Colors.red : Colors.green)),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    SizedBox(
-                      height: 20,
+                    Text(
+                      "${system.ramSize}MB",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "DSM版本",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${system.firmwareVer}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "系统时间",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${system.time}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "运行时间",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${Utils.parseOpTime(system.upTime!)}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "散热状态",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${system.sysTemp}℃ ${system.temperatureWarning == null ? (system.sysTemp! > 80 ? "警告" : "正常") : (system.temperatureWarning! ? "警告" : "正常")}",
+                      style: TextStyle(color: system.temperatureWarning == null ? (system.sysTemp! > 80 ? AppTheme.of(context)?.errorColor : AppTheme.of(context)?.successColor) : (system.temperatureWarning! ? AppTheme.of(context)?.errorColor : AppTheme.of(context)?.successColor), fontSize: 16),
                     ),
                   ],
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                child: Column(
+              WidgetCard(
+                title: "时间信息",
+                body: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 20, left: 20),
-                      child: Text(
-                        "时间信息",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
+                    Text(
+                      "服务器地址",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "服务器地址",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.ntpServer} ${system.enabledNtp! ? "" : "(暂未启用)"}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      "${system.ntpServer} ${system.enabledNtp! ? "" : "(暂未启用)"}",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              "时区",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "${system.timeZoneDesc}",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Divider(indent: 0, endIndent: 0, height: 20),
+                    Text(
+                      "时区",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                     ),
-                    SizedBox(
-                      height: 20,
+                    Text(
+                      "${system.timeZoneDesc}",
+                      style: TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
