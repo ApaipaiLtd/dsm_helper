@@ -6,6 +6,7 @@ import 'package:dsm_helper/pages/download/download.dart';
 import 'package:dsm_helper/pages/file/file.dart';
 import 'package:dsm_helper/pages/file/file_page.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/overlay_util.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
@@ -152,11 +153,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
     authPage = launchAuth && (password || biometrics);
     if (Utils.isAuthPage == false && authPage) {
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-        return AuthPage(
-          launch: false,
-        );
-      }));
+      context.push(AuthPage(launch: false));
     }
   }
 
@@ -269,10 +266,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
-                AssetImage("assets/tabbar/setting.png"),
+                AssetImage("assets/tabbar/mine.png"),
                 size: 24,
               ),
-              label: "设置",
+              label: "我的",
             ),
           ],
         ),

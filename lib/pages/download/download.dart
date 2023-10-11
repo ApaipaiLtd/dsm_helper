@@ -50,8 +50,7 @@ class DownloadState extends State<Download> with SingleTickerProviderStateMixin 
   Widget build(BuildContext context) {
     return GlassScaffold(
       appBar: GlassAppBar(
-        title: Text("传输"),
-        bottom: TabBar(
+        title: TabBar(
           controller: _tabController,
           isScrollable: true,
           tabs: [
@@ -60,6 +59,14 @@ class DownloadState extends State<Download> with SingleTickerProviderStateMixin 
             Tab(text: "备份"),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          ListView(),
+          ListView(),
+          ListView(),
+        ],
       ),
     );
   }

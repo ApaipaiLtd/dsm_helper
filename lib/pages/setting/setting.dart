@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Core/Terminal.dart';
 import 'package:dsm_helper/pages/backup/backup.dart';
-import 'package:dsm_helper/pages/control_panel/ssh/ssh.dart';
-import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/confirm_logout.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
+import 'package:dsm_helper/pages/setting/dialogs/shutdown_dialog.dart';
+import 'package:dsm_helper/pages/setting/dialogs/ssh_dialog.dart';
 import 'package:dsm_helper/pages/setting/vip.dart';
 import 'package:dsm_helper/providers/dark_mode.dart';
 import 'package:dsm_helper/pages/setting/feedback.dart';
@@ -15,7 +16,6 @@ import 'package:dsm_helper/pages/terminal/select_server.dart';
 import 'package:dsm_helper/pages/user/setting.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
@@ -29,40 +29,43 @@ import 'package:fluwx/fluwx.dart';
 import 'package:provider/provider.dart';
 import 'package:sp_util/sp_util.dart';
 
-class SettingButton extends StatelessWidget {
-  final bool loading;
+class SettingItem extends StatelessWidget {
   final String name;
   final String icon;
   final OnPressed? onPressed;
-  const SettingButton({required this.name, required this.icon, this.onPressed, this.loading = false, super.key});
+  const SettingItem({required this.name, required this.icon, this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {
-    double width = (MediaQuery.of(context).size.width - 81) / 3;
-    return SizedBox(
-      width: width,
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10),
       child: CupertinoButton(
         onPressed: onPressed,
         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        padding: EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.all(16),
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
 
-        child: Column(
+        child: Row(
           children: [
-            loading
-                ? CupertinoActivityIndicator(radius: 20)
-                : Image.asset(
-                    "assets/icons/$icon.png",
-                    width: 40,
-                  ),
-            SizedBox(
-              height: 5,
+            Image.asset(
+              "assets/icons/$icon.png",
+              width: 24,
             ),
-            Text(
-              "$name",
-              style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
-            )
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Text(
+                "$name",
+                style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+              ),
+            ),
+            Icon(
+              CupertinoIcons.right_chevron,
+              color: AppTheme.of(context)?.placeholderColor,
+              size: 16,
+            ),
           ],
         ),
       ),
@@ -114,55 +117,28 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
-  bool checking = false;
-  bool? ssh;
-  bool? telnet;
+  Terminal terminal = Terminal();
 
-  bool sshLoading = true;
+  bool terminalLoading = true;
   bool shuttingDown = false;
   bool rebooting = false;
-  String? sshPort;
 
-  List servers = [];
-
-  String account = "";
-  String host = "";
   bool otpEnable = false;
   bool otpEnforced = false;
 
   String email = "";
   @override
   void initState() {
-    getData();
-    getServers();
+    getTerminalInfo();
     getNormalUser();
-    account = SpUtil.getString("account")!;
-    host = SpUtil.getString("host")!;
     super.initState();
   }
 
-  getServers() async {
-    String serverString = SpUtil.getString("servers")!;
-    if (serverString.isNotBlank) {
-      servers = json.decode(serverString);
-    }
-  }
-
-  getData() async {
-    // var res = await Api.terminalInfo();
-    // if (res['success']) {
-    //   setState(() {
-    //     ssh = res['data']['enable_ssh'];
-    //     telnet = res['data']['enable_telnet'];
-    //     sshPort = res['data']['ssh_port'].toString();
-    //     sshLoading = false;
-    //   });
-    // } else {
-    //   setState(() {
-    //     sshLoading = false;
-    //     ssh = null;
-    //   });
-    // }
+  getTerminalInfo() async {
+    terminal = await Terminal.get();
+    setState(() {
+      terminalLoading = false;
+    });
   }
 
   getNormalUser() async {
@@ -176,12 +152,12 @@ class _SettingState extends State<Setting> {
     // }
   }
 
-  power(String type, bool force) async {
+  power(bool reboot, bool force) async {
     setState(() {
-      if (type == "shutdown") {
-        shuttingDown = true;
-      } else {
+      if (reboot) {
         rebooting = true;
+      } else {
+        shuttingDown = true;
       }
     });
     // var res = await Api.power(type, force);
@@ -285,168 +261,11 @@ class _SettingState extends State<Setting> {
     // }
   }
 
-  onShutdown() async {
-    if (shuttingDown) {
-      return;
+  onShutdown({bool reboot = false}) async {
+    bool? res = await ShutdownDialog.show(context: context, reboot: reboot);
+    if (res != null) {
+      power(reboot, false);
     }
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "确认关机",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Text(
-                      "确认要关闭设备吗？",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                    ),
-                    SizedBox(
-                      height: 22,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CupertinoButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              power("shutdown", false);
-                            },
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              "确认关机",
-                              style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Expanded(
-                          child: CupertinoButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                            },
-                            color: Theme.of(context).disabledColor,
-                            borderRadius: BorderRadius.circular(25),
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              "取消",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  onReboot() async {
-    if (rebooting) {
-      return;
-    }
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "确认重启",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Text(
-                      "确认要重新启动设备？",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                    ),
-                    SizedBox(
-                      height: 22,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CupertinoButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              power("reboot", false);
-                            },
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              "确认重启",
-                              style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Expanded(
-                          child: CupertinoButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                            },
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(25),
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              "取消",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   onTheme() {
@@ -521,7 +340,6 @@ class _SettingState extends State<Setting> {
 
   @override
   Widget build(BuildContext context) {
-    double width = (context.width - 81) / 3;
     InitDataProvider initDataProvider = context.watch<InitDataProvider>();
     return GlassScaffold(
       appBar: GlassAppBar(
@@ -541,12 +359,9 @@ class _SettingState extends State<Setting> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: ListView(
           children: [
-            SizedBox(
-              height: 30,
-            ),
             GestureDetector(
               onTap: () {
                 context.push(UserSetting(), name: "user_setting").then((res) {
@@ -659,103 +474,34 @@ class _SettingState extends State<Setting> {
                                     ),
                                   ),
                                   Spacer(),
-                                  if (ssh != null)
+                                  if (terminal.enableSsh != null)
                                     CupertinoButton(
-                                      onPressed: () {
-                                        showCupertinoModalPopup(
-                                          context: context,
-                                          builder: (context) {
-                                            return Material(
-                                              color: Colors.transparent,
-                                              child: Container(
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                                child: SafeArea(
-                                                  top: false,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.all(20),
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        Text(
-                                                          "提示",
-                                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 12,
-                                                        ),
-                                                        Text(
-                                                          "确认${ssh! ? '关闭' : '开启'}SSH吗？",
-                                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 22,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: CupertinoButton(
-                                                                onPressed: () async {
-                                                                  Navigator.of(context).pop();
-                                                                  setState(() {
-                                                                    sshLoading = true;
-                                                                  });
-                                                                  // var res = await Api.setTerminal(!ssh!, telnet, sshPort);
-                                                                  // print(res);
-                                                                  // if (!res['success']) {
-                                                                  //   Utils.toast("操作失败，代码：${res['error']['code']}");
-                                                                  // }
-                                                                  await getData();
-                                                                },
-                                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                                borderRadius: BorderRadius.circular(25),
-                                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                                child: Text(
-                                                                  "确认${ssh! ? '关闭' : '开启'}SSH",
-                                                                  style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 16,
-                                                            ),
-                                                            Expanded(
-                                                              child: CupertinoButton(
-                                                                onPressed: () async {
-                                                                  context.pop();
-                                                                  context.push(SshSetting(), name: "ssh_setting");
-                                                                },
-                                                                color: Theme.of(context).disabledColor,
-                                                                borderRadius: BorderRadius.circular(25),
-                                                                padding: EdgeInsets.symmetric(vertical: 10),
-                                                                child: Text(
-                                                                  "取消",
-                                                                  style: TextStyle(fontSize: 18),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
+                                      onPressed: () async {
+                                        bool? enableSsh = await SshDialog.show(context: context, enable: !terminal.enableSsh!);
+                                        if (enableSsh != null) {
+                                          terminal.enableSsh = enableSsh;
+                                          try {
+                                            bool? res = await terminal.set();
+                                            if (res == true) {
+                                              setState(() {});
+                                            }
+                                          } on DsmException catch (e) {
+                                            if (e.code == 105) {
+                                              Utils.toast("高版本DSM禁止未加密接口修改SSH配置，请前往网页版手动设置");
+                                            }
+                                          }
+                                        }
                                       },
                                       child: Image.asset(
                                         "assets/icons/ssh.png",
                                         width: 20,
-                                        color: Colors.white,
+                                        color: terminal.enableSsh! ? AppTheme.of(context)?.successColor : Colors.white,
                                       ),
                                     ),
                                   CupertinoButton(
-                                    onPressed: onReboot,
+                                    onPressed: () {
+                                      onShutdown(reboot: true);
+                                    },
                                     child: Image.asset(
                                       "assets/icons/reboot.png",
                                       width: 20,
@@ -782,14 +528,31 @@ class _SettingState extends State<Setting> {
               ),
             ),
             SizedBox(
-              height: 30,
+              height: 20,
             ),
-            Wrap(
-              spacing: 20,
-              runSpacing: 20,
+            Column(
               children: [
-                SettingButton(name: "主题", icon: "theme", onPressed: onTheme),
-                SettingButton(
+                if (Utils.notReviewAccount && Utils.vipExpireTime.difference(DateTime.now()).inDays < 7 && !Utils.vipForever)
+                  SettingItem(
+                    name: "会员中心",
+                    icon: "vip",
+                    onPressed: () async {
+                      Navigator.of(context)
+                          .push(
+                        CupertinoPageRoute(
+                          builder: (context) {
+                            return Vip();
+                          },
+                          settings: RouteSettings(name: "vip"),
+                        ),
+                      )
+                          .then((value) {
+                        setState(() {});
+                      });
+                    },
+                  ),
+                SettingItem(name: "主题", icon: "theme", onPressed: onTheme),
+                SettingItem(
                   name: "终端",
                   icon: "terminal",
                   onPressed: () {
@@ -802,7 +565,7 @@ class _SettingState extends State<Setting> {
                     );
                   },
                 ),
-                SettingButton(
+                SettingItem(
                   name: "相册备份",
                   icon: "upload_cloud",
                   onPressed: () {
@@ -815,9 +578,9 @@ class _SettingState extends State<Setting> {
                     );
                   },
                 ),
-                SettingButton(
+                SettingItem(
                   name: "问题反馈",
-                  icon: "edit",
+                  icon: "feedback",
                   onPressed: () async {
                     if (Utils.notReviewAccount) {
                       showCupertinoModalPopup(
@@ -896,29 +659,14 @@ class _SettingState extends State<Setting> {
                     }
                   },
                 ),
-                if (Utils.notReviewAccount && Utils.vipExpireTime.difference(DateTime.now()).inDays < 7 && !Utils.vipForever)
-                  SettingButton(
-                    name: "关闭广告",
-                    icon: "no_ad",
-                    onPressed: () async {
-                      Navigator.of(context)
-                          .push(
-                        CupertinoPageRoute(
-                          builder: (context) {
-                            return Vip();
-                          },
-                          settings: RouteSettings(name: "vip"),
-                        ),
-                      )
-                          .then((value) {
-                        setState(() {});
-                      });
-                    },
-                  )
               ],
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.refresh),
+        onPressed: getTerminalInfo,
       ),
     );
   }

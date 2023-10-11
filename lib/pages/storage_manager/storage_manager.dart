@@ -1,8 +1,17 @@
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/storage_manager/smart.dart';
+import 'package:dsm_helper/pages/storage_manager/widgets/storage_pool_item_widget.dart';
+import 'package:dsm_helper/pages/storage_manager/widgets/volume_item_widget.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/dashed_decoration.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,43 +25,32 @@ class StorageManager extends StatefulWidget {
 
 class _StorageManagerState extends State<StorageManager> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  Storage storage = Storage();
   bool loading = true;
   List ssdCaches = [];
-  List volumes = [];
   List disks = [];
   List storagePools = [];
-  List hotSpares = [];
-  Map? env;
   @override
   void initState() {
-    _tabController = TabController(length: 6, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     getData();
     super.initState();
   }
 
   getData() async {
-    var res = await Api.storage();
-    if (res['success']) {
+    try {
+      storage = await Storage.loadInfo();
+      storage.storagePools?.sort((a, b) => a.numId!.compareTo(b.numId!));
+
       setState(() {
         loading = false;
-        ssdCaches = res['data']['ssdCaches'];
-        volumes = res['data']['volumes'];
-
-        volumes.sort((a, b) {
-          return a['num_id'].compareTo(b['num_id']);
-        });
-        // print(volumes);
-        disks = res['data']['disks'];
-        disks.sort((a, b) {
-          return a['num_id'].compareTo(b['num_id']);
-        });
-        storagePools = res['data']['storagePools'];
-        env = res['data']['env'];
-        hotSpares = res['data']['hotSpares'];
       });
-    } else {
-      Utils.toast("获取存储空间信息失败，代码${res['error']['code']}");
-      Navigator.of(context).pop();
+    } on DsmException catch (e) {
+      Utils.toast("获取存储空间信息失败，错误代码${e.code}");
+      context.pop();
+    } catch (e) {
+      Utils.toast("获取存储空间信息失败");
+      context.pop();
     }
   }
 
@@ -136,119 +134,6 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                   height: 5,
                 ),
                 Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVolumeItem(volume) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(80),
-              // color: Colors.red,
-            ),
-            padding: EdgeInsets.all(5),
-            child: CircularPercentIndicator(
-              radius: 40,
-              // progressColor: Colors.lightBlueAccent,
-              animation: true,
-              linearGradient: LinearGradient(
-                colors: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9
-                    ? [
-                        Colors.blue,
-                        Colors.blueAccent,
-                      ]
-                    : [
-                        Colors.red,
-                        Colors.orangeAccent,
-                      ],
-              ),
-              animateFromLastPercent: true,
-              circularStrokeCap: CircularStrokeCap.round,
-              lineWidth: 12,
-              backgroundColor: Colors.black12,
-              percent: int.parse(volume['size']['used']) / int.parse(volume['size']['total']),
-              center: Text(
-                "${(int.parse(volume['size']['used']) / int.parse(volume['size']['total']) * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: int.parse(volume['size']['used']) / int.parse(volume['size']['total']) <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "存储空间 ${volume['num_id']}",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  children: [
-                    Label(
-                      "${volume['fs_type']}",
-                      Colors.lightBlueAccent,
-                      height: 23,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    volume['status'] == "normal"
-                        ? Label(
-                            "正常",
-                            Colors.green,
-                            fill: true,
-                          )
-                        : volume['status'] == "background"
-                            ? Label(
-                                "正在检查硬盘",
-                                Colors.lightBlueAccent,
-                                fill: true,
-                              )
-                            : volume['status'] == "attention"
-                                ? Label(
-                                    "注意",
-                                    Colors.orangeAccent,
-                                    fill: true,
-                                  )
-                                : Label(
-                                    volume['status'],
-                                    Colors.red,
-                                    fill: true,
-                                  ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("已用：${Utils.formatSize(int.parse(volume['size']['used']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("全部：${Utils.formatSize(int.parse(volume['size']['total']))}"),
               ],
             ),
           )
@@ -694,7 +579,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
-                  ...volumes.where((e) => e['pool_path'] == pool['id']).map(_buildVolumeItem).toList(),
+                  // ...volumes.where((e) => e['pool_path'] == pool['id']).map(_buildVolumeItem).toList(),
                   SizedBox(
                     height: 20,
                   ),
@@ -707,310 +592,117 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
     );
   }
 
-  Widget _buildPoolItem(pool) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-        // color: Colors.red,
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 5),
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text("存储池 ${pool['num_id']}"),
-                SizedBox(
-                  width: 10,
-                ),
-                pool['status'] == "normal"
-                    ? Label(
-                        "正常",
-                        Colors.green,
-                        fill: true,
-                      )
-                    : pool['status'] == "background"
-                        ? Label(
-                            "正在检查硬盘",
-                            Colors.lightBlueAccent,
-                            fill: true,
-                          )
-                        : pool['status'] == "attention"
-                            ? Label(
-                                "注意",
-                                Colors.orangeAccent,
-                                fill: true,
-                              )
-                            : Label(
-                                pool['status'],
-                                Colors.red,
-                                fill: true,
-                              ),
-                Spacer(),
-                Text(Utils.formatSize(int.parse(pool['size']['total']))),
-              ],
+  @override
+  Widget build(BuildContext context) {
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("存储管理器"),
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _tabController,
+          tabs: [
+            Tab(
+              child: Text("总览"),
             ),
-            SizedBox(
-              height: 10,
+            Tab(
+              child: Text("存储空间"),
             ),
-            Row(
-              children: [
-                Text(
-                  pool['device_type'] == "basic"
-                      ? "Basic"
-                      : pool['device_type'] == "shr_without_disk_protect" || pool['device_type'] == "shr"
-                          ? "Synology Hybrid RAID (SHR) "
-                          : pool['device_type'],
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                if (pool['device_type'] == "basic" || pool['device_type'] == "shr_without_disk_protect")
-                  Text(
-                    "（无数据保护）",
-                    style: TextStyle(fontSize: 12, color: Colors.red),
-                  ),
-              ],
+            Tab(
+              child: Text("HDD/SSD"),
+            ),
+            Tab(
+              child: Text("SSD 缓存"),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("存储空间管理员"),
-      ),
       body: loading
           ? Center(
-              child: Container(
-                padding: EdgeInsets.all(50),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: CupertinoActivityIndicator(
-                  radius: 14,
-                ),
-              ),
+              child: LoadingWidget(size: 30),
             )
-          : Column(
+          : TabBarView(
+              controller: _tabController,
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: TabBar(
-                    isScrollable: true,
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicator: BubbleTabIndicator(
-                      indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
-                    ),
-                    tabs: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("系统概况"),
+                ListView(
+                  children: [
+                    if (storage.volumes != null && storage.volumes!.length > 0)
+                      WidgetCard(
+                        title: "存储空间使用状况",
+                        body: Column(
+                          children: storage.volumes!.map((volume) => VolumeItemWidget(volume, isLast: storage.volumes!.last == volume)).toList(),
+                        ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("存储空间"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("存储池"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("HDD/SSD"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("Hot Spare"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("SSD 缓存"),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      ListView(
+                    WidgetCard(
+                      title: "硬盘信息",
+                      body: Wrap(
+                        runSpacing: 5,
+                        spacing: 5,
                         children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    "存储空间状态",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                ...volumes.map(_buildVolumeItem).toList(),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Text(
-                                    "存储池",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                ...storagePools.reversed.map(_buildPoolItem).toList(),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "硬盘信息",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Wrap(
-                                    runSpacing: 5,
-                                    spacing: 5,
-                                    children: [
-                                      for (int i = 0; i < int.parse(env!['bay_number']); i++)
-                                        Container(
-                                          height: 20,
-                                          width: 40,
-                                          decoration: DashedDecoration(
-                                            color: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? Colors.blue : Colors.transparent,
-                                            dashedColor: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? Colors.blue : Colors.grey,
-                                            gap: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? 0.1 : 2,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ],
+                          for (int i = 0; i < (storage.env?.bayNumber != null ? int.parse(storage.env!.bayNumber!) : 8); i++)
+                            Container(
+                              height: 20,
+                              width: 40,
+                              decoration: DashedDecoration(
+                                color: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? Colors.blue : Colors.transparent,
+                                dashedColor: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? Colors.blue : Colors.grey,
+                                gap: disks.where((disk) => disk['num_id'] == i + 1).length > 0 ? 0.1 : 2,
                               ),
                             ),
-                          ),
                         ],
                       ),
-                      volumes.length > 0
-                          ? ListView.separated(
-                              itemBuilder: (context, i) {
-                                return _buildVolumeItem(volumes.reversed.toList()[i]);
-                              },
-                              itemCount: volumes.length,
-                              separatorBuilder: (context, i) {
-                                return SizedBox(
-                                  height: 20,
-                                );
-                              },
-                            )
-                          : Center(
-                              child: Text("无存储空间"),
-                            ),
-                      storagePools.length > 0
-                          ? ListView.separated(
-                              padding: EdgeInsets.all(20),
-                              itemBuilder: (context, i) {
-                                return _buildPoolDetail(storagePools.reversed.toList()[i]);
-                              },
-                              itemCount: storagePools.length,
-                              separatorBuilder: (context, i) {
-                                return SizedBox(
-                                  height: 20,
-                                );
-                              },
-                            )
-                          : Center(
-                              child: Text("无存储池"),
-                            ),
-                      disks.length > 0
-                          ? ListView.separated(
-                              padding: EdgeInsets.all(20),
-                              itemBuilder: (context, i) {
-                                return _buildDiskItem(disks[i], full: true);
-                              },
-                              itemCount: disks.length,
-                              separatorBuilder: (context, i) {
-                                return SizedBox(
-                                  height: 20,
-                                );
-                              },
-                            )
-                          : Center(
-                              child: Text("无HDD/SSD"),
-                            ),
-                      Center(
-                        child: Text("${hotSpares.length > 0 ? "暂不支持显示，共${hotSpares.length}个" : "无备援装置"}"),
-                      ),
-                      ssdCaches.length > 0
-                          ? ListView.separated(
-                              itemBuilder: (context, i) {
-                                return _buildSSDCacheItem(ssdCaches[i]);
-                              },
-                              separatorBuilder: (context, i) {
-                                return SizedBox(
-                                  height: 20,
-                                );
-                              },
-                              itemCount: ssdCaches.length)
-                          : Center(
-                              child: Text("无SSD缓存"),
-                            ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                storage.storagePools != null && storage.storagePools!.length > 0
+                    ? ListView.separated(
+                        itemBuilder: (context, i) {
+                          var pool = storage.storagePools![i];
+                          return StoragePoolItemWidget(
+                            pool,
+                            volumes: [],
+                            disks: storage.disks!.where((disk) => pool.disks!.contains(disk.id)).toList(),
+                          );
+                        },
+                        itemCount: storage.storagePools!.length,
+                        separatorBuilder: (context, i) {
+                          return SizedBox(
+                            height: 20,
+                          );
+                        },
+                      )
+                    : EmptyWidget(
+                        text: "无存储池",
+                      ),
+                disks.length > 0
+                    ? ListView.separated(
+                        padding: EdgeInsets.all(20),
+                        itemBuilder: (context, i) {
+                          return _buildDiskItem(disks[i], full: true);
+                        },
+                        itemCount: disks.length,
+                        separatorBuilder: (context, i) {
+                          return SizedBox(
+                            height: 20,
+                          );
+                        },
+                      )
+                    : EmptyWidget(
+                        text: "无HDD/SSD",
+                      ),
+                ssdCaches.length > 0
+                    ? ListView.separated(
+                        itemBuilder: (context, i) {
+                          return _buildSSDCacheItem(ssdCaches[i]);
+                        },
+                        separatorBuilder: (context, i) {
+                          return SizedBox(
+                            height: 20,
+                          );
+                        },
+                        itemCount: ssdCaches.length)
+                    : EmptyWidget(
+                        text: "无SSD缓存",
+                      ),
               ],
             ),
     );

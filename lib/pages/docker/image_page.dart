@@ -98,7 +98,7 @@ class _ImagePageState extends State<ImagePage> with AutomaticKeepAliveClientMixi
                     ...image.tags!.map(
                       (tag) => Padding(padding: EdgeInsets.only(right: 5), child: Label(tag, AppTheme.of(context)?.primaryColor ?? Colors.blue)),
                     ),
-                  Label(Utils.formatSize(image.size!, fixed: 0, format: 1000), AppTheme.of(context)?.successColor ?? Colors.green),
+                  Label(Utils.formatSize(image.size!, fixed: 0), AppTheme.of(context)?.successColor ?? Colors.green),
                 ],
               ),
               if (image.description != null && image.description != '') ...[

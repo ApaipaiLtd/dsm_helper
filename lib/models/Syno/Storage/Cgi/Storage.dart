@@ -1,6 +1,8 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/pages/dashboard/enums/volume_status_enum.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/disk_smart_status_enum.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/disk_status_enum.dart';
 
 /// detected_pools : []
 /// disks : [{"action":{"alert":false,"notification":false,"selectable":true,"show_lifetime_chart":true},"adv_progress":"","adv_status":"not_support","below_remain_life_mail_notify_thr":false,"below_remain_life_show_thr":false,"below_remain_life_thr":false,"compatibility":"support","container":{"order":0,"str":"DS918+","supportPwrBtnDisable":false,"type":"internal"},"container_id":0,"device":"/dev/sda","disable_secera":false,"diskType":"SATA","disk_code":"","disk_location":"Main","erase_time":510,"firm":"MEAOA5C0","firmware_status":"-","has_system":true,"hide_info":[],"i18nNamingInfo":"[\"dsm:volume:volume_disk\",\" \",\"1\"]","id":"sda","ihm_testing":false,"is4Kn":false,"isSsd":false,"isSynoDrive":false,"isSynoPartition":true,"is_bundle_ssd":false,"is_erasing":false,"longName":"硬盘 1","model":"HUS724030ALE641","name":"硬盘 1","num_id":1,"order":1,"overview_status":"normal","pciSlot":-1,"perf_testing":false,"portType":"normal","remain_life":-1,"remain_life_danger":false,"remote_info":{"compatibility":"disabled","unc":0},"sb_days_left":0,"sb_days_left_critical":false,"sb_days_left_warning":false,"serial":"MJ0351YNG9HR4A","size_total":"3000592982016","slot_id":1,"smart_progress":"","smart_status":"normal","smart_test_limit":0,"smart_test_support":true,"smart_testing":false,"status":"normal","summary_status_category":"space","summary_status_key":"normal","temp":45,"testing_progress":"","testing_type":"idle","tray_status":"join","ui_serial":"MJ0351YNG9HR4A","unc":0,"used_by":"reuse_3","vendor":"Hitachi ","wcache_force_off":false,"wcache_force_on":false,"wdda_support":false},{"action":{"alert":false,"notification":false,"selectable":true,"show_lifetime_chart":true},"adv_progress":"","adv_status":"not_support","below_remain_life_mail_notify_thr":false,"below_remain_life_show_thr":false,"below_remain_life_thr":false,"compatibility":"support","container":{"order":0,"str":"DS918+","supportPwrBtnDisable":false,"type":"internal"},"container_id":0,"device":"/dev/sdc","disable_secera":false,"diskType":"SATA","disk_code":"","disk_location":"Main","erase_time":1128,"firm":"81.00A81","firmware_status":"-","has_system":true,"hide_info":[],"i18nNamingInfo":"[\"dsm:volume:volume_disk\",\" \",\"3\"]","id":"sdc","ihm_testing":false,"is4Kn":false,"isSsd":false,"isSynoDrive":false,"isSynoPartition":true,"is_bundle_ssd":false,"is_erasing":false,"longName":"硬盘 3","model":"WD120EMAZ-11BLFA0","name":"硬盘 3","num_id":3,"order":3,"overview_status":"normal","pciSlot":-1,"perf_testing":false,"portType":"normal","remain_life":-1,"remain_life_danger":false,"remote_info":{"compatibility":"disabled","unc":0},"sb_days_left":0,"sb_days_left_critical":false,"sb_days_left_warning":false,"serial":"5PGEL6TE","size_total":"12000138625024","slot_id":3,"smart_progress":"","smart_status":"normal","smart_test_limit":0,"smart_test_support":true,"smart_testing":false,"status":"normal","summary_status_category":"space","summary_status_key":"normal","temp":47,"testing_progress":"","testing_type":"idle","tray_status":"join","ui_serial":"5PGEL6TE","unc":0,"used_by":"reuse_4","vendor":"WDC     ","wcache_force_off":false,"wcache_force_on":false,"wdda_support":false},{"action":{"alert":false,"notification":false,"selectable":true,"show_lifetime_chart":true},"adv_progress":"","adv_status":"not_support","below_remain_life_mail_notify_thr":false,"below_remain_life_show_thr":false,"below_remain_life_thr":false,"compatibility":"support","container":{"order":0,"str":"DS918+","supportPwrBtnDisable":false,"type":"internal"},"container_id":0,"device":"/dev/sdf","disable_secera":false,"diskType":"SATA","disk_code":"","disk_location":"Main","erase_time":1226,"firm":"0101","firmware_status":"-","has_system":true,"hide_info":[],"i18nNamingInfo":"[\"dsm:volume:volume_disk\",\" \",\"6\"]","id":"sdf","ihm_testing":false,"is4Kn":false,"isSsd":false,"isSynoDrive":false,"isSynoPartition":true,"is_bundle_ssd":false,"is_erasing":false,"longName":"硬盘 6","model":"MG07ACA14TE","name":"硬盘 6","num_id":6,"order":6,"overview_status":"normal","pciSlot":-1,"perf_testing":false,"portType":"normal","remain_life":-1,"remain_life_danger":false,"remote_info":{"compatibility":"disabled","unc":0},"sb_days_left":0,"sb_days_left_critical":false,"sb_days_left_warning":false,"serial":"6090A0KTF94G","size_total":"14000519643136","slot_id":6,"smart_progress":"","smart_status":"normal","smart_test_limit":0,"smart_test_support":true,"smart_testing":false,"status":"normal","summary_status_category":"space","summary_status_key":"normal","temp":42,"testing_progress":"","testing_type":"idle","tray_status":"join","ui_serial":"6090A0KTF94G","unc":0,"used_by":"reuse_1","vendor":"TOSHIBA ","wcache_force_off":false,"wcache_force_on":false,"wdda_support":false}]
@@ -1320,6 +1322,7 @@ class StoragePools {
   SpaceStatus? spaceStatus;
   List<dynamic>? spares;
   String? status;
+  VolumeStatusEnum get statusEnum => VolumeStatusEnum.fromValue(status ?? 'unknown');
   List<dynamic>? suggestions;
   String? summaryStatus;
   bool? timebackup;
@@ -2554,10 +2557,12 @@ class Disks {
   num? slotId;
   String? smartProgress;
   String? smartStatus;
+  DiskSmartStatusEnum get smartStatusEnum => DiskSmartStatusEnum.fromValue(smartStatus ?? 'known');
   num? smartTestLimit;
   bool? smartTestSupport;
   bool? smartTesting;
   String? status;
+  DiskStatusEnum get statusEnum => DiskStatusEnum.fromValue(status ?? 'known');
   String? summaryStatusCategory;
   String? summaryStatusKey;
   num? temp;

@@ -13,10 +13,7 @@ class ApplicationItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (applicationEnum == ApplicationEnum.xunlei) {
-          context.push(Browser(
-            title: "迅雷-远程设备",
-            url: "https://pan.xunlei.com/yc",
-          ));
+          context.push(Browser(title: "迅雷-远程设备", url: "https://pan.xunlei.com/yc"));
         } else {
           context.pushNamed("/${applicationEnum.icon}");
         }

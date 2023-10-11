@@ -209,7 +209,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.tx!) + "/S",
+                  utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.tx!, showByte: true) + "/S",
                   style: TextStyle(color: Colors.blue),
                 ),
                 Spacer(),
@@ -219,7 +219,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.rx!) + "/S",
+                  utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.rx!, showByte: true) + "/S",
                   style: TextStyle(color: Colors.green),
                 ),
               ],
@@ -240,10 +240,15 @@ class ResourceMonitorWidget extends StatelessWidget {
                   plotAreaBorderWidth: 0,
                   primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift, isVisible: false, interval: 1, majorGridLines: const MajorGridLines(width: 0)),
                   primaryYAxis: NumericAxis(
-                    labelFormat: '{value}',
+                    // labelFormat: '{value}',
                     axisLine: const AxisLine(width: 0),
                     majorTickLines: const MajorTickLines(color: Colors.transparent),
+                    interval: Utils.chartInterval(utilizationProvider.maxNetworkSpeed),
+                    axisLabelFormatter: (args) {
+                      return ChartAxisLabel(Utils.formatSize(args.value, fixed: 0), TextStyle());
+                    },
                   ),
+                  enableAxisAnimation: true,
                   series: <AreaSeries<Network, num>>[
                     AreaSeries<Network, num>(
                       animationDuration: 1000,

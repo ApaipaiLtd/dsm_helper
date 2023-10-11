@@ -44,7 +44,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
       bottom: bottom,
       flexibleSpace: ClipRRect(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(color: Colors.transparent),
         ),
       ),

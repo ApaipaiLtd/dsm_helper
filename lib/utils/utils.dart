@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:cool_ui/cool_ui.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:dsm_helper/constants/size_enum.dart';
 import 'package:dsm_helper/models/Syno/Core/Notify/DsmNotifyStrings.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/download/download.dart';
@@ -584,47 +585,51 @@ class Utils {
   //   return taskId;
   // }
 
-  static String formatSize(num size, {int format = 1024, int fixed = 2, bool showByte = false}) {
-    if (size == 0) {
-      return "0${showByte ? 'B' : ''}";
-    } else if (size < format) {
+  static String formatSize(num size, {int fixed = 2, bool showByte = false}) {
+    if (size < SizeEnum.kb.value) {
       return "$size${showByte ? 'B' : ''}";
-    } else if (size < pow(format, 2)) {
-      return "${(size / format).toStringAsFixed(fixed)}K";
-    } else if (size < pow(format, 3)) {
-      return "${(size / pow(format, 2)).toStringAsFixed(fixed)}M";
-    } else if (size < pow(format, 4)) {
-      return "${(size / pow(format, 3)).toStringAsFixed(fixed)}G";
+    } else if (size < SizeEnum.mb.value) {
+      return "${(size / SizeEnum.kb.value).toStringAsFixed(fixed)}K";
+    } else if (size < SizeEnum.gb.value) {
+      return "${(size / SizeEnum.mb.value).toStringAsFixed(fixed)}M";
+    } else if (size < SizeEnum.tb.value) {
+      return "${(size / SizeEnum.gb.value).toStringAsFixed(fixed)}G";
     } else {
-      return "${(size / pow(format, 4)).toStringAsFixed(fixed)}T";
+      return "${(size / SizeEnum.tb.value).toStringAsFixed(fixed)}T";
     }
   }
 
   static double chartInterval(num maxNetworkSpeed) {
-    if (maxNetworkSpeed < 1024) {
+    if (maxNetworkSpeed < SizeEnum.kb.value) {
       return 102.4;
-    } else if (maxNetworkSpeed < 1024 * 2) {
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 2) {
       return 102.4 * 2;
-    } else if (maxNetworkSpeed < 1024 * 5) {
-      return 1024.0;
-    } else if (maxNetworkSpeed < 1024 * 10) {
-      return 1024.0 * 2;
-    } else if (maxNetworkSpeed < pow(1024, 2)) {
-      return 1024.0 * 200;
-    } else if (maxNetworkSpeed < pow(1024, 2) * 5) {
-      return 1.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 10) {
-      return 2.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 20) {
-      return 4.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 40) {
-      return 8.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 50) {
-      return 10.0 * pow(1024, 2);
-    } else if (maxNetworkSpeed < pow(1024, 2) * 100) {
-      return 20.0 * pow(1024, 2);
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 5) {
+      return SizeEnum.kb.value.toDouble();
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 10) {
+      return SizeEnum.kb.value.toDouble() * 2;
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 20) {
+      return SizeEnum.kb.value.toDouble() * 4;
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 50) {
+      return SizeEnum.kb.value.toDouble() * 10;
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 100) {
+      return SizeEnum.kb.value.toDouble() * 20;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value) {
+      return SizeEnum.kb.value.toDouble() * 200;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 5) {
+      return SizeEnum.mb.value.toDouble();
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 10) {
+      return SizeEnum.mb.value.toDouble() * 2;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 20) {
+      return SizeEnum.mb.value.toDouble() * 4;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 40) {
+      return SizeEnum.mb.value.toDouble() * 8;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 50) {
+      return 10.0 * SizeEnum.mb.value;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 100) {
+      return 20.0 * SizeEnum.mb.value;
     } else {
-      return 50.0 * pow(1024, 2);
+      return 50.0 * SizeEnum.mb.value;
     }
   }
 

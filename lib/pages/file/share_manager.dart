@@ -116,12 +116,8 @@ class _ShareManagerState extends State<ShareManager> {
                             link.enableUpload! ? Label("文件请求", Colors.lightBlueAccent, fill: true) : Label("共享链接", Colors.greenAccent, fill: true),
                             SizedBox(width: 5),
                             Label(
-                              link.statusEnum.label,
-                              link.statusEnum == ShareLinkStatusEnum.valid
-                                  ? Colors.green
-                                  : [ShareLinkStatusEnum.expired, ShareLinkStatusEnum.broken].contains(link.statusEnum)
-                                      ? Colors.red
-                                      : Colors.grey,
+                              link.statusEnum != ShareLinkStatusEnum.unknown ? link.statusEnum.label : link.status!,
+                              link.statusEnum.color,
                             ),
                           ],
                         ),

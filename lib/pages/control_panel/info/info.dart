@@ -2,6 +2,8 @@ import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   bool loadingDisks = false;
   @override
   void initState() {
-    _tabController = TabController(initialIndex: widget.index, length: 6, vsync: this);
+    _tabController = TabController(initialIndex: widget.index, length: 5, vsync: this);
     // if (widget.system != null) {
     //   setState(() {
     //     usbDev = widget.system!['usb_dev'];
@@ -174,7 +176,7 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildDevItem(dev) {
+  Widget _buildDeviceItem(dev) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -372,72 +374,397 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     System system = context.read<SystemInfoProvider>().systemInfo;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "信息中心",
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("信息中心"),
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _tabController,
+          tabs: [
+            Tab(
+              child: Text("常规"),
+            ),
+            Tab(
+              child: Text("网络"),
+            ),
+            Tab(
+              child: Text("存储"),
+            ),
+            Tab(
+              child: Text("服务"),
+            ),
+            Tab(
+              child: Text("设备分析"),
+            ),
+          ],
         ),
       ),
-      body: Column(
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: TabBar(
-              isScrollable: true,
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicator: BubbleTabIndicator(
-                indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+          ListView(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                margin: EdgeInsets.only(left: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, left: 20),
+                      child: Text(
+                        "基本信息",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "产品序列号",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.serial}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "产品型号",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.model}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "CPU",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.cpuVendor} ${system.cpuFamily} ${system.cpuSeries}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "CPU核心",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.cpuCores}核 @ ${(system.cpuClockSpeed! / 1000).toStringAsFixed(2)}GHz",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "物理内存",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.ramSize}MB",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "DSM版本",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.firmwareVer}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "系统时间",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.time}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "运行时间",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${Utils.parseOpTime(system.upTime!)}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (system.sysTemp != null)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "散热状态",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "${system.sysTemp}℃ ${system.temperatureWarning == null ? (system.sysTemp! > 80 ? "警告" : "正常") : (system.temperatureWarning! ? "警告" : "正常")}",
+                                style: TextStyle(color: system.temperatureWarning == null ? (system.sysTemp! > 80 ? Colors.red : Colors.green) : (system.temperatureWarning! ? Colors.red : Colors.green)),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
               ),
-              tabs: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("常规"),
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("网络"),
+                margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, left: 20),
+                      child: Text(
+                        "时间信息",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "服务器地址",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.ntpServer} ${system.enabledNtp! ? "" : "(暂未启用)"}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              "时区",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "${system.timeZoneDesc}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("存储"),
+              ),
+              if (usbDev.length > 0)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20, left: 20),
+                        child: Text(
+                          "外接设备",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      ...usbDev.map(_buildDeviceItem).toList(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("服务"),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("设备分析"),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("Synology账户"),
-                ),
-              ],
-            ),
+            ],
           ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                ListView(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+          network == null
+              ? Center(
+                  child: Text("网络信息加载失败"),
+                )
+              : ListView(
                   children: [
                     Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      margin: EdgeInsets.only(left: 20, right: 20),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -459,263 +786,14 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "产品序列号",
+                                    "系统名称",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${system.serial}",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "产品型号",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.model}",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "CPU",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.cpuVendor} ${system.cpuFamily} ${system.cpuSeries}",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "CPU核心",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.cpuCores}核 @ ${(system.cpuClockSpeed! / 1000).toStringAsFixed(2)}GHz",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "物理内存",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.ramSize}MB",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "DSM版本",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.firmwareVer}",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "系统时间",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.time}",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "运行时间",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${Utils.parseOpTime(system.upTime!)}",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (system.sysTemp != null)
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.all(10),
-                              margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "散热状态",
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      "${system.sysTemp}℃ ${system.temperatureWarning == null ? (system.sysTemp! > 80 ? "警告" : "正常") : (system.temperatureWarning! ? "警告" : "正常")}",
-                                      style: TextStyle(color: system.temperatureWarning == null ? (system.sysTemp! > 80 ? Colors.red : Colors.green) : (system.temperatureWarning! ? Colors.red : Colors.green)),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 20, left: 20),
-                            child: Text(
-                              "时间信息",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "服务器地址",
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "${system.ntpServer} ${system.enabledNtp! ? "" : "(暂未启用)"}",
+                                    "${network['hostname']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -734,14 +812,66 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                                 Expanded(
                                   flex: 1,
                                   child: Text(
-                                    "时区",
+                                    "DNS",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    "${system.timeZoneDesc}",
+                                    "${network['dns']}",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.all(10),
+                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    "默认网关",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    "${network['gateway']}",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.all(10),
+                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    "工作群组",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    "${network['workgroup']}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -754,240 +884,77 @@ class _SystemInfoState extends State<SystemInfo> with SingleTickerProviderStateM
                         ],
                       ),
                     ),
-                    if (usbDev.length > 0)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 20, left: 20),
-                              child: Text(
-                                "外接设备",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            ...usbDev.map(_buildDevItem).toList(),
-                            SizedBox(
-                              height: 20,
-                            ),
-                          ],
-                        ),
-                      ),
+                    ...nifs.map(_buildNifItem).toList(),
                   ],
                 ),
-                network == null
-                    ? Center(
-                        child: Text("网络信息加载失败"),
-                      )
-                    : ListView(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20, left: 20),
-                                  child: Text(
-                                    "基本信息",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "系统名称",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          "${network['hostname']}",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          "DNS",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          "${network['dns']}",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          "默认网关",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          "${network['gateway']}",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          "工作群组",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          "${network['workgroup']}",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                          ...nifs.map(_buildNifItem).toList(),
-                        ],
+          loadingDisks
+              ? Center(
+                  child: Container(
+                    padding: EdgeInsets.all(50),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: CupertinoActivityIndicator(
+                      radius: 14,
+                    ),
+                  ),
+                )
+              : ListView(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                loadingDisks
-                    ? Center(
-                        child: Container(
-                          padding: EdgeInsets.all(50),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: CupertinoActivityIndicator(
-                            radius: 14,
-                          ),
-                        ),
-                      )
-                    : ListView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20, top: 20),
-                                  child: Text(
-                                    "存储空间",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                ...volumes.map(_buildVolumeItem).toList(),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
+                          Padding(
+                            padding: EdgeInsets.only(left: 20, top: 20),
+                            child: Text(
+                              "存储空间",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20, top: 20),
-                                  child: Text(
-                                    "硬盘",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                ...disks.map(_buildDiskItem).toList(),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
+                          ...volumes.map(_buildVolumeItem).toList(),
+                          SizedBox(
+                            height: 20,
                           ),
                         ],
                       ),
-                Center(
-                  child: Text("待开发"),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 20, top: 20),
+                            child: Text(
+                              "硬盘",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          ...disks.map(_buildDiskItem).toList(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Center(
-                  child: Text("待开发"),
-                ),
-                Center(
-                  child: Text("待开发"),
-                ),
-              ],
-            ),
+          Center(
+            child: Text("待开发"),
+          ),
+          Center(
+            child: Text("待开发"),
           ),
         ],
       ),
