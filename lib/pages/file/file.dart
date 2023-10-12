@@ -1022,9 +1022,7 @@ class FilesState extends State<Files> {
             openPlainFile(file);
             break;
           case FileTypeEnum.pdf:
-            Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return PdfViewer(api.Api.dsm.baseUrl! + "/fbdownload/${file.name!}?dlink=%22${Utils.utf8Encode(file.path!)}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open", file.name!);
-            }));
+            context.push(PdfViewer(api.Api.dsm.baseUrl! + "/fbdownload/${file.name!}?dlink=%22${Utils.utf8Encode(file.path!)}%22&_sid=%22${api.Api.dsm.sid!}%22&mode=open", file.name!), rootNavigator: true);
             break;
           default:
             AndroidIntent intent = AndroidIntent(

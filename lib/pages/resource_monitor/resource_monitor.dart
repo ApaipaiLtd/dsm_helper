@@ -1,255 +1,47 @@
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
 import 'package:dsm_helper/pages/resource_monitor/task_manager.dart';
 import 'package:dsm_helper/pages/resource_monitor/users.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class ResourceMonitor extends StatefulWidget {
-  ResourceMonitor({this.tabIndex = 0});
+  ResourceMonitor({this.tabIndex = 0, super.key});
   final int tabIndex;
   @override
   _ResourceMonitorState createState() => _ResourceMonitorState();
 }
 
 class _ResourceMonitorState extends State<ResourceMonitor> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  @override
+  void initState() {
+    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.tabIndex);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-
-        title: Text("资源监控"),
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: [
+            Tab(text: "性能"),
+            Tab(text: "任务管理器"),
+            Tab(text: "连接"),
+          ],
+        ),
       ),
-      body: ListView(
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-            child: CupertinoButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return Performance();
-                    },
-                    settings: RouteSettings(name: "performance"),
-                  ),
-                );
-              },
-              padding: EdgeInsets.zero,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Image.asset(
-                      "assets/control_panel/performance.png",
-                      width: 40,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        "性能",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-            child: CupertinoButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return TaskManager();
-                    },
-                    settings: RouteSettings(name: "task_manager"),
-                  ),
-                );
-              },
-              padding: EdgeInsets.zero,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Image.asset(
-                      "assets/control_panel/task_manager.png",
-                      width: 40,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        "任务管理器",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-            child: CupertinoButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return Users();
-                    },
-                    settings: RouteSettings(name: "monitor_users"),
-                  ),
-                );
-              },
-              padding: EdgeInsets.zero,
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Image.asset(
-                      "assets/control_panel/plugin.png",
-                      width: 40,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        "目前连接用户",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-          //   child: CupertinoButton(
-          //     onPressed: () {
-          //       Navigator.of(context).push(
-          //         CupertinoPageRoute(
-          //           builder: (context) {
-          //             return SpeedLimit();
-          //           },
-          //           settings: RouteSettings(name: "speed_limit"),
-          //         ),
-          //       );
-          //     },
-          //     padding: EdgeInsets.zero,
-          //     decoration: BoxDecoration(
-          //       color: Theme.of(context).scaffoldBackgroundColor,
-          //       borderRadius: BorderRadius.circular(20),
-          //     ),
-          //
-          //     child: Padding(
-          //       padding: EdgeInsets.symmetric(vertical: 20),
-          //       child: Row(
-          //         children: [
-          //           SizedBox(
-          //             width: 20,
-          //           ),
-          //           Image.asset(
-          //             "assets/control_panel/speed.png",
-          //             width: 40,
-          //           ),
-          //           SizedBox(
-          //             width: 10,
-          //           ),
-          //           Expanded(
-          //             child: Text(
-          //               "速度限制",
-          //               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          //             ),
-          //           ),
-          //           SizedBox(
-          //             width: 20,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-          //   child: CupertinoButton(
-          //     onPressed: () {
-          //       Navigator.of(context).push(
-          //         CupertinoPageRoute(
-          //           builder: (context) {
-          //             return MonitorSetting();
-          //           },
-          //           settings: RouteSettings(name: "monitor_setting"),
-          //         ),
-          //       );
-          //     },
-          //     padding: EdgeInsets.zero,
-          //     decoration: BoxDecoration(
-          //       color: Theme.of(context).scaffoldBackgroundColor,
-          //       borderRadius: BorderRadius.circular(20),
-          //     ),
-          //
-          //     child: Padding(
-          //       padding: EdgeInsets.symmetric(vertical: 20),
-          //       child: Row(
-          //         children: [
-          //           SizedBox(
-          //             width: 20,
-          //           ),
-          //           Image.asset(
-          //             "assets/icons/setting.png",
-          //             width: 40,
-          //           ),
-          //           SizedBox(
-          //             width: 10,
-          //           ),
-          //           Expanded(
-          //             child: Text(
-          //               "设置",gg
-          //               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          //             ),
-          //           ),
-          //           SizedBox(
-          //             width: 20,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          Container(),
+          Container(),
+          Container(),
         ],
       ),
     );

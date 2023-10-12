@@ -182,12 +182,7 @@ class StoragePoolItemWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             body: Column(
-              children: disks
-                  .map((disk) => DiskItemWidget(
-                        disk,
-                        showStatus: true,
-                      ))
-                  .toList(),
+              children: disks.map((disk) => DiskItemWidget(disk, showStatus: true, isLast: disks.last == disk)).toList(),
             ),
           ),
           WidgetCard(
