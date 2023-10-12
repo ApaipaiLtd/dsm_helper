@@ -616,36 +616,6 @@ class _HelperSettingState extends State<HelperSetting> {
                     ),
                   ),
                 ),
-                if (Utils.notReviewAccount)
-                  GestureDetector(
-                    onTap: () {
-                      context.push(Vip(), name: "vip");
-                    },
-                    // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/icons/no_ad.png",
-                            width: 30,
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              "关闭广告",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          Icon(
-                            CupertinoIcons.right_chevron,
-                            size: 16,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),

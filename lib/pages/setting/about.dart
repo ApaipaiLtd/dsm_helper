@@ -58,12 +58,10 @@ class _AboutState extends State<About> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        "assets/logo.png",
-                        width: 80,
-                      ),
+                    Image.asset(
+                      "assets/logo.png",
+                      width: 80,
+                      height: 80,
                     ),
                     SizedBox(
                       height: 20,
@@ -73,7 +71,7 @@ class _AboutState extends State<About> {
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${packageInfo?.version} build:${packageInfo?.buildNumber}",
+                      "v${packageInfo?.version} build:${packageInfo?.buildNumber}",
                       style: TextStyle(
                         color: AppTheme.of(context)?.placeholderColor,
                         fontSize: 16,
@@ -452,7 +450,17 @@ class _AboutState extends State<About> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
-                        children: [if (checking) LoadingWidget(), Text("检查更新")],
+                        children: [
+                          if (checking) ...[
+                            LoadingWidget(
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                          Text("检查更新")
+                        ],
                       ),
                     ),
                   ),

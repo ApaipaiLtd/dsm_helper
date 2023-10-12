@@ -1,6 +1,9 @@
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:easy_app_installer/easy_app_installer.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,11 +64,9 @@ class _UpdateState extends State<Update> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "软件更新",
-        ),
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("软件更新"),
       ),
       body: Column(
         children: [
@@ -75,56 +76,33 @@ class _UpdateState extends State<Update> {
                 SizedBox(
                   height: 50,
                 ),
-                Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(60),
-                    ),
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(
-                        "assets/logo.png",
-                      ),
-                      radius: 60,
-                    ),
-                  ),
+                Image.asset(
+                  "assets/logo.png",
+                  width: 80,
+                  height: 80,
                 ),
                 SizedBox(
                   height: 30,
                 ),
-                Column(
-                  children: [
-                    Text(
-                      "新版本 v${widget.data['buildVersion']} build ${widget.data['buildVersionNo']}",
-                      style: TextStyle(fontSize: 18),
+                Center(
+                  child: Text(
+                    "v${widget.data['buildVersion']} build ${widget.data['buildVersionNo']}",
+                    style: TextStyle(
+                      color: AppTheme.of(context)?.placeholderColor,
+                      fontSize: 16,
                     ),
-                  ],
+                  ),
                 ),
                 SizedBox(
                   height: 40,
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "更新日志：",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "${widget.data['buildUpdateDescription'] == "" ? "暂无更新日志" : widget.data['buildUpdateDescription']}",
-                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                      ),
-                    ],
+                WidgetCard(
+                  title: "更新日志",
+                  body: Container(
+                    child: Text(
+                      "${widget.data['buildUpdateDescription'] == "" ? "暂无更新日志" : widget.data['buildUpdateDescription']}",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
+                    ),
                   ),
                 ),
               ],
@@ -136,54 +114,45 @@ class _UpdateState extends State<Update> {
             },
             child: Text(
               "使用浏览器下载",
-              style: TextStyle(color: Colors.grey, decoration: TextDecoration.underline, fontSize: 14),
+              style: TextStyle(color: AppTheme.of(context)?.placeholderColor, decoration: TextDecoration.underline, fontSize: 14),
             ),
           ),
-          SizedBox(
-            height: 20,
-          ),
-          if (!downloading)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: CupertinoButton(
-                onPressed: () {
-                  download();
-                },
-                // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 20),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(20),
-
-                child: Text(
-                  "开始下载",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
+          SafeArea(
+            top: false,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: !downloading
+                  ? CupertinoButton(
+                      onPressed: () {
+                        download();
+                      },
+                      color: AppTheme.of(context)?.primaryColor,
+                      borderRadius: BorderRadius.circular(15),
+                      child: Text(
+                        "下载更新",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: FAProgressBar(
+                          backgroundColor: Colors.transparent,
+                          progressColor: Colors.blue,
+                          currentValue: (progress * 100).ceil(),
+                          size: 64,
+                          borderRadius: BorderRadius.circular(20),
+                          displayText: '%',
+                          displayTextStyle: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
             ),
-          if (downloading)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: FAProgressBar(
-                    backgroundColor: Colors.transparent,
-                    progressColor: Colors.blue,
-                    currentValue: (progress * 100).ceil(),
-                    size: 64,
-                    borderRadius: BorderRadius.circular(20),
-                    displayText: '%',
-                    displayTextStyle: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-          SizedBox(
-            height: 30,
           ),
         ],
       ),
