@@ -15,7 +15,7 @@ class ControlPanelItemWidget extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: width,
-        height: 80,
+        height: 70,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -25,13 +25,14 @@ class ControlPanelItemWidget extends StatelessWidget {
               width: 30,
               fit: BoxFit.contain,
             ),
-            SizedBox(height: 5),
             SizedBox(
               height: 30,
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12),
+              child: Center(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12),
+                ),
               ),
             ),
           ],
