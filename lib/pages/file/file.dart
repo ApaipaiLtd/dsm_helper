@@ -1469,10 +1469,11 @@ class FilesState extends State<Files> {
                     ),
                   ),
                   Expanded(
-                      child: Text(
-                    "已选${selectedFiles.length}项",
-                    textAlign: TextAlign.center,
-                  )),
+                    child: Text(
+                      "已选${selectedFiles.length}项",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                   CupertinoButton(
                     onPressed: () {
                       if (selectedFiles.length == files.files!.length) {
@@ -2001,10 +2002,10 @@ class FilesState extends State<Files> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: getBackgroundTask,
-        child: Icon(Icons.refresh),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: getBackgroundTask,
+      //   child: Icon(Icons.refresh),
+      // ),
     );
   }
 }

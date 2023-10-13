@@ -71,7 +71,7 @@ class SystemHealthWidget extends StatelessWidget {
                         style: TextStyle(color: Color(0x99000000), fontSize: 16),
                       ),
                       Text(
-                        "${Utils.parseOpTime(system.upTime!)}",
+                        "${system.upTime != null ? Utils.parseOpTime(system.upTime!) : '-'}",
                         style: TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ],

@@ -7,6 +7,8 @@ import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -266,286 +268,287 @@ class _UploadState extends State<Upload> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "文件上传",
-        ),
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("文件上传"),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: CupertinoButton(
-              onPressed: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) {
-                    return SelectFolder(
-                      multi: false,
-                    );
-                  },
-                ).then((res) {
-                  if (res != null && res.length == 1) {
-                    setState(() {
-                      savePath = res[0];
-                    });
-                  }
-                });
-              },
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "上传位置",
-                      style: TextStyle(fontSize: 12),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: CupertinoButton(
+                onPressed: () {
+                  showCupertinoModalPopup(
+                    context: context,
+                    builder: (context) {
+                      return SelectFolder(
+                        multi: false,
+                      );
+                    },
+                  ).then((res) {
+                    if (res != null && res.length == 1) {
+                      setState(() {
+                        savePath = res[0];
+                      });
+                    }
+                  });
+                },
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "上传位置",
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                      ),
+                      Text(
+                        savePath == "" ? "请选择上传位置" : savePath,
+                        style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: uploads.length > 0
+                  ? ListView.builder(
+                      itemBuilder: (context, i) {
+                        return _buildUploadItem(uploads[i]);
+                      },
+                      itemCount: uploads.length,
+                    )
+                  : Center(
+                      child: Text(
+                        "暂无待上传文件",
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
+                      ),
                     ),
-                    Text(
-                      savePath == "" ? "请选择上传位置" : savePath,
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CupertinoButton(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(50),
+                        onPressed: () async {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: (context) {
+                              return Material(
+                                color: Colors.transparent,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(22),
+                                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+                                  child: SafeArea(
+                                    top: false,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text(
+                                          "选择添加方式",
+                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        CupertinoButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            final List<AssetEntity>? assets = await AssetPicker.pickAssets(context, pickerConfig: AssetPickerConfig(maxAssets: 1000));
+                                            if (assets != null && assets.length > 0) {
+                                              assets.forEach((asset) {
+                                                asset.file.then((file) {
+                                                  setState(() {
+                                                    uploads.add(UploadItem(file!.path, file.path.split("/").last));
+                                                  });
+                                                });
+                                              });
+                                            } else {
+                                              debugPrint("未选择文件");
+                                            }
+                                          },
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          child: Text(
+                                            "上传图片",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        CupertinoButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                                            if (Platform.isAndroid) {
+                                              AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                                              if (androidInfo.version.sdkInt >= 30) {
+                                                bool permission = false;
+                                                permission = await Permission.manageExternalStorage.request().isGranted;
+                                                if (!permission) {
+                                                  Utils.toast("安卓11需授权文件管理权限");
+                                                  return;
+                                                }
+                                              } else {
+                                                bool permission = false;
+                                                permission = await Permission.storage.request().isGranted;
+                                                if (!permission) {
+                                                  Utils.toast("请先授权APP访问存储权限");
+                                                  return;
+                                                }
+                                              }
+                                              showCupertinoModalBottomSheet<List<FileSystemEntity>>(
+                                                context: context,
+                                                builder: (context) {
+                                                  return SelectLocalFolder(
+                                                    multi: true,
+                                                    folder: false,
+                                                  );
+                                                },
+                                              ).then((res) {
+                                                if (res != null && res.length > 0) {
+                                                  res.forEach((entry) {
+                                                    if (FileSystemEntity.isFileSync(entry.path)) {
+                                                      setState(() {
+                                                        uploads.add(UploadItem(entry.path, entry.path.split("/").last));
+                                                      });
+                                                    } else {
+                                                      Directory directory = Directory(entry.path);
+                                                      directory.list(recursive: true).forEach((element) {
+                                                        if (!element.path.split("/").last.startsWith(".")) {
+                                                          if (FileSystemEntity.isFileSync(element.path)) {
+                                                            List<String> slice = element.path.replaceFirst("${entry.path}/", "").split("/");
+                                                            setState(() {
+                                                              uploads.add(UploadItem(element.path, slice.last, subPath: slice.getRange(0, slice.length - 1).join("/")));
+                                                            });
+                                                          }
+                                                        }
+                                                      });
+                                                    }
+                                                  });
+                                                }
+                                                // if (res != null && res.length == 1) {
+                                                //   setState(() {
+                                                //     downloadPath = res[0];
+                                                //     Utils.downloadSavePath = res[0];
+                                                //     Utils.setStorage("download_save_path", res[0]);
+                                                //   });
+                                                // }
+                                              });
+                                            } else {
+                                              FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+
+                                              if (result != null) {
+                                                setState(() {
+                                                  uploads.addAll(result.files.map((file) {
+                                                    return UploadItem(file.path!, file.name, fileSize: file.size);
+                                                  }).toList());
+                                                });
+                                              } else {
+                                                // User canceled the picker
+                                              }
+                                            }
+                                          },
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          child: Text(
+                                            "上传文件",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        CupertinoButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                          },
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                          borderRadius: BorderRadius.circular(25),
+                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          child: Text(
+                                            "取消",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Text("添加文件"),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: CupertinoButton(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(50),
+                        onPressed: () async {
+                          if (savePath.isBlank) {
+                            Utils.vibrate(FeedbackType.warning);
+                            Utils.toast("请选择上传位置");
+                            return;
+                          }
+                          // return;
+                          for (int i = 0; i < uploads.length; i++) {
+                            UploadItem upload = uploads[i];
+                            if (upload.status != UploadStatus.wait) {
+                              continue;
+                            }
+                            //上传文件
+                            setState(() {
+                              upload.status = UploadStatus.running;
+                            });
+                            // print("上传路径：$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}");
+                            var res = await Api.upload("$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}", upload.path, upload.cancelToken, (progress, total) {
+                              setState(() {
+                                upload.uploadSize = progress;
+                                upload.fileSize = total;
+                              });
+                            });
+                            print(res);
+                            if (res['success']) {
+                              setState(() {
+                                upload.status = UploadStatus.complete;
+                              });
+                            } else {
+                              setState(() {
+                                upload.status = UploadStatus.failed;
+                              });
+                            }
+                          }
+                        },
+                        child: Text("开始上传"),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: uploads.length > 0
-                ? ListView.builder(
-                    itemBuilder: (context, i) {
-                      return _buildUploadItem(uploads[i]);
-                    },
-                    itemCount: uploads.length,
-                  )
-                : Center(
-                    child: Text(
-                      "暂无待上传文件",
-                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                    ),
-                  ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CupertinoButton(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(50),
-                      onPressed: () async {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) {
-                            return Material(
-                              color: Colors.transparent,
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(22),
-                                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                                child: SafeArea(
-                                  top: false,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text(
-                                        "选择添加方式",
-                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          final List<AssetEntity>? assets = await AssetPicker.pickAssets(context, pickerConfig: AssetPickerConfig(maxAssets: 1000));
-                                          if (assets != null && assets.length > 0) {
-                                            assets.forEach((asset) {
-                                              asset.file.then((file) {
-                                                setState(() {
-                                                  uploads.add(UploadItem(file!.path, file.path.split("/").last));
-                                                });
-                                              });
-                                            });
-                                          } else {
-                                            debugPrint("未选择文件");
-                                          }
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "上传图片",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-                                          if (Platform.isAndroid) {
-                                            AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-                                            if (androidInfo.version.sdkInt >= 30) {
-                                              bool permission = false;
-                                              permission = await Permission.manageExternalStorage.request().isGranted;
-                                              if (!permission) {
-                                                Utils.toast("安卓11需授权文件管理权限");
-                                                return;
-                                              }
-                                            } else {
-                                              bool permission = false;
-                                              permission = await Permission.storage.request().isGranted;
-                                              if (!permission) {
-                                                Utils.toast("请先授权APP访问存储权限");
-                                                return;
-                                              }
-                                            }
-                                            showCupertinoModalBottomSheet<List<FileSystemEntity>>(
-                                              context: context,
-                                              builder: (context) {
-                                                return SelectLocalFolder(
-                                                  multi: true,
-                                                  folder: false,
-                                                );
-                                              },
-                                            ).then((res) {
-                                              if (res != null && res.length > 0) {
-                                                res.forEach((entry) {
-                                                  if (FileSystemEntity.isFileSync(entry.path)) {
-                                                    setState(() {
-                                                      uploads.add(UploadItem(entry.path, entry.path.split("/").last));
-                                                    });
-                                                  } else {
-                                                    Directory directory = Directory(entry.path);
-                                                    directory.list(recursive: true).forEach((element) {
-                                                      if (!element.path.split("/").last.startsWith(".")) {
-                                                        if (FileSystemEntity.isFileSync(element.path)) {
-                                                          List<String> slice = element.path.replaceFirst("${entry.path}/", "").split("/");
-                                                          setState(() {
-                                                            uploads.add(UploadItem(element.path, slice.last, subPath: slice.getRange(0, slice.length - 1).join("/")));
-                                                          });
-                                                        }
-                                                      }
-                                                    });
-                                                  }
-                                                });
-                                              }
-                                              // if (res != null && res.length == 1) {
-                                              //   setState(() {
-                                              //     downloadPath = res[0];
-                                              //     Utils.downloadSavePath = res[0];
-                                              //     Utils.setStorage("download_save_path", res[0]);
-                                              //   });
-                                              // }
-                                            });
-                                          } else {
-                                            FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
-
-                                            if (result != null) {
-                                              setState(() {
-                                                uploads.addAll(result.files.map((file) {
-                                                  return UploadItem(file.path!, file.name, fileSize: file.size);
-                                                }).toList());
-                                              });
-                                            } else {
-                                              // User canceled the picker
-                                            }
-                                          }
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "上传文件",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                        },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Text(
-                                          "取消",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: Text("添加文件"),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    child: CupertinoButton(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(50),
-                      onPressed: () async {
-                        if (savePath.isBlank) {
-                          Utils.vibrate(FeedbackType.warning);
-                          Utils.toast("请选择上传位置");
-                          return;
-                        }
-                        // return;
-                        for (int i = 0; i < uploads.length; i++) {
-                          UploadItem upload = uploads[i];
-                          if (upload.status != UploadStatus.wait) {
-                            continue;
-                          }
-                          //上传文件
-                          setState(() {
-                            upload.status = UploadStatus.running;
-                          });
-                          // print("上传路径：$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}");
-                          var res = await Api.upload("$savePath${upload.subPath.isNotBlank ? "/${upload.subPath}" : ""}", upload.path, upload.cancelToken, (progress, total) {
-                            setState(() {
-                              upload.uploadSize = progress;
-                              upload.fileSize = total;
-                            });
-                          });
-                          print(res);
-                          if (res['success']) {
-                            setState(() {
-                              upload.status = UploadStatus.complete;
-                            });
-                          } else {
-                            setState(() {
-                              upload.status = UploadStatus.failed;
-                            });
-                          }
-                        }
-                      },
-                      child: Text("开始上传"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

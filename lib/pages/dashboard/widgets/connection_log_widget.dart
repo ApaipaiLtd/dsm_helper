@@ -1,17 +1,77 @@
 import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
+import 'package:dsm_helper/pages/dashboard/dialogs/kick_connection_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class ConnectionLogWidget extends StatelessWidget {
-  final CurrentConnection connectedUsers;
-  const ConnectionLogWidget(this.connectedUsers, {super.key});
+class ConnectionLogWidget extends StatefulWidget {
+  const ConnectionLogWidget({super.key});
+
+  @override
+  State<ConnectionLogWidget> createState() => _ConnectionLogWidgetState();
+}
+
+class _ConnectionLogWidgetState extends State<ConnectionLogWidget> {
+  CurrentConnection connectedUsers = CurrentConnection();
+  bool loading = true;
+  bool error = false;
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  getData({bool loop = true}) async {
+    try {
+      connectedUsers = await CurrentConnection.get();
+      setState(() {
+        loading = false;
+      });
+    } catch (e) {
+      // 如果首次加载失败，则显示错误信息，否则不显示
+      if (loading) {
+        setState(() {
+          error = true;
+        });
+      }
+    }
+    if (loop && mounted) {
+      int refreshDuration = context.read<SettingProvider>().refreshDuration;
+      Future.delayed(Duration(seconds: refreshDuration)).then((_) {
+        getData();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = connectedUsers.items!.map((item) => _buildUserItem(context, item)).toList();
+    late Widget cardBody;
+    if (loading) {
+      cardBody = SizedBox(height: 100, child: Center(child: LoadingWidget(size: 30)));
+    } else if (error) {
+      cardBody = EmptyWidget(
+        text: "数据加载失败",
+        size: 100,
+      );
+    } else {
+      List<Widget> children = connectedUsers.items?.map((item) => _buildUserItem(context, item)).toList() ?? [];
+      if (children.isEmpty) {
+        cardBody = EmptyWidget(
+          text: "暂无已连接用户",
+          size: 100,
+        );
+      } else {
+        cardBody = Column(
+          children: children.expand((element) => [element, if (element != children.last) Divider()]).toList(),
+        );
+      }
+    }
     return WidgetCard(
       title: "已连接用户",
       // icon: Image.asset(
@@ -19,16 +79,7 @@ class ConnectionLogWidget extends StatelessWidget {
       //   width: 26,
       //   height: 26,
       // ),
-      body: connectedUsers.items != null && connectedUsers.items!.length > 0
-          ? Column(
-              children: children.expand((element) => [element, if (element != children.last) Container(color: Colors.black12, height: 0.5)]).toList(),
-            )
-          : Center(
-              child: Text(
-                "暂无日志",
-                style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-              ),
-            ),
+      body: cardBody,
     );
   }
 
@@ -36,150 +87,68 @@ class ConnectionLogWidget extends StatelessWidget {
     DateTime loginTime = DateTime.parse(user.time!.toString().replaceAll("/", "-"));
     DateTime currentTime = DateTime.now();
     var timeLong = Utils.timeLong(currentTime.difference(loginTime).inSeconds);
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${user.who}",
-                  style: TextStyle(fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "${user.type}",
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 14, color: Colors.black45),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "${timeLong.hours.toString().padLeft(2, "0")}:${timeLong.minutes.toString().padLeft(2, "0")}:${timeLong.seconds.toString().padLeft(2, "0")}",
-                      style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.primaryColor),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.right,
-                    )
-                  ],
-                )
-              ],
-            ),
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${user.who}",
+                style: TextStyle(fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Row(
+                children: [
+                  Text(
+                    "${user.type}",
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.placeholderColor),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "${timeLong.hours.toString().padLeft(2, "0")}:${timeLong.minutes.toString().padLeft(2, "0")}:${timeLong.seconds.toString().padLeft(2, "0")}",
+                    style: TextStyle(fontSize: 14, color: AppTheme.of(context)?.primaryColor),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.right,
+                  )
+                ],
+              )
+            ],
           ),
-          SizedBox(
-            width: 5,
-          ),
-          CupertinoButton(
-            onPressed: () async {
-              if (user.running) {
-                return;
-              }
-              showCupertinoModalPopup(
-                context: context,
-                builder: (context) {
-                  return Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-                      child: SafeArea(
-                        top: false,
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                "终止连接",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                "确认要终止此连接？",
-                                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w400),
-                              ),
-                              SizedBox(
-                                height: 22,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CupertinoButton(
-                                      onPressed: () async {
-                                        // Navigator.of(context).pop();
-                                        // setState(() {
-                                        //   user['running'] = true;
-                                        // });
-                                        // var res = await Api.kickConnection({"who": user['who'], "from": user['from']});
-                                        // setState(() {
-                                        //   user['running'] = false;
-                                        // });
-                                        //
-                                        // if (res['success']) {
-                                        //   Utils.toast("连接已终止");
-                                        // }
-                                      },
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "终止连接",
-                                        style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Expanded(
-                                    child: CupertinoButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                      },
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Text(
-                                        "取消",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        CupertinoButton(
+          onPressed: user.running
+              ? null
+              : () async {
+                  bool? res = await KickConnectDialog.show(context: context, user: user);
+                  if (res == true) {
+                    setState(() {
+                      user.running = true;
+                    });
+                    bool? result = await user.kickConnection();
+                    if (result == true) {
+                      getData(loop: false);
+                    }
+                  }
                 },
-              );
-            },
-            padding: EdgeInsets.zero,
-            child: SizedBox(
-              width: 30,
-              height: 30,
-              child: user.running
-                  ? CupertinoActivityIndicator()
-                  : Image.asset(
-                      "assets/icons/remove_circle_fill.png",
-                      width: 30,
-                      height: 30,
-                    ),
-            ),
-          ),
-        ],
-      ),
+          padding: EdgeInsets.zero,
+          child: user.running
+              ? LoadingWidget(
+                  size: 24,
+                )
+              : Image.asset(
+                  "assets/icons/remove_circle_fill.png",
+                  width: 24,
+                  height: 24,
+                ),
+        ),
+      ],
     );
   }
 }

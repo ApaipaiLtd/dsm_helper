@@ -1,7 +1,9 @@
+import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/resource_monitor/performance.dart';
 import 'package:dsm_helper/pages/resource_monitor/resource_monitor.dart';
+import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
@@ -19,6 +21,7 @@ class ResourceMonitorWidget extends StatelessWidget {
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
     Utilization utilization = utilizationProvider.utilization;
     List<Network> networks = utilizationProvider.networks;
+    System system = context.read<SystemInfoProvider>().systemInfo;
     return WidgetCard(
       onTap: () {
         context.push(ResourceMonitor(), name: "resource_monitor");
@@ -204,15 +207,25 @@ class ResourceMonitorWidget extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
+                  "assets/icons/temperature.png",
+                  width: 16,
+                  height: 16,
+                ),
+                Text(
+                  "${system.sysTemp}℃",
+                  style: TextStyle(color: AppTheme.of(context)?.successColor),
+                ),
+                Spacer(),
+                Image.asset(
                   "assets/icons/arrow_down.png",
                   width: 20,
                   height: 20,
                 ),
                 Text(
                   utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.tx!, showByte: true) + "/S",
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: AppTheme.of(context)?.primaryColor),
                 ),
-                Spacer(),
+                SizedBox(width: 20),
                 Image.asset(
                   "assets/icons/arrow_up.png",
                   width: 20,
@@ -220,66 +233,60 @@ class ResourceMonitorWidget extends StatelessWidget {
                 ),
                 Text(
                   utilization.network == null ? '-' : Utils.formatSize(utilization.network!.first.rx!, showByte: true) + "/S",
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: AppTheme.of(context)?.successColor),
                 ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 5,
           ),
           GestureDetector(
             onTap: () {
               context.push(Performance(tabIndex: 3), name: "performance");
             },
-            child: AspectRatio(
-              aspectRatio: 2.2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: SfCartesianChart(
-                  plotAreaBorderWidth: 0,
-                  primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift, isVisible: false, interval: 1, majorGridLines: const MajorGridLines(width: 0)),
-                  primaryYAxis: NumericAxis(
-                    // labelFormat: '{value}',
-                    axisLine: const AxisLine(width: 0),
-                    majorTickLines: const MajorTickLines(color: Colors.transparent),
-                    interval: Utils.chartInterval(utilizationProvider.maxNetworkSpeed),
-                    axisLabelFormatter: (args) {
-                      return ChartAxisLabel(Utils.formatSize(args.value, fixed: 0), TextStyle());
-                    },
-                  ),
-                  enableAxisAnimation: true,
-                  series: <AreaSeries<Network, num>>[
-                    AreaSeries<Network, num>(
-                      animationDuration: 1000,
-                      dataSource: networks,
-                      xValueMapper: (Network network, _) => networks.indexOf(network),
-                      yValueMapper: (Network network, _) => network.tx,
-                      // dataLabelSettings: DataLabelSettings(),
-                      // width: 2,
-                      name: '上传',
-                      markerSettings: const MarkerSettings(isVisible: false),
-                      // color: Colors.lightBlue,
-                      borderWidth: 2,
-                      borderColor: AppTheme.of(context)?.primaryColor,
-                      gradient: LinearGradient(colors: [Colors.white, Color(0xFFD5E4F5)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
-                    ),
-                    AreaSeries<Network, num>(
-                      animationDuration: 1000,
-                      dataSource: networks,
-                      // width: 2,
-                      name: '下载',
-                      xValueMapper: (Network network, _) => networks.indexOf(network),
-                      yValueMapper: (Network network, _) => network.rx,
-                      markerSettings: const MarkerSettings(isVisible: false),
-                      color: Colors.lightGreen,
-                      borderColor: Color(0xFF43CF7C),
-                      borderWidth: 2,
-                      gradient: LinearGradient(colors: [Color(0x0CCCCCCC), Color(0x2343CF7C)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
-                    )
-                  ],
-                  tooltipBehavior: TooltipBehavior(enable: true, shared: true),
+            child: SizedBox(
+              height: 150,
+              child: SfCartesianChart(
+                plotAreaBorderWidth: 0,
+                primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift, isVisible: false, interval: 1, majorGridLines: const MajorGridLines(width: 0)),
+                primaryYAxis: NumericAxis(
+                  // labelFormat: '{value}',
+                  axisLine: const AxisLine(width: 0),
+                  majorTickLines: const MajorTickLines(color: Colors.transparent),
+                  interval: Utils.chartInterval(utilizationProvider.maxNetworkSpeed),
+                  axisLabelFormatter: (args) {
+                    return ChartAxisLabel(Utils.formatSize(args.value, fixed: 0), TextStyle());
+                  },
                 ),
+                enableAxisAnimation: true,
+                series: <AreaSeries<Network, num>>[
+                  AreaSeries<Network, num>(
+                    animationDuration: 1000,
+                    dataSource: networks,
+                    xValueMapper: (Network network, _) => networks.indexOf(network),
+                    yValueMapper: (Network network, _) => network.tx,
+                    // dataLabelSettings: DataLabelSettings(),
+                    // width: 2,
+                    name: '上传',
+                    markerSettings: const MarkerSettings(isVisible: false),
+                    // color: Colors.lightBlue,
+                    borderWidth: 2,
+                    borderColor: AppTheme.of(context)?.primaryColor,
+                    gradient: LinearGradient(colors: [Colors.white, Color(0xFFD5E4F5)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
+                  ),
+                  AreaSeries<Network, num>(
+                    animationDuration: 1000,
+                    dataSource: networks,
+                    // width: 2,
+                    name: '下载',
+                    xValueMapper: (Network network, _) => networks.indexOf(network),
+                    yValueMapper: (Network network, _) => network.rx,
+                    markerSettings: const MarkerSettings(isVisible: false),
+                    color: Colors.lightGreen,
+                    borderColor: Color(0xFF43CF7C),
+                    borderWidth: 2,
+                    gradient: LinearGradient(colors: [Color(0x0CCCCCCC), Color(0x2343CF7C)], begin: Alignment.bottomCenter, end: Alignment.topCenter),
+                  )
+                ],
+                tooltipBehavior: TooltipBehavior(enable: true, shared: true),
               ),
             ),
           ),

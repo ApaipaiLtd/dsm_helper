@@ -606,25 +606,25 @@ class _LoginState extends State<Login> {
           //     ),
           //   ),
           // ),
-          if (servers.length > 0)
-            Padding(
-              padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-              child: CupertinoButton(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-                padding: EdgeInsets.all(10),
-                onPressed: () {
-                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                    return Accounts();
-                  }));
-                },
-                child: Image.asset(
-                  "assets/icons/history.png",
-                  width: 20,
-                  height: 20,
-                ),
-              ),
-            )
+          // if (servers.length > 0)
+          //   Padding(
+          //     padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
+          //     child: CupertinoButton(
+          //       color: Theme.of(context).scaffoldBackgroundColor,
+          //       borderRadius: BorderRadius.circular(10),
+          //       padding: EdgeInsets.all(10),
+          //       onPressed: () {
+          //         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
+          //           return Accounts();
+          //         }));
+          //       },
+          //       child: Image.asset(
+          //         "assets/icons/history.png",
+          //         width: 20,
+          //         height: 20,
+          //       ),
+          //     ),
+          //   )
         ],
       ),
       body: GestureDetector(

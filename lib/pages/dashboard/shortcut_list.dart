@@ -1,4 +1,5 @@
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
+import 'package:dsm_helper/pages/applications/application_enums.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/control_panel/control_panel.dart';
 import 'package:dsm_helper/pages/docker/detail.dart';
@@ -53,13 +54,13 @@ class ShortcutList extends StatelessWidget {
       "SYNO.SDS.DownloadStation.Application",
       "SYNO.SDS.XLPan.Application",
     ];
-    bool showShortcut = context.watch<ShortcutProvider>().showShortcut;
     InitDataModel initData = context.watch<InitDataProvider>().initData;
     List<ShortcutItems> shortcutItems = initData.userSettings?.desktop?.shortcutItems != null ? initData.userSettings!.desktop!.shortcutItems! : [];
     List<String> validAppViewOrder = initData.userSettings?.desktop?.validAppviewOrder != null ? initData.userSettings!.desktop!.validAppviewOrder! : [];
-    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Utils.notReviewAccount && showShortcut) {
+    if (shortcutItems.where((element) => supportedShortcuts.contains(element.className)).length > 0 && Utils.notReviewAccount) {
       return Container(
-        height: 95,
+        height: 82,
+        margin: EdgeInsets.only(top: 10),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, i) {
@@ -210,26 +211,28 @@ class ShortcutList extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        icon,
-                        width: 50,
+                child: Column(
+                  children: [
+                    Image.asset(
+                      icon,
+                      width: 45,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 32,
+                      child: Center(
+                        child: Text(
+                          "$name",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        "$name",
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 13, color: Colors.black),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               if (unread > 0)

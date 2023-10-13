@@ -5,16 +5,10 @@ import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/models/Syno/Core/Notify.dart';
 import 'package:dsm_helper/models/Syno/Core/Notify/DsmNotifyStrings.dart';
-import 'package:dsm_helper/models/Syno/Core/SyslogClient/Log.dart';
-import 'package:dsm_helper/models/Syno/Core/SyslogClient/Status.dart';
 import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/models/Syno/Core/System/Utilization.dart';
-import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
 import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart' hide Size;
-import 'package:dsm_helper/models/base_model.dart';
-import 'package:dsm_helper/models/setting/group_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/external_device.dart';
-import 'package:dsm_helper/pages/dashboard/dialogs/first_launch_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/media_converter.dart';
 import 'package:dsm_helper/pages/dashboard/shortcut_list.dart';
 import 'package:dsm_helper/pages/dashboard/widget_setting.dart';
@@ -28,11 +22,14 @@ import 'package:dsm_helper/pages/dashboard/widgets/task_scheduler_widget.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -52,13 +49,9 @@ class DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   CurrentConnection connectedUsers = CurrentConnection();
-  TaskScheduler taskScheduler = TaskScheduler();
-  SynoClientStatus latestLog = SynoClientStatus();
   DsmNotify dsmNotify = DsmNotify();
-  SyslogClientLog fileChangeLogs = SyslogClientLog();
   List esatas = [];
   List usbs = [];
-  Map? appNotify;
   Map? converter;
   bool loading = true;
   bool success = true;
@@ -78,23 +71,24 @@ class DashboardState extends State<Dashboard> {
   @override
   void initState() {
     getNotifyStrings();
-    initData();
-    getData(init: true);
+    getInitData();
+
     super.initState();
   }
 
-  initData() async {
+  getInitData() async {
     InitDataModel initData = await InitDataModel.get();
     InitDataProvider initDataProvider = context.read<InitDataProvider>();
     initDataProvider.setInitData(initData);
     Utils.version = int.parse(initData.session!.majorversion!);
     setState(() {});
+    getData();
   }
 
-  getGroups() async {
-    Utils.groups = await GroupsModel.fetch();
-    FirstLaunchDialog.show(context);
-  }
+  // getGroups() async {
+  //   Utils.groups = await GroupsModel.fetch();
+  //   FirstLaunchDialog.show(context);
+  // }
 
   getNotifyStrings() async {
     Utils.notifyStrings = await DsmNotifyStrings.get();
@@ -137,17 +131,19 @@ class DashboardState extends State<Dashboard> {
 
   initUtilizationTask() async {
     UtilizationProvider utilizationProvider = context.read<UtilizationProvider>();
-    Utilization utilization = await Utilization.get();
-    utilizationProvider.setUtilization(utilization);
-    setState(() {});
-    await Future.delayed(Duration(seconds: 10));
-
+    try {
+      Utilization utilization = await Utilization.get();
+      utilizationProvider.setUtilization(utilization);
+    } catch (e) {}
+    await Future.delayed(Duration(seconds: refreshDuration));
     initUtilizationTask();
   }
 
   initNotifyTask({bool loop = true}) async {
-    dsmNotify = await DsmNotify.notify();
-    setState(() {});
+    try {
+      dsmNotify = await DsmNotify.notify();
+      setState(() {});
+    } catch (e) {}
 
     if (loop) {
       await Future.delayed(Duration(seconds: 30));
@@ -155,32 +151,40 @@ class DashboardState extends State<Dashboard> {
     }
   }
 
-  getData({bool init = false}) async {
+  initSystemInfoTask({bool loop = true}) async {
+    try {
+      List<DsmResponse> batchRes = await api.Api.dsm.batch(apis: [System()]);
+      batchRes.forEach((element) {
+        switch (element.data.runtimeType.toString()) {
+          case "System":
+            SystemInfoProvider provider = context.read<SystemInfoProvider>();
+            provider.setSystemInfo(element.data);
+            break;
+        }
+      });
+    } catch (e) {}
+
+    if (loop) {
+      await Future.delayed(Duration(seconds: 30));
+      initNotifyTask();
+    }
+  }
+
+  getData() async {
     // getExternalDevice();
     // getMediaConverter();
-    List<BaseModel> apis = [System(), SyslogClientLog()];
-    List<DsmResponse> batchRes = await api.Api.dsm.batch(apis: apis);
-    batchRes.forEach((element) {
-      switch (element.data.runtimeType.toString()) {
-        case "System":
-          SystemInfoProvider provider = context.read<SystemInfoProvider>();
-          provider.setSystemInfo(element.data);
-          break;
-        case "SyslogClientLog":
-          setState(() {
-            fileChangeLogs = element.data;
-          });
-      }
-    });
-    taskScheduler = await TaskScheduler.list();
 
-    connectedUsers = await CurrentConnection.get();
+    InitDataModel initData = context.read<InitDataProvider>().initData;
+    List<String> widgets = initData.userSettings?.synoSDSWidgetInstance?.moduleList ?? [];
 
-    latestLog = await SynoClientStatus.get();
-
-    Storage storage = await Storage.loadInfo();
-    StorageProvider storageProvider = context.read<StorageProvider>();
-    storageProvider.setStorage(storage);
+    if (widgets.contains("SYNO.SDS.SystemInfoApp.StorageUsageWidget")) {
+      try {
+        Storage storage = await Storage.loadInfo();
+        StorageProvider storageProvider = context.read<StorageProvider>();
+        storageProvider.setStorage(storage);
+      } catch (e) {}
+    }
+    initSystemInfoTask();
 
     initUtilizationTask();
 
@@ -191,120 +195,26 @@ class DashboardState extends State<Dashboard> {
       success = true;
     });
     return;
-    // var res = await Api.systemInfo(widgets);
-    //
-    // if (res['success']) {
-    //   if (!mounted) {
-    //     return;
-    //   }
-    //
-    //   setState(() {
-    //     loading = false;
-    //     success = true;
-    //   });
-    //
-    //   List result = res['data']['result'];
-    //   result.forEach((item) {
-    //     if (item['success'] == true) {
-    //       switch (item['api']) {
-    //         case "SYNO.Core.System.Utilization":
-    //           setState(() {
-    //             utilization = item['data'];
-    //             if (networks.length > 20) {
-    //               networks.removeAt(0);
-    //             }
-    //             networks.add(item['data']['network'][0]);
-    //           });
-    //           break;
-    //         case "SYNO.Core.System":
-    //           setState(() {
-    //             system = item['data'];
-    //             Utils.systemVersion(system!['firmware_ver']);
-    //           });
-    //           break;
-    //         case "SYNO.Core.CurrentConnection":
-    //           setState(() {
-    //             connectedUsers = item['data']['items'];
-    //           });
-    //           break;
-    //         case "SYNO.Storage.CGI.Storage":
-    //           setState(() {
-    //             ssdCaches = item['data']['ssdCaches'];
-    //             volumes = item['data']['volumes'];
-    //             volumes.sort((a, b) {
-    //               return a['num_id'].compareTo(b['num_id']);
-    //             });
-    //             disks = item['data']['disks'];
-    //           });
-    //           break;
-    //         case 'SYNO.Core.TaskScheduler':
-    //           setState(() {
-    //             tasks = item['data']['tasks'];
-    //           });
-    //           break;
-    //         case 'SYNO.Core.SyslogClient.Status':
-    //           setState(() {
-    //             latestLog = item['data']['logs'];
-    //           });
-    //           break;
-    //         case "SYNO.Core.DSMNotify":
-    //           setState(() {
-    //             notifies = item['data']['items'];
-    //           });
-    //           break;
-    //         case "SYNO.Core.AppNotify":
-    //           setState(() {
-    //             appNotify = item['data'];
-    //           });
-    //           break;
-    //         case "SYNO.Core.SyslogClient.Log":
-    //           Log.logger.info(jsonEncode(item['data']));
-    //           setState(() {
-    //             fileLogs = item['data']['items'];
-    //           });
-    //           break;
-    //       }
-    //     }
-    //
-    //     // else if(item['api'] == ""){
-    //     //
-    //     // }
-    //   });
-    // } else {
-    //   setState(() {
-    //     if (loading) {
-    //       success = res['success'];
-    //       loading = false;
-    //     }
-    //
-    //     msg = res['msg'] ?? "加载失败，code:${res['error']['code']}";
-    //   });
-    // }
-    // if (init && mounted) {
-    //   Future.delayed(Duration(seconds: refreshDuration)).then((value) {
-    //     getData(init: init);
-    //   });
-    //   return;
-    // }
   }
 
   Widget _buildWidgetItem(widget) {
-    if (widget == "SYNO.SDS.SystemInfoApp.SystemHealthWidget") {
-      return SystemHealthWidget();
-    } else if (widget == "SYNO.SDS.SystemInfoApp.ConnectionLogWidget") {
-      return ConnectionLogWidget(connectedUsers);
-    } else if (widget == "SYNO.SDS.TaskScheduler.TaskSchedulerWidget") {
-      return TaskSchedulerWidget(taskScheduler);
-    } else if (widget == "SYNO.SDS.SystemInfoApp.RecentLogWidget") {
-      return RecentLogWidget(latestLog);
-    } else if (widget == "SYNO.SDS.ResourceMonitor.Widget") {
-      return ResourceMonitorWidget();
-    } else if (widget == "SYNO.SDS.SystemInfoApp.StorageUsageWidget") {
-      return StorageUsageWidget();
-    } else if (widget == "SYNO.SDS.SystemInfoApp.FileChangeLogWidget") {
-      return FileChangeLogWidget(fileChangeLogs);
-    } else {
-      return Container();
+    switch (widget) {
+      case "SYNO.SDS.SystemInfoApp.SystemHealthWidget":
+        return SystemHealthWidget();
+      case "SYNO.SDS.SystemInfoApp.ConnectionLogWidget":
+        return ConnectionLogWidget();
+      case "SYNO.SDS.TaskScheduler.TaskSchedulerWidget":
+        return TaskSchedulerWidget();
+      case "SYNO.SDS.SystemInfoApp.RecentLogWidget":
+        return RecentLogWidget();
+      case "SYNO.SDS.ResourceMonitor.Widget":
+        return ResourceMonitorWidget();
+      case "SYNO.SDS.SystemInfoApp.StorageUsageWidget":
+        return StorageUsageWidget();
+      case "SYNO.SDS.SystemInfoApp.FileChangeLogWidget":
+        return FileChangeLogWidget();
+      default:
+        return SizedBox();
     }
   }
 
@@ -376,7 +286,7 @@ class DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     refreshDuration = context.watch<SettingProvider>().refreshDuration;
-
+    bool showShortcut = context.watch<ShortcutProvider>().showShortcut;
     InitDataModel initData = context.watch<InitDataProvider>().initData;
     return GlassScaffold(
       key: _scaffoldKey,
@@ -471,11 +381,7 @@ class DashboardState extends State<Dashboard> {
             // if (converter != null && (converter!['photo_remain'] + converter!['thumb_remain'] + converter!['video_remain'] > 0))
             CupertinoButton(
               onPressed: () {
-                showCupertinoModalPopup(
-                    context: context,
-                    builder: (context) {
-                      return MediaConverter(converter!);
-                    });
+                MediaConverterPopup.show(converter!, context: context);
               },
               child: Image.asset(
                 "assets/icons/converting.png",
@@ -489,36 +395,22 @@ class DashboardState extends State<Dashboard> {
           if (Utils.notReviewAccount)
             CupertinoButton(
               onPressed: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                  return WidgetSetting();
-                })).then((res) {
-                  if (res != null) {
-                    getData();
-                  }
-                });
+                context.push(WidgetSetting(), name: "widget_setting");
               },
               child: Image.asset(
-                "assets/icons/plus_circle.png",
+                "assets/icons/setting.png",
                 width: 24,
                 height: 24,
               ),
             ),
           CupertinoButton(
             onPressed: () {
-              Navigator.of(context)
-                  .push(
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return Notify(dsmNotify);
-                  },
-                  settings: RouteSettings(name: "notify"),
-                ),
-              )
-                  .then((res) {
-                if (res != null && res) {
+              context.push(Notify(dsmNotify), name: "notify").then((res) {
+                if (res != null && res == true) {
                   setState(() {
                     dsmNotify.items = [];
                   });
+                  initNotifyTask(loop: false);
                 }
               });
             },
@@ -554,46 +446,41 @@ class DashboardState extends State<Dashboard> {
               ? ListView(
                   // padding: EdgeInsets.only(top: context.padding.top + 60, bottom: 10),
                   children: [
-                    ShortcutList(),
-                    if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.length > 0)
+                    if (showShortcut) ShortcutList(),
+                    if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.isNotEmpty)
                       ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
                         return _buildWidgetItem(widget);
                         // return Text(widget);
                       }).toList()
                     else
-                      Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "未添加小组件",
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            SizedBox(
-                              width: 200,
-                              child: CupertinoButton(
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(20),
-                                onPressed: () {
-                                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-                                    return WidgetSetting();
-                                  })).then((res) {
-                                    if (res != null) {
-                                      getData();
-                                    }
-                                  });
-                                },
-                                child: Text(
-                                  ' 添加 ',
-                                  style: TextStyle(fontSize: 18),
-                                ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 50,
+                          ),
+                          EmptyWidget(
+                            text: "未添加小组件",
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: 200,
+                            child: CupertinoButton(
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              color: AppTheme.of(context)?.primaryColor,
+                              borderRadius: BorderRadius.circular(15),
+                              onPressed: () {
+                                context.push(WidgetSetting(), name: "widget_setting");
+                              },
+                              child: Text(
+                                '添加小组件',
+                                style: TextStyle(fontSize: 18),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       )
                   ],
                 )
@@ -609,13 +496,13 @@ class DashboardState extends State<Dashboard> {
                         width: 200,
                         child: CupertinoButton(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppTheme.of(context)?.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
                           onPressed: () {
                             getData();
                           },
                           child: Text(
-                            ' 刷新 ',
+                            '刷新',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
@@ -623,12 +510,6 @@ class DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.refresh),
-      //   onPressed: () {
-      //     getData();
-      //   },
-      // ),
     );
   }
 }

@@ -5,7 +5,7 @@ class ShortcutProvider with ChangeNotifier {
   bool _showShortcut = true;
   bool get showShortcut => _showShortcut;
   ShortcutProvider(this._showShortcut);
-  void changeMode(bool showShortcut) async {
+  void setShowShortcut(bool showShortcut) async {
     _showShortcut = showShortcut;
     notifyListeners();
     SpUtil.putBool("show_shortcut", showShortcut);

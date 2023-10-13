@@ -1,3 +1,4 @@
+import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/base_model.dart';
 
 /// errorCount : 0
@@ -14,6 +15,23 @@ class SyslogClientLog extends BaseModel {
     this.total,
     this.warnCount,
   });
+
+  static Future<SyslogClientLog> list() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.SyslogClient.Log",
+      "list",
+      version: 1,
+      parser: SyslogClientLog.fromJson,
+      data: {
+        "start": 0,
+        "limit": 50,
+        "target": "LOCAL",
+        "logtype": "ftp,filestation,webdav,cifs,tftp,afp",
+        "dir": "desc",
+      },
+    );
+    return res.data;
+  }
 
   SyslogClientLog.fromJson(dynamic json) {
     errorCount = json['errorCount'];

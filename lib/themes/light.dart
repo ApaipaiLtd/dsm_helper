@@ -28,8 +28,6 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   dialogBackgroundColor: Color(0xF000000),
   dividerTheme: DividerThemeData(
     color: Color(0xF000000),
-    indent: 15,
-    endIndent: 15,
     thickness: 1,
   ),
   inputDecorationTheme: InputDecorationTheme(

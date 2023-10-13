@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/Core/Notify.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/utils/strings.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
@@ -9,6 +11,7 @@ import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class Notify extends StatefulWidget {
   final DsmNotify notifies;
@@ -18,6 +21,7 @@ class Notify extends StatefulWidget {
 }
 
 class _NotifyState extends State<Notify> {
+  bool loading = true;
   Map<String, List<DsmNotifyItems>> notifyGroups = {};
 
   @override
@@ -139,11 +143,27 @@ class _NotifyState extends State<Notify> {
         actions: [
           CupertinoButton(
             onPressed: () async {
-              // var res = await Api.clearNotify();
-              // if (res['success']) {
-              //   Utils.toast("清除成功");
-              //   Navigator.of(context).pop(true);
-              // }
+              setState(() {
+                loading = true;
+              });
+              try {
+                bool? res = await DsmNotify.clean();
+                if (res == true) {
+                  Utils.vibrate(FeedbackType.success);
+                  Utils.toast("消息清除成功");
+                  context.pop(true);
+                }
+              } on DsmException catch (e) {
+                Utils.vibrate(FeedbackType.error);
+                Utils.toast("消息清除失败，代码：${e.code}");
+              } catch (e) {
+                Utils.vibrate(FeedbackType.error);
+                Utils.toast("消息清除失败");
+              } finally {
+                setState(() {
+                  loading = false;
+                });
+              }
             },
             child: Image.asset(
               "assets/icons/clean.png",
@@ -160,7 +180,7 @@ class _NotifyState extends State<Notify> {
               }).toList(),
             )
           : EmptyWidget(
-              text: "暂无数据",
+              text: "暂无消息",
             ),
     );
   }

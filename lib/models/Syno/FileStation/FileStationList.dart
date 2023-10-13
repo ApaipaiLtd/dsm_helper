@@ -172,12 +172,11 @@ class FileItem {
   Future<bool?> deleteFavorite() async {
     DsmResponse res = await Api.dsm.entry(
       "SYNO.FileStation.Favorite",
-      '"delete"',
+      'delete',
       version: 2,
       data: {
         "path": path!,
       },
-      parser: FileStationList.fromJson,
     );
     return res.success;
   }

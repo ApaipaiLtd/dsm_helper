@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dsm_helper/apis/api.dart';
 
 /// items : [{"can_be_kicked":true,"descr":"DiskStation Manager","from":"221.3.93.20","pid":1,"protocol":"HTTP/HTTPS","time":"2023/09/11 17:57:20","type":"HTTP/HTTPS","user_can_be_disabled":true,"who":"yaoshuwei"},{"can_be_kicked":true,"descr":"DiskStation Manager","from":"17.232.89.36","pid":1,"protocol":"HTTP/HTTPS","time":"2023/09/11 17:26:13","type":"HTTP/HTTPS","user_can_be_disabled":true,"who":"jinx"},{"can_be_kicked":true,"descr":"DiskStation Manager","from":"58.240.94.146","pid":1,"protocol":"HTTP/HTTPS","time":"2023/09/10 14:20:08","type":"HTTP/HTTPS","user_can_be_disabled":true,"who":"jinx"},{"can_be_kicked":true,"descr":"DiskStation Manager","from":"113.120.111.165","pid":1,"protocol":"HTTP/HTTPS","time":"2023/09/04 19:38:03","type":"HTTP/HTTPS","user_can_be_disabled":true,"who":"yaoshuwei"}]
@@ -85,6 +87,24 @@ class UserItems {
     this.userCanBeDisabled,
     this.who,
   });
+
+  Future<bool?> kickConnection() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.CurrentConnection",
+      'kick_connection',
+      version: 1,
+      data: {
+        "http_conn": jsonEncode([
+          {
+            "who": who,
+            "from": from,
+          }
+        ]),
+        "service_conn": '[]',
+      },
+    );
+    return res.success;
+  }
 
   UserItems.fromJson(dynamic json) {
     canBeKicked = json['can_be_kicked'];

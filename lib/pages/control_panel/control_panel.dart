@@ -192,14 +192,15 @@ class _ControlPanelState extends State<ControlPanel> {
                 //   icon: "notifications",
                 //   width: width,
                 // ),
-                ControlPanelItemWidget(
-                  onTap: () {
-                    context.push(TaskSchedulerManage(), name: 'task_scheduler');
-                  },
-                  title: "任务计划",
-                  icon: "task_scheduler",
-                  width: width,
-                ),
+                if (Utils.version < 7)
+                  ControlPanelItemWidget(
+                    onTap: () {
+                      context.push(TaskSchedulerManage(), name: 'task_scheduler');
+                    },
+                    title: "任务计划",
+                    icon: "task_scheduler",
+                    width: width,
+                  ),
                 ControlPanelItemWidget(
                   onTap: () {
                     context.push(Power(), name: 'power');

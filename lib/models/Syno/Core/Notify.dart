@@ -28,6 +28,14 @@ class DsmNotify {
     return res.data;
   }
 
+  static Future<bool?> clean() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.DSMNotify", "notify", version: 1, data: {
+      "action": "apply",
+      "clean": "all",
+    });
+    return res.success;
+  }
+
   DsmNotify.fromJson(dynamic json) {
     admingrpsetmtime = json['admingrpsetmtime'];
     if (json['items'] != null) {

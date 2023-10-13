@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dsm_helper/apis/api.dart';
 
 /// ActionPrivilege : []
@@ -10,10 +12,10 @@ import 'package:dsm_helper/apis/api.dart';
 
 class InitDataModel {
   InitDataModel({
-    this.actionPrivilege,
-    this.appPrivilege,
-    this.groupSettings,
-    this.serviceStatus,
+    // this.actionPrivilege,
+    // this.appPrivilege,
+    // this.groupSettings,
+    // this.serviceStatus,
     this.session,
     this.urlTag,
     this.userSettings,
@@ -32,53 +34,53 @@ class InitDataModel {
   }
 
   InitDataModel.fromJson(dynamic json) {
-    actionPrivilege = [];
-    appPrivilege = json['AppPrivilege'] != null ? AppPrivilege.fromJson(json['AppPrivilege']) : null;
-    groupSettings = json['GroupSettings'] != null ? GroupSettings.fromJson(json['GroupSettings']) : null;
-    serviceStatus = json['ServiceStatus'] != null ? ServiceStatus.fromJson(json['ServiceStatus']) : null;
+    // actionPrivilege = [];
+    // appPrivilege = json['AppPrivilege'] != null ? AppPrivilege.fromJson(json['AppPrivilege']) : null;
+    // groupSettings = json['GroupSettings'] != null ? GroupSettings.fromJson(json['GroupSettings']) : null;
+    // serviceStatus = json['ServiceStatus'] != null ? ServiceStatus.fromJson(json['ServiceStatus']) : null;
     session = json['Session'] != null ? Session.fromJson(json['Session']) : null;
     urlTag = json['UrlTag'];
     userSettings = json['UserSettings'] != null ? UserSettings.fromJson(json['UserSettings']) : null;
   }
-  List<dynamic>? actionPrivilege;
-  AppPrivilege? appPrivilege;
-  GroupSettings? groupSettings;
-  ServiceStatus? serviceStatus;
+  // List<dynamic>? actionPrivilege;
+  // AppPrivilege? appPrivilege;
+  // GroupSettings? groupSettings;
+  // ServiceStatus? serviceStatus;
   Session? session;
   dynamic urlTag;
   UserSettings? userSettings;
   InitDataModel copyWith({
     List<dynamic>? actionPrivilege,
-    AppPrivilege? appPrivilege,
-    GroupSettings? groupSettings,
-    ServiceStatus? serviceStatus,
+    // AppPrivilege? appPrivilege,
+    // GroupSettings? groupSettings,
+    // ServiceStatus? serviceStatus,
     Session? session,
     dynamic urlTag,
     UserSettings? userSettings,
   }) =>
       InitDataModel(
-        actionPrivilege: actionPrivilege ?? this.actionPrivilege,
-        appPrivilege: appPrivilege ?? this.appPrivilege,
-        groupSettings: groupSettings ?? this.groupSettings,
-        serviceStatus: serviceStatus ?? this.serviceStatus,
+        // actionPrivilege: actionPrivilege ?? this.actionPrivilege,
+        // appPrivilege: appPrivilege ?? this.appPrivilege,
+        // groupSettings: groupSettings ?? this.groupSettings,
+        // serviceStatus: serviceStatus ?? this.serviceStatus,
         session: session ?? this.session,
         urlTag: urlTag ?? this.urlTag,
         userSettings: userSettings ?? this.userSettings,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    if (actionPrivilege != null) {
-      map['ActionPrivilege'] = actionPrivilege?.map((v) => v.toJson()).toList();
-    }
-    if (appPrivilege != null) {
-      map['AppPrivilege'] = appPrivilege?.toJson();
-    }
-    if (groupSettings != null) {
-      map['GroupSettings'] = groupSettings?.toJson();
-    }
-    if (serviceStatus != null) {
-      map['ServiceStatus'] = serviceStatus?.toJson();
-    }
+    // if (actionPrivilege != null) {
+    //   map['ActionPrivilege'] = actionPrivilege?.map((v) => v.toJson()).toList();
+    // }
+    // if (appPrivilege != null) {
+    //   map['AppPrivilege'] = appPrivilege?.toJson();
+    // }
+    // if (groupSettings != null) {
+    //   map['GroupSettings'] = groupSettings?.toJson();
+    // }
+    // if (serviceStatus != null) {
+    //   map['ServiceStatus'] = serviceStatus?.toJson();
+    // }
     if (session != null) {
       map['Session'] = session?.toJson();
     }
@@ -121,134 +123,146 @@ class UserSettings {
     this.backgroundTask,
     this.desktop,
     this.personal,
-    this.synoFinderSpotlightApplication,
-    this.synoSDSAdminCenterApplication,
-    this.synoSDSAppDiskMessageAppInstance,
-    this.synoSDSAppFileStation3Instance,
-    this.synoSDSAppFileTaskMonitorInstance,
-    this.synoSDSAppPersonalSettingsInstance,
-    this.synoSDSAppPromotionApp,
-    this.synoSDSAria2Application,
-    this.synoSDSBrowserBoxApplication,
-    this.synoSDSCSTNInstance,
-    this.synoSDSDSMNotifyTray,
-    this.synoSDSDockerApplication,
-    this.synoSDSDockerContainerDetailInstance,
-    this.synoSDSDriveApplication,
-    this.synoSDSHelpBrowserApplication,
-    this.synoSDSPhotoViewerApplication,
-    this.synoSDSPkgManAppInstance,
-    this.synoSDSResourceMonitorInstance,
-    this.synoSDSStorageManagerInstance,
-    this.synoSDSStorageManagerQuickWizardInstance,
-    this.synoSDSWebDAVServerInstance,
+    // this.synoFinderSpotlightApplication,
+    // this.synoSDSAdminCenterApplication,
+    // this.synoSDSAppDiskMessageAppInstance,
+    // this.synoSDSAppFileStation3Instance,
+    // this.synoSDSAppFileTaskMonitorInstance,
+    // this.synoSDSAppPersonalSettingsInstance,
+    // this.synoSDSAppPromotionApp,
+    // this.synoSDSAria2Application,
+    // this.synoSDSBrowserBoxApplication,
+    // this.synoSDSCSTNInstance,
+    // this.synoSDSDSMNotifyTray,
+    // this.synoSDSDockerApplication,
+    // this.synoSDSDockerContainerDetailInstance,
+    // this.synoSDSDriveApplication,
+    // this.synoSDSHelpBrowserApplication,
+    // this.synoSDSPhotoViewerApplication,
+    // this.synoSDSPkgManAppInstance,
+    // this.synoSDSResourceMonitorInstance,
+    // this.synoSDSStorageManagerInstance,
+    // this.synoSDSStorageManagerQuickWizardInstance,
+    // this.synoSDSWebDAVServerInstance,
     this.synoSDSWidgetInstance,
   });
+
+  Future<bool?> apply(List<String> modulelist) async {
+    String data = jsonEncode(jsonEncode({
+      "SYNO.SDS._Widget.Instance": {
+        "modulelist": modulelist,
+      }
+    }));
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.UserSettings", "apply", version: 1, data: {
+      "data": data,
+    });
+    return res.success;
+  }
 
   UserSettings.fromJson(dynamic json) {
     backgroundTask = json['BackgroundTask'];
     desktop = json['Desktop'] != null ? Desktop.fromJson(json['Desktop']) : null;
     personal = json['Personal'] != null ? Personal.fromJson(json['Personal']) : null;
-    synoFinderSpotlightApplication = json['SYNO.Finder.Spotlight.Application'] != null ? SynoFinderSpotlightApplication.fromJson(json['SYNO.Finder.Spotlight.Application']) : null;
-    synoSDSAdminCenterApplication = json['SYNO.SDS.AdminCenter.Application'] != null ? SynoSdsAdminCenterApplication.fromJson(json['SYNO.SDS.AdminCenter.Application']) : null;
-    synoSDSAppDiskMessageAppInstance = json['SYNO.SDS.App.DiskMessageApp.Instance'] != null ? SynoSdsAppDiskMessageAppInstance.fromJson(json['SYNO.SDS.App.DiskMessageApp.Instance']) : null;
-    synoSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'] != null ? SynoSdsAppFileStation3Instance.fromJson(json['SYNO.SDS.App.FileStation3.Instance']) : null;
-    synoSDSAppFileTaskMonitorInstance = json['SYNO.SDS.App.FileTaskMonitor.Instance'] != null ? SynoSdsAppFileTaskMonitorInstance.fromJson(json['SYNO.SDS.App.FileTaskMonitor.Instance']) : null;
-    synoSDSAppPersonalSettingsInstance = json['SYNO.SDS.App.PersonalSettings.Instance'] != null ? SynoSdsAppPersonalSettingsInstance.fromJson(json['SYNO.SDS.App.PersonalSettings.Instance']) : null;
-    synoSDSAppPromotionApp = json['SYNO.SDS.App.PromotionApp'] != null ? SynoSdsAppPromotionApp.fromJson(json['SYNO.SDS.App.PromotionApp']) : null;
-    synoSDSAria2Application = json['SYNO.SDS.Aria2.Application'] != null ? SynoSdsAria2Application.fromJson(json['SYNO.SDS.Aria2.Application']) : null;
-    synoSDSBrowserBoxApplication = json['SYNO.SDS.BrowserBox.Application'] != null ? SynoSdsBrowserBoxApplication.fromJson(json['SYNO.SDS.BrowserBox.Application']) : null;
-    synoSDSCSTNInstance = json['SYNO.SDS.CSTN.Instance'] != null ? SynoSdsCstnInstance.fromJson(json['SYNO.SDS.CSTN.Instance']) : null;
-    synoSDSDSMNotifyTray = json['SYNO.SDS.DSMNotify.Tray'] != null ? SynoSdsDsmNotifyTray.fromJson(json['SYNO.SDS.DSMNotify.Tray']) : null;
-    synoSDSDockerApplication = json['SYNO.SDS.Docker.Application'] != null ? SynoSdsDockerApplication.fromJson(json['SYNO.SDS.Docker.Application']) : null;
-    synoSDSDockerContainerDetailInstance = json['SYNO.SDS.Docker.ContainerDetail.Instance'] != null ? SynoSdsDockerContainerDetailInstance.fromJson(json['SYNO.SDS.Docker.ContainerDetail.Instance']) : null;
-    synoSDSDriveApplication = json['SYNO.SDS.Drive.Application'] != null ? SynoSdsDriveApplication.fromJson(json['SYNO.SDS.Drive.Application']) : null;
-    synoSDSHelpBrowserApplication = json['SYNO.SDS.HelpBrowser.Application'] != null ? SynoSdsHelpBrowserApplication.fromJson(json['SYNO.SDS.HelpBrowser.Application']) : null;
-    synoSDSPhotoViewerApplication = json['SYNO.SDS.PhotoViewer.Application'] != null ? SynoSdsPhotoViewerApplication.fromJson(json['SYNO.SDS.PhotoViewer.Application']) : null;
-    synoSDSPkgManAppInstance = json['SYNO.SDS.PkgManApp.Instance'] != null ? SynoSdsPkgManAppInstance.fromJson(json['SYNO.SDS.PkgManApp.Instance']) : null;
-    synoSDSResourceMonitorInstance = json['SYNO.SDS.ResourceMonitor.Instance'] != null ? SynoSdsResourceMonitorInstance.fromJson(json['SYNO.SDS.ResourceMonitor.Instance']) : null;
-    synoSDSStorageManagerInstance = json['SYNO.SDS.StorageManager.Instance'] != null ? SynoSdsStorageManagerInstance.fromJson(json['SYNO.SDS.StorageManager.Instance']) : null;
-    synoSDSStorageManagerQuickWizardInstance = json['SYNO.SDS.StorageManager.QuickWizard.Instance'] != null ? SynoSdsStorageManagerQuickWizardInstance.fromJson(json['SYNO.SDS.StorageManager.QuickWizard.Instance']) : null;
-    synoSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'] != null ? SynoSdsWebDavServerInstance.fromJson(json['SYNO.SDS.WebDAVServer.Instance']) : null;
+    // synoFinderSpotlightApplication = json['SYNO.Finder.Spotlight.Application'] != null ? SynoFinderSpotlightApplication.fromJson(json['SYNO.Finder.Spotlight.Application']) : null;
+    // synoSDSAdminCenterApplication = json['SYNO.SDS.AdminCenter.Application'] != null ? SynoSdsAdminCenterApplication.fromJson(json['SYNO.SDS.AdminCenter.Application']) : null;
+    // synoSDSAppDiskMessageAppInstance = json['SYNO.SDS.App.DiskMessageApp.Instance'] != null ? SynoSdsAppDiskMessageAppInstance.fromJson(json['SYNO.SDS.App.DiskMessageApp.Instance']) : null;
+    // synoSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'] != null ? SynoSdsAppFileStation3Instance.fromJson(json['SYNO.SDS.App.FileStation3.Instance']) : null;
+    // synoSDSAppFileTaskMonitorInstance = json['SYNO.SDS.App.FileTaskMonitor.Instance'] != null ? SynoSdsAppFileTaskMonitorInstance.fromJson(json['SYNO.SDS.App.FileTaskMonitor.Instance']) : null;
+    // synoSDSAppPersonalSettingsInstance = json['SYNO.SDS.App.PersonalSettings.Instance'] != null ? SynoSdsAppPersonalSettingsInstance.fromJson(json['SYNO.SDS.App.PersonalSettings.Instance']) : null;
+    // synoSDSAppPromotionApp = json['SYNO.SDS.App.PromotionApp'] != null ? SynoSdsAppPromotionApp.fromJson(json['SYNO.SDS.App.PromotionApp']) : null;
+    // synoSDSAria2Application = json['SYNO.SDS.Aria2.Application'] != null ? SynoSdsAria2Application.fromJson(json['SYNO.SDS.Aria2.Application']) : null;
+    // synoSDSBrowserBoxApplication = json['SYNO.SDS.BrowserBox.Application'] != null ? SynoSdsBrowserBoxApplication.fromJson(json['SYNO.SDS.BrowserBox.Application']) : null;
+    // synoSDSCSTNInstance = json['SYNO.SDS.CSTN.Instance'] != null ? SynoSdsCstnInstance.fromJson(json['SYNO.SDS.CSTN.Instance']) : null;
+    // synoSDSDSMNotifyTray = json['SYNO.SDS.DSMNotify.Tray'] != null ? SynoSdsDsmNotifyTray.fromJson(json['SYNO.SDS.DSMNotify.Tray']) : null;
+    // synoSDSDockerApplication = json['SYNO.SDS.Docker.Application'] != null ? SynoSdsDockerApplication.fromJson(json['SYNO.SDS.Docker.Application']) : null;
+    // synoSDSDockerContainerDetailInstance = json['SYNO.SDS.Docker.ContainerDetail.Instance'] != null ? SynoSdsDockerContainerDetailInstance.fromJson(json['SYNO.SDS.Docker.ContainerDetail.Instance']) : null;
+    // synoSDSDriveApplication = json['SYNO.SDS.Drive.Application'] != null ? SynoSdsDriveApplication.fromJson(json['SYNO.SDS.Drive.Application']) : null;
+    // synoSDSHelpBrowserApplication = json['SYNO.SDS.HelpBrowser.Application'] != null ? SynoSdsHelpBrowserApplication.fromJson(json['SYNO.SDS.HelpBrowser.Application']) : null;
+    // synoSDSPhotoViewerApplication = json['SYNO.SDS.PhotoViewer.Application'] != null ? SynoSdsPhotoViewerApplication.fromJson(json['SYNO.SDS.PhotoViewer.Application']) : null;
+    // synoSDSPkgManAppInstance = json['SYNO.SDS.PkgManApp.Instance'] != null ? SynoSdsPkgManAppInstance.fromJson(json['SYNO.SDS.PkgManApp.Instance']) : null;
+    // synoSDSResourceMonitorInstance = json['SYNO.SDS.ResourceMonitor.Instance'] != null ? SynoSdsResourceMonitorInstance.fromJson(json['SYNO.SDS.ResourceMonitor.Instance']) : null;
+    // synoSDSStorageManagerInstance = json['SYNO.SDS.StorageManager.Instance'] != null ? SynoSdsStorageManagerInstance.fromJson(json['SYNO.SDS.StorageManager.Instance']) : null;
+    // synoSDSStorageManagerQuickWizardInstance = json['SYNO.SDS.StorageManager.QuickWizard.Instance'] != null ? SynoSdsStorageManagerQuickWizardInstance.fromJson(json['SYNO.SDS.StorageManager.QuickWizard.Instance']) : null;
+    // synoSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'] != null ? SynoSdsWebDavServerInstance.fromJson(json['SYNO.SDS.WebDAVServer.Instance']) : null;
     synoSDSWidgetInstance = json['SYNO.SDS._Widget.Instance'] != null ? SynoSdsWidgetInstance.fromJson(json['SYNO.SDS._Widget.Instance']) : null;
   }
   dynamic backgroundTask;
   Desktop? desktop;
   Personal? personal;
-  SynoFinderSpotlightApplication? synoFinderSpotlightApplication;
-  SynoSdsAdminCenterApplication? synoSDSAdminCenterApplication;
-  SynoSdsAppDiskMessageAppInstance? synoSDSAppDiskMessageAppInstance;
-  SynoSdsAppFileStation3Instance? synoSDSAppFileStation3Instance;
-  SynoSdsAppFileTaskMonitorInstance? synoSDSAppFileTaskMonitorInstance;
-  SynoSdsAppPersonalSettingsInstance? synoSDSAppPersonalSettingsInstance;
-  SynoSdsAppPromotionApp? synoSDSAppPromotionApp;
-  SynoSdsAria2Application? synoSDSAria2Application;
-  SynoSdsBrowserBoxApplication? synoSDSBrowserBoxApplication;
-  SynoSdsCstnInstance? synoSDSCSTNInstance;
-  SynoSdsDsmNotifyTray? synoSDSDSMNotifyTray;
-  SynoSdsDockerApplication? synoSDSDockerApplication;
-  SynoSdsDockerContainerDetailInstance? synoSDSDockerContainerDetailInstance;
-  SynoSdsDriveApplication? synoSDSDriveApplication;
-  SynoSdsHelpBrowserApplication? synoSDSHelpBrowserApplication;
-  SynoSdsPhotoViewerApplication? synoSDSPhotoViewerApplication;
-  SynoSdsPkgManAppInstance? synoSDSPkgManAppInstance;
-  SynoSdsResourceMonitorInstance? synoSDSResourceMonitorInstance;
-  SynoSdsStorageManagerInstance? synoSDSStorageManagerInstance;
-  SynoSdsStorageManagerQuickWizardInstance? synoSDSStorageManagerQuickWizardInstance;
-  SynoSdsWebDavServerInstance? synoSDSWebDAVServerInstance;
+  // SynoFinderSpotlightApplication? synoFinderSpotlightApplication;
+  // SynoSdsAdminCenterApplication? synoSDSAdminCenterApplication;
+  // SynoSdsAppDiskMessageAppInstance? synoSDSAppDiskMessageAppInstance;
+  // SynoSdsAppFileStation3Instance? synoSDSAppFileStation3Instance;
+  // SynoSdsAppFileTaskMonitorInstance? synoSDSAppFileTaskMonitorInstance;
+  // SynoSdsAppPersonalSettingsInstance? synoSDSAppPersonalSettingsInstance;
+  // SynoSdsAppPromotionApp? synoSDSAppPromotionApp;
+  // SynoSdsAria2Application? synoSDSAria2Application;
+  // SynoSdsBrowserBoxApplication? synoSDSBrowserBoxApplication;
+  // SynoSdsCstnInstance? synoSDSCSTNInstance;
+  // SynoSdsDsmNotifyTray? synoSDSDSMNotifyTray;
+  // SynoSdsDockerApplication? synoSDSDockerApplication;
+  // SynoSdsDockerContainerDetailInstance? synoSDSDockerContainerDetailInstance;
+  // SynoSdsDriveApplication? synoSDSDriveApplication;
+  // SynoSdsHelpBrowserApplication? synoSDSHelpBrowserApplication;
+  // SynoSdsPhotoViewerApplication? synoSDSPhotoViewerApplication;
+  // SynoSdsPkgManAppInstance? synoSDSPkgManAppInstance;
+  // SynoSdsResourceMonitorInstance? synoSDSResourceMonitorInstance;
+  // SynoSdsStorageManagerInstance? synoSDSStorageManagerInstance;
+  // SynoSdsStorageManagerQuickWizardInstance? synoSDSStorageManagerQuickWizardInstance;
+  // SynoSdsWebDavServerInstance? synoSDSWebDAVServerInstance;
   SynoSdsWidgetInstance? synoSDSWidgetInstance;
   UserSettings copyWith({
     dynamic backgroundTask,
     Desktop? desktop,
     Personal? personal,
-    SynoFinderSpotlightApplication? synoFinderSpotlightApplication,
-    SynoSdsAdminCenterApplication? synoSDSAdminCenterApplication,
-    SynoSdsAppDiskMessageAppInstance? synoSDSAppDiskMessageAppInstance,
-    SynoSdsAppFileStation3Instance? synoSDSAppFileStation3Instance,
-    SynoSdsAppFileTaskMonitorInstance? synoSDSAppFileTaskMonitorInstance,
-    SynoSdsAppPersonalSettingsInstance? synoSDSAppPersonalSettingsInstance,
-    SynoSdsAppPromotionApp? synoSDSAppPromotionApp,
-    SynoSdsAria2Application? synoSDSAria2Application,
-    SynoSdsBrowserBoxApplication? synoSDSBrowserBoxApplication,
-    SynoSdsCstnInstance? synoSDSCSTNInstance,
-    SynoSdsDsmNotifyTray? synoSDSDSMNotifyTray,
-    SynoSdsDockerApplication? synoSDSDockerApplication,
-    SynoSdsDockerContainerDetailInstance? synoSDSDockerContainerDetailInstance,
-    SynoSdsDriveApplication? synoSDSDriveApplication,
-    SynoSdsHelpBrowserApplication? synoSDSHelpBrowserApplication,
-    SynoSdsPhotoViewerApplication? synoSDSPhotoViewerApplication,
-    SynoSdsPkgManAppInstance? synoSDSPkgManAppInstance,
-    SynoSdsResourceMonitorInstance? synoSDSResourceMonitorInstance,
-    SynoSdsStorageManagerInstance? synoSDSStorageManagerInstance,
-    SynoSdsStorageManagerQuickWizardInstance? synoSDSStorageManagerQuickWizardInstance,
-    SynoSdsWebDavServerInstance? synoSDSWebDAVServerInstance,
+    // SynoFinderSpotlightApplication? synoFinderSpotlightApplication,
+    // SynoSdsAdminCenterApplication? synoSDSAdminCenterApplication,
+    // SynoSdsAppDiskMessageAppInstance? synoSDSAppDiskMessageAppInstance,
+    // SynoSdsAppFileStation3Instance? synoSDSAppFileStation3Instance,
+    // SynoSdsAppFileTaskMonitorInstance? synoSDSAppFileTaskMonitorInstance,
+    // SynoSdsAppPersonalSettingsInstance? synoSDSAppPersonalSettingsInstance,
+    // SynoSdsAppPromotionApp? synoSDSAppPromotionApp,
+    // SynoSdsAria2Application? synoSDSAria2Application,
+    // SynoSdsBrowserBoxApplication? synoSDSBrowserBoxApplication,
+    // SynoSdsCstnInstance? synoSDSCSTNInstance,
+    // SynoSdsDsmNotifyTray? synoSDSDSMNotifyTray,
+    // SynoSdsDockerApplication? synoSDSDockerApplication,
+    // SynoSdsDockerContainerDetailInstance? synoSDSDockerContainerDetailInstance,
+    // SynoSdsDriveApplication? synoSDSDriveApplication,
+    // SynoSdsHelpBrowserApplication? synoSDSHelpBrowserApplication,
+    // SynoSdsPhotoViewerApplication? synoSDSPhotoViewerApplication,
+    // SynoSdsPkgManAppInstance? synoSDSPkgManAppInstance,
+    // SynoSdsResourceMonitorInstance? synoSDSResourceMonitorInstance,
+    // SynoSdsStorageManagerInstance? synoSDSStorageManagerInstance,
+    // SynoSdsStorageManagerQuickWizardInstance? synoSDSStorageManagerQuickWizardInstance,
+    // SynoSdsWebDavServerInstance? synoSDSWebDAVServerInstance,
     SynoSdsWidgetInstance? synoSDSWidgetInstance,
   }) =>
       UserSettings(
         backgroundTask: backgroundTask ?? this.backgroundTask,
         desktop: desktop ?? this.desktop,
         personal: personal ?? this.personal,
-        synoFinderSpotlightApplication: synoFinderSpotlightApplication ?? this.synoFinderSpotlightApplication,
-        synoSDSAdminCenterApplication: synoSDSAdminCenterApplication ?? this.synoSDSAdminCenterApplication,
-        synoSDSAppDiskMessageAppInstance: synoSDSAppDiskMessageAppInstance ?? this.synoSDSAppDiskMessageAppInstance,
-        synoSDSAppFileStation3Instance: synoSDSAppFileStation3Instance ?? this.synoSDSAppFileStation3Instance,
-        synoSDSAppFileTaskMonitorInstance: synoSDSAppFileTaskMonitorInstance ?? this.synoSDSAppFileTaskMonitorInstance,
-        synoSDSAppPersonalSettingsInstance: synoSDSAppPersonalSettingsInstance ?? this.synoSDSAppPersonalSettingsInstance,
-        synoSDSAppPromotionApp: synoSDSAppPromotionApp ?? this.synoSDSAppPromotionApp,
-        synoSDSAria2Application: synoSDSAria2Application ?? this.synoSDSAria2Application,
-        synoSDSBrowserBoxApplication: synoSDSBrowserBoxApplication ?? this.synoSDSBrowserBoxApplication,
-        synoSDSCSTNInstance: synoSDSCSTNInstance ?? this.synoSDSCSTNInstance,
-        synoSDSDSMNotifyTray: synoSDSDSMNotifyTray ?? this.synoSDSDSMNotifyTray,
-        synoSDSDockerApplication: synoSDSDockerApplication ?? this.synoSDSDockerApplication,
-        synoSDSDockerContainerDetailInstance: synoSDSDockerContainerDetailInstance ?? this.synoSDSDockerContainerDetailInstance,
-        synoSDSDriveApplication: synoSDSDriveApplication ?? this.synoSDSDriveApplication,
-        synoSDSHelpBrowserApplication: synoSDSHelpBrowserApplication ?? this.synoSDSHelpBrowserApplication,
-        synoSDSPhotoViewerApplication: synoSDSPhotoViewerApplication ?? this.synoSDSPhotoViewerApplication,
-        synoSDSPkgManAppInstance: synoSDSPkgManAppInstance ?? this.synoSDSPkgManAppInstance,
-        synoSDSResourceMonitorInstance: synoSDSResourceMonitorInstance ?? this.synoSDSResourceMonitorInstance,
-        synoSDSStorageManagerInstance: synoSDSStorageManagerInstance ?? this.synoSDSStorageManagerInstance,
-        synoSDSStorageManagerQuickWizardInstance: synoSDSStorageManagerQuickWizardInstance ?? this.synoSDSStorageManagerQuickWizardInstance,
-        synoSDSWebDAVServerInstance: synoSDSWebDAVServerInstance ?? this.synoSDSWebDAVServerInstance,
+        // synoFinderSpotlightApplication: synoFinderSpotlightApplication ?? this.synoFinderSpotlightApplication,
+        // synoSDSAdminCenterApplication: synoSDSAdminCenterApplication ?? this.synoSDSAdminCenterApplication,
+        // synoSDSAppDiskMessageAppInstance: synoSDSAppDiskMessageAppInstance ?? this.synoSDSAppDiskMessageAppInstance,
+        // synoSDSAppFileStation3Instance: synoSDSAppFileStation3Instance ?? this.synoSDSAppFileStation3Instance,
+        // synoSDSAppFileTaskMonitorInstance: synoSDSAppFileTaskMonitorInstance ?? this.synoSDSAppFileTaskMonitorInstance,
+        // synoSDSAppPersonalSettingsInstance: synoSDSAppPersonalSettingsInstance ?? this.synoSDSAppPersonalSettingsInstance,
+        // synoSDSAppPromotionApp: synoSDSAppPromotionApp ?? this.synoSDSAppPromotionApp,
+        // synoSDSAria2Application: synoSDSAria2Application ?? this.synoSDSAria2Application,
+        // synoSDSBrowserBoxApplication: synoSDSBrowserBoxApplication ?? this.synoSDSBrowserBoxApplication,
+        // synoSDSCSTNInstance: synoSDSCSTNInstance ?? this.synoSDSCSTNInstance,
+        // synoSDSDSMNotifyTray: synoSDSDSMNotifyTray ?? this.synoSDSDSMNotifyTray,
+        // synoSDSDockerApplication: synoSDSDockerApplication ?? this.synoSDSDockerApplication,
+        // synoSDSDockerContainerDetailInstance: synoSDSDockerContainerDetailInstance ?? this.synoSDSDockerContainerDetailInstance,
+        // synoSDSDriveApplication: synoSDSDriveApplication ?? this.synoSDSDriveApplication,
+        // synoSDSHelpBrowserApplication: synoSDSHelpBrowserApplication ?? this.synoSDSHelpBrowserApplication,
+        // synoSDSPhotoViewerApplication: synoSDSPhotoViewerApplication ?? this.synoSDSPhotoViewerApplication,
+        // synoSDSPkgManAppInstance: synoSDSPkgManAppInstance ?? this.synoSDSPkgManAppInstance,
+        // synoSDSResourceMonitorInstance: synoSDSResourceMonitorInstance ?? this.synoSDSResourceMonitorInstance,
+        // synoSDSStorageManagerInstance: synoSDSStorageManagerInstance ?? this.synoSDSStorageManagerInstance,
+        // synoSDSStorageManagerQuickWizardInstance: synoSDSStorageManagerQuickWizardInstance ?? this.synoSDSStorageManagerQuickWizardInstance,
+        // synoSDSWebDAVServerInstance: synoSDSWebDAVServerInstance ?? this.synoSDSWebDAVServerInstance,
         synoSDSWidgetInstance: synoSDSWidgetInstance ?? this.synoSDSWidgetInstance,
       );
   Map<String, dynamic> toJson() {
@@ -260,69 +274,69 @@ class UserSettings {
     if (personal != null) {
       map['Personal'] = personal?.toJson();
     }
-    if (synoFinderSpotlightApplication != null) {
-      map['SYNO.Finder.Spotlight.Application'] = synoFinderSpotlightApplication?.toJson();
-    }
-    if (synoSDSAdminCenterApplication != null) {
-      map['SYNO.SDS.AdminCenter.Application'] = synoSDSAdminCenterApplication?.toJson();
-    }
-    if (synoSDSAppDiskMessageAppInstance != null) {
-      map['SYNO.SDS.App.DiskMessageApp.Instance'] = synoSDSAppDiskMessageAppInstance?.toJson();
-    }
-    if (synoSDSAppFileStation3Instance != null) {
-      map['SYNO.SDS.App.FileStation3.Instance'] = synoSDSAppFileStation3Instance?.toJson();
-    }
-    if (synoSDSAppFileTaskMonitorInstance != null) {
-      map['SYNO.SDS.App.FileTaskMonitor.Instance'] = synoSDSAppFileTaskMonitorInstance?.toJson();
-    }
-    if (synoSDSAppPersonalSettingsInstance != null) {
-      map['SYNO.SDS.App.PersonalSettings.Instance'] = synoSDSAppPersonalSettingsInstance?.toJson();
-    }
-    if (synoSDSAppPromotionApp != null) {
-      map['SYNO.SDS.App.PromotionApp'] = synoSDSAppPromotionApp?.toJson();
-    }
-    if (synoSDSAria2Application != null) {
-      map['SYNO.SDS.Aria2.Application'] = synoSDSAria2Application?.toJson();
-    }
-    if (synoSDSBrowserBoxApplication != null) {
-      map['SYNO.SDS.BrowserBox.Application'] = synoSDSBrowserBoxApplication?.toJson();
-    }
-    if (synoSDSCSTNInstance != null) {
-      map['SYNO.SDS.CSTN.Instance'] = synoSDSCSTNInstance?.toJson();
-    }
-    if (synoSDSDSMNotifyTray != null) {
-      map['SYNO.SDS.DSMNotify.Tray'] = synoSDSDSMNotifyTray?.toJson();
-    }
-    if (synoSDSDockerApplication != null) {
-      map['SYNO.SDS.Docker.Application'] = synoSDSDockerApplication?.toJson();
-    }
-    if (synoSDSDockerContainerDetailInstance != null) {
-      map['SYNO.SDS.Docker.ContainerDetail.Instance'] = synoSDSDockerContainerDetailInstance?.toJson();
-    }
-    if (synoSDSDriveApplication != null) {
-      map['SYNO.SDS.Drive.Application'] = synoSDSDriveApplication?.toJson();
-    }
-    if (synoSDSHelpBrowserApplication != null) {
-      map['SYNO.SDS.HelpBrowser.Application'] = synoSDSHelpBrowserApplication?.toJson();
-    }
-    if (synoSDSPhotoViewerApplication != null) {
-      map['SYNO.SDS.PhotoViewer.Application'] = synoSDSPhotoViewerApplication?.toJson();
-    }
-    if (synoSDSPkgManAppInstance != null) {
-      map['SYNO.SDS.PkgManApp.Instance'] = synoSDSPkgManAppInstance?.toJson();
-    }
-    if (synoSDSResourceMonitorInstance != null) {
-      map['SYNO.SDS.ResourceMonitor.Instance'] = synoSDSResourceMonitorInstance?.toJson();
-    }
-    if (synoSDSStorageManagerInstance != null) {
-      map['SYNO.SDS.StorageManager.Instance'] = synoSDSStorageManagerInstance?.toJson();
-    }
-    if (synoSDSStorageManagerQuickWizardInstance != null) {
-      map['SYNO.SDS.StorageManager.QuickWizard.Instance'] = synoSDSStorageManagerQuickWizardInstance?.toJson();
-    }
-    if (synoSDSWebDAVServerInstance != null) {
-      map['SYNO.SDS.WebDAVServer.Instance'] = synoSDSWebDAVServerInstance?.toJson();
-    }
+    // if (synoFinderSpotlightApplication != null) {
+    //   map['SYNO.Finder.Spotlight.Application'] = synoFinderSpotlightApplication?.toJson();
+    // }
+    // if (synoSDSAdminCenterApplication != null) {
+    //   map['SYNO.SDS.AdminCenter.Application'] = synoSDSAdminCenterApplication?.toJson();
+    // }
+    // if (synoSDSAppDiskMessageAppInstance != null) {
+    //   map['SYNO.SDS.App.DiskMessageApp.Instance'] = synoSDSAppDiskMessageAppInstance?.toJson();
+    // }
+    // if (synoSDSAppFileStation3Instance != null) {
+    //   map['SYNO.SDS.App.FileStation3.Instance'] = synoSDSAppFileStation3Instance?.toJson();
+    // }
+    // if (synoSDSAppFileTaskMonitorInstance != null) {
+    //   map['SYNO.SDS.App.FileTaskMonitor.Instance'] = synoSDSAppFileTaskMonitorInstance?.toJson();
+    // }
+    // if (synoSDSAppPersonalSettingsInstance != null) {
+    //   map['SYNO.SDS.App.PersonalSettings.Instance'] = synoSDSAppPersonalSettingsInstance?.toJson();
+    // }
+    // if (synoSDSAppPromotionApp != null) {
+    //   map['SYNO.SDS.App.PromotionApp'] = synoSDSAppPromotionApp?.toJson();
+    // }
+    // if (synoSDSAria2Application != null) {
+    //   map['SYNO.SDS.Aria2.Application'] = synoSDSAria2Application?.toJson();
+    // }
+    // if (synoSDSBrowserBoxApplication != null) {
+    //   map['SYNO.SDS.BrowserBox.Application'] = synoSDSBrowserBoxApplication?.toJson();
+    // }
+    // if (synoSDSCSTNInstance != null) {
+    //   map['SYNO.SDS.CSTN.Instance'] = synoSDSCSTNInstance?.toJson();
+    // }
+    // if (synoSDSDSMNotifyTray != null) {
+    //   map['SYNO.SDS.DSMNotify.Tray'] = synoSDSDSMNotifyTray?.toJson();
+    // }
+    // if (synoSDSDockerApplication != null) {
+    //   map['SYNO.SDS.Docker.Application'] = synoSDSDockerApplication?.toJson();
+    // }
+    // if (synoSDSDockerContainerDetailInstance != null) {
+    //   map['SYNO.SDS.Docker.ContainerDetail.Instance'] = synoSDSDockerContainerDetailInstance?.toJson();
+    // }
+    // if (synoSDSDriveApplication != null) {
+    //   map['SYNO.SDS.Drive.Application'] = synoSDSDriveApplication?.toJson();
+    // }
+    // if (synoSDSHelpBrowserApplication != null) {
+    //   map['SYNO.SDS.HelpBrowser.Application'] = synoSDSHelpBrowserApplication?.toJson();
+    // }
+    // if (synoSDSPhotoViewerApplication != null) {
+    //   map['SYNO.SDS.PhotoViewer.Application'] = synoSDSPhotoViewerApplication?.toJson();
+    // }
+    // if (synoSDSPkgManAppInstance != null) {
+    //   map['SYNO.SDS.PkgManApp.Instance'] = synoSDSPkgManAppInstance?.toJson();
+    // }
+    // if (synoSDSResourceMonitorInstance != null) {
+    //   map['SYNO.SDS.ResourceMonitor.Instance'] = synoSDSResourceMonitorInstance?.toJson();
+    // }
+    // if (synoSDSStorageManagerInstance != null) {
+    //   map['SYNO.SDS.StorageManager.Instance'] = synoSDSStorageManagerInstance?.toJson();
+    // }
+    // if (synoSDSStorageManagerQuickWizardInstance != null) {
+    //   map['SYNO.SDS.StorageManager.QuickWizard.Instance'] = synoSDSStorageManagerQuickWizardInstance?.toJson();
+    // }
+    // if (synoSDSWebDAVServerInstance != null) {
+    //   map['SYNO.SDS.WebDAVServer.Instance'] = synoSDSWebDAVServerInstance?.toJson();
+    // }
     if (synoSDSWidgetInstance != null) {
       map['SYNO.SDS._Widget.Instance'] = synoSDSWidgetInstance?.toJson();
     }
@@ -337,37 +351,37 @@ class UserSettings {
 class SynoSdsWidgetInstance {
   SynoSdsWidgetInstance({
     this.moduleList,
-    this.restoreParams,
-    this.restoreSizePos,
+    // this.restoreParams,
+    // this.restoreSizePos,
   });
 
   SynoSdsWidgetInstance.fromJson(dynamic json) {
     moduleList = json['modulelist'] != null ? json['modulelist'].cast<String>() : [];
-    restoreParams = json['restoreParams'] != null ? RestoreParams.fromJson(json['restoreParams']) : null;
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+    // restoreParams = json['restoreParams'] != null ? RestoreParams.fromJson(json['restoreParams']) : null;
+    // restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
   }
   List<String>? moduleList;
-  RestoreParams? restoreParams;
-  RestoreSizePos? restoreSizePos;
+  // RestoreParams? restoreParams;
+  // RestoreSizePos? restoreSizePos;
   SynoSdsWidgetInstance copyWith({
     List<String>? moduleList,
-    RestoreParams? restoreParams,
-    RestoreSizePos? restoreSizePos,
+    // RestoreParams? restoreParams,
+    // RestoreSizePos? restoreSizePos,
   }) =>
       SynoSdsWidgetInstance(
         moduleList: moduleList ?? this.moduleList,
-        restoreParams: restoreParams ?? this.restoreParams,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+        // restoreParams: restoreParams ?? this.restoreParams,
+        // restoreSizePos: restoreSizePos ?? this.restoreSizePos,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['modulelist'] = moduleList;
-    if (restoreParams != null) {
-      map['restoreParams'] = restoreParams?.toJson();
-    }
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
+    // if (restoreParams != null) {
+    //   map['restoreParams'] = restoreParams?.toJson();
+    // }
+    // if (restoreSizePos != null) {
+    //   map['restoreSizePos'] = restoreSizePos?.toJson();
+    // }
     return map;
   }
 }
@@ -378,1123 +392,1123 @@ class SynoSdsWidgetInstance {
 /// maximized : false
 /// top : 286
 /// width : 344
-
-class RestoreSizePos {
-  RestoreSizePos({
-    this.fromRestore,
-    this.height,
-    this.left,
-    this.maximized,
-    this.top,
-    this.width,
-    this.pageX,
-    this.pageY,
-    this.x,
-    this.y,
-  });
-
-  RestoreSizePos.fromJson(dynamic json) {
-    fromRestore = json['fromRestore'];
-    height = json['height'];
-    left = json['left'];
-    maximized = json['maximized'];
-    top = json['top'];
-    width = json['width'];
-    pageX = json['pageX'];
-    pageY = json['pageY'];
-    x = json['x'];
-    y = json['y'];
-  }
-  bool? fromRestore;
-  num? height;
-  num? left;
-  bool? maximized;
-  num? top;
-  num? width;
-  num? pageX;
-  num? pageY;
-  num? x;
-  num? y;
-  RestoreSizePos copyWith({
-    bool? fromRestore,
-    num? height,
-    num? left,
-    bool? maximized,
-    num? top,
-    num? width,
-    num? pageX,
-    num? pageY,
-    num? x,
-    num? y,
-  }) =>
-      RestoreSizePos(
-        fromRestore: fromRestore ?? this.fromRestore,
-        height: height ?? this.height,
-        left: left ?? this.left,
-        maximized: maximized ?? this.maximized,
-        top: top ?? this.top,
-        width: width ?? this.width,
-        pageX: pageX ?? this.pageX,
-        pageY: pageY ?? this.pageY,
-        x: x ?? this.x,
-        y: y ?? this.y,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['fromRestore'] = fromRestore;
-    map['height'] = height;
-    map['left'] = left;
-    map['maximized'] = maximized;
-    map['top'] = top;
-    map['width'] = width;
-    map['pageX'] = pageX;
-    map['pageY'] = pageY;
-    map['x'] = x;
-    map['y'] = y;
-    return map;
-  }
-}
-
-/// windowState : {"docked":1,"widgets":[{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.SystemHealthWidget","widgetParams":{"networkLastSelectedId":"eth0"}},{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.ResourceMonitor.Widget","widgetParams":{"networkInterfaceIdx":0}},{"mediumSize":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.StorageUsageWidget","widgetParams":{}}]}
-
-class RestoreParams {
-  RestoreParams({
-    this.windowState,
-  });
-
-  RestoreParams.fromJson(dynamic json) {
-    windowState = json['windowState'] != null ? WindowState.fromJson(json['windowState']) : null;
-  }
-  WindowState? windowState;
-  RestoreParams copyWith({
-    WindowState? windowState,
-  }) =>
-      RestoreParams(
-        windowState: windowState ?? this.windowState,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (windowState != null) {
-      map['windowState'] = windowState?.toJson();
-    }
-    return map;
-  }
-}
-
-/// docked : 1
-/// widgets : [{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.SystemHealthWidget","widgetParams":{"networkLastSelectedId":"eth0"}},{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.ResourceMonitor.Widget","widgetParams":{"networkInterfaceIdx":0}},{"mediumSize":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.StorageUsageWidget","widgetParams":{}}]
-
-class WindowState {
-  WindowState({
-    this.docked,
-    this.widgets,
-  });
-
-  WindowState.fromJson(dynamic json) {
-    docked = json['docked'];
-    if (json['widgets'] != null) {
-      widgets = [];
-      json['widgets'].forEach((v) {
-        widgets?.add(Widgets.fromJson(v));
-      });
-    }
-  }
-  num? docked;
-  List<Widgets>? widgets;
-  WindowState copyWith({
-    num? docked,
-    List<Widgets>? widgets,
-  }) =>
-      WindowState(
-        docked: docked ?? this.docked,
-        widgets: widgets ?? this.widgets,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['docked'] = docked;
-    if (widgets != null) {
-      map['widgets'] = widgets?.map((v) => v.toJson()).toList();
-    }
-    return map;
-  }
-}
-
-/// mediumSize : false
-/// minimized : false
-/// widgetClassName : "SYNO.SDS.SystemInfoApp.SystemHealthWidget"
-/// widgetParams : {"networkLastSelectedId":"eth0"}
-
-class Widgets {
-  Widgets({
-    this.mediumSize,
-    this.minimized,
-    this.widgetClassName,
-    this.widgetParams,
-  });
-
-  Widgets.fromJson(dynamic json) {
-    mediumSize = json['mediumSize'];
-    minimized = json['minimized'];
-    widgetClassName = json['widgetClassName'];
-    widgetParams = json['widgetParams'] != null ? WidgetParams.fromJson(json['widgetParams']) : null;
-  }
-  bool? mediumSize;
-  bool? minimized;
-  String? widgetClassName;
-  WidgetParams? widgetParams;
-  Widgets copyWith({
-    bool? mediumSize,
-    bool? minimized,
-    String? widgetClassName,
-    WidgetParams? widgetParams,
-  }) =>
-      Widgets(
-        mediumSize: mediumSize ?? this.mediumSize,
-        minimized: minimized ?? this.minimized,
-        widgetClassName: widgetClassName ?? this.widgetClassName,
-        widgetParams: widgetParams ?? this.widgetParams,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['mediumSize'] = mediumSize;
-    map['minimized'] = minimized;
-    map['widgetClassName'] = widgetClassName;
-    if (widgetParams != null) {
-      map['widgetParams'] = widgetParams?.toJson();
-    }
-    return map;
-  }
-}
-
-/// networkLastSelectedId : "eth0"
-
-class WidgetParams {
-  WidgetParams({
-    this.networkLastSelectedId,
-  });
-
-  WidgetParams.fromJson(dynamic json) {
-    networkLastSelectedId = json['networkLastSelectedId'];
-  }
-  String? networkLastSelectedId;
-  WidgetParams copyWith({
-    String? networkLastSelectedId,
-  }) =>
-      WidgetParams(
-        networkLastSelectedId: networkLastSelectedId ?? this.networkLastSelectedId,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['networkLastSelectedId'] = networkLastSelectedId;
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":560,"pageX":160,"pageY":160,"width":990}
-
-class SynoSdsWebDavServerInstance {
-  SynoSdsWebDavServerInstance({
-    this.restoreSizePos,
-  });
-
-  SynoSdsWebDavServerInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsWebDavServerInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsWebDavServerInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"x":40,"y":40}
-
-class SynoSdsStorageManagerQuickWizardInstance {
-  SynoSdsStorageManagerQuickWizardInstance({
-    this.restoreSizePos,
-  });
-
-  SynoSdsStorageManagerQuickWizardInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsStorageManagerQuickWizardInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsStorageManagerQuickWizardInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// disk_grid_hidden : ["expansionLoc","allocStatus","healthOrHCLStatus","serialNum","firmware","align4Kn"]
-/// restoreSizePos : {"fromRestore":true,"height":885,"maximized":false,"pageX":558,"pageY":216,"width":1200}
-
-class SynoSdsStorageManagerInstance {
-  SynoSdsStorageManagerInstance({
-    this.diskGridHidden,
-    this.restoreSizePos,
-  });
-
-  SynoSdsStorageManagerInstance.fromJson(dynamic json) {
-    diskGridHidden = json['disk_grid_hidden'] != null ? json['disk_grid_hidden'].cast<String>() : [];
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  List<String>? diskGridHidden;
-  RestoreSizePos? restoreSizePos;
-  SynoSdsStorageManagerInstance copyWith({
-    List<String>? diskGridHidden,
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsStorageManagerInstance(
-        diskGridHidden: diskGridHidden ?? this.diskGridHidden,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['disk_grid_hidden'] = diskGridHidden;
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":574,"maximized":false,"pageX":471,"pageY":291,"width":1063}
-
-class SynoSdsResourceMonitorInstance {
-  SynoSdsResourceMonitorInstance({
-    this.restoreSizePos,
-  });
-
-  SynoSdsResourceMonitorInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsResourceMonitorInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsResourceMonitorInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// agreed_term_version : "0003"
-/// restoreSizePos : {"fromRestore":true,"height":876,"pageX":430,"pageY":50,"width":1060}
-
-class SynoSdsPkgManAppInstance {
-  SynoSdsPkgManAppInstance({
-    this.agreedTermVersion,
-    this.restoreSizePos,
-  });
-
-  SynoSdsPkgManAppInstance.fromJson(dynamic json) {
-    agreedTermVersion = json['agreed_term_version'];
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  String? agreedTermVersion;
-  RestoreSizePos? restoreSizePos;
-  SynoSdsPkgManAppInstance copyWith({
-    String? agreedTermVersion,
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsPkgManAppInstance(
-        agreedTermVersion: agreedTermVersion ?? this.agreedTermVersion,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['agreed_term_version'] = agreedTermVersion;
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":796,"pageX":416,"pageY":90,"width":1087}
-
-class SynoSdsPhotoViewerApplication {
-  SynoSdsPhotoViewerApplication({
-    this.restoreSizePos,
-  });
-
-  SynoSdsPhotoViewerApplication.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsPhotoViewerApplication copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsPhotoViewerApplication(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// hasBeenLaunched : true
-/// restoreSizePos : {"fromRestore":true,"height":580,"left":10,"maximized":false,"top":10,"width":1036}
-
-class SynoSdsHelpBrowserApplication {
-  SynoSdsHelpBrowserApplication({
-    this.hasBeenLaunched,
-    this.restoreSizePos,
-  });
-
-  SynoSdsHelpBrowserApplication.fromJson(dynamic json) {
-    hasBeenLaunched = json['hasBeenLaunched'];
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  bool? hasBeenLaunched;
-  RestoreSizePos? restoreSizePos;
-  SynoSdsHelpBrowserApplication copyWith({
-    bool? hasBeenLaunched,
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsHelpBrowserApplication(
-        hasBeenLaunched: hasBeenLaunched ?? this.hasBeenLaunched,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['hasBeenLaunched'] = hasBeenLaunched;
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// gridsortstates : {"direction":"ASC","field":"name"}
-/// hide_office_intro_prompt : true
-/// hide_prompt_toast : true
-
-class SynoSdsDriveApplication {
-  SynoSdsDriveApplication({
-    this.gridsortstates,
-    this.hideOfficeIntroPrompt,
-    this.hidePromptToast,
-  });
-
-  SynoSdsDriveApplication.fromJson(dynamic json) {
-    gridsortstates = json['gridsortstates'] != null ? Gridsortstates.fromJson(json['gridsortstates']) : null;
-    hideOfficeIntroPrompt = json['hide_office_intro_prompt'];
-    hidePromptToast = json['hide_prompt_toast'];
-  }
-  Gridsortstates? gridsortstates;
-  bool? hideOfficeIntroPrompt;
-  bool? hidePromptToast;
-  SynoSdsDriveApplication copyWith({
-    Gridsortstates? gridsortstates,
-    bool? hideOfficeIntroPrompt,
-    bool? hidePromptToast,
-  }) =>
-      SynoSdsDriveApplication(
-        gridsortstates: gridsortstates ?? this.gridsortstates,
-        hideOfficeIntroPrompt: hideOfficeIntroPrompt ?? this.hideOfficeIntroPrompt,
-        hidePromptToast: hidePromptToast ?? this.hidePromptToast,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (gridsortstates != null) {
-      map['gridsortstates'] = gridsortstates?.toJson();
-    }
-    map['hide_office_intro_prompt'] = hideOfficeIntroPrompt;
-    map['hide_prompt_toast'] = hidePromptToast;
-    return map;
-  }
-}
-
-/// direction : "ASC"
-/// field : "name"
-
-class Gridsortstates {
-  Gridsortstates({
-    this.direction,
-    this.field,
-  });
-
-  Gridsortstates.fromJson(dynamic json) {
-    direction = json['direction'];
-    field = json['field'];
-  }
-  String? direction;
-  String? field;
-  Gridsortstates copyWith({
-    String? direction,
-    String? field,
-  }) =>
-      Gridsortstates(
-        direction: direction ?? this.direction,
-        field: field ?? this.field,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['direction'] = direction;
-    map['field'] = field;
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":858,"pageX":322,"pageY":80,"width":1093}
-
-class SynoSdsDockerContainerDetailInstance {
-  SynoSdsDockerContainerDetailInstance({
-    this.restoreSizePos,
-  });
-
-  SynoSdsDockerContainerDetailInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsDockerContainerDetailInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsDockerContainerDetailInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// WelcomDialog-welcome : true
-/// restoreSizePos : {"fromRestore":true,"height":566,"pageX":319,"pageY":106,"width":988}
-
-class SynoSdsDockerApplication {
-  SynoSdsDockerApplication({
-    this.welcomDialogwelcome,
-    this.restoreSizePos,
-  });
-
-  SynoSdsDockerApplication.fromJson(dynamic json) {
-    welcomDialogwelcome = json['WelcomDialog-welcome'];
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  bool? welcomDialogwelcome;
-  RestoreSizePos? restoreSizePos;
-  SynoSdsDockerApplication copyWith({
-    bool? welcomDialogwelcome,
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsDockerApplication(
-        welcomDialogwelcome: welcomDialogwelcome ?? this.welcomDialogwelcome,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['WelcomDialog-welcome'] = welcomDialogwelcome;
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// lastRead : 1684500044
-
-class SynoSdsDsmNotifyTray {
-  SynoSdsDsmNotifyTray({
-    this.lastRead,
-  });
-
-  SynoSdsDsmNotifyTray.fromJson(dynamic json) {
-    lastRead = json['lastRead'];
-  }
-  num? lastRead;
-  SynoSdsDsmNotifyTray copyWith({
-    num? lastRead,
-  }) =>
-      SynoSdsDsmNotifyTray(
-        lastRead: lastRead ?? this.lastRead,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['lastRead'] = lastRead;
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":580,"pageX":422,"pageY":60,"width":1200}
-/// welcome_window_ds_id : "60e94f2a443206e0af87f96578fdc0a2"
-
-class SynoSdsCstnInstance {
-  SynoSdsCstnInstance({
-    this.restoreSizePos,
-    this.welcomeWindowDsId,
-  });
-
-  SynoSdsCstnInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-    welcomeWindowDsId = json['welcome_window_ds_id'];
-  }
-  RestoreSizePos? restoreSizePos;
-  String? welcomeWindowDsId;
-  SynoSdsCstnInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-    String? welcomeWindowDsId,
-  }) =>
-      SynoSdsCstnInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-        welcomeWindowDsId: welcomeWindowDsId ?? this.welcomeWindowDsId,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    map['welcome_window_ds_id'] = welcomeWindowDsId;
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":600,"pageX":373,"pageY":65,"width":800}
-
-class SynoSdsBrowserBoxApplication {
-  SynoSdsBrowserBoxApplication({
-    this.restoreSizePos,
-  });
-
-  SynoSdsBrowserBoxApplication.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsBrowserBoxApplication copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsBrowserBoxApplication(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":958,"pageX":561,"pageY":186,"width":1438}
-
-class SynoSdsAria2Application {
-  SynoSdsAria2Application({
-    this.restoreSizePos,
-  });
-
-  SynoSdsAria2Application.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsAria2Application copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsAria2Application(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// last_promote_patch : {"buildnumber":"42962","major":"7","micro":"1","minor":"1","nano":"5"}
-/// show_quick_tour_tray : false
-
-class SynoSdsAppPromotionApp {
-  SynoSdsAppPromotionApp({
-    this.lastPromotePatch,
-    this.showQuickTourTray,
-  });
-
-  SynoSdsAppPromotionApp.fromJson(dynamic json) {
-    lastPromotePatch = json['last_promote_patch'] != null ? LastPromotePatch.fromJson(json['last_promote_patch']) : null;
-    showQuickTourTray = json['show_quick_tour_tray'];
-  }
-  LastPromotePatch? lastPromotePatch;
-  bool? showQuickTourTray;
-  SynoSdsAppPromotionApp copyWith({
-    LastPromotePatch? lastPromotePatch,
-    bool? showQuickTourTray,
-  }) =>
-      SynoSdsAppPromotionApp(
-        lastPromotePatch: lastPromotePatch ?? this.lastPromotePatch,
-        showQuickTourTray: showQuickTourTray ?? this.showQuickTourTray,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (lastPromotePatch != null) {
-      map['last_promote_patch'] = lastPromotePatch?.toJson();
-    }
-    map['show_quick_tour_tray'] = showQuickTourTray;
-    return map;
-  }
-}
-
-/// buildnumber : "42962"
-/// major : "7"
-/// micro : "1"
-/// minor : "1"
-/// nano : "5"
-
-class LastPromotePatch {
-  LastPromotePatch({
-    this.buildnumber,
-    this.major,
-    this.micro,
-    this.minor,
-    this.nano,
-  });
-
-  LastPromotePatch.fromJson(dynamic json) {
-    buildnumber = json['buildnumber'];
-    major = json['major'];
-    micro = json['micro'];
-    minor = json['minor'];
-    nano = json['nano'];
-  }
-  String? buildnumber;
-  String? major;
-  String? micro;
-  String? minor;
-  String? nano;
-  LastPromotePatch copyWith({
-    String? buildnumber,
-    String? major,
-    String? micro,
-    String? minor,
-    String? nano,
-  }) =>
-      LastPromotePatch(
-        buildnumber: buildnumber ?? this.buildnumber,
-        major: major ?? this.major,
-        micro: micro ?? this.micro,
-        minor: minor ?? this.minor,
-        nano: nano ?? this.nano,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['buildnumber'] = buildnumber;
-    map['major'] = major;
-    map['micro'] = micro;
-    map['minor'] = minor;
-    map['nano'] = nano;
-    return map;
-  }
-}
-
-/// enableautooverwrite : true
-/// enablesmartmvcp : true
-/// isfirstdd : false
-/// now_user_sees_active_insight_toast : true
-/// restoreSizePos : {"fromRestore":true,"height":574,"left":451,"maximized":false,"top":200,"width":850}
-/// search_count : 6
-/// smartmvcpoverwrite : true
-
-class SynoSdsAppPersonalSettingsInstance {
-  SynoSdsAppPersonalSettingsInstance({
-    this.enableautooverwrite,
-    this.enablesmartmvcp,
-    this.isfirstdd,
-    this.nowUserSeesActiveInsightToast,
-    this.restoreSizePos,
-    this.searchCount,
-    this.smartmvcpoverwrite,
-  });
-
-  SynoSdsAppPersonalSettingsInstance.fromJson(dynamic json) {
-    enableautooverwrite = json['enableautooverwrite'];
-    enablesmartmvcp = json['enablesmartmvcp'];
-    isfirstdd = json['isfirstdd'];
-    nowUserSeesActiveInsightToast = json['now_user_sees_active_insight_toast'];
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-    searchCount = json['search_count'];
-    smartmvcpoverwrite = json['smartmvcpoverwrite'];
-  }
-  bool? enableautooverwrite;
-  bool? enablesmartmvcp;
-  bool? isfirstdd;
-  bool? nowUserSeesActiveInsightToast;
-  RestoreSizePos? restoreSizePos;
-  num? searchCount;
-  bool? smartmvcpoverwrite;
-  SynoSdsAppPersonalSettingsInstance copyWith({
-    bool? enableautooverwrite,
-    bool? enablesmartmvcp,
-    bool? isfirstdd,
-    bool? nowUserSeesActiveInsightToast,
-    RestoreSizePos? restoreSizePos,
-    num? searchCount,
-    bool? smartmvcpoverwrite,
-  }) =>
-      SynoSdsAppPersonalSettingsInstance(
-        enableautooverwrite: enableautooverwrite ?? this.enableautooverwrite,
-        enablesmartmvcp: enablesmartmvcp ?? this.enablesmartmvcp,
-        isfirstdd: isfirstdd ?? this.isfirstdd,
-        nowUserSeesActiveInsightToast: nowUserSeesActiveInsightToast ?? this.nowUserSeesActiveInsightToast,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-        searchCount: searchCount ?? this.searchCount,
-        smartmvcpoverwrite: smartmvcpoverwrite ?? this.smartmvcpoverwrite,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['enableautooverwrite'] = enableautooverwrite;
-    map['enablesmartmvcp'] = enablesmartmvcp;
-    map['isfirstdd'] = isfirstdd;
-    map['now_user_sees_active_insight_toast'] = nowUserSeesActiveInsightToast;
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    map['search_count'] = searchCount;
-    map['smartmvcpoverwrite'] = smartmvcpoverwrite;
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"height":500,"pageX":995,"pageY":398,"width":800}
-
-class SynoSdsAppFileTaskMonitorInstance {
-  SynoSdsAppFileTaskMonitorInstance({
-    this.restoreSizePos,
-  });
-
-  SynoSdsAppFileTaskMonitorInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsAppFileTaskMonitorInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsAppFileTaskMonitorInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// activeViewItemId : "fileGrid"
-/// gridstates : {"columns":[{"id":"filename","width":430},{"id":"filesize","width":126},{"id":"type","width":99},{"id":"mt","width":160},{"hidden":true,"id":"ct","width":248},{"hidden":true,"id":"at","width":248},{"hidden":true,"id":"privilege","width":131},{"hidden":true,"id":"owner","width":131},{"hidden":true,"id":"group","width":131}],"sort":{"direction":"ASC","field":"filename"}}
-/// gridstates.cmWithppath : {"columns":[{"id":"filename","width":210},{"id":"filesize","width":105},{"id":"type","width":131},{"id":"mt","width":197},{"hidden":true,"id":"ct","width":197},{"hidden":true,"id":"at","width":197},{"hidden":true,"id":"privilege","width":105},{"hidden":true,"id":"owner","width":105},{"hidden":true,"id":"group","width":105},{"id":"ppath","width":107}],"sort":{"direction":"ASC","field":"name"}}
-/// restoreSizePos : {"fromRestore":true,"height":826,"pageX":212,"pageY":81,"width":1010}
-/// treePanelWidth : 231
-
-class SynoSdsAppFileStation3Instance {
-  SynoSdsAppFileStation3Instance({
-    this.activeViewItemId,
-    this.gridstates,
-    this.gridstatescmWithppath,
-    this.restoreSizePos,
-    this.treePanelWidth,
-  });
-
-  SynoSdsAppFileStation3Instance.fromJson(dynamic json) {
-    activeViewItemId = json['activeViewItemId'];
-    gridstates = json['gridstates'] != null ? Gridstates.fromJson(json['gridstates']) : null;
-    gridstatescmWithppath = json['gridstates.cmWithppath'] != null ? GridstatesCmWithppath.fromJson(json['gridstates.cmWithppath']) : null;
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-    treePanelWidth = json['treePanelWidth'];
-  }
-  String? activeViewItemId;
-  Gridstates? gridstates;
-  GridstatesCmWithppath? gridstatescmWithppath;
-  RestoreSizePos? restoreSizePos;
-  num? treePanelWidth;
-  SynoSdsAppFileStation3Instance copyWith({
-    String? activeViewItemId,
-    Gridstates? gridstates,
-    GridstatesCmWithppath? gridstatescmWithppath,
-    RestoreSizePos? restoreSizePos,
-    num? treePanelWidth,
-  }) =>
-      SynoSdsAppFileStation3Instance(
-        activeViewItemId: activeViewItemId ?? this.activeViewItemId,
-        gridstates: gridstates ?? this.gridstates,
-        gridstatescmWithppath: gridstatescmWithppath ?? this.gridstatescmWithppath,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-        treePanelWidth: treePanelWidth ?? this.treePanelWidth,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['activeViewItemId'] = activeViewItemId;
-    if (gridstates != null) {
-      map['gridstates'] = gridstates?.toJson();
-    }
-    if (gridstatescmWithppath != null) {
-      map['gridstates.cmWithppath'] = gridstatescmWithppath?.toJson();
-    }
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    map['treePanelWidth'] = treePanelWidth;
-    return map;
-  }
-}
-
-/// columns : [{"id":"filename","width":210},{"id":"filesize","width":105},{"id":"type","width":131},{"id":"mt","width":197},{"hidden":true,"id":"ct","width":197},{"hidden":true,"id":"at","width":197},{"hidden":true,"id":"privilege","width":105},{"hidden":true,"id":"owner","width":105},{"hidden":true,"id":"group","width":105},{"id":"ppath","width":107}]
-/// sort : {"direction":"ASC","field":"name"}
-
-class GridstatesCmWithppath {
-  GridstatesCmWithppath({
-    this.columns,
-    this.sort,
-  });
-
-  GridstatesCmWithppath.fromJson(dynamic json) {
-    if (json['columns'] != null) {
-      columns = [];
-      json['columns'].forEach((v) {
-        columns?.add(Columns.fromJson(v));
-      });
-    }
-    sort = json['sort'] != null ? Sort.fromJson(json['sort']) : null;
-  }
-  List<Columns>? columns;
-  Sort? sort;
-  GridstatesCmWithppath copyWith({
-    List<Columns>? columns,
-    Sort? sort,
-  }) =>
-      GridstatesCmWithppath(
-        columns: columns ?? this.columns,
-        sort: sort ?? this.sort,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (columns != null) {
-      map['columns'] = columns?.map((v) => v.toJson()).toList();
-    }
-    if (sort != null) {
-      map['sort'] = sort?.toJson();
-    }
-    return map;
-  }
-}
-
-/// direction : "ASC"
-/// field : "name"
-
-class Sort {
-  Sort({
-    this.direction,
-    this.field,
-  });
-
-  Sort.fromJson(dynamic json) {
-    direction = json['direction'];
-    field = json['field'];
-  }
-  String? direction;
-  String? field;
-  Sort copyWith({
-    String? direction,
-    String? field,
-  }) =>
-      Sort(
-        direction: direction ?? this.direction,
-        field: field ?? this.field,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['direction'] = direction;
-    map['field'] = field;
-    return map;
-  }
-}
-
-/// id : "filename"
-/// width : 210
-
-class Columns {
-  Columns({
-    this.id,
-    this.width,
-  });
-
-  Columns.fromJson(dynamic json) {
-    id = json['id'];
-    width = json['width'];
-  }
-  String? id;
-  num? width;
-  Columns copyWith({
-    String? id,
-    num? width,
-  }) =>
-      Columns(
-        id: id ?? this.id,
-        width: width ?? this.width,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['id'] = id;
-    map['width'] = width;
-    return map;
-  }
-}
-
-/// columns : [{"id":"filename","width":430},{"id":"filesize","width":126},{"id":"type","width":99},{"id":"mt","width":160},{"hidden":true,"id":"ct","width":248},{"hidden":true,"id":"at","width":248},{"hidden":true,"id":"privilege","width":131},{"hidden":true,"id":"owner","width":131},{"hidden":true,"id":"group","width":131}]
-/// sort : {"direction":"ASC","field":"filename"}
-
-class Gridstates {
-  Gridstates({
-    this.columns,
-    this.sort,
-  });
-
-  Gridstates.fromJson(dynamic json) {
-    if (json['columns'] != null) {
-      columns = [];
-      json['columns'].forEach((v) {
-        columns?.add(Columns.fromJson(v));
-      });
-    }
-    sort = json['sort'] != null ? Sort.fromJson(json['sort']) : null;
-  }
-  List<Columns>? columns;
-  Sort? sort;
-  Gridstates copyWith({
-    List<Columns>? columns,
-    Sort? sort,
-  }) =>
-      Gridstates(
-        columns: columns ?? this.columns,
-        sort: sort ?? this.sort,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (columns != null) {
-      map['columns'] = columns?.map((v) => v.toJson()).toList();
-    }
-    if (sort != null) {
-      map['sort'] = sort?.toJson();
-    }
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"x":190,"y":0}
-
-class SynoSdsAppDiskMessageAppInstance {
-  SynoSdsAppDiskMessageAppInstance({
-    this.restoreSizePos,
-  });
-
-  SynoSdsAppDiskMessageAppInstance.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoSdsAppDiskMessageAppInstance copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsAppDiskMessageAppInstance(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// activeScreen : "advanced"
-/// restoreSizePos : {"fromRestore":true,"height":695,"maximized":false,"pageX":23,"pageY":73,"width":1150}
-
-class SynoSdsAdminCenterApplication {
-  SynoSdsAdminCenterApplication({
-    this.activeScreen,
-    this.restoreSizePos,
-  });
-
-  SynoSdsAdminCenterApplication.fromJson(dynamic json) {
-    activeScreen = json['activeScreen'];
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  String? activeScreen;
-  RestoreSizePos? restoreSizePos;
-  SynoSdsAdminCenterApplication copyWith({
-    String? activeScreen,
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoSdsAdminCenterApplication(
-        activeScreen: activeScreen ?? this.activeScreen,
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['activeScreen'] = activeScreen;
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
-
-/// restoreSizePos : {"fromRestore":true,"pageX":640,"pageY":184}
-
-class SynoFinderSpotlightApplication {
-  SynoFinderSpotlightApplication({
-    this.restoreSizePos,
-  });
-
-  SynoFinderSpotlightApplication.fromJson(dynamic json) {
-    restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
-  }
-  RestoreSizePos? restoreSizePos;
-  SynoFinderSpotlightApplication copyWith({
-    RestoreSizePos? restoreSizePos,
-  }) =>
-      SynoFinderSpotlightApplication(
-        restoreSizePos: restoreSizePos ?? this.restoreSizePos,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (restoreSizePos != null) {
-      map['restoreSizePos'] = restoreSizePos?.toJson();
-    }
-    return map;
-  }
-}
+//
+// class RestoreSizePos {
+//   RestoreSizePos({
+//     this.fromRestore,
+//     this.height,
+//     this.left,
+//     this.maximized,
+//     this.top,
+//     this.width,
+//     this.pageX,
+//     this.pageY,
+//     this.x,
+//     this.y,
+//   });
+//
+//   RestoreSizePos.fromJson(dynamic json) {
+//     fromRestore = json['fromRestore'];
+//     height = json['height'];
+//     left = json['left'];
+//     maximized = json['maximized'];
+//     top = json['top'];
+//     width = json['width'];
+//     pageX = json['pageX'];
+//     pageY = json['pageY'];
+//     x = json['x'];
+//     y = json['y'];
+//   }
+//   bool? fromRestore;
+//   num? height;
+//   num? left;
+//   bool? maximized;
+//   num? top;
+//   num? width;
+//   num? pageX;
+//   num? pageY;
+//   num? x;
+//   num? y;
+//   RestoreSizePos copyWith({
+//     bool? fromRestore,
+//     num? height,
+//     num? left,
+//     bool? maximized,
+//     num? top,
+//     num? width,
+//     num? pageX,
+//     num? pageY,
+//     num? x,
+//     num? y,
+//   }) =>
+//       RestoreSizePos(
+//         fromRestore: fromRestore ?? this.fromRestore,
+//         height: height ?? this.height,
+//         left: left ?? this.left,
+//         maximized: maximized ?? this.maximized,
+//         top: top ?? this.top,
+//         width: width ?? this.width,
+//         pageX: pageX ?? this.pageX,
+//         pageY: pageY ?? this.pageY,
+//         x: x ?? this.x,
+//         y: y ?? this.y,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['fromRestore'] = fromRestore;
+//     map['height'] = height;
+//     map['left'] = left;
+//     map['maximized'] = maximized;
+//     map['top'] = top;
+//     map['width'] = width;
+//     map['pageX'] = pageX;
+//     map['pageY'] = pageY;
+//     map['x'] = x;
+//     map['y'] = y;
+//     return map;
+//   }
+// }
+//
+// /// windowState : {"docked":1,"widgets":[{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.SystemHealthWidget","widgetParams":{"networkLastSelectedId":"eth0"}},{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.ResourceMonitor.Widget","widgetParams":{"networkInterfaceIdx":0}},{"mediumSize":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.StorageUsageWidget","widgetParams":{}}]}
+//
+// class RestoreParams {
+//   RestoreParams({
+//     this.windowState,
+//   });
+//
+//   RestoreParams.fromJson(dynamic json) {
+//     windowState = json['windowState'] != null ? WindowState.fromJson(json['windowState']) : null;
+//   }
+//   WindowState? windowState;
+//   RestoreParams copyWith({
+//     WindowState? windowState,
+//   }) =>
+//       RestoreParams(
+//         windowState: windowState ?? this.windowState,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (windowState != null) {
+//       map['windowState'] = windowState?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// docked : 1
+// /// widgets : [{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.SystemHealthWidget","widgetParams":{"networkLastSelectedId":"eth0"}},{"mediumSize":false,"minimized":false,"widgetClassName":"SYNO.SDS.ResourceMonitor.Widget","widgetParams":{"networkInterfaceIdx":0}},{"mediumSize":false,"widgetClassName":"SYNO.SDS.SystemInfoApp.StorageUsageWidget","widgetParams":{}}]
+//
+// class WindowState {
+//   WindowState({
+//     this.docked,
+//     this.widgets,
+//   });
+//
+//   WindowState.fromJson(dynamic json) {
+//     docked = json['docked'];
+//     if (json['widgets'] != null) {
+//       widgets = [];
+//       json['widgets'].forEach((v) {
+//         widgets?.add(Widgets.fromJson(v));
+//       });
+//     }
+//   }
+//   num? docked;
+//   List<Widgets>? widgets;
+//   WindowState copyWith({
+//     num? docked,
+//     List<Widgets>? widgets,
+//   }) =>
+//       WindowState(
+//         docked: docked ?? this.docked,
+//         widgets: widgets ?? this.widgets,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['docked'] = docked;
+//     if (widgets != null) {
+//       map['widgets'] = widgets?.map((v) => v.toJson()).toList();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// mediumSize : false
+// /// minimized : false
+// /// widgetClassName : "SYNO.SDS.SystemInfoApp.SystemHealthWidget"
+// /// widgetParams : {"networkLastSelectedId":"eth0"}
+//
+// class Widgets {
+//   Widgets({
+//     this.mediumSize,
+//     this.minimized,
+//     this.widgetClassName,
+//     this.widgetParams,
+//   });
+//
+//   Widgets.fromJson(dynamic json) {
+//     mediumSize = json['mediumSize'];
+//     minimized = json['minimized'];
+//     widgetClassName = json['widgetClassName'];
+//     widgetParams = json['widgetParams'] != null ? WidgetParams.fromJson(json['widgetParams']) : null;
+//   }
+//   bool? mediumSize;
+//   bool? minimized;
+//   String? widgetClassName;
+//   WidgetParams? widgetParams;
+//   Widgets copyWith({
+//     bool? mediumSize,
+//     bool? minimized,
+//     String? widgetClassName,
+//     WidgetParams? widgetParams,
+//   }) =>
+//       Widgets(
+//         mediumSize: mediumSize ?? this.mediumSize,
+//         minimized: minimized ?? this.minimized,
+//         widgetClassName: widgetClassName ?? this.widgetClassName,
+//         widgetParams: widgetParams ?? this.widgetParams,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['mediumSize'] = mediumSize;
+//     map['minimized'] = minimized;
+//     map['widgetClassName'] = widgetClassName;
+//     if (widgetParams != null) {
+//       map['widgetParams'] = widgetParams?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// networkLastSelectedId : "eth0"
+//
+// class WidgetParams {
+//   WidgetParams({
+//     this.networkLastSelectedId,
+//   });
+//
+//   WidgetParams.fromJson(dynamic json) {
+//     networkLastSelectedId = json['networkLastSelectedId'];
+//   }
+//   String? networkLastSelectedId;
+//   WidgetParams copyWith({
+//     String? networkLastSelectedId,
+//   }) =>
+//       WidgetParams(
+//         networkLastSelectedId: networkLastSelectedId ?? this.networkLastSelectedId,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['networkLastSelectedId'] = networkLastSelectedId;
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":560,"pageX":160,"pageY":160,"width":990}
+//
+// class SynoSdsWebDavServerInstance {
+//   SynoSdsWebDavServerInstance({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsWebDavServerInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsWebDavServerInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsWebDavServerInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"x":40,"y":40}
+//
+// class SynoSdsStorageManagerQuickWizardInstance {
+//   SynoSdsStorageManagerQuickWizardInstance({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsStorageManagerQuickWizardInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsStorageManagerQuickWizardInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsStorageManagerQuickWizardInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// disk_grid_hidden : ["expansionLoc","allocStatus","healthOrHCLStatus","serialNum","firmware","align4Kn"]
+// /// restoreSizePos : {"fromRestore":true,"height":885,"maximized":false,"pageX":558,"pageY":216,"width":1200}
+//
+// class SynoSdsStorageManagerInstance {
+//   SynoSdsStorageManagerInstance({
+//     this.diskGridHidden,
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsStorageManagerInstance.fromJson(dynamic json) {
+//     diskGridHidden = json['disk_grid_hidden'] != null ? json['disk_grid_hidden'].cast<String>() : [];
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   List<String>? diskGridHidden;
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsStorageManagerInstance copyWith({
+//     List<String>? diskGridHidden,
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsStorageManagerInstance(
+//         diskGridHidden: diskGridHidden ?? this.diskGridHidden,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['disk_grid_hidden'] = diskGridHidden;
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":574,"maximized":false,"pageX":471,"pageY":291,"width":1063}
+//
+// class SynoSdsResourceMonitorInstance {
+//   SynoSdsResourceMonitorInstance({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsResourceMonitorInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsResourceMonitorInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsResourceMonitorInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// agreed_term_version : "0003"
+// /// restoreSizePos : {"fromRestore":true,"height":876,"pageX":430,"pageY":50,"width":1060}
+//
+// class SynoSdsPkgManAppInstance {
+//   SynoSdsPkgManAppInstance({
+//     this.agreedTermVersion,
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsPkgManAppInstance.fromJson(dynamic json) {
+//     agreedTermVersion = json['agreed_term_version'];
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   String? agreedTermVersion;
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsPkgManAppInstance copyWith({
+//     String? agreedTermVersion,
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsPkgManAppInstance(
+//         agreedTermVersion: agreedTermVersion ?? this.agreedTermVersion,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['agreed_term_version'] = agreedTermVersion;
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":796,"pageX":416,"pageY":90,"width":1087}
+//
+// class SynoSdsPhotoViewerApplication {
+//   SynoSdsPhotoViewerApplication({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsPhotoViewerApplication.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsPhotoViewerApplication copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsPhotoViewerApplication(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// hasBeenLaunched : true
+// /// restoreSizePos : {"fromRestore":true,"height":580,"left":10,"maximized":false,"top":10,"width":1036}
+//
+// class SynoSdsHelpBrowserApplication {
+//   SynoSdsHelpBrowserApplication({
+//     this.hasBeenLaunched,
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsHelpBrowserApplication.fromJson(dynamic json) {
+//     hasBeenLaunched = json['hasBeenLaunched'];
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   bool? hasBeenLaunched;
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsHelpBrowserApplication copyWith({
+//     bool? hasBeenLaunched,
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsHelpBrowserApplication(
+//         hasBeenLaunched: hasBeenLaunched ?? this.hasBeenLaunched,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['hasBeenLaunched'] = hasBeenLaunched;
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// gridsortstates : {"direction":"ASC","field":"name"}
+// /// hide_office_intro_prompt : true
+// /// hide_prompt_toast : true
+//
+// class SynoSdsDriveApplication {
+//   SynoSdsDriveApplication({
+//     this.gridsortstates,
+//     this.hideOfficeIntroPrompt,
+//     this.hidePromptToast,
+//   });
+//
+//   SynoSdsDriveApplication.fromJson(dynamic json) {
+//     gridsortstates = json['gridsortstates'] != null ? Gridsortstates.fromJson(json['gridsortstates']) : null;
+//     hideOfficeIntroPrompt = json['hide_office_intro_prompt'];
+//     hidePromptToast = json['hide_prompt_toast'];
+//   }
+//   Gridsortstates? gridsortstates;
+//   bool? hideOfficeIntroPrompt;
+//   bool? hidePromptToast;
+//   SynoSdsDriveApplication copyWith({
+//     Gridsortstates? gridsortstates,
+//     bool? hideOfficeIntroPrompt,
+//     bool? hidePromptToast,
+//   }) =>
+//       SynoSdsDriveApplication(
+//         gridsortstates: gridsortstates ?? this.gridsortstates,
+//         hideOfficeIntroPrompt: hideOfficeIntroPrompt ?? this.hideOfficeIntroPrompt,
+//         hidePromptToast: hidePromptToast ?? this.hidePromptToast,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (gridsortstates != null) {
+//       map['gridsortstates'] = gridsortstates?.toJson();
+//     }
+//     map['hide_office_intro_prompt'] = hideOfficeIntroPrompt;
+//     map['hide_prompt_toast'] = hidePromptToast;
+//     return map;
+//   }
+// }
+//
+// /// direction : "ASC"
+// /// field : "name"
+//
+// class Gridsortstates {
+//   Gridsortstates({
+//     this.direction,
+//     this.field,
+//   });
+//
+//   Gridsortstates.fromJson(dynamic json) {
+//     direction = json['direction'];
+//     field = json['field'];
+//   }
+//   String? direction;
+//   String? field;
+//   Gridsortstates copyWith({
+//     String? direction,
+//     String? field,
+//   }) =>
+//       Gridsortstates(
+//         direction: direction ?? this.direction,
+//         field: field ?? this.field,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['direction'] = direction;
+//     map['field'] = field;
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":858,"pageX":322,"pageY":80,"width":1093}
+//
+// class SynoSdsDockerContainerDetailInstance {
+//   SynoSdsDockerContainerDetailInstance({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsDockerContainerDetailInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsDockerContainerDetailInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsDockerContainerDetailInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// WelcomDialog-welcome : true
+// /// restoreSizePos : {"fromRestore":true,"height":566,"pageX":319,"pageY":106,"width":988}
+//
+// class SynoSdsDockerApplication {
+//   SynoSdsDockerApplication({
+//     this.welcomDialogwelcome,
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsDockerApplication.fromJson(dynamic json) {
+//     welcomDialogwelcome = json['WelcomDialog-welcome'];
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   bool? welcomDialogwelcome;
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsDockerApplication copyWith({
+//     bool? welcomDialogwelcome,
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsDockerApplication(
+//         welcomDialogwelcome: welcomDialogwelcome ?? this.welcomDialogwelcome,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['WelcomDialog-welcome'] = welcomDialogwelcome;
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// lastRead : 1684500044
+//
+// class SynoSdsDsmNotifyTray {
+//   SynoSdsDsmNotifyTray({
+//     this.lastRead,
+//   });
+//
+//   SynoSdsDsmNotifyTray.fromJson(dynamic json) {
+//     lastRead = json['lastRead'];
+//   }
+//   num? lastRead;
+//   SynoSdsDsmNotifyTray copyWith({
+//     num? lastRead,
+//   }) =>
+//       SynoSdsDsmNotifyTray(
+//         lastRead: lastRead ?? this.lastRead,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['lastRead'] = lastRead;
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":580,"pageX":422,"pageY":60,"width":1200}
+// /// welcome_window_ds_id : "60e94f2a443206e0af87f96578fdc0a2"
+//
+// class SynoSdsCstnInstance {
+//   SynoSdsCstnInstance({
+//     this.restoreSizePos,
+//     this.welcomeWindowDsId,
+//   });
+//
+//   SynoSdsCstnInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//     welcomeWindowDsId = json['welcome_window_ds_id'];
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   String? welcomeWindowDsId;
+//   SynoSdsCstnInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//     String? welcomeWindowDsId,
+//   }) =>
+//       SynoSdsCstnInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//         welcomeWindowDsId: welcomeWindowDsId ?? this.welcomeWindowDsId,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     map['welcome_window_ds_id'] = welcomeWindowDsId;
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":600,"pageX":373,"pageY":65,"width":800}
+//
+// class SynoSdsBrowserBoxApplication {
+//   SynoSdsBrowserBoxApplication({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsBrowserBoxApplication.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsBrowserBoxApplication copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsBrowserBoxApplication(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":958,"pageX":561,"pageY":186,"width":1438}
+//
+// class SynoSdsAria2Application {
+//   SynoSdsAria2Application({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsAria2Application.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsAria2Application copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsAria2Application(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// last_promote_patch : {"buildnumber":"42962","major":"7","micro":"1","minor":"1","nano":"5"}
+// /// show_quick_tour_tray : false
+//
+// class SynoSdsAppPromotionApp {
+//   SynoSdsAppPromotionApp({
+//     this.lastPromotePatch,
+//     this.showQuickTourTray,
+//   });
+//
+//   SynoSdsAppPromotionApp.fromJson(dynamic json) {
+//     lastPromotePatch = json['last_promote_patch'] != null ? LastPromotePatch.fromJson(json['last_promote_patch']) : null;
+//     showQuickTourTray = json['show_quick_tour_tray'];
+//   }
+//   LastPromotePatch? lastPromotePatch;
+//   bool? showQuickTourTray;
+//   SynoSdsAppPromotionApp copyWith({
+//     LastPromotePatch? lastPromotePatch,
+//     bool? showQuickTourTray,
+//   }) =>
+//       SynoSdsAppPromotionApp(
+//         lastPromotePatch: lastPromotePatch ?? this.lastPromotePatch,
+//         showQuickTourTray: showQuickTourTray ?? this.showQuickTourTray,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (lastPromotePatch != null) {
+//       map['last_promote_patch'] = lastPromotePatch?.toJson();
+//     }
+//     map['show_quick_tour_tray'] = showQuickTourTray;
+//     return map;
+//   }
+// }
+//
+// /// buildnumber : "42962"
+// /// major : "7"
+// /// micro : "1"
+// /// minor : "1"
+// /// nano : "5"
+//
+// class LastPromotePatch {
+//   LastPromotePatch({
+//     this.buildnumber,
+//     this.major,
+//     this.micro,
+//     this.minor,
+//     this.nano,
+//   });
+//
+//   LastPromotePatch.fromJson(dynamic json) {
+//     buildnumber = json['buildnumber'];
+//     major = json['major'];
+//     micro = json['micro'];
+//     minor = json['minor'];
+//     nano = json['nano'];
+//   }
+//   String? buildnumber;
+//   String? major;
+//   String? micro;
+//   String? minor;
+//   String? nano;
+//   LastPromotePatch copyWith({
+//     String? buildnumber,
+//     String? major,
+//     String? micro,
+//     String? minor,
+//     String? nano,
+//   }) =>
+//       LastPromotePatch(
+//         buildnumber: buildnumber ?? this.buildnumber,
+//         major: major ?? this.major,
+//         micro: micro ?? this.micro,
+//         minor: minor ?? this.minor,
+//         nano: nano ?? this.nano,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['buildnumber'] = buildnumber;
+//     map['major'] = major;
+//     map['micro'] = micro;
+//     map['minor'] = minor;
+//     map['nano'] = nano;
+//     return map;
+//   }
+// }
+//
+// /// enableautooverwrite : true
+// /// enablesmartmvcp : true
+// /// isfirstdd : false
+// /// now_user_sees_active_insight_toast : true
+// /// restoreSizePos : {"fromRestore":true,"height":574,"left":451,"maximized":false,"top":200,"width":850}
+// /// search_count : 6
+// /// smartmvcpoverwrite : true
+//
+// class SynoSdsAppPersonalSettingsInstance {
+//   SynoSdsAppPersonalSettingsInstance({
+//     this.enableautooverwrite,
+//     this.enablesmartmvcp,
+//     this.isfirstdd,
+//     this.nowUserSeesActiveInsightToast,
+//     this.restoreSizePos,
+//     this.searchCount,
+//     this.smartmvcpoverwrite,
+//   });
+//
+//   SynoSdsAppPersonalSettingsInstance.fromJson(dynamic json) {
+//     enableautooverwrite = json['enableautooverwrite'];
+//     enablesmartmvcp = json['enablesmartmvcp'];
+//     isfirstdd = json['isfirstdd'];
+//     nowUserSeesActiveInsightToast = json['now_user_sees_active_insight_toast'];
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//     searchCount = json['search_count'];
+//     smartmvcpoverwrite = json['smartmvcpoverwrite'];
+//   }
+//   bool? enableautooverwrite;
+//   bool? enablesmartmvcp;
+//   bool? isfirstdd;
+//   bool? nowUserSeesActiveInsightToast;
+//   RestoreSizePos? restoreSizePos;
+//   num? searchCount;
+//   bool? smartmvcpoverwrite;
+//   SynoSdsAppPersonalSettingsInstance copyWith({
+//     bool? enableautooverwrite,
+//     bool? enablesmartmvcp,
+//     bool? isfirstdd,
+//     bool? nowUserSeesActiveInsightToast,
+//     RestoreSizePos? restoreSizePos,
+//     num? searchCount,
+//     bool? smartmvcpoverwrite,
+//   }) =>
+//       SynoSdsAppPersonalSettingsInstance(
+//         enableautooverwrite: enableautooverwrite ?? this.enableautooverwrite,
+//         enablesmartmvcp: enablesmartmvcp ?? this.enablesmartmvcp,
+//         isfirstdd: isfirstdd ?? this.isfirstdd,
+//         nowUserSeesActiveInsightToast: nowUserSeesActiveInsightToast ?? this.nowUserSeesActiveInsightToast,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//         searchCount: searchCount ?? this.searchCount,
+//         smartmvcpoverwrite: smartmvcpoverwrite ?? this.smartmvcpoverwrite,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['enableautooverwrite'] = enableautooverwrite;
+//     map['enablesmartmvcp'] = enablesmartmvcp;
+//     map['isfirstdd'] = isfirstdd;
+//     map['now_user_sees_active_insight_toast'] = nowUserSeesActiveInsightToast;
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     map['search_count'] = searchCount;
+//     map['smartmvcpoverwrite'] = smartmvcpoverwrite;
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"height":500,"pageX":995,"pageY":398,"width":800}
+//
+// class SynoSdsAppFileTaskMonitorInstance {
+//   SynoSdsAppFileTaskMonitorInstance({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsAppFileTaskMonitorInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsAppFileTaskMonitorInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsAppFileTaskMonitorInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// activeViewItemId : "fileGrid"
+// /// gridstates : {"columns":[{"id":"filename","width":430},{"id":"filesize","width":126},{"id":"type","width":99},{"id":"mt","width":160},{"hidden":true,"id":"ct","width":248},{"hidden":true,"id":"at","width":248},{"hidden":true,"id":"privilege","width":131},{"hidden":true,"id":"owner","width":131},{"hidden":true,"id":"group","width":131}],"sort":{"direction":"ASC","field":"filename"}}
+// /// gridstates.cmWithppath : {"columns":[{"id":"filename","width":210},{"id":"filesize","width":105},{"id":"type","width":131},{"id":"mt","width":197},{"hidden":true,"id":"ct","width":197},{"hidden":true,"id":"at","width":197},{"hidden":true,"id":"privilege","width":105},{"hidden":true,"id":"owner","width":105},{"hidden":true,"id":"group","width":105},{"id":"ppath","width":107}],"sort":{"direction":"ASC","field":"name"}}
+// /// restoreSizePos : {"fromRestore":true,"height":826,"pageX":212,"pageY":81,"width":1010}
+// /// treePanelWidth : 231
+//
+// class SynoSdsAppFileStation3Instance {
+//   SynoSdsAppFileStation3Instance({
+//     this.activeViewItemId,
+//     this.gridstates,
+//     this.gridstatescmWithppath,
+//     this.restoreSizePos,
+//     this.treePanelWidth,
+//   });
+//
+//   SynoSdsAppFileStation3Instance.fromJson(dynamic json) {
+//     activeViewItemId = json['activeViewItemId'];
+//     gridstates = json['gridstates'] != null ? Gridstates.fromJson(json['gridstates']) : null;
+//     gridstatescmWithppath = json['gridstates.cmWithppath'] != null ? GridstatesCmWithppath.fromJson(json['gridstates.cmWithppath']) : null;
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//     treePanelWidth = json['treePanelWidth'];
+//   }
+//   String? activeViewItemId;
+//   Gridstates? gridstates;
+//   GridstatesCmWithppath? gridstatescmWithppath;
+//   RestoreSizePos? restoreSizePos;
+//   num? treePanelWidth;
+//   SynoSdsAppFileStation3Instance copyWith({
+//     String? activeViewItemId,
+//     Gridstates? gridstates,
+//     GridstatesCmWithppath? gridstatescmWithppath,
+//     RestoreSizePos? restoreSizePos,
+//     num? treePanelWidth,
+//   }) =>
+//       SynoSdsAppFileStation3Instance(
+//         activeViewItemId: activeViewItemId ?? this.activeViewItemId,
+//         gridstates: gridstates ?? this.gridstates,
+//         gridstatescmWithppath: gridstatescmWithppath ?? this.gridstatescmWithppath,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//         treePanelWidth: treePanelWidth ?? this.treePanelWidth,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['activeViewItemId'] = activeViewItemId;
+//     if (gridstates != null) {
+//       map['gridstates'] = gridstates?.toJson();
+//     }
+//     if (gridstatescmWithppath != null) {
+//       map['gridstates.cmWithppath'] = gridstatescmWithppath?.toJson();
+//     }
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     map['treePanelWidth'] = treePanelWidth;
+//     return map;
+//   }
+// }
+//
+// /// columns : [{"id":"filename","width":210},{"id":"filesize","width":105},{"id":"type","width":131},{"id":"mt","width":197},{"hidden":true,"id":"ct","width":197},{"hidden":true,"id":"at","width":197},{"hidden":true,"id":"privilege","width":105},{"hidden":true,"id":"owner","width":105},{"hidden":true,"id":"group","width":105},{"id":"ppath","width":107}]
+// /// sort : {"direction":"ASC","field":"name"}
+//
+// class GridstatesCmWithppath {
+//   GridstatesCmWithppath({
+//     this.columns,
+//     this.sort,
+//   });
+//
+//   GridstatesCmWithppath.fromJson(dynamic json) {
+//     if (json['columns'] != null) {
+//       columns = [];
+//       json['columns'].forEach((v) {
+//         columns?.add(Columns.fromJson(v));
+//       });
+//     }
+//     sort = json['sort'] != null ? Sort.fromJson(json['sort']) : null;
+//   }
+//   List<Columns>? columns;
+//   Sort? sort;
+//   GridstatesCmWithppath copyWith({
+//     List<Columns>? columns,
+//     Sort? sort,
+//   }) =>
+//       GridstatesCmWithppath(
+//         columns: columns ?? this.columns,
+//         sort: sort ?? this.sort,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (columns != null) {
+//       map['columns'] = columns?.map((v) => v.toJson()).toList();
+//     }
+//     if (sort != null) {
+//       map['sort'] = sort?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// direction : "ASC"
+// /// field : "name"
+//
+// class Sort {
+//   Sort({
+//     this.direction,
+//     this.field,
+//   });
+//
+//   Sort.fromJson(dynamic json) {
+//     direction = json['direction'];
+//     field = json['field'];
+//   }
+//   String? direction;
+//   String? field;
+//   Sort copyWith({
+//     String? direction,
+//     String? field,
+//   }) =>
+//       Sort(
+//         direction: direction ?? this.direction,
+//         field: field ?? this.field,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['direction'] = direction;
+//     map['field'] = field;
+//     return map;
+//   }
+// }
+//
+// /// id : "filename"
+// /// width : 210
+//
+// class Columns {
+//   Columns({
+//     this.id,
+//     this.width,
+//   });
+//
+//   Columns.fromJson(dynamic json) {
+//     id = json['id'];
+//     width = json['width'];
+//   }
+//   String? id;
+//   num? width;
+//   Columns copyWith({
+//     String? id,
+//     num? width,
+//   }) =>
+//       Columns(
+//         id: id ?? this.id,
+//         width: width ?? this.width,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['id'] = id;
+//     map['width'] = width;
+//     return map;
+//   }
+// }
+//
+// /// columns : [{"id":"filename","width":430},{"id":"filesize","width":126},{"id":"type","width":99},{"id":"mt","width":160},{"hidden":true,"id":"ct","width":248},{"hidden":true,"id":"at","width":248},{"hidden":true,"id":"privilege","width":131},{"hidden":true,"id":"owner","width":131},{"hidden":true,"id":"group","width":131}]
+// /// sort : {"direction":"ASC","field":"filename"}
+//
+// class Gridstates {
+//   Gridstates({
+//     this.columns,
+//     this.sort,
+//   });
+//
+//   Gridstates.fromJson(dynamic json) {
+//     if (json['columns'] != null) {
+//       columns = [];
+//       json['columns'].forEach((v) {
+//         columns?.add(Columns.fromJson(v));
+//       });
+//     }
+//     sort = json['sort'] != null ? Sort.fromJson(json['sort']) : null;
+//   }
+//   List<Columns>? columns;
+//   Sort? sort;
+//   Gridstates copyWith({
+//     List<Columns>? columns,
+//     Sort? sort,
+//   }) =>
+//       Gridstates(
+//         columns: columns ?? this.columns,
+//         sort: sort ?? this.sort,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (columns != null) {
+//       map['columns'] = columns?.map((v) => v.toJson()).toList();
+//     }
+//     if (sort != null) {
+//       map['sort'] = sort?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"x":190,"y":0}
+//
+// class SynoSdsAppDiskMessageAppInstance {
+//   SynoSdsAppDiskMessageAppInstance({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsAppDiskMessageAppInstance.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsAppDiskMessageAppInstance copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsAppDiskMessageAppInstance(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// activeScreen : "advanced"
+// /// restoreSizePos : {"fromRestore":true,"height":695,"maximized":false,"pageX":23,"pageY":73,"width":1150}
+//
+// class SynoSdsAdminCenterApplication {
+//   SynoSdsAdminCenterApplication({
+//     this.activeScreen,
+//     this.restoreSizePos,
+//   });
+//
+//   SynoSdsAdminCenterApplication.fromJson(dynamic json) {
+//     activeScreen = json['activeScreen'];
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   String? activeScreen;
+//   RestoreSizePos? restoreSizePos;
+//   SynoSdsAdminCenterApplication copyWith({
+//     String? activeScreen,
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoSdsAdminCenterApplication(
+//         activeScreen: activeScreen ?? this.activeScreen,
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['activeScreen'] = activeScreen;
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// restoreSizePos : {"fromRestore":true,"pageX":640,"pageY":184}
+//
+// class SynoFinderSpotlightApplication {
+//   SynoFinderSpotlightApplication({
+//     this.restoreSizePos,
+//   });
+//
+//   SynoFinderSpotlightApplication.fromJson(dynamic json) {
+//     restoreSizePos = json['restoreSizePos'] != null ? RestoreSizePos.fromJson(json['restoreSizePos']) : null;
+//   }
+//   RestoreSizePos? restoreSizePos;
+//   SynoFinderSpotlightApplication copyWith({
+//     RestoreSizePos? restoreSizePos,
+//   }) =>
+//       SynoFinderSpotlightApplication(
+//         restoreSizePos: restoreSizePos ?? this.restoreSizePos,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (restoreSizePos != null) {
+//       map['restoreSizePos'] = restoreSizePos?.toJson();
+//     }
+//     return map;
+//   }
+// }
 
 /// dateFormat : "Y-m-d"
 /// lang : "def"
@@ -1533,18 +1547,18 @@ class Personal {
     return map;
   }
 }
-
-/// ShortcutItems : [{"className":"SYNO.SDS.PkgManApp.Instance","id":"56c191c2-2a1a-45b7-b78f-381131c45b88"},{"className":"SYNO.SDS.AdminCenter.Application","id":"1f884144-d043-423b-bbb9-7302470b5011"},{"className":"SYNO.SDS.App.FileStation3.Instance","id":"07e13d5e-46d1-4aa3-a423-77091634e1d6"},{"className":"SYNO.Foto.AppInstance","id":"7037c164-d7ed-438d-b231-5c43d39c7e34"},{"className":"SYNO.SDS.Aria2.Application","id":"ae6c7a54-04f9-48b9-b790-0da4375633f7"},{"className":"SYNO.SDS.BrowserBox.Application","id":"3a3e49d2-4a4d-4e4d-8681-fdbd32418001"},{"className":"SYNO.SDS.Docker.Application","id":"a9326392-b5a5-4da8-b1de-c7eda8a872f3"},{"className":"media.emby.EmbyServer","id":"ab5c3845-05e0-46e3-94ac-cef877e202a6"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"62295c22-05cc-466c-b972-69b918cc6fc9","isModule":true,"moduleTitle":"yunzai-bot","param":{"data":{"name":"yunzai-bot"}}},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"f980620e-755a-49fd-a95e-5d3302a51aa6","isModule":true,"moduleTitle":"jellyfin","param":{"data":{"name":"jellyfin"}},"type":"url","url":"http://pan.apaipai.top:9096"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"379af9e3-a041-4ffc-b974-9e8b19c5eeed","isModule":true,"moduleTitle":"emby","param":{"data":{"name":"emby"}},"type":"url","url":"http://pan.apaipai.top:7096"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"b1bc6b42-ff09-4ba0-87dc-fcd9d4cf2435","isModule":true,"moduleTitle":"qbittorrent","param":{"data":{"name":"qbittorrent"}},"type":"url","url":"http://pan.apaipai.top:5580"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"953589c6-59f2-4ac9-988c-a3e5aef63aed","isModule":true,"moduleTitle":"webssh","param":{"data":{"name":"webssh"}},"type":"url","url":"http://pan.apaipai.top:2222/ssh/host/192.168.0.100"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"ce57a66e-f283-4cc6-a7ca-215370fd46bd","isModule":true,"moduleTitle":"nas-tools","param":{"data":{"name":"nas-tools"}},"type":"url","url":"http://pan.apaipai.top:3000"}]
-/// appMenuStyle : "classical"
-/// desktopStyle : "normal"
-/// disableAccessibility : false
-/// enableDesktopNotification : false
-/// enableTaskbarThumbnail : true
-/// hotkey_disabled : false
-/// new_app_list : []
-/// rememberWindowState : false
-/// valid_appview_order : ["SYNO.SDS.AdminCenter.Application","SYNO.SDS.HelpBrowser.Application","SYNO.SDS.PkgManApp.Instance","SYNO.SDS.ResourceMonitor.Instance","SYNO.SDS.StorageManager.Instance","SYNO.SDS.LogCenter.BuiltIn","SYNO.SDS.SecurityScan.Instance","SYNO.SDS.SupportForm.Application","SYNO.SDS.ActiveInsight.Instance","SYNO.SDS.iSCSI.Application","SYNO.SDS.App.FileStation3.Instance","SYNO.SDS.OAuthService.Instance","SYNO.Finder.Application","SYNO.SDS.Docker.Application","SYNO.SDS.DDNS-GO.Application","SYNO.SDS.WebDAVServer.Instance","SYNO.Foto.AppInstance","SYNO.SDS.CSTN.Instance","SYNO.SDS.Drive.Application","SYNO.SDS.SynologyDriveShareSync.Instance","SYNO.SDS.Aria2.Application","SYNO.SDS.BrowserBox.Application","SYNO.SDS.HomeAssistant.Application","SYNO.SDS.QLTools.Application","SYNO.SDS.Virtualization.Application"]
-/// wallpaper : {"customize_background":true,"customize_background_type":"image","index":2,"version":2,"wallpaper":2,"wallpaper_ext":".jpg","wallpaper_height":2160,"wallpaper_path":"/图片空间/壁纸/公众号精选壁纸/ANIME-PICTURES.NET_-_597277-3840x2160-original-congqian+you+ke+xing-single-long+hair-looking+at+viewer-blush.jpg","wallpaper_position":"fill","wallpaper_type":"fromDS","wallpaper_width":3840}
+//
+// /// ShortcutItems : [{"className":"SYNO.SDS.PkgManApp.Instance","id":"56c191c2-2a1a-45b7-b78f-381131c45b88"},{"className":"SYNO.SDS.AdminCenter.Application","id":"1f884144-d043-423b-bbb9-7302470b5011"},{"className":"SYNO.SDS.App.FileStation3.Instance","id":"07e13d5e-46d1-4aa3-a423-77091634e1d6"},{"className":"SYNO.Foto.AppInstance","id":"7037c164-d7ed-438d-b231-5c43d39c7e34"},{"className":"SYNO.SDS.Aria2.Application","id":"ae6c7a54-04f9-48b9-b790-0da4375633f7"},{"className":"SYNO.SDS.BrowserBox.Application","id":"3a3e49d2-4a4d-4e4d-8681-fdbd32418001"},{"className":"SYNO.SDS.Docker.Application","id":"a9326392-b5a5-4da8-b1de-c7eda8a872f3"},{"className":"media.emby.EmbyServer","id":"ab5c3845-05e0-46e3-94ac-cef877e202a6"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"62295c22-05cc-466c-b972-69b918cc6fc9","isModule":true,"moduleTitle":"yunzai-bot","param":{"data":{"name":"yunzai-bot"}}},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"f980620e-755a-49fd-a95e-5d3302a51aa6","isModule":true,"moduleTitle":"jellyfin","param":{"data":{"name":"jellyfin"}},"type":"url","url":"http://pan.apaipai.top:9096"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"379af9e3-a041-4ffc-b974-9e8b19c5eeed","isModule":true,"moduleTitle":"emby","param":{"data":{"name":"emby"}},"type":"url","url":"http://pan.apaipai.top:7096"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"b1bc6b42-ff09-4ba0-87dc-fcd9d4cf2435","isModule":true,"moduleTitle":"qbittorrent","param":{"data":{"name":"qbittorrent"}},"type":"url","url":"http://pan.apaipai.top:5580"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"953589c6-59f2-4ac9-988c-a3e5aef63aed","isModule":true,"moduleTitle":"webssh","param":{"data":{"name":"webssh"}},"type":"url","url":"http://pan.apaipai.top:2222/ssh/host/192.168.0.100"},{"className":"SYNO.SDS.Docker.ContainerDetail.Instance","icon":"images/docker_shortcut_{0}.png","id":"ce57a66e-f283-4cc6-a7ca-215370fd46bd","isModule":true,"moduleTitle":"nas-tools","param":{"data":{"name":"nas-tools"}},"type":"url","url":"http://pan.apaipai.top:3000"}]
+// /// appMenuStyle : "classical"
+// /// desktopStyle : "normal"
+// /// disableAccessibility : false
+// /// enableDesktopNotification : false
+// /// enableTaskbarThumbnail : true
+// /// hotkey_disabled : false
+// /// new_app_list : []
+// /// rememberWindowState : false
+// /// valid_appview_order : ["SYNO.SDS.AdminCenter.Application","SYNO.SDS.HelpBrowser.Application","SYNO.SDS.PkgManApp.Instance","SYNO.SDS.ResourceMonitor.Instance","SYNO.SDS.StorageManager.Instance","SYNO.SDS.LogCenter.BuiltIn","SYNO.SDS.SecurityScan.Instance","SYNO.SDS.SupportForm.Application","SYNO.SDS.ActiveInsight.Instance","SYNO.SDS.iSCSI.Application","SYNO.SDS.App.FileStation3.Instance","SYNO.SDS.OAuthService.Instance","SYNO.Finder.Application","SYNO.SDS.Docker.Application","SYNO.SDS.DDNS-GO.Application","SYNO.SDS.WebDAVServer.Instance","SYNO.Foto.AppInstance","SYNO.SDS.CSTN.Instance","SYNO.SDS.Drive.Application","SYNO.SDS.SynologyDriveShareSync.Instance","SYNO.SDS.Aria2.Application","SYNO.SDS.BrowserBox.Application","SYNO.SDS.HomeAssistant.Application","SYNO.SDS.QLTools.Application","SYNO.SDS.Virtualization.Application"]
+// /// wallpaper : {"customize_background":true,"customize_background_type":"image","index":2,"version":2,"wallpaper":2,"wallpaper_ext":".jpg","wallpaper_height":2160,"wallpaper_path":"/图片空间/壁纸/公众号精选壁纸/ANIME-PICTURES.NET_-_597277-3840x2160-original-congqian+you+ke+xing-single-long+hair-looking+at+viewer-blush.jpg","wallpaper_position":"fill","wallpaper_type":"fromDS","wallpaper_width":3840}
 
 class Desktop {
   Desktop({
@@ -1839,74 +1853,75 @@ class Data {
   }
 }
 
-/// AdvControlPanel : false
-/// authType : "local"
-/// boot_done : true
-/// brm_enable : "no"
-/// builddate : "2023/04/08"
-/// buildphase : "GM"
-/// custom_login_title : "Apaipai"
-/// date_format : "Y-m-d"
-/// domainUser : "false"
-/// dsm_timeout : 15
-/// fullversion : "42962-s5"
-/// gpo_enable_java : "no"
-/// ha_active_hostname : "ChallengerV"
-/// ha_active_model : ""
-/// ha_allow_bond_manage : true
-/// ha_handle_set_ovs : false
-/// ha_heartbeat_ip_list : ["169.254.1.1","169.254.1.2"]
-/// ha_hide_hw_setting : false
-/// ha_hide_ntb : false
-/// ha_hide_ntp_setting : false
-/// ha_hw_spectre_meltdown : false
-/// ha_not_support_bridge : false
-/// ha_not_support_ipv6 : false
-/// ha_not_support_pppoe : false
-/// ha_not_support_usb_modem : false
-/// ha_passive_hostname : "ChallengerV"
-/// ha_passive_model : ""
-/// ha_running : false
-/// ha_safemode : false
-/// ha_support_controller_notify : false
-/// ha_support_node_notify : false
-/// ha_support_pw_btn : false
-/// has_ha_if : false
-/// hostname : "ChallengerV"
-/// ip_country : ""
-/// isLogined : true
-/// isMobile : false
-/// is_admin : true
-/// is_dual_chain : false
-/// is_ha_empty_passive : false
-/// is_ha_upgrading : false
-/// is_hybrid_ha : false
-/// is_secure : false
-/// is_system_recovering : false
-/// is_upgrading : false
-/// join_dsm_cms : false
-/// juniormodedata_exist : false
-/// lang : "chs"
-/// majorversion : "7"
-/// manage_eth_in_ha_pkg : false
-/// manage_hostname_in_ha_pkg : false
-/// manage_pw_btn_in_ha_pkg : false
-/// minorversion : "1"
-/// productversion : "7.1.1"
-/// promote_ew : true
-/// remove_banner : "false"
-/// smallfixnumber : "5"
-/// sso_appid : ""
-/// sso_server : ""
-/// sso_support : false
-/// support_synodrive_ability : "no"
-/// sys_lang : "def"
-/// theme_cls : "default"
-/// time_format : "H:i"
-/// timezone : "Beijing"
-/// user : "yaoshuwei"
-/// version : "42962"
-
+//
+// /// AdvControlPanel : false
+// /// authType : "local"
+// /// boot_done : true
+// /// brm_enable : "no"
+// /// builddate : "2023/04/08"
+// /// buildphase : "GM"
+// /// custom_login_title : "Apaipai"
+// /// date_format : "Y-m-d"
+// /// domainUser : "false"
+// /// dsm_timeout : 15
+// /// fullversion : "42962-s5"
+// /// gpo_enable_java : "no"
+// /// ha_active_hostname : "ChallengerV"
+// /// ha_active_model : ""
+// /// ha_allow_bond_manage : true
+// /// ha_handle_set_ovs : false
+// /// ha_heartbeat_ip_list : ["169.254.1.1","169.254.1.2"]
+// /// ha_hide_hw_setting : false
+// /// ha_hide_ntb : false
+// /// ha_hide_ntp_setting : false
+// /// ha_hw_spectre_meltdown : false
+// /// ha_not_support_bridge : false
+// /// ha_not_support_ipv6 : false
+// /// ha_not_support_pppoe : false
+// /// ha_not_support_usb_modem : false
+// /// ha_passive_hostname : "ChallengerV"
+// /// ha_passive_model : ""
+// /// ha_running : false
+// /// ha_safemode : false
+// /// ha_support_controller_notify : false
+// /// ha_support_node_notify : false
+// /// ha_support_pw_btn : false
+// /// has_ha_if : false
+// /// hostname : "ChallengerV"
+// /// ip_country : ""
+// /// isLogined : true
+// /// isMobile : false
+// /// is_admin : true
+// /// is_dual_chain : false
+// /// is_ha_empty_passive : false
+// /// is_ha_upgrading : false
+// /// is_hybrid_ha : false
+// /// is_secure : false
+// /// is_system_recovering : false
+// /// is_upgrading : false
+// /// join_dsm_cms : false
+// /// juniormodedata_exist : false
+// /// lang : "chs"
+// /// majorversion : "7"
+// /// manage_eth_in_ha_pkg : false
+// /// manage_hostname_in_ha_pkg : false
+// /// manage_pw_btn_in_ha_pkg : false
+// /// minorversion : "1"
+// /// productversion : "7.1.1"
+// /// promote_ew : true
+// /// remove_banner : "false"
+// /// smallfixnumber : "5"
+// /// sso_appid : ""
+// /// sso_server : ""
+// /// sso_support : false
+// /// support_synodrive_ability : "no"
+// /// sys_lang : "def"
+// /// theme_cls : "default"
+// /// time_format : "H:i"
+// /// timezone : "Beijing"
+// /// user : "yaoshuwei"
+// /// version : "42962"
+//
 class Session {
   Session({
     this.advControlPanel,
@@ -2325,212 +2340,212 @@ class Session {
   }
 }
 
-/// SYNO.SDS.PersonalPhotoStation : false
-
-class ServiceStatus {
-  ServiceStatus({
-    this.synoSDSPersonalPhotoStation,
-  });
-
-  ServiceStatus.fromJson(dynamic json) {
-    synoSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
-  }
-  bool? synoSDSPersonalPhotoStation;
-  ServiceStatus copyWith({
-    bool? synoSDSPersonalPhotoStation,
-  }) =>
-      ServiceStatus(
-        synoSDSPersonalPhotoStation: synoSDSPersonalPhotoStation ?? this.synoSDSPersonalPhotoStation,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['SYNO.SDS.PersonalPhotoStation'] = synoSDSPersonalPhotoStation;
-    return map;
-  }
-}
-
-/// PackageTask : {"tasks":{}}
-
-class GroupSettings {
-  GroupSettings({
-    this.packageTask,
-  });
-
-  GroupSettings.fromJson(dynamic json) {
-    packageTask = json['PackageTask'] != null ? PackageTask.fromJson(json['PackageTask']) : null;
-  }
-  PackageTask? packageTask;
-  GroupSettings copyWith({
-    PackageTask? packageTask,
-  }) =>
-      GroupSettings(
-        packageTask: packageTask ?? this.packageTask,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (packageTask != null) {
-      map['PackageTask'] = packageTask?.toJson();
-    }
-    return map;
-  }
-}
-
-/// tasks : {}
-
-class PackageTask {
-  PackageTask({
-    this.tasks,
-  });
-
-  PackageTask.fromJson(dynamic json) {
-    tasks = json['tasks'];
-  }
-  dynamic tasks;
-  PackageTask copyWith({
-    dynamic tasks,
-  }) =>
-      PackageTask(
-        tasks: tasks ?? this.tasks,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['tasks'] = tasks;
-    return map;
-  }
-}
-
-/// SYNO.AFP : true
-/// SYNO.Desktop : true
-/// SYNO.FTP : true
-/// SYNO.Finder.Application : true
-/// SYNO.Foto.AppInstance : true
-/// SYNO.Rsync : true
-/// SYNO.SDS.App.FileStation3.Instance : true
-/// SYNO.SDS.BackupService.Instance : true
-/// SYNO.SDS.Drive.Application : true
-/// SYNO.SDS.HomeAssistant.Application : true
-/// SYNO.SDS.MailPlusServer.Instance : true
-/// SYNO.SDS.MailServer.Instance : true
-/// SYNO.SDS.PersonalPhotoStation : true
-/// SYNO.SDS.SMBService.AppPrivilege.Instance : true
-/// SYNO.SDS.Virtualization.Application : true
-/// SYNO.SDS.WebDAVServer.Instance : true
-/// SYNO.SFTP : true
-
-class AppPrivilege {
-  AppPrivilege({
-    this.synoafp,
-    this.synoDesktop,
-    this.synoftp,
-    this.synoFinderApplication,
-    this.synoFotoAppInstance,
-    this.synoRsync,
-    this.synoSDSAppFileStation3Instance,
-    this.synoSDSBackupServiceInstance,
-    this.synoSDSDriveApplication,
-    this.synoSDSHomeAssistantApplication,
-    this.synoSDSMailPlusServerInstance,
-    this.synoSDSMailServerInstance,
-    this.synoSDSPersonalPhotoStation,
-    this.synoSDSSMBServiceAppPrivilegeInstance,
-    this.synoSDSVirtualizationApplication,
-    this.synoSDSWebDAVServerInstance,
-    this.synosftp,
-  });
-
-  AppPrivilege.fromJson(dynamic json) {
-    synoafp = json['SYNO.AFP'];
-    synoDesktop = json['SYNO.Desktop'];
-    synoftp = json['SYNO.FTP'];
-    synoFinderApplication = json['SYNO.Finder.Application'];
-    synoFotoAppInstance = json['SYNO.Foto.AppInstance'];
-    synoRsync = json['SYNO.Rsync'];
-    synoSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'];
-    synoSDSBackupServiceInstance = json['SYNO.SDS.BackupService.Instance'];
-    synoSDSDriveApplication = json['SYNO.SDS.Drive.Application'];
-    synoSDSHomeAssistantApplication = json['SYNO.SDS.HomeAssistant.Application'];
-    synoSDSMailPlusServerInstance = json['SYNO.SDS.MailPlusServer.Instance'];
-    synoSDSMailServerInstance = json['SYNO.SDS.MailServer.Instance'];
-    synoSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
-    synoSDSSMBServiceAppPrivilegeInstance = json['SYNO.SDS.SMBService.AppPrivilege.Instance'];
-    synoSDSVirtualizationApplication = json['SYNO.SDS.Virtualization.Application'];
-    synoSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'];
-    synosftp = json['SYNO.SFTP'];
-  }
-  bool? synoafp;
-  bool? synoDesktop;
-  bool? synoftp;
-  bool? synoFinderApplication;
-  bool? synoFotoAppInstance;
-  bool? synoRsync;
-  bool? synoSDSAppFileStation3Instance;
-  bool? synoSDSBackupServiceInstance;
-  bool? synoSDSDriveApplication;
-  bool? synoSDSHomeAssistantApplication;
-  bool? synoSDSMailPlusServerInstance;
-  bool? synoSDSMailServerInstance;
-  bool? synoSDSPersonalPhotoStation;
-  bool? synoSDSSMBServiceAppPrivilegeInstance;
-  bool? synoSDSVirtualizationApplication;
-  bool? synoSDSWebDAVServerInstance;
-  bool? synosftp;
-  AppPrivilege copyWith({
-    bool? synoafp,
-    bool? synoDesktop,
-    bool? synoftp,
-    bool? synoFinderApplication,
-    bool? synoFotoAppInstance,
-    bool? synoRsync,
-    bool? synoSDSAppFileStation3Instance,
-    bool? synoSDSBackupServiceInstance,
-    bool? synoSDSDriveApplication,
-    bool? synoSDSHomeAssistantApplication,
-    bool? synoSDSMailPlusServerInstance,
-    bool? synoSDSMailServerInstance,
-    bool? synoSDSPersonalPhotoStation,
-    bool? synoSDSSMBServiceAppPrivilegeInstance,
-    bool? synoSDSVirtualizationApplication,
-    bool? synoSDSWebDAVServerInstance,
-    bool? synosftp,
-  }) =>
-      AppPrivilege(
-        synoafp: synoafp ?? this.synoafp,
-        synoDesktop: synoDesktop ?? this.synoDesktop,
-        synoftp: synoftp ?? this.synoftp,
-        synoFinderApplication: synoFinderApplication ?? this.synoFinderApplication,
-        synoFotoAppInstance: synoFotoAppInstance ?? this.synoFotoAppInstance,
-        synoRsync: synoRsync ?? this.synoRsync,
-        synoSDSAppFileStation3Instance: synoSDSAppFileStation3Instance ?? this.synoSDSAppFileStation3Instance,
-        synoSDSBackupServiceInstance: synoSDSBackupServiceInstance ?? this.synoSDSBackupServiceInstance,
-        synoSDSDriveApplication: synoSDSDriveApplication ?? this.synoSDSDriveApplication,
-        synoSDSHomeAssistantApplication: synoSDSHomeAssistantApplication ?? this.synoSDSHomeAssistantApplication,
-        synoSDSMailPlusServerInstance: synoSDSMailPlusServerInstance ?? this.synoSDSMailPlusServerInstance,
-        synoSDSMailServerInstance: synoSDSMailServerInstance ?? this.synoSDSMailServerInstance,
-        synoSDSPersonalPhotoStation: synoSDSPersonalPhotoStation ?? this.synoSDSPersonalPhotoStation,
-        synoSDSSMBServiceAppPrivilegeInstance: synoSDSSMBServiceAppPrivilegeInstance ?? this.synoSDSSMBServiceAppPrivilegeInstance,
-        synoSDSVirtualizationApplication: synoSDSVirtualizationApplication ?? this.synoSDSVirtualizationApplication,
-        synoSDSWebDAVServerInstance: synoSDSWebDAVServerInstance ?? this.synoSDSWebDAVServerInstance,
-        synosftp: synosftp ?? this.synosftp,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['SYNO.AFP'] = synoafp;
-    map['SYNO.Desktop'] = synoDesktop;
-    map['SYNO.FTP'] = synoftp;
-    map['SYNO.Finder.Application'] = synoFinderApplication;
-    map['SYNO.Foto.AppInstance'] = synoFotoAppInstance;
-    map['SYNO.Rsync'] = synoRsync;
-    map['SYNO.SDS.App.FileStation3.Instance'] = synoSDSAppFileStation3Instance;
-    map['SYNO.SDS.BackupService.Instance'] = synoSDSBackupServiceInstance;
-    map['SYNO.SDS.Drive.Application'] = synoSDSDriveApplication;
-    map['SYNO.SDS.HomeAssistant.Application'] = synoSDSHomeAssistantApplication;
-    map['SYNO.SDS.MailPlusServer.Instance'] = synoSDSMailPlusServerInstance;
-    map['SYNO.SDS.MailServer.Instance'] = synoSDSMailServerInstance;
-    map['SYNO.SDS.PersonalPhotoStation'] = synoSDSPersonalPhotoStation;
-    map['SYNO.SDS.SMBService.AppPrivilege.Instance'] = synoSDSSMBServiceAppPrivilegeInstance;
-    map['SYNO.SDS.Virtualization.Application'] = synoSDSVirtualizationApplication;
-    map['SYNO.SDS.WebDAVServer.Instance'] = synoSDSWebDAVServerInstance;
-    map['SYNO.SFTP'] = synosftp;
-    return map;
-  }
-}
+// /// SYNO.SDS.PersonalPhotoStation : false
+//
+// class ServiceStatus {
+//   ServiceStatus({
+//     this.synoSDSPersonalPhotoStation,
+//   });
+//
+//   ServiceStatus.fromJson(dynamic json) {
+//     synoSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
+//   }
+//   bool? synoSDSPersonalPhotoStation;
+//   ServiceStatus copyWith({
+//     bool? synoSDSPersonalPhotoStation,
+//   }) =>
+//       ServiceStatus(
+//         synoSDSPersonalPhotoStation: synoSDSPersonalPhotoStation ?? this.synoSDSPersonalPhotoStation,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['SYNO.SDS.PersonalPhotoStation'] = synoSDSPersonalPhotoStation;
+//     return map;
+//   }
+// }
+//
+// /// PackageTask : {"tasks":{}}
+//
+// class GroupSettings {
+//   GroupSettings({
+//     this.packageTask,
+//   });
+//
+//   GroupSettings.fromJson(dynamic json) {
+//     packageTask = json['PackageTask'] != null ? PackageTask.fromJson(json['PackageTask']) : null;
+//   }
+//   PackageTask? packageTask;
+//   GroupSettings copyWith({
+//     PackageTask? packageTask,
+//   }) =>
+//       GroupSettings(
+//         packageTask: packageTask ?? this.packageTask,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     if (packageTask != null) {
+//       map['PackageTask'] = packageTask?.toJson();
+//     }
+//     return map;
+//   }
+// }
+//
+// /// tasks : {}
+//
+// class PackageTask {
+//   PackageTask({
+//     this.tasks,
+//   });
+//
+//   PackageTask.fromJson(dynamic json) {
+//     tasks = json['tasks'];
+//   }
+//   dynamic tasks;
+//   PackageTask copyWith({
+//     dynamic tasks,
+//   }) =>
+//       PackageTask(
+//         tasks: tasks ?? this.tasks,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['tasks'] = tasks;
+//     return map;
+//   }
+// }
+//
+// /// SYNO.AFP : true
+// /// SYNO.Desktop : true
+// /// SYNO.FTP : true
+// /// SYNO.Finder.Application : true
+// /// SYNO.Foto.AppInstance : true
+// /// SYNO.Rsync : true
+// /// SYNO.SDS.App.FileStation3.Instance : true
+// /// SYNO.SDS.BackupService.Instance : true
+// /// SYNO.SDS.Drive.Application : true
+// /// SYNO.SDS.HomeAssistant.Application : true
+// /// SYNO.SDS.MailPlusServer.Instance : true
+// /// SYNO.SDS.MailServer.Instance : true
+// /// SYNO.SDS.PersonalPhotoStation : true
+// /// SYNO.SDS.SMBService.AppPrivilege.Instance : true
+// /// SYNO.SDS.Virtualization.Application : true
+// /// SYNO.SDS.WebDAVServer.Instance : true
+// /// SYNO.SFTP : true
+//
+// class AppPrivilege {
+//   AppPrivilege({
+//     this.synoafp,
+//     this.synoDesktop,
+//     this.synoftp,
+//     this.synoFinderApplication,
+//     this.synoFotoAppInstance,
+//     this.synoRsync,
+//     this.synoSDSAppFileStation3Instance,
+//     this.synoSDSBackupServiceInstance,
+//     this.synoSDSDriveApplication,
+//     this.synoSDSHomeAssistantApplication,
+//     this.synoSDSMailPlusServerInstance,
+//     this.synoSDSMailServerInstance,
+//     this.synoSDSPersonalPhotoStation,
+//     this.synoSDSSMBServiceAppPrivilegeInstance,
+//     this.synoSDSVirtualizationApplication,
+//     this.synoSDSWebDAVServerInstance,
+//     this.synosftp,
+//   });
+//
+//   AppPrivilege.fromJson(dynamic json) {
+//     synoafp = json['SYNO.AFP'];
+//     synoDesktop = json['SYNO.Desktop'];
+//     synoftp = json['SYNO.FTP'];
+//     synoFinderApplication = json['SYNO.Finder.Application'];
+//     synoFotoAppInstance = json['SYNO.Foto.AppInstance'];
+//     synoRsync = json['SYNO.Rsync'];
+//     synoSDSAppFileStation3Instance = json['SYNO.SDS.App.FileStation3.Instance'];
+//     synoSDSBackupServiceInstance = json['SYNO.SDS.BackupService.Instance'];
+//     synoSDSDriveApplication = json['SYNO.SDS.Drive.Application'];
+//     synoSDSHomeAssistantApplication = json['SYNO.SDS.HomeAssistant.Application'];
+//     synoSDSMailPlusServerInstance = json['SYNO.SDS.MailPlusServer.Instance'];
+//     synoSDSMailServerInstance = json['SYNO.SDS.MailServer.Instance'];
+//     synoSDSPersonalPhotoStation = json['SYNO.SDS.PersonalPhotoStation'];
+//     synoSDSSMBServiceAppPrivilegeInstance = json['SYNO.SDS.SMBService.AppPrivilege.Instance'];
+//     synoSDSVirtualizationApplication = json['SYNO.SDS.Virtualization.Application'];
+//     synoSDSWebDAVServerInstance = json['SYNO.SDS.WebDAVServer.Instance'];
+//     synosftp = json['SYNO.SFTP'];
+//   }
+//   bool? synoafp;
+//   bool? synoDesktop;
+//   bool? synoftp;
+//   bool? synoFinderApplication;
+//   bool? synoFotoAppInstance;
+//   bool? synoRsync;
+//   bool? synoSDSAppFileStation3Instance;
+//   bool? synoSDSBackupServiceInstance;
+//   bool? synoSDSDriveApplication;
+//   bool? synoSDSHomeAssistantApplication;
+//   bool? synoSDSMailPlusServerInstance;
+//   bool? synoSDSMailServerInstance;
+//   bool? synoSDSPersonalPhotoStation;
+//   bool? synoSDSSMBServiceAppPrivilegeInstance;
+//   bool? synoSDSVirtualizationApplication;
+//   bool? synoSDSWebDAVServerInstance;
+//   bool? synosftp;
+//   AppPrivilege copyWith({
+//     bool? synoafp,
+//     bool? synoDesktop,
+//     bool? synoftp,
+//     bool? synoFinderApplication,
+//     bool? synoFotoAppInstance,
+//     bool? synoRsync,
+//     bool? synoSDSAppFileStation3Instance,
+//     bool? synoSDSBackupServiceInstance,
+//     bool? synoSDSDriveApplication,
+//     bool? synoSDSHomeAssistantApplication,
+//     bool? synoSDSMailPlusServerInstance,
+//     bool? synoSDSMailServerInstance,
+//     bool? synoSDSPersonalPhotoStation,
+//     bool? synoSDSSMBServiceAppPrivilegeInstance,
+//     bool? synoSDSVirtualizationApplication,
+//     bool? synoSDSWebDAVServerInstance,
+//     bool? synosftp,
+//   }) =>
+//       AppPrivilege(
+//         synoafp: synoafp ?? this.synoafp,
+//         synoDesktop: synoDesktop ?? this.synoDesktop,
+//         synoftp: synoftp ?? this.synoftp,
+//         synoFinderApplication: synoFinderApplication ?? this.synoFinderApplication,
+//         synoFotoAppInstance: synoFotoAppInstance ?? this.synoFotoAppInstance,
+//         synoRsync: synoRsync ?? this.synoRsync,
+//         synoSDSAppFileStation3Instance: synoSDSAppFileStation3Instance ?? this.synoSDSAppFileStation3Instance,
+//         synoSDSBackupServiceInstance: synoSDSBackupServiceInstance ?? this.synoSDSBackupServiceInstance,
+//         synoSDSDriveApplication: synoSDSDriveApplication ?? this.synoSDSDriveApplication,
+//         synoSDSHomeAssistantApplication: synoSDSHomeAssistantApplication ?? this.synoSDSHomeAssistantApplication,
+//         synoSDSMailPlusServerInstance: synoSDSMailPlusServerInstance ?? this.synoSDSMailPlusServerInstance,
+//         synoSDSMailServerInstance: synoSDSMailServerInstance ?? this.synoSDSMailServerInstance,
+//         synoSDSPersonalPhotoStation: synoSDSPersonalPhotoStation ?? this.synoSDSPersonalPhotoStation,
+//         synoSDSSMBServiceAppPrivilegeInstance: synoSDSSMBServiceAppPrivilegeInstance ?? this.synoSDSSMBServiceAppPrivilegeInstance,
+//         synoSDSVirtualizationApplication: synoSDSVirtualizationApplication ?? this.synoSDSVirtualizationApplication,
+//         synoSDSWebDAVServerInstance: synoSDSWebDAVServerInstance ?? this.synoSDSWebDAVServerInstance,
+//         synosftp: synosftp ?? this.synosftp,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['SYNO.AFP'] = synoafp;
+//     map['SYNO.Desktop'] = synoDesktop;
+//     map['SYNO.FTP'] = synoftp;
+//     map['SYNO.Finder.Application'] = synoFinderApplication;
+//     map['SYNO.Foto.AppInstance'] = synoFotoAppInstance;
+//     map['SYNO.Rsync'] = synoRsync;
+//     map['SYNO.SDS.App.FileStation3.Instance'] = synoSDSAppFileStation3Instance;
+//     map['SYNO.SDS.BackupService.Instance'] = synoSDSBackupServiceInstance;
+//     map['SYNO.SDS.Drive.Application'] = synoSDSDriveApplication;
+//     map['SYNO.SDS.HomeAssistant.Application'] = synoSDSHomeAssistantApplication;
+//     map['SYNO.SDS.MailPlusServer.Instance'] = synoSDSMailPlusServerInstance;
+//     map['SYNO.SDS.MailServer.Instance'] = synoSDSMailServerInstance;
+//     map['SYNO.SDS.PersonalPhotoStation'] = synoSDSPersonalPhotoStation;
+//     map['SYNO.SDS.SMBService.AppPrivilege.Instance'] = synoSDSSMBServiceAppPrivilegeInstance;
+//     map['SYNO.SDS.Virtualization.Application'] = synoSDSVirtualizationApplication;
+//     map['SYNO.SDS.WebDAVServer.Instance'] = synoSDSWebDAVServerInstance;
+//     map['SYNO.SFTP'] = synosftp;
+//     return map;
+//   }
+// }

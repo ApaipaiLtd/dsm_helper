@@ -29,8 +29,7 @@ class _ApplicationsState extends State<Applications> {
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: context.width ~/ 120),
           itemBuilder: (context, i) {
-            String application = applications[i];
-            return ApplicationItemWidget(application);
+            return ApplicationItemWidget(applications[i]);
           },
           itemCount: applications.length,
         ),

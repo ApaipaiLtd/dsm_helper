@@ -2,44 +2,90 @@ import 'package:dsm_helper/extensions/list.dart';
 import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
 import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class TaskSchedulerWidget extends StatelessWidget {
-  final TaskScheduler taskScheduler;
-  const TaskSchedulerWidget(this.taskScheduler, {super.key});
+class TaskSchedulerWidget extends StatefulWidget {
+  const TaskSchedulerWidget({super.key});
+
+  @override
+  State<TaskSchedulerWidget> createState() => _TaskSchedulerWidgetState();
+}
+
+class _TaskSchedulerWidgetState extends State<TaskSchedulerWidget> {
+  bool loading = true;
+  bool error = false;
+  TaskScheduler taskScheduler = TaskScheduler();
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  getData({bool loop = true}) async {
+    try {
+      taskScheduler = await TaskScheduler.list();
+      setState(() {
+        loading = false;
+      });
+    } catch (e) {
+      // 如果首次加载失败，则显示错误信息，否则不显示
+      if (loading) {
+        setState(() {
+          error = true;
+        });
+      }
+    }
+    if (loop && mounted) {
+      int refreshDuration = context.read<SettingProvider>().refreshDuration;
+      Future.delayed(Duration(seconds: refreshDuration)).then((_) {
+        getData();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = taskScheduler.tasks!
-        .map((task) => TaskSchedulerItem(
-              task,
-              isLast: taskScheduler.tasks!.last == task,
-            ))
-        .toList();
+    late Widget cardBody;
+    if (loading) {
+      cardBody = SizedBox(height: 100, child: Center(child: LoadingWidget(size: 30)));
+    } else if (error) {
+      cardBody = EmptyWidget(
+        text: "数据加载失败",
+        size: 100,
+      );
+    } else {
+      List<Widget> children = taskScheduler.tasks?.map((task) => TaskSchedulerItem(task)).toList() ?? [];
+      if (children.isEmpty) {
+        cardBody = EmptyWidget(
+          text: "暂无计划任务",
+          size: 100,
+        );
+      } else {
+        cardBody = Column(
+          children: children.expand((element) => [element, if (element != children.last) Divider()]).toList(),
+        );
+      }
+    }
     return WidgetCard(
-      onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-          return TaskSchedulerManage();
-        }));
-      },
-      title: "计划任务",
+      title: "任务计划",
       // icon: Image.asset(
       //   "assets/icons/task.png",
       //   width: 26,
       //   height: 26,
       // ),
-      body: Column(
-        children: children.expand((element) => [element, if (element != children.last) Divider()]).toList(),
-      ),
+      body: cardBody,
     );
   }
 }
 
 class TaskSchedulerItem extends StatefulWidget {
   final Tasks task;
-  final bool isLast;
-  const TaskSchedulerItem(this.task, {this.isLast = false, super.key});
+  const TaskSchedulerItem(this.task, {super.key});
 
   @override
   State<TaskSchedulerItem> createState() => _TaskSchedulerItemState();

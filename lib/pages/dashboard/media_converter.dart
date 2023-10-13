@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/animation_progress_bar.dart';
@@ -262,8 +263,8 @@ class _MediaConverterState extends State<MediaConverter> {
                                               onPressed: () async {
                                                 Navigator.of(context).pop();
                                               },
-                                                color: Theme.of(context).scaffoldBackgroundColor,
-                                                borderRadius: BorderRadius.circular(25),
+                                              color: Theme.of(context).scaffoldBackgroundColor,
+                                              borderRadius: BorderRadius.circular(25),
                                               padding: EdgeInsets.symmetric(vertical: 10),
                                               child: Text(
                                                 "取消",
@@ -310,8 +311,8 @@ class _MediaConverterState extends State<MediaConverter> {
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(25),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(25),
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text(
                     "确定",
@@ -326,6 +327,19 @@ class _MediaConverterState extends State<MediaConverter> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class MediaConverterPopup {
+  static show(converter, {required BuildContext context}) async {
+    return await showCupertinoModalPopup(
+      context: context,
+      // barrierColor: Colors.black12,
+      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+      builder: (context) {
+        return MediaConverter(converter);
+      },
     );
   }
 }

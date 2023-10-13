@@ -1,11 +1,20 @@
+import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
 import 'package:dsm_helper/providers/shortcut.dart';
 import 'package:dsm_helper/providers/wallpaper.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
+import 'package:reorderables/reorderables.dart';
 import 'package:sp_util/sp_util.dart';
 
 class WidgetSetting extends StatefulWidget {
@@ -15,10 +24,8 @@ class WidgetSetting extends StatefulWidget {
 }
 
 class _WidgetSettingState extends State<WidgetSetting> {
-  bool showShortcut = true;
-  bool showWallpaper = true;
+  bool saving = false;
   List<String> allWidgets = [
-    // "SYNO.SDS.SystemInfoApp.FileChangeLogWidget",
     "SYNO.SDS.SystemInfoApp.SystemHealthWidget",
     "SYNO.SDS.ResourceMonitor.Widget",
     "SYNO.SDS.SystemInfoApp.StorageUsageWidget",
@@ -36,229 +43,208 @@ class _WidgetSettingState extends State<WidgetSetting> {
     "SYNO.SDS.SystemInfoApp.StorageUsageWidget": "存储",
     "SYNO.SDS.ResourceMonitor.Widget": "资源监控",
   };
-  List<String> showWidgets = [];
   List<String> selectedWidgets = [];
+  List<String> get unselectedWidget => allWidgets.where((element) => !selectedWidgets.contains(element)).toList();
   @override
   void initState() {
     InitDataModel initData = context.read<InitDataProvider>().initData;
-    showShortcut = SpUtil.getBool("show_shortcut", defValue: true)!;
-    showWallpaper = SpUtil.getBool("show_wallpaper", defValue: true)!;
-    setState(() {
-      selectedWidgets.addAll(initData.userSettings!.synoSDSWidgetInstance!.moduleList!);
-      showWidgets.addAll(initData.userSettings!.synoSDSWidgetInstance!.moduleList!);
-    });
-    allWidgets.forEach((widget) {
-      if (!showWidgets.contains(widget)) {
-        setState(() {
-          showWidgets.add(widget);
-        });
-      }
-    });
+    if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null) {
+      initData.userSettings!.synoSDSWidgetInstance!.moduleList!.forEach((element) {
+        if (allWidgets.contains(element)) {
+          selectedWidgets.add(element);
+        }
+      });
+    }
+    setState(() {});
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("小组件设置"),
+    ShortcutProvider shortcutProvider = context.watch<ShortcutProvider>();
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("控制台设置"),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: CupertinoButton(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(10),
-              padding: EdgeInsets.all(10),
-              onPressed: () async {
-                List saveWidgets = [];
-                showWidgets.forEach((widget) {
-                  if (selectedWidgets.contains(widget)) {
-                    saveWidgets.add(widget);
-                  }
-                });
-                Map data = {
-                  "SYNO.SDS._Widget.Instance": {"modulelist": saveWidgets},
-                  // "restoreSizePos": widget.restoreSizePos
-                };
-                var res = await Api.userSetting(data);
-                if (res['success']) {
-                  Utils.toast("保存小组件成功");
-                  Navigator.of(context).pop(saveWidgets);
-                } else {
-                  Utils.toast("保存小组件失败，代码${res['error']['code']}");
-                }
-              },
-              child: Image.asset(
-                "assets/icons/save.png",
-                width: 20,
-                height: 20,
-              ),
-            ),
+          CupertinoButton(
+            onPressed: saving
+                ? null
+                : () async {
+                    setState(() {
+                      saving = true;
+                    });
+                    InitDataProvider initDataProvider = context.read<InitDataProvider>();
+                    try {
+                      bool? res = await initDataProvider.initData.userSettings?.apply(selectedWidgets);
+                      if (res == true) {
+                        initDataProvider.initData.userSettings?.synoSDSWidgetInstance?.moduleList = selectedWidgets;
+                        initDataProvider.notify();
+                        context.pop(true);
+                      }
+                    } on DsmException catch (e) {
+                      Utils.vibrate(FeedbackType.error);
+                      Utils.toast("保存小组件失败，代码${e.code}");
+                    } finally {
+                      setState(() {
+                        saving = false;
+                      });
+                    }
+
+                    // Map data = {
+                    //   "SYNO.SDS._Widget.Instance": {"modulelist": selectedWidgets},
+                    //   // "restoreSizePos": widget.restoreSizePos
+                    // };
+                    // var res = await Api.userSetting(data);
+                    // if (res['success']) {
+                    //   Utils.toast("保存小组件成功");
+                    //   context.pop(true);
+                    // } else {
+                    //   Utils.toast("保存小组件失败，代码${res['error']['code']}");
+                    // }
+                  },
+            child: saving
+                ? LoadingWidget(
+                    size: 24,
+                  )
+                : Image.asset(
+                    "assets/icons/save.png",
+                    width: 24,
+                    height: 24,
+                  ),
           ),
         ],
       ),
-      body: Column(
+      body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  setState(() {
-                    showShortcut = !showShortcut;
-                    Provider.of<ShortcutProvider>(context, listen: false).changeMode(showShortcut);
-                  });
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset(
-                            "assets/icons/shortcut.png",
-                            width: 30,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "控制台快捷方式",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Spacer(),
-                          if (showShortcut)
-                            Icon(
-                              CupertinoIcons.checkmark_alt,
-                              color: Color(0xffff9813),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  setState(() {
-                    showWallpaper = !showWallpaper;
-                    Provider.of<WallpaperProvider>(context, listen: false).changeMode(showWallpaper);
-                  });
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset(
-                            "assets/icons/wallpaper.png",
-                            width: 30,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "系统状态显示壁纸",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Spacer(),
-                          if (showWallpaper)
-                            Icon(
-                              CupertinoIcons.checkmark_alt,
-                              color: Color(0xffff9813),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: ReorderableListView(
-              children: showWidgets.map((widget) {
-                return GestureDetector(
-                  key: ValueKey(widget),
-                  onTap: () {
-                    setState(() {
-                      if (selectedWidgets.contains(widget)) {
-                        selectedWidgets.remove(widget);
-                      } else {
-                        selectedWidgets.add(widget);
-                      }
-                      print(showWidgets);
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              name[widget],
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(5),
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: selectedWidgets.contains(widget)
-                                  ? Icon(
-                                      CupertinoIcons.checkmark_alt,
-                                      color: Color(0xffff9813),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ],
+          WidgetCard(
+            title: "控制台设置",
+            body: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "桌面快捷方式",
+                        style: TextStyle(fontSize: 16),
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                      child: Transform.scale(
+                        scale: 0.8,
+                        child: CupertinoSwitch(
+                          value: shortcutProvider.showShortcut,
+                          onChanged: (v) {
+                            shortcutProvider.setShowShortcut(v);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          if (selectedWidgets.isNotEmpty)
+            WidgetCard(
+              title: "小组件排序",
+              padding: EdgeInsets.symmetric(vertical: 14),
+              body: ReorderableColumn(
+                children: selectedWidgets.map((widget) {
+                  return Container(
+                    key: ValueKey(widget),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            name[widget],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedWidgets.remove(widget);
+                            });
+                          },
+                          child: Image.asset(
+                            "assets/icons/remove_circle_fill.png",
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                draggedItemBuilder: (context, index) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            name[selectedWidgets[index]],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Image.asset(
+                          "assets/icons/move.png",
+                          width: 24,
+                          height: 24,
+                          color: AppTheme.of(context)?.placeholderColor,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                onReorderStarted: (_) {
+                  Utils.vibrate(FeedbackType.success);
+                },
+                onReorder: (int oldIndex, int newIndex) {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  var child = selectedWidgets.removeAt(oldIndex);
+                  selectedWidgets.insert(newIndex, child);
+
+                  setState(() {});
+                },
+              ),
+            ),
+          WidgetCard(
+            title: "可添加小组件",
+            body: Column(
+              children: unselectedWidget.map((widget) {
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name[widget] ?? widget,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedWidgets.add(widget);
+                          });
+                        },
+                        child: Image.asset(
+                          "assets/icons/plus_circle.png",
+                          width: 24,
+                          height: 24,
+                          color: AppTheme.of(context)?.primaryColor,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }).toList(),
-              onReorder: (int oldIndex, int newIndex) {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                var child = showWidgets.removeAt(oldIndex);
-                showWidgets.insert(newIndex, child);
-
-                setState(() {});
-              },
             ),
           ),
         ],

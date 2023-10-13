@@ -614,16 +614,20 @@ class Utils {
       return SizeEnum.kb.value.toDouble() * 10;
     } else if (maxNetworkSpeed < SizeEnum.kb.value * 100) {
       return SizeEnum.kb.value.toDouble() * 20;
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 200) {
+      return SizeEnum.kb.value.toDouble() * 40;
+    } else if (maxNetworkSpeed < SizeEnum.kb.value * 500) {
+      return SizeEnum.kb.value.toDouble() * 100;
     } else if (maxNetworkSpeed < SizeEnum.mb.value) {
       return SizeEnum.kb.value.toDouble() * 200;
+    } else if (maxNetworkSpeed < SizeEnum.mb.value * 2) {
+      return SizeEnum.kb.value.toDouble() * 400;
     } else if (maxNetworkSpeed < SizeEnum.mb.value * 5) {
       return SizeEnum.mb.value.toDouble();
     } else if (maxNetworkSpeed < SizeEnum.mb.value * 10) {
       return SizeEnum.mb.value.toDouble() * 2;
     } else if (maxNetworkSpeed < SizeEnum.mb.value * 20) {
       return SizeEnum.mb.value.toDouble() * 4;
-    } else if (maxNetworkSpeed < SizeEnum.mb.value * 40) {
-      return SizeEnum.mb.value.toDouble() * 8;
     } else if (maxNetworkSpeed < SizeEnum.mb.value * 50) {
       return 10.0 * SizeEnum.mb.value;
     } else if (maxNetworkSpeed < SizeEnum.mb.value * 100) {

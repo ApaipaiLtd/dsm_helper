@@ -161,9 +161,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       String buildNumber = packageInfo.buildNumber;
-      if (kDebugMode) {
-        buildNumber = '1';
-      }
+      // if (kDebugMode) {
+      //   buildNumber = '1';
+      // }
       var res = await Api.update(buildNumber); //packageInfo.buildNumber
       if (res['code'] == 1) {
         showCupertinoDialog(
