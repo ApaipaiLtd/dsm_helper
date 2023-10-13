@@ -6,6 +6,7 @@ import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/utils/http_util.dart';
+import 'package:dsm_helper/utils/log.dart';
 
 class DsmApi extends HttpUtil {
   String? baseUrl;
@@ -78,9 +79,9 @@ class DsmApi extends HttpUtil {
     data['_sid'] = sid;
     Response response = await dio!.post("/webapi/entry.cgi", data: data, queryParameters: parameters, options: options);
     List<DsmResponse> res = [];
+    Log.logger.info(response.data);
     if (response.data['success']) {
       for (int i = 0; i < apis.length; i++) {
-        print(response.data['data']['result'][i]);
         res.add(DsmResponse.fromJson(response.data['data']['result'][i], apis[i].fromJson));
       }
     }

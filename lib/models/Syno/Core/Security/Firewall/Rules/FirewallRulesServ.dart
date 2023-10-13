@@ -1,4 +1,6 @@
+import 'package:dsm_helper/models/Syno/Core/Service/ServicePortInfo.dart';
 import 'package:dsm_helper/models/base_model.dart';
+import 'package:dsm_helper/pages/control_panel/info/enums/firewall_status_enum.dart';
 
 /// service_policy : [{"interface_info":[{"adapter":"ovs_eth0","port_info":[{"port_id":"afp","status":"allow"}],"status":"allow"},{"adapter":"pppoe","port_info":[{"port_id":"afp","status":"allow"}],"status":"allow"}],"service_id":"atalk","status":"allow"},null]
 
@@ -67,6 +69,7 @@ class ServicePolicy {
   List<InterfaceInfo>? interfaceInfo;
   String? serviceId;
   String? status;
+  FirewallStatusEnum get statusEnum => FirewallStatusEnum.fromValue(status ?? 'unknown');
   ServicePolicy copyWith({
     List<InterfaceInfo>? interfaceInfo,
     String? serviceId,
@@ -128,37 +131,6 @@ class InterfaceInfo {
     if (portInfo != null) {
       map['port_info'] = portInfo?.map((v) => v.toJson()).toList();
     }
-    map['status'] = status;
-    return map;
-  }
-}
-
-/// port_id : "afp"
-/// status : "allow"
-
-class PortInfo {
-  PortInfo({
-    this.portId,
-    this.status,
-  });
-
-  PortInfo.fromJson(dynamic json) {
-    portId = json['port_id'];
-    status = json['status'];
-  }
-  String? portId;
-  String? status;
-  PortInfo copyWith({
-    String? portId,
-    String? status,
-  }) =>
-      PortInfo(
-        portId: portId ?? this.portId,
-        status: status ?? this.status,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['port_id'] = portId;
     map['status'] = status;
     return map;
   }

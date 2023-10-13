@@ -9,8 +9,8 @@ class ServicePortInfo extends BaseModel {
     };
   }
 
-  String? api = "SYNO.Core.Security.Firewall.Rules.Serv";
-  String? method = "policy_check";
+  String? api = "SYNO.Core.Service.PortInfo";
+  String? method = "load";
   int? version = 1;
 
   ServicePortInfo.fromJson(dynamic json) {
@@ -57,6 +57,7 @@ class PortInfo {
     this.portId,
     this.protocol,
     this.srcPort,
+    this.status,
   });
 
   PortInfo.fromJson(dynamic json) {
@@ -66,12 +67,14 @@ class PortInfo {
     portId = json['port_id'];
     protocol = json['protocol'];
     srcPort = json['src_port'];
+    status = json['status'];
   }
   String? desc;
   List<String>? dstPort;
   String? name;
   String? portId;
   String? protocol;
+  String? status;
   dynamic srcPort;
   PortInfo copyWith({
     String? desc,
@@ -79,6 +82,7 @@ class PortInfo {
     String? name,
     String? portId,
     String? protocol,
+    String? status,
     dynamic srcPort,
   }) =>
       PortInfo(
@@ -88,6 +92,7 @@ class PortInfo {
         portId: portId ?? this.portId,
         protocol: protocol ?? this.protocol,
         srcPort: srcPort ?? this.srcPort,
+        status: status ?? this.status,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -97,6 +102,7 @@ class PortInfo {
     map['port_id'] = portId;
     map['protocol'] = protocol;
     map['src_port'] = srcPort;
+    map['status'] = status;
     return map;
   }
 }

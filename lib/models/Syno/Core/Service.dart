@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Core/Security/Firewall/Rules/FirewallRulesServ.dart';
+import 'package:dsm_helper/models/Syno/Core/Service/ServicePortInfo.dart';
 import 'package:dsm_helper/models/base_model.dart';
 
 /// service : [{"additional":{"active_status":"active"},"display_name_section_key":"helptoc:winmacnfs_mac","enable_status":"enabled","service_id":"atalk"},{"additional":{"active_status":"inactive"},"display_name_section_key":"network:bonjourPrinter_subject","enable_status":"disabled","service_id":"bonjour"},{"additional":{"active_status":"inactive"},"display_name_section_key":"service:cups_printer_daemon","enable_status":"static","service_id":"cupsd"},{"additional":{"active_status":"active"},"display_name_section_key":"tree:leaf_ftp","enable_status":"enabled","service_id":"ftp-pure"},{"additional":{"active_status":"active"},"display_name_section_key":"tree:leaf_ftpes","enable_status":"enabled","service_id":"ftp-ssl"},{"additional":{"active_status":"active"},"display_name_section_key":"nfs:nfs_title","enable_status":"enabled","service_id":"nfs-server"},{"additional":{"active_status":"active"},"display_name_section_key":"helptoc:ntp_service","enable_status":"enabled","service_id":"ntpd"},{"additional":{"active_status":"active"},"display_name_section_key":"tree:leaf_iscsi","enable_status":"static","service_id":"pkg-iscsi"},{"additional":{"active_status":"active"},"display_name_section_key":"helptoc:winmacnfs_win","enable_status":"enabled","service_id":"pkg-synosamba-smbd"},{"additional":{"active_status":"active"},"display_name_section_key":"service:wstransfer_title","enable_status":"enabled","service_id":"pkg-synosamba-wstransfer-genconf"},{"additional":{"active_status":"inactive"},"display_name_section_key":"service:service_rsync","enable_status":"disabled","service_id":"rsyncd"},{"additional":{"active_status":"inactive"},"display_name_section_key":"tree:leaf_sftp","enable_status":"disabled","service_id":"sftp"},{"additional":{"active_status":"active"},"display_name_section_key":"SNMP","enable_status":"static","service_id":"snmpd"},{"additional":{"active_status":"active"},"display_name_section_key":"firewall:firewall_service_opt_ssh","enable_status":"enabled","service_id":"ssh-shell"},{"additional":{"active_status":"active"},"display_name_section_key":"about:dsm","enable_status":"static","service_id":"synoscgi"},{"additional":{"active_status":"inactive"},"display_name_section_key":"firewall:firewall_service_opt_telnet","enable_status":"disabled","service_id":"telnetd"},{"additional":{"active_status":"inactive"},"display_name_section_key":"ftp:tftp_title","enable_status":"disabled","service_id":"tftp"},{"additional":{"active_status":"inactive"},"display_name_section_key":"helptoc:power_ups","enable_status":"disabled","service_id":"ups-net"},{"additional":{"active_status":"inactive"},"display_name_section_key":"helptoc:power_ups","enable_status":"static","service_id":"ups-usb"}]
@@ -76,8 +78,11 @@ class Service {
   }
   Additional? additional;
   String? displayNameSectionKey;
+  String? displayName;
   String? enableStatus;
   String? serviceId;
+  List<PortInfo> portInfo = [];
+  ServicePolicy? servicePolicy;
   Service copyWith({
     Additional? additional,
     String? displayNameSectionKey,

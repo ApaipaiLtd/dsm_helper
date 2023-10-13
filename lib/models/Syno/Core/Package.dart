@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Core/Security/Firewall/Rules/FirewallRulesServ.dart';
+import 'package:dsm_helper/models/Syno/Core/Service/ServicePortInfo.dart';
 import 'package:dsm_helper/models/base_model.dart';
 
 /// packages : [{"additional":{"autoupdate":false,"autoupdate_important":false,"beta":false,"ctl_uninstall":true,"dependent_packages":null,"description":"Active Insight 云服务可加速故障排除流程，提供更好的技术支持体验。在多台 Synology 主机上启用此服务时，您可通过性能监控和自动警告系统管理您部署在不同位置的这些设备。","description_enu":"","distributor":"","distributor_url":"","dsm_app_launch_name":"","dsm_app_page":"","dsm_apps":"SYNO.SDS.ActiveInsight.Instance ","install_type":"system","installed_info":{"is_brick":false,"is_broken":false,"path":"/usr/local/packages/@appstore/ActiveInsight"},"is_uninstall_pages":true,"maintainer":"Synology Inc.","maintainer_url":"","report_beta_url":"","silent_upgrade":true,"startable":false,"support_center":true,"support_url":"","updated_at":"2023/06/29","status":"status_description","status_code":0,"status_origin":"running"},"id":"ActiveInsight","name":"Active Insight","timestamp":1697094982290,"version":"2.1.0-2603"}]
@@ -109,6 +111,8 @@ class Packages {
   String? name;
   num? timestamp;
   String? version;
+  List<PortInfo> portInfo = [];
+  ServicePolicy? servicePolicy;
   Packages copyWith({
     Additional? additional,
     String? id,
