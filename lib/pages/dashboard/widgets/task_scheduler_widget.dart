@@ -1,6 +1,4 @@
-import 'package:dsm_helper/extensions/list.dart';
 import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
-import 'package:dsm_helper/pages/control_panel/task_scheduler/task_scheduler.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';

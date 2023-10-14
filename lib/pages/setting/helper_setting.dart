@@ -4,7 +4,6 @@ import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/common/gesture_password.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
-import 'package:dsm_helper/pages/setting/vip.dart';
 import 'package:dsm_helper/pages/setting/logout.dart';
 import 'package:dsm_helper/providers/setting.dart';
 import 'package:dsm_helper/themes/app_theme.dart';

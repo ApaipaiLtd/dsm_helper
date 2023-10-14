@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:dsm_helper/apis/api.dart';
@@ -25,10 +24,7 @@ import 'package:dsm_helper/widgets/terminal_button.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Feedback;
-import 'package:fluwx/fluwx.dart';
-
 import 'package:provider/provider.dart';
-import 'package:sp_util/sp_util.dart';
 
 class SettingItem extends StatelessWidget {
   final String name;

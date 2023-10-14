@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dsm_helper/models/Syno/FileStation/Sharing.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/setting/license.dart';
 import 'package:dsm_helper/pages/setting/open_source.dart';
@@ -26,8 +25,6 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   bool checking = false;
   PackageInfo? packageInfo;
-  TapGestureRecognizer _licenseRecognizer = TapGestureRecognizer();
-  TapGestureRecognizer _privacyRecognizer = TapGestureRecognizer();
   @override
   void initState() {
     getInfo();

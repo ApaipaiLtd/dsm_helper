@@ -1,19 +1,11 @@
-import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
-import 'package:dsm_helper/models/Syno/Core/System.dart';
 import 'package:dsm_helper/pages/control_panel/info/common_tab.dart';
 import 'package:dsm_helper/pages/control_panel/info/network_tab.dart';
 import 'package:dsm_helper/pages/control_panel/info/service_tab.dart';
 import 'package:dsm_helper/pages/control_panel/info/storage_tab.dart';
-import 'package:dsm_helper/providers/init_data_provider.dart';
-import 'package:dsm_helper/providers/system_info_provider.dart';
-import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
-import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:provider/provider.dart';
 
 class SystemInfo extends StatefulWidget {
   final int index;

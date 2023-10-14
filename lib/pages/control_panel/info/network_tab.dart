@@ -3,7 +3,6 @@ import 'package:dsm_helper/pages/control_panel/info/widgets/network_nif_item_wid
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
-import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 
 class NetworkTab extends StatefulWidget {

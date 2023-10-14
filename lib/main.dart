@@ -6,9 +6,7 @@ import 'package:dsm_helper/pages/control_panel/control_panel.dart';
 import 'package:dsm_helper/pages/docker/docker.dart';
 import 'package:dsm_helper/pages/download_station/download_station.dart';
 import 'package:dsm_helper/pages/home.dart';
-import 'package:dsm_helper/pages/login/accounts.dart';
 import 'package:dsm_helper/pages/login/auth_page.dart';
-import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/pages/moments/moments.dart';
 import 'package:dsm_helper/pages/packages/packages.dart';
 import 'package:dsm_helper/pages/photos/photos.dart';
@@ -230,9 +228,7 @@ class _DsmHelperState extends State<DsmHelper> {
               //         ? Accounts()
               //         : Login(),
               routes: {
-                "/login": (BuildContext context) => Login(),
                 "/home": (BuildContext context) => Home(),
-                "/accounts": (BuildContext context) => Accounts(),
                 "/control_panel": (BuildContext context) => ControlPanel(),
                 "/package_center": (BuildContext context) => Packages(),
                 "/resource_monitor": (BuildContext context) => ResourceMonitor(),

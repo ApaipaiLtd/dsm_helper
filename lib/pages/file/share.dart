@@ -297,11 +297,14 @@ class _ShareState extends State<Share> {
               }
             },
           ),
+          SizedBox(
+            width: double.infinity,
+          ),
           CupertinoButton(
             child: Image.asset(
               "assets/icons/save.png",
-              width: 20,
-              height: 20,
+              width: 24,
+              height: 24,
             ),
             onPressed: () async {
               var hide = showWeuiLoadingToast(context: context);

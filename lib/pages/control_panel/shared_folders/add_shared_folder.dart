@@ -211,7 +211,7 @@ class _AddSharedFoldersState extends State<AddSharedFolders> {
                   )
                 : Image.asset(
                     "assets/icons/save.png",
-                    width: 20,
+                    width: 24,
                   ),
             onPressed: creating ? null : _save,
           ),

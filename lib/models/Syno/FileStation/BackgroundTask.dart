@@ -1,64 +1,19 @@
-/// offset : 0
-/// tasks : [{"api":"SYNO.FileStation.CopyMove","background":{"cancel":{"api":"SYNO.FileStation.CopyMove","method":"stop","params":{"taskid":"FileStation_1696901220D794357E"},"version":3},"id":"FileStation_1696901220D794357E","query":{"api":"SYNO.FileStation.CopyMove","method":"status","params":{"taskid":"FileStation_1696901220D794357E"},"version":3},"title":["{0}: {1}","filebrowser:filetable_move","又又酱"]},"crtime":1696901220,"finished":false,"method":"start","params":{"accurate_progress":true,"dest_folder_path":"/下载","overwrite":true,"path":["/home/Photos/又又酱"],"remove_src":true},"path":"","processed_size":0,"processing_path":"","progress":-1,"taskid":"FileStation_1696901220D794357E","total":0,"version":3}]
-/// total : 1
+/// api : "SYNO.FileStation.CopyMove"
+/// background : {"cancel":{"api":"SYNO.FileStation.CopyMove","method":"stop","params":{"taskid":"FileStation_169725454647E00CB1"},"version":3},"id":"FileStation_169725454647E00CB1","query":{"api":"SYNO.FileStation.CopyMove","method":"status","params":{"taskid":"FileStation_169725454647E00CB1"},"version":3},"title":["{0}: {1}","filebrowser:filetable_move","明日花绮罗"]}
+/// crtime : 1697254861
+/// finished : false
+/// method : "start"
+/// params : {"accurate_progress":true,"dest_folder_path":"/T14","overwrite":true,"path":["/下载/明日花绮罗"],"remove_src":true}
+/// path : "/下载/明日花绮罗"
+/// processed_size : 18152947712
+/// processing_path : "/下载/明日花绮罗"
+/// progress : 0.015545164234936237
+/// taskid : "FileStation_169725454647E00CB1"
+/// total : 1167755274383
+/// version : 3
 
 class BackgroundTask {
   BackgroundTask({
-    this.offset,
-    this.tasks,
-    this.total,
-  });
-
-  BackgroundTask.fromJson(dynamic json) {
-    offset = json['offset'];
-    if (json['tasks'] != null) {
-      tasks = [];
-      json['tasks'].forEach((v) {
-        tasks?.add(Tasks.fromJson(v));
-      });
-    }
-    total = json['total'];
-  }
-  num? offset;
-  List<Tasks>? tasks;
-  num? total;
-  BackgroundTask copyWith({
-    num? offset,
-    List<Tasks>? tasks,
-    num? total,
-  }) =>
-      BackgroundTask(
-        offset: offset ?? this.offset,
-        tasks: tasks ?? this.tasks,
-        total: total ?? this.total,
-      );
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['offset'] = offset;
-    if (tasks != null) {
-      map['tasks'] = tasks?.map((v) => v.toJson()).toList();
-    }
-    map['total'] = total;
-    return map;
-  }
-}
-
-/// api : "SYNO.FileStation.CopyMove"
-/// background : {"cancel":{"api":"SYNO.FileStation.CopyMove","method":"stop","params":{"taskid":"FileStation_1696901220D794357E"},"version":3},"id":"FileStation_1696901220D794357E","query":{"api":"SYNO.FileStation.CopyMove","method":"status","params":{"taskid":"FileStation_1696901220D794357E"},"version":3},"title":["{0}: {1}","filebrowser:filetable_move","又又酱"]}
-/// crtime : 1696901220
-/// finished : false
-/// method : "start"
-/// params : {"accurate_progress":true,"dest_folder_path":"/下载","overwrite":true,"path":["/home/Photos/又又酱"],"remove_src":true}
-/// path : ""
-/// processed_size : 0
-/// processing_path : ""
-/// progress : -1
-/// taskid : "FileStation_1696901220D794357E"
-/// total : 0
-/// version : 3
-
-class Tasks {
-  Tasks({
     this.api,
     this.background,
     this.crtime,
@@ -74,7 +29,7 @@ class Tasks {
     this.version,
   });
 
-  Tasks.fromJson(dynamic json) {
+  BackgroundTask.fromJson(dynamic json) {
     api = json['api'];
     background = json['background'] != null ? Background.fromJson(json['background']) : null;
     crtime = json['crtime'];
@@ -102,7 +57,7 @@ class Tasks {
   String? taskid;
   num? total;
   num? version;
-  Tasks copyWith({
+  BackgroundTask copyWith({
     String? api,
     Background? background,
     num? crtime,
@@ -117,7 +72,7 @@ class Tasks {
     num? total,
     num? version,
   }) =>
-      Tasks(
+      BackgroundTask(
         api: api ?? this.api,
         background: background ?? this.background,
         crtime: crtime ?? this.crtime,
@@ -156,9 +111,9 @@ class Tasks {
 }
 
 /// accurate_progress : true
-/// dest_folder_path : "/下载"
+/// dest_folder_path : "/T14"
 /// overwrite : true
-/// path : ["/home/Photos/又又酱"]
+/// path : ["/下载/明日花绮罗"]
 /// remove_src : true
 
 class Params {
@@ -168,6 +123,7 @@ class Params {
     this.overwrite,
     this.path,
     this.removeSrc,
+    this.taskid,
   });
 
   Params.fromJson(dynamic json) {
@@ -176,18 +132,21 @@ class Params {
     overwrite = json['overwrite'];
     path = json['path'] != null ? json['path'].cast<String>() : [];
     removeSrc = json['remove_src'];
+    taskid = json['taskid'];
   }
   bool? accurateProgress;
   String? destFolderPath;
   bool? overwrite;
   List<String>? path;
   bool? removeSrc;
+  String? taskid;
   Params copyWith({
     bool? accurateProgress,
     String? destFolderPath,
     bool? overwrite,
     List<String>? path,
     bool? removeSrc,
+    String? taskid,
   }) =>
       Params(
         accurateProgress: accurateProgress ?? this.accurateProgress,
@@ -195,6 +154,7 @@ class Params {
         overwrite: overwrite ?? this.overwrite,
         path: path ?? this.path,
         removeSrc: removeSrc ?? this.removeSrc,
+        taskid: taskid ?? this.taskid,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -203,14 +163,15 @@ class Params {
     map['overwrite'] = overwrite;
     map['path'] = path;
     map['remove_src'] = removeSrc;
+    map['taskid'] = taskid;
     return map;
   }
 }
 
-/// cancel : {"api":"SYNO.FileStation.CopyMove","method":"stop","params":{"taskid":"FileStation_1696901220D794357E"},"version":3}
-/// id : "FileStation_1696901220D794357E"
-/// query : {"api":"SYNO.FileStation.CopyMove","method":"status","params":{"taskid":"FileStation_1696901220D794357E"},"version":3}
-/// title : ["{0}: {1}","filebrowser:filetable_move","又又酱"]
+/// cancel : {"api":"SYNO.FileStation.CopyMove","method":"stop","params":{"taskid":"FileStation_169725454647E00CB1"},"version":3}
+/// id : "FileStation_169725454647E00CB1"
+/// query : {"api":"SYNO.FileStation.CopyMove","method":"status","params":{"taskid":"FileStation_169725454647E00CB1"},"version":3}
+/// title : ["{0}: {1}","filebrowser:filetable_move","明日花绮罗"]
 
 class Background {
   Background({
@@ -221,19 +182,19 @@ class Background {
   });
 
   Background.fromJson(dynamic json) {
-    cancel = json['cancel'] != null ? Action.fromJson(json['cancel']) : null;
+    cancel = json['cancel'] != null ? Query.fromJson(json['cancel']) : null;
     id = json['id'];
-    query = json['query'] != null ? Action.fromJson(json['query']) : null;
+    query = json['query'] != null ? Query.fromJson(json['query']) : null;
     title = json['title'] != null ? json['title'].cast<String>() : [];
   }
-  Action? cancel;
+  Query? cancel;
   String? id;
-  Action? query;
+  Query? query;
   List<String>? title;
   Background copyWith({
-    Action? cancel,
+    Query? cancel,
     String? id,
-    Action? query,
+    Query? query,
     List<String>? title,
   }) =>
       Background(
@@ -257,35 +218,35 @@ class Background {
 }
 
 /// api : "SYNO.FileStation.CopyMove"
-/// method : "stop"
-/// params : {"taskid":"FileStation_1696901220D794357E"}
+/// method : "status"
+/// params : {"taskid":"FileStation_169725454647E00CB1"}
 /// version : 3
 
-class Action {
-  Action({
+class Query {
+  Query({
     this.api,
     this.method,
     this.params,
     this.version,
   });
 
-  Action.fromJson(dynamic json) {
+  Query.fromJson(dynamic json) {
     api = json['api'];
     method = json['method'];
-    params = json['params'];
+    params = json['params'] != null ? Params.fromJson(json['params']) : null;
     version = json['version'];
   }
   String? api;
   String? method;
-  Map? params;
+  Params? params;
   num? version;
-  Action copyWith({
+  Query copyWith({
     String? api,
     String? method,
-    Map? params,
+    Params? params,
     num? version,
   }) =>
-      Action(
+      Query(
         api: api ?? this.api,
         method: method ?? this.method,
         params: params ?? this.params,
@@ -295,7 +256,9 @@ class Action {
     final map = <String, dynamic>{};
     map['api'] = api;
     map['method'] = method;
-    map['params'] = params;
+    if (params != null) {
+      map['params'] = params?.toJson();
+    }
     map['version'] = version;
     return map;
   }

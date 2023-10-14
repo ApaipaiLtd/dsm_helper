@@ -1,5 +1,4 @@
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
-import 'package:dsm_helper/pages/applications/application_enums.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
 import 'package:dsm_helper/pages/control_panel/control_panel.dart';
 import 'package:dsm_helper/pages/docker/detail.dart';
@@ -17,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/init_data_provider.dart';
-import '../../providers/shortcut.dart';
 import '../photos/photos.dart';
 
 class ShortcutList extends StatelessWidget {

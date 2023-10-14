@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dsm_helper/pages/applications/applications.dart';
 import 'package:dsm_helper/pages/download/download.dart';
-import 'package:dsm_helper/pages/file/file.dart';
 import 'package:dsm_helper/pages/file/file_page.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
@@ -11,7 +10,6 @@ import 'package:dsm_helper/utils/overlay_util.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/update_dialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
