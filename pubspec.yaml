@@ -98,6 +98,7 @@ dependencies:
   flutter_floating: ^1.0.8
   kumi_popup_window: ^2.0.1
   reorderables: ^0.6.0
+  event_bus: ^2.0.0
 #  fplayer: ^1.0.4
   fplayer:
     path: fplayer

@@ -17,7 +17,7 @@ class ConnectionLogWidget extends StatefulWidget {
   State<ConnectionLogWidget> createState() => _ConnectionLogWidgetState();
 }
 
-class _ConnectionLogWidgetState extends State<ConnectionLogWidget> {
+class _ConnectionLogWidgetState extends State<ConnectionLogWidget> with AutomaticKeepAliveClientMixin {
   CurrentConnection connectedUsers = CurrentConnection();
   bool loading = true;
   bool error = false;
@@ -51,6 +51,7 @@ class _ConnectionLogWidgetState extends State<ConnectionLogWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     late Widget cardBody;
     if (loading) {
       cardBody = SizedBox(height: 100, child: Center(child: LoadingWidget(size: 30)));
@@ -151,4 +152,7 @@ class _ConnectionLogWidgetState extends State<ConnectionLogWidget> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

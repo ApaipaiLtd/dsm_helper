@@ -212,7 +212,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                   height: 16,
                 ),
                 Text(
-                  "${system.sysTemp}℃",
+                  "${system.sysTemp ?? '-'}℃",
                   style: TextStyle(color: AppTheme.of(context)?.successColor),
                 ),
                 Spacer(),

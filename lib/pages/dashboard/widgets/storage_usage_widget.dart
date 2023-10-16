@@ -13,7 +13,7 @@ class StorageUsageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Storage storage = context.read<StorageProvider>().storage;
+    Storage storage = context.watch<StorageProvider>().storage;
     return Column(
       children: [
         WidgetCard(

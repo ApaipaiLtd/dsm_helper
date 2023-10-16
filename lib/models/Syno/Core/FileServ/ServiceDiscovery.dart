@@ -5,7 +5,7 @@ import 'package:dsm_helper/models/base_model.dart';
 /// time_machine_disable_shares : []
 /// time_machine_shares : []
 
-class ServiceDiscovery extends BaseModel {
+class ServiceDiscovery implements BaseModel {
   ServiceDiscovery({
     this.enableAfpTimeMachine,
     this.enableSmbTimeMachine,
@@ -66,4 +66,7 @@ class ServiceDiscovery extends BaseModel {
   fromJson(json) {
     return ServiceDiscovery.fromJson(json);
   }
+
+  @override
+  Map<String, dynamic>? data;
 }

@@ -1,5 +1,7 @@
+import 'package:background_downloader/background_downloader.dart';
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
+import 'package:dsm_helper/database/table_extension.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
@@ -22,7 +24,12 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     queryServers();
+    initDownloader();
     super.initState();
+  }
+
+  initDownloader() async {
+    await FileDownloader(persistentStorage: SqlitePersistentStorage()).trackTasks();
   }
 
   queryServers() async {
@@ -35,7 +42,7 @@ class _SplashState extends State<Splash> {
     List<Account> accounts = await DbUtils.db.select(DbUtils.db.accounts).get();
     if (accounts.isEmpty) {
       if (servers.length == 1) {
-        Api.dsm = DsmApi(baseUrl: '${servers.first.ssl ? 'https' : 'http'}://${servers.first.domain}:${servers.first.port}');
+        Api.dsm = DsmApi(baseUrl: '${servers.first.url}');
         try {
           ApiModel.apiInfo = await ApiModel.info();
           // context.push(Login(servers.first), replace: true);
