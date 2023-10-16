@@ -33,7 +33,7 @@ jobs:
       - name: Restore packages
         run: flutter pub get
 
-      - name: Build Android App Bundle
+      - name: Build Android Apk
         run: flutter build apk --release --flavor=beta
 
       - name: Upload PGYER File
@@ -41,5 +41,5 @@ jobs:
         uses: xtayga/upload-pgyer-action@master
         with:
           url: https://www.pgyer.com/apiv2/app/upload
-          forms: '{"_api_key":"${{ secrets.PGY_KEY }}","buildName":"群晖助手Beta"}'
+          forms: '{"_api_key":"${{ secrets.PGY_API_KEY }}","buildName":"群晖助手Beta"}'
           fileForms: '{"file":"build/app/outputs/flutter-apk/app-beta-release.apk"}'
