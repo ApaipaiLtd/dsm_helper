@@ -22,11 +22,19 @@ jobs:
         with:
           flutter-version: "3.13.6"
 
+      - name: Create the Keystore
+        env:
+          KEY_PROPERTIES: ${{ secrets.KEY_PROPERTIES }}
+        run: |
+          # import keystore from secrets
+          ls -all
+          echo $KEY_PROPERTIES | base64 -di > android/key.properties
+
       - name: Restore packages
         run: flutter pub get
 
       - name: Build Android App Bundle
-        run: flutter build apk --release
+        run: flutter build apk --release --flavor=beta
 
       - name: Upload PGYER File
         id: pgyer
@@ -34,10 +42,4 @@ jobs:
         with:
           url: https://www.pgyer.com/apiv2/app/upload
           forms: '{"_api_key":"${{ secrets.PGY_KEY }}","buildName":"群晖助手"}'
-          fileForms: '{"file":"build/app/outputs/apk/release/app-dev-release.apk"}'
-
-      - name: Publish Android Artefacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: release-aab
-          path: build/app/outputs/apk/release/app-release.apk
+          fileForms: '{"file":"build/app/outputs/apk/release/app-beta-release.apk"}'
