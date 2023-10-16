@@ -41,5 +41,5 @@ jobs:
         uses: xtayga/upload-pgyer-action@master
         with:
           url: https://www.pgyer.com/apiv2/app/upload
-          forms: '{"_api_key":"${{ secrets.PGY_KEY }}","buildName":"群晖助手"}'
-          fileForms: '{"file":"build/app/outputs/apk/release/app-beta-release.apk"}'
+          forms: '{"_api_key":"${{ secrets.PGY_KEY }}","buildName":"群晖助手Beta"}'
+          fileForms: '{"file":"build/app/outputs/flutter-apk/app-beta-release.apk"}'
