@@ -9,7 +9,7 @@ import 'package:dio/io.dart';
 import 'package:dsm_helper/constants/size_enum.dart';
 import 'package:dsm_helper/models/Syno/Core/Notify/DsmNotifyStrings.dart';
 import 'package:dsm_helper/models/setting/group_model.dart';
-import 'package:dsm_helper/pages/download/download.dart';
+import 'package:dsm_helper/pages/transfer/transfer.dart';
 import 'package:dsm_helper/pages/file/enums/file_type_enums.dart';
 import 'package:dsm_helper/pages/update/update.dart';
 import 'package:dsm_helper/utils/api.dart';
@@ -71,7 +71,7 @@ class Utils {
   static Map strings = {};
   static Map<String, DsmNotifyStrings> notifyStrings = {};
   static bool isAuthPage = false;
-  static GlobalKey<DownloadState> downloadKey = GlobalKey<DownloadState>();
+  // static GlobalKey<DownloadState> downloadKey = GlobalKey<DownloadState>();
   static String appName = "";
 
   static String downloadSavePath = "";

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:android_intent_plus/android_intent.dart';
+import 'package:background_downloader/background_downloader.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cool_ui/cool_ui.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -19,6 +20,8 @@ import 'package:dsm_helper/pages/file/enums/sort_enums.dart';
 import 'package:dsm_helper/pages/file/remote_folder.dart';
 import 'package:dsm_helper/pages/file/widgets/file_grid_item_widget.dart';
 import 'package:dsm_helper/pages/file/widgets/file_list_item_widget.dart';
+import 'package:dsm_helper/pages/transfer/bus/download_file_bus.dart';
+import 'package:dsm_helper/utils/bus/bus.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/log.dart';
@@ -521,7 +524,7 @@ class FilesState extends State<Files> {
     }
   }
 
-  downloadFiles(List files) async {
+  downloadFiles(List<FileItem> files) async {
     ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.mobile) {
       Utils.vibrate(FeedbackType.warning);
@@ -606,36 +609,45 @@ class FilesState extends State<Files> {
     }
   }
 
-  download(files) async {
+  download(List<FileItem> files) async {
     // 检查权限
     if (Platform.isAndroid) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      if (androidInfo.version.sdkInt >= 30) {
-        bool permission = false;
-        permission = await Permission.manageExternalStorage.request().isGranted;
-        if (!permission) {
-          Utils.toast("安卓11以上需授权文件管理权限");
-          return;
-        }
-      } else {
-        bool permission = false;
-        permission = await Permission.storage.request().isGranted;
-        if (!permission) {
-          Utils.toast("请先授权APP访问存储权限");
-          return;
-        }
+      // if (androidInfo.version.sdkInt >= 30) {
+      //   bool permission = false;
+      //   permission = await Permission.manageExternalStorage.isGranted;
+      //   if (!permission) {
+      //     Utils.toast("安卓11以上需授权文件管理权限");
+      //     return;
+      //   }
+      // } else {
+      bool permission = false;
+      permission = await Permission.storage.request().isGranted;
+      if (!permission) {
+        Utils.toast("请先授权APP访问存储权限");
+        return;
       }
+      // }
     }
 
     for (var file in files) {
-      String url = api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file['path'])}&mode=download&_sid=${api.Api.dsm.sid!}";
+      String url = api.Api.dsm.baseUrl! + "/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=${Uri.encodeComponent(file.path!)}&mode=download&_sid=${api.Api.dsm.sid!}";
       String filename = "";
-      if (file['isdir']) {
-        filename = file['name'] + ".zip";
+      if (file.isdir == true) {
+        filename = "${file.name}.zip";
       } else {
-        filename = file['name'];
+        filename = file.name!;
       }
+      DownloadTask task = await DownloadTask(
+        url: url,
+        filename: filename,
+        displayName: filename,
+        directory: 'download',
+        updates: Updates.statusAndProgress,
+        allowPause: true,
+      ).withSuggestedFilename(unique: true);
+      bus.fire(DownloadFileEvent(task));
       // await Utils.download(filename, url);
     }
     Utils.toast("已添加${files.length > 1 ? "${files.length}个" : ""}下载任务，请至下载页面查看");

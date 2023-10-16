@@ -14,7 +14,7 @@ class TaskSchedulerWidget extends StatefulWidget {
   State<TaskSchedulerWidget> createState() => _TaskSchedulerWidgetState();
 }
 
-class _TaskSchedulerWidgetState extends State<TaskSchedulerWidget> {
+class _TaskSchedulerWidgetState extends State<TaskSchedulerWidget> with AutomaticKeepAliveClientMixin {
   bool loading = true;
   bool error = false;
   TaskScheduler taskScheduler = TaskScheduler();
@@ -48,6 +48,7 @@ class _TaskSchedulerWidgetState extends State<TaskSchedulerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     late Widget cardBody;
     if (loading) {
       cardBody = SizedBox(height: 100, child: Center(child: LoadingWidget(size: 30)));
@@ -79,6 +80,9 @@ class _TaskSchedulerWidgetState extends State<TaskSchedulerWidget> {
       body: cardBody,
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class TaskSchedulerItem extends StatefulWidget {
@@ -139,7 +143,9 @@ class _TaskSchedulerItemState extends State<TaskSchedulerItem> {
             width: 30,
             height: 30,
             child: widget.task.running
-                ? CupertinoActivityIndicator()
+                ? LoadingWidget(
+                    size: 24,
+                  )
                 : Image.asset(
                     "assets/icons/play_circle_fill.png",
                     width: 30,

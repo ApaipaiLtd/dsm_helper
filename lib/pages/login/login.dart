@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:drift/drift.dart' as drift;
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/apis/dsm_api/dsm_api.dart';
 import 'package:dsm_helper/database/table_extension.dart';
 import 'package:dsm_helper/database/tables.dart';
 import 'package:dsm_helper/models/Syno/Api/auth.dart';
@@ -93,7 +94,7 @@ class _LoginState extends State<Login> {
                 synoToken: authModel.synotoken!,
               ),
             );
-        await Api.dsm.init(widget.server.url, deviceId: authModel.deviceId, sid: authModel.sid);
+        Api.dsm = DsmApi(baseUrl: widget.server.url, deviceId: authModel.deviceId!, sid: authModel.sid!);
         context.push(Home(), replace: true);
       } on DsmException catch (e) {
         if (e.code == 400) {

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dsm_helper/pages/applications/applications.dart';
-import 'package:dsm_helper/pages/download/download.dart';
+import 'package:dsm_helper/pages/transfer/transfer.dart';
 import 'package:dsm_helper/pages/file/file_page.dart';
 import 'package:dsm_helper/pages/setting/setting.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
@@ -213,7 +213,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             Dashboard(key: _dashboardStateKey),
             FilePage(key: _filesStateKey),
             Applications(),
-            Download(key: Utils.downloadKey),
+            Transfer(),
             Setting(),
           ],
           index: _currentIndex,

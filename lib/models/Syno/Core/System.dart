@@ -3,6 +3,7 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_response.dart';
 import 'package:dsm_helper/models/base_model.dart';
+import 'package:dsm_helper/pages/control_panel/info/enums/use_device_class_enum.dart';
 
 /// cpu_clock_speed : 1996
 /// cpu_cores : "4"
@@ -256,6 +257,7 @@ class UsbDev {
     vid = json['vid'];
   }
   String? cls;
+  UsbDeviceClassEnum get classEnum => UsbDeviceClassEnum.fromValue(cls ?? 'unknown');
   String? pid;
   String? producer;
   String? product;

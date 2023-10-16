@@ -1,4 +1,5 @@
 import 'package:dsm_helper/models/Syno/Core/System.dart';
+import 'package:dsm_helper/pages/control_panel/info/enums/use_device_class_enum.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class UsbDeviceItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            dev.cls == "hub" ? "USB集线器" : dev.cls ?? '',
+            dev.classEnum != UsbDeviceClassEnum.unknown ? dev.classEnum.label : dev.cls ?? '未知',
             style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
           ),
           Text(

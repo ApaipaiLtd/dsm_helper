@@ -2,7 +2,7 @@ import 'package:dsm_helper/models/base_model.dart';
 
 /// enable : false
 
-class Acl extends BaseModel {
+class Acl implements BaseModel {
   Acl({
     this.enable,
   });
@@ -31,4 +31,7 @@ class Acl extends BaseModel {
   fromJson(json) {
     return Acl.fromJson(json);
   }
+
+  @override
+  Map<String, dynamic>? data;
 }

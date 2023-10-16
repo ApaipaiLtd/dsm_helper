@@ -15,7 +15,7 @@ class FileChangeLogWidget extends StatefulWidget {
   State<FileChangeLogWidget> createState() => _FileChangeLogWidgetState();
 }
 
-class _FileChangeLogWidgetState extends State<FileChangeLogWidget> {
+class _FileChangeLogWidgetState extends State<FileChangeLogWidget> with AutomaticKeepAliveClientMixin {
   bool loading = true;
   bool error = false;
   SyslogClientLog fileLogs = SyslogClientLog();
@@ -50,6 +50,7 @@ class _FileChangeLogWidgetState extends State<FileChangeLogWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return WidgetCard(
       title: "文件更改日志",
       /*icon: Image.asset(
@@ -136,4 +137,7 @@ class _FileChangeLogWidgetState extends State<FileChangeLogWidget> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -581,7 +581,7 @@ class _SelectServerState extends State<SelectServer> {
               DbUtils.db.updateAccount(account.copyWith(
                 sid: authModel.sid!,
               ));
-              await Api.dsm.init(server.url, deviceId: authModel.deviceId, sid: authModel.sid);
+              Api.dsm = DsmApi(baseUrl: server.url, deviceId: account.deviceId, sid: account.sid);
               hide();
               context.push(Home(), replace: true);
             } on DsmException catch (e) {

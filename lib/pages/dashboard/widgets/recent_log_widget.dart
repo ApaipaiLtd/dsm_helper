@@ -17,7 +17,7 @@ class RecentLogWidget extends StatefulWidget {
   State<RecentLogWidget> createState() => _RecentLogWidgetState();
 }
 
-class _RecentLogWidgetState extends State<RecentLogWidget> {
+class _RecentLogWidgetState extends State<RecentLogWidget> with AutomaticKeepAliveClientMixin {
   bool loading = true;
   bool error = false;
   SynoClientStatus latestLog = SynoClientStatus();
@@ -52,6 +52,7 @@ class _RecentLogWidgetState extends State<RecentLogWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return WidgetCard(
       onTap: () {
         context.push(LogCenter(), name: "log_center");
@@ -135,4 +136,7 @@ class _RecentLogWidgetState extends State<RecentLogWidget> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
