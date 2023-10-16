@@ -1,3 +1,4 @@
+import 'package:dsm_helper/models/Syno/Core/SynoUser.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -6,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 class UserDetail extends StatefulWidget {
-  final Map user;
+  final Users user;
   UserDetail(this.user);
   @override
   _UserDetailState createState() => _UserDetailState();
@@ -17,7 +18,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  Map? user;
+  Users? user;
   List groups = [];
   List originGroups = [];
   List bandwidthControl = [];
@@ -31,9 +32,9 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   @override
   void initState() {
     _tabController = TabController(length: 6, vsync: this);
-    _nameController.value = TextEditingValue(text: widget.user['name']);
-    _descriptionController.value = TextEditingValue(text: widget.user['description']);
-    _emailController.value = TextEditingValue(text: widget.user['email']);
+    _nameController.value = TextEditingValue(text: widget.user.name ?? '');
+    _descriptionController.value = TextEditingValue(text: widget.user.description ?? '');
+    _emailController.value = TextEditingValue(text: widget.user.email ?? '');
     setState(() {
       user = widget.user;
     });
@@ -248,7 +249,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   }
 
   getGroup() async {
-    var res = await Api.userGroup(user!['name']);
+    var res = await Api.userGroup(user!.name!);
     if (res['success']) {
       setState(() {
         groups = res['data']['groups'];
@@ -259,7 +260,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
 
   getData() async {
     getGroup();
-    var res = await Api.userDetail(user!['name']);
+    var res = await Api.userDetail(user!.name!);
     if (res['success']) {
       List result = res['data']['result'];
       result.forEach((item) {
@@ -268,7 +269,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
             case "SYNO.Core.User":
               setState(() {
                 user = item['data']['users'][0];
-                user!['new_name'] = item['data']['users'][0]['name'];
+                // user.newName = item['data']['users'][0]['name'];
               });
               break;
             case "SYNO.Core.User.PasswordExpiry":
@@ -312,7 +313,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.user['name']}"),
+        title: Text("${widget.user.name}"),
       ),
       body: Column(
         children: [
@@ -376,7 +377,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _nameController,
-                        onChanged: (v) => user!['new_name'] = v,
+                        // onChanged: (v) => user!['new_name'] = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '名称',
@@ -394,7 +395,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _descriptionController,
-                        onChanged: (v) => user!['description'] = v,
+                        onChanged: (v) => user!.description = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '描述',
@@ -412,7 +413,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: TextField(
                         controller: _emailController,
-                        onChanged: (v) => user!['email'] = v,
+                        onChanged: (v) => user!.email = v,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: '电子邮件',
@@ -461,7 +462,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          user!['cannot_chg_passwd'] = !user!['cannot_chg_passwd'];
+                          // user!['cannot_chg_passwd'] = !user!['cannot_chg_passwd'];
                         });
                       },
                       child: Container(
@@ -475,11 +476,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                           children: [
                             Text("不允许此用户修改密码"),
                             Spacer(),
-                            if (user!['cannot_chg_passwd'] ?? false)
-                              Icon(
-                                CupertinoIcons.checkmark_alt,
-                                color: Color(0xffff9813),
-                              ),
+                            // if (user!['cannot_chg_passwd'] ?? false)
+                            //   Icon(
+                            //     CupertinoIcons.checkmark_alt,
+                            //     color: Color(0xffff9813),
+                            //   ),
                           ],
                         ),
                       ),
@@ -504,11 +505,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                           children: [
                             Text("密码始终有效"),
                             Spacer(),
-                            if (user!['passwd_never_expire'] ?? false)
-                              Icon(
-                                CupertinoIcons.checkmark_alt,
-                                color: Color(0xffff9813),
-                              ),
+                            // if (user!['passwd_never_expire'] ?? false)
+                            //   Icon(
+                            //     CupertinoIcons.checkmark_alt,
+                            //     color: Color(0xffff9813),
+                            //   ),
                           ],
                         ),
                       ),
@@ -519,10 +520,10 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          if (user!['expired'] != "normal") {
-                            user!['expired'] = "normal";
+                          if (user!.expired != "normal") {
+                            user!.expired = "normal";
                           } else {
-                            user!['expired'] = "now";
+                            user!.expired = "now";
                           }
                         });
                       },
@@ -542,14 +543,14 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   Spacer(),
-                                  if (user!['expired'] != "normal")
+                                  if (user!.expired != "normal")
                                     Icon(
                                       CupertinoIcons.checkmark_alt,
                                       color: Color(0xffff9813),
                                     ),
                                 ],
                               ),
-                              if (user!['expired'] != "normal")
+                              if (user!.expired != "normal")
                                 Container(
                                   margin: EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
@@ -565,7 +566,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                           child: GestureDetector(
                                             onTap: () {
                                               setState(() {
-                                                user!['expired'] = "now";
+                                                user!.expired = "now";
                                               });
                                             },
                                             child: Container(
@@ -584,7 +585,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                                         style: TextStyle(fontSize: 16, height: 1.6),
                                                       ),
                                                       Spacer(),
-                                                      if (user!['expired'] == "now")
+                                                      if (user!.expired == "now")
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -605,7 +606,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                             onTap: () {
                                               DatePicker.showDatePicker(context, locale: LocaleType.zh, currentTime: DateTime.now(), onConfirm: (v) {
                                                 setState(() {
-                                                  user!['expired'] = v.format("Y-m-d");
+                                                  user!.expired = v.format("Y-m-d");
                                                 });
                                               });
                                             },
@@ -621,11 +622,11 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        "${user!['expired'] == "now" ? "到期于：" : user!['expired']}",
+                                                        "${user!.expired == "now" ? "到期于：" : user!.expired}",
                                                         style: TextStyle(fontSize: 16, height: 1.6),
                                                       ),
                                                       Spacer(),
-                                                      if (user!['expired'] != "now")
+                                                      if (user!.expired != "now")
                                                         Icon(
                                                           CupertinoIcons.checkmark_alt,
                                                           color: Color(0xffff9813),
@@ -709,7 +710,7 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                       Utils.toast("密码最低6位");
                       return;
                     }
-                    user!['password'] = password;
+                    // user!['password'] = password;
                   }
 
                   //对比当前groups与原始groups
@@ -721,17 +722,17 @@ class _UserDetailState extends State<UserDetail> with SingleTickerProviderStateM
                     saving = true;
                   });
 
-                  var res = await Api.userSave(user!, addGroup, removeGroup);
-                  setState(() {
-                    saving = false;
-                  });
-                  if (res['success']) {
-                    widget.user['name'] = user!['new_name'];
-                    widget.user['email'] = user!['email'];
-                    Utils.toast("保存成功");
-                  } else {
-                    Utils.toast("保存失败,代码${res['error']['code']}");
-                  }
+                  // var res = await Api.userSave(user!, addGroup, removeGroup);
+                  // setState(() {
+                  //   saving = false;
+                  // });
+                  // if (res['success']) {
+                  //   widget.user['name'] = user!['new_name'];
+                  //   widget.user['email'] = user!['email'];
+                  //   Utils.toast("保存成功");
+                  // } else {
+                  //   Utils.toast("保存失败,代码${res['error']['code']}");
+                  // }
                 },
                 child: saving
                     ? CupertinoActivityIndicator(

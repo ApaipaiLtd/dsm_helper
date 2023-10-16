@@ -1,9 +1,19 @@
+import 'package:dsm_helper/models/base_model.dart';
+import 'package:dsm_helper/pages/control_panel/external_device/enums/device_status_enum.dart';
+import 'package:dsm_helper/pages/control_panel/external_device/enums/partition_status_enums.dart';
+
 /// devices : [{"dev_id":"sdq","dev_title":"USB Disk 1","dev_type":"usbDisk","partitions":[{"dev_fstype":"exfat","filesystem":"","name_id":"sdq1","partition_title":"USB Disk 1 Partition 1","share_name":"","status":"normal","total_size_mb":29999,"used_size_mb":0},{"dev_fstype":"vfat","filesystem":"","name_id":"sdq2","partition_title":"USB Disk 1 Partition 2","share_name":"","status":"normal","total_size_mb":32,"used_size_mb":0}],"product":"Teclast CoolFlash","status":"init"}]
 
-class Device {
+class Device implements BaseModel {
   Device({
     this.devices,
-  });
+    this.api,
+    List<String>? additional = const ['all'],
+  }) {
+    this.data = {
+      "additional": additional,
+    };
+  }
 
   Device.fromJson(dynamic json) {
     if (json['devices'] != null) {
@@ -27,6 +37,23 @@ class Device {
     }
     return map;
   }
+
+  @override
+  String? api;
+
+  @override
+  Map<String, dynamic>? data;
+
+  @override
+  String? method = 'list';
+
+  @override
+  int? version = 1;
+
+  @override
+  fromJson(json) {
+    return Device.fromJson(json);
+  }
 }
 
 /// dev_id : "sdq"
@@ -43,6 +70,7 @@ class Devices {
     this.devType,
     this.partitions,
     this.product,
+    this.producer,
     this.status,
   });
 
@@ -57,6 +85,7 @@ class Devices {
       });
     }
     product = json['product'];
+    producer = json['producer'];
     status = json['status'];
   }
   String? devId;
@@ -64,13 +93,16 @@ class Devices {
   String? devType;
   List<Partitions>? partitions;
   String? product;
+  String? producer;
   String? status; // init 初始化中 normal 正常运作
+  DeviceStatusEnum get statusEnum => DeviceStatusEnum.fromValue(status ?? 'unknown');
   Devices copyWith({
     String? devId,
     String? devTitle,
     String? devType,
     List<Partitions>? partitions,
     String? product,
+    String? producer,
     String? status,
   }) =>
       Devices(
@@ -79,6 +111,7 @@ class Devices {
         devType: devType ?? this.devType,
         partitions: partitions ?? this.partitions,
         product: product ?? this.product,
+        producer: producer ?? this.producer,
         status: status ?? this.status,
       );
   Map<String, dynamic> toJson() {
@@ -90,6 +123,7 @@ class Devices {
       map['partitions'] = partitions?.map((v) => v.toJson()).toList();
     }
     map['product'] = product;
+    map['producer'] = producer;
     map['status'] = status;
     return map;
   }
@@ -132,8 +166,11 @@ class Partitions {
   String? partitionTitle;
   String? shareName;
   String? status;
+  PartitionStatusEnum get statusEnum => PartitionStatusEnum.fromValue(status ?? 'unknown');
   num? totalSizeMb;
   num? usedSizeMb;
+  double get usedPercent => totalSizeMb != null && usedSizeMb != null && totalSizeMb! > 0 ? usedSizeMb! / totalSizeMb! * 100 : 0;
+  num get freeSizeMb => totalSizeMb != null && usedSizeMb != null ? totalSizeMb! - usedSizeMb! : 0;
   Partitions copyWith({
     String? devFstype,
     String? filesystem,

@@ -1,7 +1,17 @@
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Core/ExternalDevice/Storage/Device.dart';
+import 'package:dsm_helper/pages/control_panel/external_device/enums/device_status_enum.dart';
+import 'package:dsm_helper/pages/control_panel/external_device/enums/partition_status_enums.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
-import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/line_progress_bar.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -13,8 +23,8 @@ class ExternalDevice extends StatefulWidget {
 
 class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List esatas = [];
-  List usbs = [];
+  Device esatas = Device();
+  Device usbs = Device();
   bool loading = true;
   @override
   void initState() {
@@ -23,299 +33,249 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
     super.initState();
   }
 
+  List<Devices> get devices => (usbs.devices ?? []) + (esatas.devices ?? []);
+
   getData() async {
-    var res = await Api.externalDevice();
-    if (res['success']) {
+    try {
+      List<DsmResponse> batchRes = await Api.dsm.batch(apis: [Device(api: "SYNO.Core.ExternalDevice.Storage.USB"), Device(api: "SYNO.Core.ExternalDevice.Storage.eSATA")]);
+      usbs = batchRes[0].data;
+      esatas = batchRes[1].data;
       setState(() {
         loading = false;
       });
-      List result = res['data']['result'];
-      result.forEach((item) {
-        if (item['success'] == true) {
-          switch (item['api']) {
-            case "SYNO.Core.ExternalDevice.Storage.eSATA":
-              setState(() {
-                esatas = item['data']['devices'];
-              });
-              break;
-            case "SYNO.Core.ExternalDevice.Storage.USB":
-              setState(() {
-                usbs = item['data']['devices'];
-              });
-              break;
-          }
-        }
-      });
-    } else {
-      Utils.toast("获取外接设备失败，code${res['error']['code']}");
+    } catch (e) {
+      Utils.toast("获取外接设备失败");
     }
   }
 
-  Widget _buildPartitionItem(partition) {
+  Widget _buildPartitionItem(Partitions partition) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme.of(context).dividerColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      margin: EdgeInsets.only(top: 20),
-      padding: EdgeInsets.all(20),
+      margin: EdgeInsets.only(top: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text("${partition['partition_title']}"),
-              SizedBox(
-                width: 10,
+              Text("${partition.partitionTitle}"),
+              Text(
+                "${partition.shareName}",
+                style: TextStyle(fontSize: 13, color: AppTheme.of(context)?.placeholderColor),
               ),
-              partition['status'] == "normal"
+              SizedBox(width: 10),
+              partition.statusEnum != PartitionStatusEnum.unknown
                   ? Label(
-                      "正常",
-                      Colors.green,
+                      partition.statusEnum.label,
+                      partition.statusEnum.color,
                       fill: true,
                     )
-                  : partition['status'] == "background"
-                      ? Label(
-                          "正在检查硬盘",
-                          Colors.lightBlueAccent,
-                          fill: true,
-                        )
-                      : Label(
-                          partition['status'],
-                          Colors.red,
-                          fill: true,
-                        ),
+                  : Label(
+                      partition.status ?? '-',
+                      partition.statusEnum.color,
+                      fill: true,
+                    ),
             ],
           ),
           SizedBox(
             height: 10,
           ),
-          Row(
-            children: [
-              Container(
-                margin: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(80),
-                  // color: Colors.red,
+          Text(
+            "${partition.usedPercent.toStringAsFixed(1)}%",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 5),
+          LineProgressBar(value: partition.usedPercent),
+          SizedBox(height: 5),
+          DefaultTextStyle(
+            style: TextStyle(fontSize: 12),
+            child: Row(
+              children: [
+                Text(
+                  "已用 ${partition.usedSizeMb != null ? Utils.formatSize(partition.usedSizeMb! * 1024 * 1024) : '--'} ",
+                  style: TextStyle(color: partition.usedPercent > 80 ? AppTheme.of(context)?.errorColor : AppTheme.of(context)?.primaryColor),
                 ),
-                padding: EdgeInsets.all(5),
-                child: CircularPercentIndicator(
-                  radius: 40,
-                  // progressColor: Colors.lightBlueAccent,
-                  animation: true,
-                  linearGradient: LinearGradient(
-                    colors: partition['used_size_mb'] / partition['total_size_mb'] <= 0.9
-                        ? [
-                            Colors.blue,
-                            Colors.blueAccent,
-                          ]
-                        : [
-                            Colors.red,
-                            Colors.orangeAccent,
-                          ],
-                  ),
-                  animateFromLastPercent: true,
-                  circularStrokeCap: CircularStrokeCap.round,
-                  lineWidth: 12,
-                  backgroundColor: Colors.black12,
-                  percent: partition['used_size_mb'] / partition['total_size_mb'],
-                  center: Text(
-                    "${(partition['used_size_mb'] / partition['total_size_mb'] * 100).toStringAsFixed(0)}%",
-                    style: TextStyle(color: partition['used_size_mb'] / partition['total_size_mb'] <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
-                  ),
+                Text(
+                  "/ ${partition.totalSizeMb != null ? Utils.formatSize(partition.totalSizeMb! * 1024 * 1024) : '--'}",
+                  style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                 ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "${partition['share_name']}",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Label(
-                          partition['filesystem'] ?? partition['dev_fstype'],
-                          Colors.blue,
-                          fill: true,
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text("已用：${Utils.formatSize(partition['used_size_mb'] * 1024 * 1024)}"),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text("可用：${Utils.formatSize(partition['total_size_mb'] * 1024 * 1024 - partition['used_size_mb'] * 1024 * 1024)}"),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text("容量：${Utils.formatSize(partition['total_size_mb'] * 1024 * 1024)}"),
-                  ],
+                Spacer(),
+                Text(
+                  "可用：${Utils.formatSize(partition.freeSizeMb * 1024 * 1024)}",
+                  style: TextStyle(color: AppTheme.of(context)?.successColor),
                 ),
-              )
-            ],
-          )
+              ],
+            ),
+          ),
+          // Row(
+          //   children: [
+          //     Container(
+          //       margin: EdgeInsets.all(10),
+          //       decoration: BoxDecoration(
+          //         color: Theme.of(context).scaffoldBackgroundColor,
+          //         borderRadius: BorderRadius.circular(80),
+          //         // color: Colors.red,
+          //       ),
+          //       padding: EdgeInsets.all(5),
+          //       child: CircularPercentIndicator(
+          //         radius: 40,
+          //         // progressColor: Colors.lightBlueAccent,
+          //         animation: true,
+          //         linearGradient: LinearGradient(
+          //           colors: partition['used_size_mb'] / partition['total_size_mb'] <= 0.9
+          //               ? [
+          //                   Colors.blue,
+          //                   Colors.blueAccent,
+          //                 ]
+          //               : [
+          //                   Colors.red,
+          //                   Colors.orangeAccent,
+          //                 ],
+          //         ),
+          //         animateFromLastPercent: true,
+          //         circularStrokeCap: CircularStrokeCap.round,
+          //         lineWidth: 12,
+          //         backgroundColor: Colors.black12,
+          //         percent: partition['used_size_mb'] / partition['total_size_mb'],
+          //         center: Text(
+          //           "${(partition['used_size_mb'] / partition['total_size_mb'] * 100).toStringAsFixed(0)}%",
+          //           style: TextStyle(color: partition['used_size_mb'] / partition['total_size_mb'] <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
+          //         ),
+          //       ),
+          //     ),
+          //     SizedBox(
+          //       width: 10,
+          //     ),
+          //     Expanded(
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Row(
+          //             children: [
+          //               Text(
+          //                 "${partition['share_name']}",
+          //                 style: TextStyle(fontWeight: FontWeight.w600),
+          //               ),
+          //               SizedBox(
+          //                 width: 10,
+          //               ),
+          //               Label(
+          //                 partition['filesystem'] ?? partition['dev_fstype'],
+          //                 Colors.blue,
+          //                 fill: true,
+          //               )
+          //             ],
+          //           ),
+          //           SizedBox(
+          //             height: 5,
+          //           ),
+          //           Text("已用：${Utils.formatSize(partition['used_size_mb'] * 1024 * 1024)}"),
+          //           SizedBox(
+          //             height: 5,
+          //           ),
+          //           Text("可用：${Utils.formatSize(partition['total_size_mb'] * 1024 * 1024 - partition['used_size_mb'] * 1024 * 1024)}"),
+          //           SizedBox(
+          //             height: 5,
+          //           ),
+          //           Text("容量：${Utils.formatSize(partition['total_size_mb'] * 1024 * 1024)}"),
+          //         ],
+          //       ),
+          //     )
+          //   ],
+          // )
         ],
       ),
     );
   }
 
-  Widget _buildESataItem(esata) {
-    List partitions = esata['partitions'];
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  "${esata['dev_title']}",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                esata['status'] == "normal"
-                    ? Label(
-                        "正常",
-                        Colors.green,
-                        fill: true,
-                      )
-                    : Label(
-                        esata['status'],
-                        Colors.red,
-                        fill: true,
-                      ),
-                SizedBox(
-                  width: 10,
-                ),
-                Spacer(),
-                CupertinoButton(
-                  onPressed: () async {
-                    var res = await Api.ejectEsata(esata['dev_id']);
-                    if (res['success']) {
-                      Utils.toast("设备已退出");
-                      getData();
-                    } else {
-                      Utils.toast("设备退出失败，代码${res['error']['code']}");
-                    }
-                  },
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  padding: EdgeInsets.all(5),
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: Icon(
-                      CupertinoIcons.eject,
-                      color: Color(0xffff9813),
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ],
+  Widget _buildDeviceItem(Devices device) {
+    return WidgetCard(
+      title: "${device.devTitle}",
+      icon: device.statusEnum != DeviceStatusEnum.unknown
+          ? Label(
+              device.statusEnum.label,
+              device.statusEnum.color,
+              fill: true,
+            )
+          : Label(
+              device.status ?? '-',
+              device.statusEnum.color,
+              fill: true,
             ),
-            ...partitions.map(_buildPartitionItem).toList(),
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "制造商",
+            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+          ),
+          Text(
+            "${device.producer ?? '-'}",
+            style: TextStyle(fontSize: 16),
+          ),
+          Divider(indent: 0, endIndent: 0, height: 20),
+          Text(
+            "产品名称",
+            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+          ),
+          Text(
+            "${device.product ?? '-'}",
+            style: TextStyle(fontSize: 16),
+          ),
+          if (device.partitions != null) ...device.partitions!.map(_buildPartitionItem).toList(),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text("外接设备"),
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _tabController,
+          tabs: [
+            Tab(
+              text: "外接设备",
+            ),
+            Tab(
+              text: "打印机",
+            ),
+          ],
+        ),
       ),
-      body: Column(
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: TabBar(
-              isScrollable: false,
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicator: BubbleTabIndicator(
-                indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
-              ),
-              tabs: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("外接设备"),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("打印机"),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                loading
-                    ? Center(
-                        child: Container(
-                          padding: EdgeInsets.all(50),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: CupertinoActivityIndicator(
-                            radius: 14,
-                          ),
-                        ),
-                      )
-                    : (esatas + usbs).length > 0
-                        ? ListView.separated(
-                            padding: EdgeInsets.all(20),
-                            itemBuilder: (context, i) {
-                              return _buildESataItem((esatas + usbs)[i]);
-                            },
-                            separatorBuilder: (context, i) {
-                              return SizedBox(
-                                height: 20,
-                              );
-                            },
-                            itemCount: (esatas + usbs).length)
-                        : Center(
-                            child: Text(
-                              "暂无外接设备",
-                              style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                            ),
-                          ),
-                Center(
-                  child: Text("未开发"),
-                ),
-              ],
-            ),
+          loading
+              ? Center(
+                  child: LoadingWidget(size: 30),
+                )
+              : devices.length > 0
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      child: ListView.separated(
+                        itemBuilder: (context, i) {
+                          return _buildDeviceItem(devices[i]);
+                        },
+                        separatorBuilder: (context, i) {
+                          return SizedBox(
+                            height: 20,
+                          );
+                        },
+                        itemCount: devices.length,
+                      ),
+                    )
+                  : EmptyWidget(
+                      text: "暂无外接设备",
+                    ),
+          Center(
+            child: Text("未开发"),
           ),
         ],
       ),
