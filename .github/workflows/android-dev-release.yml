@@ -33,8 +33,8 @@ jobs:
         uses: xtayga/upload-pgyer-action@master
         with:
           url: https://www.pgyer.com/apiv2/app/upload
-          forms: '{"_api_key":"${{ secrets.PGY_KEY }}","buildName":"RSSAndroid"}'
-          fileForms: '{"file":"build/app/outputs/apk/release/app-release.apk"}'
+          forms: '{"_api_key":"${{ secrets.PGY_KEY }}","buildName":"群晖助手"}'
+          fileForms: '{"file":"build/app/outputs/apk/release/app-dev-release.apk"}'
 
       - name: Publish Android Artefacts
         uses: actions/upload-artifact@v1
