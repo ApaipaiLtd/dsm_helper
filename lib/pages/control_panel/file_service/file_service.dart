@@ -10,7 +10,7 @@ import 'package:dsm_helper/models/Syno/Core/FileServ/ReflinkCopy.dart';
 import 'package:dsm_helper/models/Syno/Core/FileServ/ServiceDiscovery.dart';
 import 'package:dsm_helper/models/Syno/Core/FileServ/Sftp.dart';
 import 'package:dsm_helper/models/Syno/Core/FileServ/Smb.dart';
-import 'package:dsm_helper/models/Syno/Core/FileServ/WSTransfer.dart';
+import 'package:dsm_helper/models/Syno/Core/FileServ/WsTransfer.dart';
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/FileTransfer.dart';
 import 'package:dsm_helper/models/Syno/Core/Tftp.dart';
 import 'package:dsm_helper/models/Syno/Core/Web/Dsm.dart';
