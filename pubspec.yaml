@@ -48,7 +48,7 @@ dependencies:
   background_downloader: ^7.10.1
   percent_indicator: ^4.2.3
   fl_chart: ^0.63.0 # 0.63.0起不再支持flutter 3.7
-  file_picker: ^5.5.0
+  file_picker: 6.0.0
   open_file: ^3.3.2
   flutter_datetime_picker_plus: ^2.1.0
 #  flutter_datetime_picker:
@@ -64,7 +64,7 @@ dependencies:
   url_launcher: ^6.1.14 # 6.1.12 起不再支持flutter3.7
   local_auth: ^2.1.7
   gesture_password_widget: ^2.0.1
-  connectivity_plus: ^5.0.0
+  connectivity_plus: ^5.0.1
   code_editor: ^2.1.0
   flutter_highlight: ^0.7.0
 #  syncfusion_flutter_charts: ^20.3.57
@@ -76,7 +76,7 @@ dependencies:
   fluwx: ^4.3.2
 #  better_player:
 #    git: https://github.com/AnonymHK/betterplayer.git
-  device_info_plus: ^9.0.3
+  device_info_plus: ^9.1.0
   xml2json: ^6.2.0 # 6.0.0起不支持 flutter 3.7
 #  wake_on_lan: ^3.0.0
   dartssh2: ^2.8.2
