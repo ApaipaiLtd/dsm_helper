@@ -1,10 +1,7 @@
-import 'package:dsm_helper/apis/dsm_api/dsm_exception.dart';
 import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/storage_manager/widgets/disk_item_widget.dart';
 import 'package:dsm_helper/pages/storage_manager/widgets/volume_item_widget.dart';
-import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
-import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -25,20 +22,20 @@ class _StorageTabState extends State<StorageTab> {
   }
 
   getData() async {
-    try {
-      storage = await Storage.loadInfo();
-      storage.storagePools?.sort((a, b) => a.numId!.compareTo(b.numId!));
+    // try {
+    storage = await Storage.loadInfo();
+    storage.storagePools?.sort((a, b) => a.numId!.compareTo(b.numId!));
 
-      setState(() {
-        loading = false;
-      });
-    } on DsmException catch (e) {
-      Utils.toast("获取存储空间信息失败，错误代码${e.code}");
-      context.pop();
-    } catch (e) {
-      Utils.toast("获取存储空间信息失败");
-      context.pop();
-    }
+    setState(() {
+      loading = false;
+    });
+    // } on DsmException catch (e) {
+    //   Utils.toast("获取存储空间信息失败，错误代码${e.code}");
+    //   context.pop();
+    // } catch (e) {
+    //   Utils.toast("获取存储空间信息失败");
+    //   context.pop();
+    // }
   }
 
   @override

@@ -5,16 +5,13 @@ import 'package:dsm_helper/pages/control_panel/external_device/enums/partition_s
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/line_progress_bar.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ExternalDevice extends StatefulWidget {
   @override

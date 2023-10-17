@@ -22,7 +22,7 @@ class DiskCardItemWidget extends StatelessWidget {
       child: ExpansionContainer(
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         childrenPadding: EdgeInsets.symmetric(vertical: 10),
-        title: DiskItemWidget(disk),
+        title: DiskItemWidget(disk, isLast: true),
         children: [
           Text(
             "位置",

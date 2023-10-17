@@ -33,6 +33,7 @@ class HttpUtil {
       ?..add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) async {
         options.headers['did'] = deviceId;
         options.headers['sid'] = sid;
+        options.headers['Accept-Language'] = "zh-CN,zh;q=0.9,en;q=0.8";
         return handler.next(options);
       }, onResponse: (Response response, handler) async {
         return handler.next(response);

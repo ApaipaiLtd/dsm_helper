@@ -19,7 +19,7 @@ class DiskItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              "硬盘 ${disk.numId}",
+              "${disk.name}",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
             ),
             SizedBox(width: 5),
@@ -44,20 +44,22 @@ class DiskItemWidget extends StatelessWidget {
         SizedBox(height: 5),
         Row(
           children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
-                color: disk.statusEnum.color,
-                shape: BoxShape.circle,
+            if (!showStatus) ...[
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: disk.statusEnum.color,
+                  shape: BoxShape.circle,
+                ),
+                margin: EdgeInsets.only(right: 3),
               ),
-              margin: EdgeInsets.only(right: 3),
-            ),
-            Text(
-              disk.statusEnum != DiskStatusEnum.unknown ? disk.statusEnum.label : disk.status!,
-              style: TextStyle(color: disk.statusEnum.color, fontSize: 12),
-            ),
-            SizedBox(width: 10),
+              Text(
+                disk.statusEnum != DiskStatusEnum.unknown ? disk.statusEnum.label : disk.status!,
+                style: TextStyle(color: disk.statusEnum.color, fontSize: 12),
+              ),
+              SizedBox(width: 10),
+            ],
             Expanded(
               child: Text(
                 "${disk.vendor?.trim()} ${disk.model}",
@@ -106,7 +108,7 @@ class DiskItemWidget extends StatelessWidget {
             ],
           ),
         ],
-        if (!isLast) SizedBox(height: 10),
+        if (!isLast) Divider(height: 10),
       ],
     );
   }

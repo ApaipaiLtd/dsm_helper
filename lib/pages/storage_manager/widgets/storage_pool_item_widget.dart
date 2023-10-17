@@ -1,8 +1,10 @@
 import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/pages/dashboard/enums/volume_status_enum.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/storage_pool_device_type_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/enums/storage_pool_scrubbing_status_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/widgets/disk_item_widget.dart';
+import 'package:dsm_helper/pages/storage_manager/widgets/missing_drive_item_widget.dart';
 import 'package:dsm_helper/pages/storage_manager/widgets/volume_item_widget.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -53,10 +55,15 @@ class StoragePoolItemWidget extends StatelessWidget {
                 ),
                 SizedBox(width: 10),
                 if (pool.size != null)
-                  Text(
+                  Text.rich(
                     //${Utils.formatSize(pool.size!.used!)} /
-                    "${Utils.formatSize(pool.size!.total!)}",
-                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
+                    TextSpan(children: [
+                      TextSpan(
+                        text: "${Utils.formatSize(pool.size!.total!, showByte: true)}已分配",
+                      ),
+                      TextSpan(text: " | ${Utils.formatSize(pool.size!.free!, showByte: true)}可用", style: TextStyle(color: AppTheme.of(context)?.placeholderColor)),
+                    ]),
+                    style: TextStyle(color: AppTheme.of(context)?.primaryColor, fontSize: 12),
                   ),
               ],
             ),
@@ -80,17 +87,16 @@ class StoragePoolItemWidget extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: pool.deviceType == "basic"
-                            ? "Basic"
+                        text: pool.deviceTypeEnum != StoragePoolDeviceTypeEnum.unknown
+                            ? pool.deviceTypeEnum.label
                             : pool.deviceType == "shr_without_disk_protect" || pool.deviceType == "shr"
                                 ? "Synology Hybrid RAID (SHR) "
                                 : pool.deviceType,
                       ),
-                      if (pool.deviceType == "basic" || pool.deviceType == "shr_without_disk_protect")
-                        TextSpan(
-                          text: "（无数据保护）",
-                          style: TextStyle(color: AppTheme.of(context)?.errorColor),
-                        ),
+                      TextSpan(
+                        text: "（${pool.deviceTypeEnum.protect ? '有' : '无'}数据保护）",
+                        style: TextStyle(color: pool.deviceTypeEnum.protect ? AppTheme.of(context)?.primaryColor : AppTheme.of(context)?.errorColor),
+                      ),
                     ],
                   ),
                   style: TextStyle(fontSize: 16),
@@ -104,6 +110,15 @@ class StoragePoolItemWidget extends StatelessWidget {
                   "${pool.raidType == 'single' ? '否' : '是'}",
                   style: TextStyle(fontSize: 16),
                 ),
+                // Divider(indent: 0, endIndent: 0, height: 20),
+                // Text(
+                //   "存储空间加密",
+                //   style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                // ),
+                // Text(
+                //   "${pool.i == 'single' ? '否' : '是'}",
+                //   style: TextStyle(fontSize: 16),
+                // ),
               ],
             ),
           ),
@@ -126,14 +141,20 @@ class StoragePoolItemWidget extends StatelessWidget {
                             "数据清理",
                             style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                           ),
-                          Text(
-                            "${pool.scrubbingStatusEnum != StoragePoolScrubbingStatusEnum.unknown ? pool.scrubbingStatusEnum.label : '${pool.scrubbingStatus}'}",
-                            style: TextStyle(fontSize: 16),
-                          ),
+                          if (pool.isScheduled == true)
+                            Text(
+                              "${pool.scrubbingStatusEnum == StoragePoolScrubbingStatusEnum.schedule_done ? "已计划于${DateTime.fromMillisecondsSinceEpoch(pool.nextScheduleTime!.toInt() * 1000).format("Y-m-d")}" : '${pool.scrubbingStatus}'}",
+                              style: TextStyle(fontSize: 16),
+                            )
+                          else
+                            Text(
+                              "${pool.scrubbingStatusEnum != StoragePoolScrubbingStatusEnum.unknown ? pool.scrubbingStatusEnum.label : '${pool.scrubbingStatus}'}",
+                              style: TextStyle(fontSize: 16),
+                            ),
                         ],
                       ),
                     ),
-                    if (pool.scrubbingStatusEnum == StoragePoolScrubbingStatusEnum.ready)
+                    if ([StoragePoolScrubbingStatusEnum.ready, StoragePoolScrubbingStatusEnum.schedule_done].contains(pool.scrubbingStatusEnum))
                       CupertinoButton(
                         onPressed: () async {},
                         padding: EdgeInsets.zero,
@@ -174,6 +195,17 @@ class StoragePoolItemWidget extends StatelessWidget {
               ],
             ),
           ),
+          if (pool.missingDrives != null && pool.missingDrives!.isNotEmpty)
+            WidgetCard(
+              title: "必需硬盘信息",
+              boxDecoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              body: Column(
+                children: pool.missingDrives!.map((drive) => MissingDriveItemWidget(drive, isLast: pool.missingDrives!.last == drive)).toList(),
+              ),
+            ),
           WidgetCard(
             title: "硬盘信息",
             boxDecoration: BoxDecoration(

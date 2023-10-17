@@ -8,7 +8,7 @@ enum ApplicationEnum {
   xunlei(name: "迅雷", packageName: "SYNO.SDS.XLPan.Application", icon: "xunlei", iconFolder: "/"),
   docker(name: "Docker", packageName: "SYNO.SDS.Docker.Application", icon: "docker", iconFolder: "/"),
   containerManager(name: "Container Manager", packageName: "SYNO.SDS.ContainerManager.Application", icon: "container_manager", iconFolder: "/"),
-  downloadStation(name: "Download Station", packageName: "SYNO.SDS.DownloadStation.Application", icon: "download_station"),
+  downloadStation(name: "Download Station", packageName: "SYNO.SDS.DownloadStation.Application", icon: "download_station", iconFolder: '/'),
   moments(name: "Moments", packageName: "SYNO.Photo.AppInstance", icon: "moments"),
   photos(name: "Synology Photos", packageName: "SYNO.Foto.AppInstance", icon: "synology_photos"),
   virtualMachineManager(name: "Virtual Machine Manager", packageName: "SYNO.SDS.Virtualization.Application", icon: "virtual_machine"),

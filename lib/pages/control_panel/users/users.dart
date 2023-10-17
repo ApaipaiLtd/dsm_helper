@@ -1,11 +1,5 @@
-import 'package:dsm_helper/models/Syno/Core/SynoUser.dart';
-import 'package:dsm_helper/pages/control_panel/users/user_detail.dart';
 import 'package:dsm_helper/pages/control_panel/users/user_tab.dart';
-import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
-import 'package:dsm_helper/widgets/label.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Users extends StatefulWidget {

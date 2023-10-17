@@ -4,6 +4,7 @@ import 'package:dsm_helper/pages/dashboard/enums/volume_status_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/enums/disk_overview_status_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/enums/disk_smart_status_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/enums/disk_status_enum.dart';
+import 'package:dsm_helper/pages/storage_manager/enums/storage_pool_device_type_enum.dart';
 import 'package:dsm_helper/pages/storage_manager/enums/storage_pool_scrubbing_status_enum.dart';
 
 /// detected_pools : []
@@ -630,6 +631,106 @@ class VspaceCanDo {
   }
 }
 
+class MissingDrives {
+  MissingDrives({
+    this.containerId,
+    this.diskType,
+    this.diskOrderId,
+    this.i18nNamingInfo,
+    this.mediumType,
+    this.model,
+    this.name,
+    this.numId,
+    this.pciSlot,
+    this.portType,
+    this.serial,
+    this.sizeTotal,
+    this.usage,
+    this.vendor,
+  });
+
+  MissingDrives.fromJson(dynamic json) {
+    containerId = json['container_id'];
+    diskType = json['diskType'];
+    diskOrderId = json['disk_order_id'];
+    i18nNamingInfo = json['i18nNamingInfo'];
+    mediumType = json['mediumType'];
+    model = json['model'];
+    name = json['name'];
+    numId = json['num_id'];
+    pciSlot = json['pciSlot'];
+    portType = json['portType'];
+    serial = json['serial'];
+    sizeTotal = json['size_total'];
+    usage = json['usage'];
+    vendor = json['vendor'];
+  }
+  num? containerId;
+  String? diskType;
+  num? diskOrderId;
+  String? i18nNamingInfo;
+  String? mediumType;
+  String? model;
+  String? name;
+  num? numId;
+  num? pciSlot;
+  String? portType;
+  String? serial;
+  num? sizeTotal;
+  String? usage;
+  String? vendor;
+  MissingDrives copyWith({
+    num? containerId,
+    String? diskType,
+    num? diskOrderId,
+    String? i18nNamingInfo,
+    String? mediumType,
+    String? model,
+    String? name,
+    num? numId,
+    num? pciSlot,
+    String? portType,
+    String? serial,
+    num? sizeTotal,
+    String? usage,
+    String? vendor,
+  }) =>
+      MissingDrives(
+        containerId: containerId ?? this.containerId,
+        diskType: diskType ?? this.diskType,
+        diskOrderId: diskOrderId ?? this.diskOrderId,
+        i18nNamingInfo: i18nNamingInfo ?? this.i18nNamingInfo,
+        mediumType: mediumType ?? this.mediumType,
+        model: model ?? this.model,
+        name: name ?? this.name,
+        numId: numId ?? this.numId,
+        pciSlot: pciSlot ?? this.pciSlot,
+        portType: portType ?? this.portType,
+        serial: serial ?? this.serial,
+        sizeTotal: sizeTotal ?? this.sizeTotal,
+        usage: usage ?? this.usage,
+        vendor: vendor ?? this.vendor,
+      );
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['container_id'] = containerId;
+    map['diskType'] = diskType;
+    map['disk_order_id'] = diskOrderId;
+    map['i18nNamingInfo'] = i18nNamingInfo;
+    map['mediumType'] = mediumType;
+    map['model'] = model;
+    map['name'] = name;
+    map['num_id'] = numId;
+    map['pciSlot'] = pciSlot;
+    map['portType'] = portType;
+    map['serial'] = serial;
+    map['size_total'] = sizeTotal;
+    map['usage'] = usage;
+    map['vendor'] = vendor;
+    return map;
+  }
+}
+
 /// resize : {"can_do":false,"errCode":53504,"stopService":false}
 
 class Snapshot {
@@ -1239,10 +1340,10 @@ class StoragePools {
     minimalDiskSize = json['minimal_disk_size'];
     minimalSpareSize = json['minimal_spare_size'];
     if (json['missing_drives'] != null) {
-      missingDrives = json['missing_drives'];
-      // json['missing_drives'].forEach((v) {
-      //   missingDrives?.add(Dynamic.fromJson(v));
-      // });
+      missingDrives = [];
+      json['missing_drives'].forEach((v) {
+        missingDrives?.add(MissingDrives.fromJson(v));
+      });
     }
     nextScheduleTime = json['next_schedule_time'];
     numId = json['num_id'];
@@ -1293,7 +1394,8 @@ class StoragePools {
   String? container;
   DataScrubbing? dataScrubbing;
   String? desc;
-  String? deviceType;
+  String? deviceType; // basic(Basic) shr_without_disk_protect(Synology Hybrid RAID (SHR)) raid_0 raid_1 raid_5 raid10
+  StoragePoolDeviceTypeEnum get deviceTypeEnum => StoragePoolDeviceTypeEnum.fromValue(deviceType ?? 'unknown');
   num? diskFailureNumber;
   List<String>? disks;
   num? driveType;
@@ -1308,7 +1410,7 @@ class StoragePools {
   String? maximalDiskSize;
   String? minimalDiskSize;
   String? minimalSpareSize;
-  List<dynamic>? missingDrives;
+  List<MissingDrives>? missingDrives;
   num? nextScheduleTime;
   num? numId;
   List<PoolChild>? poolChild;
@@ -1355,7 +1457,7 @@ class StoragePools {
     String? maximalDiskSize,
     String? minimalDiskSize,
     String? minimalSpareSize,
-    List<dynamic>? missingDrives,
+    List<MissingDrives>? missingDrives,
     num? nextScheduleTime,
     num? numId,
     List<PoolChild>? poolChild,
@@ -2410,7 +2512,7 @@ class Disks {
     this.pciSlot,
     this.perfTesting,
     this.portType,
-    this.remainLife,
+    // this.remainLife,
     this.remainLifeDanger,
     this.remoteInfo,
     this.sbDaysLeft,
@@ -2483,7 +2585,7 @@ class Disks {
     pciSlot = json['pciSlot'];
     perfTesting = json['perf_testing'];
     portType = json['portType'];
-    remainLife = json['remain_life'];
+    // remainLife = json['remain_life'];
     remainLifeDanger = json['remain_life_danger'];
     remoteInfo = json['remote_info'] != null ? RemoteInfo.fromJson(json['remote_info']) : null;
     sbDaysLeft = json['sb_days_left'];
@@ -2550,7 +2652,7 @@ class Disks {
   num? pciSlot;
   bool? perfTesting;
   String? portType;
-  num? remainLife;
+  // num? remainLife;
   bool? remainLifeDanger;
   RemoteInfo? remoteInfo;
   num? sbDaysLeft;
@@ -2618,7 +2720,7 @@ class Disks {
     num? pciSlot,
     bool? perfTesting,
     String? portType,
-    num? remainLife,
+    // num? remainLife,
     bool? remainLifeDanger,
     RemoteInfo? remoteInfo,
     num? sbDaysLeft,
@@ -2685,7 +2787,7 @@ class Disks {
         pciSlot: pciSlot ?? this.pciSlot,
         perfTesting: perfTesting ?? this.perfTesting,
         portType: portType ?? this.portType,
-        remainLife: remainLife ?? this.remainLife,
+        // remainLife: remainLife ?? this.remainLife,
         remainLifeDanger: remainLifeDanger ?? this.remainLifeDanger,
         remoteInfo: remoteInfo ?? this.remoteInfo,
         sbDaysLeft: sbDaysLeft ?? this.sbDaysLeft,
@@ -2759,7 +2861,7 @@ class Disks {
     map['pciSlot'] = pciSlot;
     map['perf_testing'] = perfTesting;
     map['portType'] = portType;
-    map['remain_life'] = remainLife;
+    // map['remain_life'] = remainLife;
     map['remain_life_danger'] = remainLifeDanger;
     if (remoteInfo != null) {
       map['remote_info'] = remoteInfo?.toJson();

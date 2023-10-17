@@ -11,13 +11,8 @@ import 'package:dsm_helper/widgets/dashed_decoration.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
-import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class StorageManager extends StatefulWidget {
   @override
@@ -42,6 +37,7 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
     try {
       storage = await Storage.loadInfo();
       storage.storagePools?.sort((a, b) => a.numId!.compareTo(b.numId!));
+      storage.disks?.sort((a, b) => a.numId!.compareTo(b.numId!));
 
       setState(() {
         loading = false;
@@ -53,94 +49,6 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
       Utils.toast("获取存储空间信息失败");
       context.pop();
     }
-  }
-
-  Widget _buildSSDCacheItem(volume) {
-    double percent = int.parse(volume['size']['used'] ?? volume['size']['reusable']) / int.parse(volume['size']['total']);
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(80),
-              // color: Colors.red,
-            ),
-            padding: EdgeInsets.all(5),
-            child: CircularPercentIndicator(
-              radius: 40,
-              // progressColor: Colors.lightBlueAccent,
-              animation: true,
-              linearGradient: LinearGradient(
-                colors: percent <= 0.9
-                    ? [
-                        Colors.blue,
-                        Colors.blueAccent,
-                      ]
-                    : [
-                        Colors.red,
-                        Colors.orangeAccent,
-                      ],
-              ),
-              animateFromLastPercent: true,
-              circularStrokeCap: CircularStrokeCap.round,
-              lineWidth: 12,
-              backgroundColor: Colors.black12,
-              percent: percent,
-              center: Text(
-                "${(percent * 100).toStringAsFixed(0)}%",
-                style: TextStyle(color: percent <= 0.9 ? Colors.blue : Colors.red, fontSize: 22),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "${volume['id'].toString().replaceFirst("ssd_", "SSD 缓存 ")}",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Label(
-                      volume['status'] == "normal" ? "正常" : volume['status'],
-                      volume['status'] == "normal" ? Colors.green : Colors.red,
-                      fill: true,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("已用：${Utils.formatSize(int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("可用：${Utils.formatSize(int.parse(volume['size']['total']) - int.parse(volume['size']['used'] ?? volume['size']['reusable']))}"),
-                SizedBox(
-                  height: 5,
-                ),
-                Text("容量：${Utils.formatSize(int.parse(volume['size']['total']))}"),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
   }
 
   @override
@@ -247,17 +155,17 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                     : EmptyWidget(
                         text: "无HDD/SSD",
                       ),
-                ssdCaches.length > 0
+                storage.ssdCaches != null && storage.ssdCaches!.length > 0
                     ? ListView.separated(
                         itemBuilder: (context, i) {
-                          return _buildSSDCacheItem(ssdCaches[i]);
+                          return VolumeItemWidget(storage.ssdCaches![i]);
                         },
                         separatorBuilder: (context, i) {
                           return SizedBox(
                             height: 20,
                           );
                         },
-                        itemCount: ssdCaches.length,
+                        itemCount: storage.ssdCaches!.length,
                       )
                     : EmptyWidget(
                         text: "无SSD缓存",
