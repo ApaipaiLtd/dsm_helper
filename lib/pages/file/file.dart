@@ -26,7 +26,7 @@ import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/log.dart';
 import 'package:dsm_helper/utils/overlay_util.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -797,7 +797,7 @@ class FilesState extends State<Files> {
       zipName = paths.last + ".zip";
     }
     destPath = "/" + paths.join("/") + "/" + zipName;
-    showCustomDialog(
+    showGlassDialog(
       context: context,
       builder: (context) {
         return AlertDialog(

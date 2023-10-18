@@ -11,7 +11,7 @@ import 'package:dsm_helper/utils/extensions/datetime_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api, DateTimeExt;
 import 'package:dsm_helper/widgets/button.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -105,7 +105,7 @@ class _AddServerState extends State<AddServer> {
     // 判断是否存在
     List<Server> res = await (DbUtils.db.select(DbUtils.db.servers)..where((server) => server.domain.equals(domain))).get();
     if (res.length > 0) {
-      showCustomDialog(
+      showGlassDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -208,7 +208,7 @@ class _AddServerState extends State<AddServer> {
         actions: [
           CupertinoButton(
             onPressed: () {
-              showCustomDialog(
+              showGlassDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(

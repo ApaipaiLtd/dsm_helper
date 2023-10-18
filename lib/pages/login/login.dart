@@ -8,12 +8,13 @@ import 'package:dsm_helper/models/Syno/Api/auth.dart';
 import 'package:dsm_helper/models/Syno/SDS/Session/SessionData.dart';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/button.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,7 @@ class _LoginState extends State<Login> {
       // 将hostname和backgroundImage存入Servers
       DbUtils.db.updateServer(
         widget.server.copyWith(
-          backgroundImage: drift.Value("${widget.server.url}/${(sessionDataModel?.loginBackgroundEnable ?? false) ? "webman/login_background${sessionDataModel?.loginBackgroundExt}" : "webman/resources/images/2x/default_login_background/dsm7_01.jpg?v=${DateTime.now().secondsSinceEpoch}"}"),
+          backgroundImage: drift.Value(sessionDataModel?.loginBackgroundEnable == true ? "${widget.server.url}/webman/login_background${sessionDataModel?.loginBackgroundExt}" : null),
           hostname: drift.Value(sessionDataModel?.hostname),
         ),
       );
@@ -117,7 +118,7 @@ class _LoginState extends State<Login> {
   showOptCodeDialog(String message) {
     otpCode = '';
     _otpCodeController.clear();
-    showCustomDialog(
+    showGlassDialog(
         context: context,
         barrierDismissible: true,
         builder: (context) {
@@ -187,6 +188,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.of(context)?.cardColor,
       body: AnnotatedRegion(
         value: SystemUiOverlayStyle.light,
         child: Stack(
@@ -194,13 +196,21 @@ class _LoginState extends State<Login> {
             Container(
               height: context.height,
             ),
-            ExtendedImage.network(
-              "${widget.server.url}/${(sessionDataModel?.loginBackgroundEnable ?? false) ? "webman/login_background${sessionDataModel?.loginBackgroundExt}" : "webman/resources/images/2x/default_login_background/dsm7_01.jpg?v=1685410415"}",
-              cache: false,
-              height: context.width / 16 * 9,
-              width: context.width,
-              fit: BoxFit.cover,
-            ),
+            if (sessionDataModel?.loginBackgroundEnable == true)
+              ExtendedImage.network(
+                "${widget.server.url}/webman/login_background${sessionDataModel?.loginBackgroundExt}",
+                cache: false,
+                height: context.width / 16 * 9,
+                width: context.width,
+                fit: BoxFit.cover,
+              )
+            else
+              Image.asset(
+                "assets/default_login_background.jpg",
+                height: context.width / 16 * 9,
+                width: context.width,
+                fit: BoxFit.cover,
+              ),
             if ((sessionDataModel?.loginLogoEnable ?? false) && (sessionDataModel?.loginLogoExt != null))
               Positioned(
                 left: 20,
@@ -308,6 +318,7 @@ class _LoginState extends State<Login> {
                                   "assets/icons/close_circle.png",
                                   width: 20,
                                 ),
+                                padding: EdgeInsets.all(5),
                                 onPressed: () {
                                   setState(() {
                                     account = '';
@@ -357,6 +368,7 @@ class _LoginState extends State<Login> {
                                       "assets/icons/close_circle.png",
                                       width: 20,
                                     ),
+                                    padding: EdgeInsets.all(5),
                                     onPressed: () {
                                       _passwordController.clear();
                                       setState(() {

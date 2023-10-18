@@ -3,14 +3,14 @@ import 'package:dsm_helper/models/Syno/FileStation/FileStationList.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class CreateFolderDialog {
   static Future<bool?> show({required BuildContext context, required String path}) async {
-    return await showCustomDialog(
+    return await showGlassDialog(
       context: context,
       builder: (context) {
         String name = "";

@@ -12,6 +12,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
   final Color? successColor;
   final Color? warningColor;
   final Color? errorColor;
+  final Color? cardColor;
   AppTheme({
     this.primaryColor,
     this.placeholderColor,
@@ -20,6 +21,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
     this.successColor,
     this.warningColor,
     this.errorColor,
+    this.cardColor,
   });
 
   @override
@@ -29,6 +31,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
     Color? titleColor,
     Color? progressColor,
     Color? errorColor,
+    Color? cardColor,
   }) {
     return AppTheme(
       primaryColor: primaryColor ?? this.primaryColor,
@@ -38,6 +41,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
       successColor: progressColor ?? this.successColor,
       warningColor: warningColor ?? this.warningColor,
       errorColor: errorColor ?? this.errorColor,
+      cardColor: cardColor ?? this.cardColor,
     );
   }
 

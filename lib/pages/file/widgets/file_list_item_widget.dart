@@ -86,7 +86,7 @@ class FileListItemWidget extends StatelessWidget {
             alignment: Alignment.center,
             child: Container(
               decoration: BoxDecoration(
-                color: selected ? AppTheme.of(context)?.primaryColor : Colors.black12,
+                color: selected ? AppTheme.of(context)?.primaryColor : Theme.of(context).disabledColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               width: 20,

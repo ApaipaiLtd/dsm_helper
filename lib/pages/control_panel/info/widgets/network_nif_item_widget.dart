@@ -21,7 +21,7 @@ class NetworkNifItemWidget extends StatelessWidget {
             style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
           ),
           Text(
-            "${nif.statusEnum != NetworkNifStatusEnum.unknown ? nif.statusEnum.label : nif.status}",
+            "${nif.statusEnum != NetworkStatusEnum.unknown ? nif.statusEnum.label : nif.status}",
             style: TextStyle(fontSize: 16, color: nif.statusEnum.color),
           ),
           Divider(indent: 0, endIndent: 0, height: 20),

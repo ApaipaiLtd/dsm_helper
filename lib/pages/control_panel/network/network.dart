@@ -1,7 +1,18 @@
-import 'package:dsm_helper/utils/utils.dart';
-import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/Syno/Core/Network/Ethernet.dart';
+import 'package:dsm_helper/models/Syno/Core/Network/Network.dart';
+import 'package:dsm_helper/models/Syno/Core/Network/PPPoE.dart';
+import 'package:dsm_helper/models/Syno/Core/Network/Proxy.dart';
+import 'package:dsm_helper/pages/control_panel/info/enums/network_nif_status_enum.dart';
+import 'package:dsm_helper/pages/control_panel/network/enums/interface_type_enums.dart';
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/widgets/dot_widget.dart';
 import 'package:dsm_helper/widgets/expansion_container.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,564 +30,446 @@ class _NetworkState extends State<Network> with SingleTickerProviderStateMixin {
   TextEditingController _proxyHttpHostController = TextEditingController();
   TextEditingController _proxyHttpPortController = TextEditingController();
   late TabController _tabController;
-  Map network = {};
-  Map proxy = {};
+  CoreNetwork network = CoreNetwork();
+  Proxy proxy = Proxy();
   Map gateway = {};
   Map dsm = {};
-  List ethernets = [];
-  List pppoes = [];
+  Ethernets ethernets = Ethernets();
+  PPPoEs pppoes = PPPoEs();
   bool loading = true;
   @override
   void initState() {
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     getData();
     super.initState();
   }
 
   getData() async {
-    var res = await Api.networkStatus();
-    if (res['success']) {
-      setState(() {
-        loading = false;
-      });
-      List result = res['data']['result'];
-      result.forEach((item) {
-        if (item['success'] == true) {
-          switch (item['api']) {
-            case "SYNO.Core.Network":
-              setState(() {
-                if (item['data'] != null) {
-                  network = item['data'];
-                  _serverNameController.value = TextEditingValue(text: network['server_name']);
-                  _dnsPrimaryController.value = TextEditingValue(text: network['dns_primary']);
-                  _dnsSecondaryController.value = TextEditingValue(text: network['dns_secondary']);
-                }
-              });
-              break;
-            case "SYNO.Core.Network.Ethernet":
-              setState(() {
-                ethernets = item['data'];
-              });
-              break;
-            case "SYNO.Core.Network.PPPoE":
-              setState(() {
-                pppoes = item['data'];
-              });
-              break;
-            case "SYNO.Core.Network.Proxy":
-              setState(() {
-                proxy = item['data'];
-                _proxyHttpHostController.value = TextEditingValue(text: proxy['http_host']);
-                _proxyHttpPortController.value = TextEditingValue(text: proxy['http_port']);
-              });
-              break;
-            case "SYNO.Core.Network.Router.Gateway.List":
-              setState(() {
-                gateway = item['data'];
-              });
-              break;
-            case "SYNO.Core.Web.DSM":
-              setState(() {
-                dsm = item['data'];
-                print(dsm);
-              });
-              break;
-          }
-        }
-      });
-    }
+    List<DsmResponse> batchRes = await Api.dsm.batch(apis: [CoreNetwork(), Proxy(), Ethernets(), PPPoEs()]);
+    batchRes.forEach((res) {
+      switch (res.data.runtimeType.toString()) {
+        case "CoreNetwork":
+          network = res.data;
+          print(network.toJson());
+          _serverNameController.value = TextEditingValue(text: network.serverName ?? '');
+          _dnsPrimaryController.value = TextEditingValue(text: network.dnsPrimary ?? '');
+          _dnsSecondaryController.value = TextEditingValue(text: network.dnsSecondary ?? '');
+          break;
+        case "Proxy":
+          proxy = res.data;
+          _proxyHttpHostController.value = TextEditingValue(text: proxy.httpHost ?? '');
+          _proxyHttpPortController.value = TextEditingValue(text: proxy.httpPort ?? '');
+          break;
+        case "Ethernets":
+          ethernets = res.data;
+          break;
+        case "PPPoEs":
+          pppoes = res.data;
+          break;
+      }
+    });
+
+    setState(() {
+      loading = false;
+    });
+    // var res = await Api.networkStatus();
+    // if (res['success']) {
+    //   setState(() {
+    //     loading = false;
+    //   });
+    //   List result = res['data']['result'];
+    //   result.forEach((item) {
+    //     if (item['success'] == true) {
+    //       switch (item['api']) {
+    //         case "SYNO.Core.Network":
+    //           setState(() {
+    //             if (item['data'] != null) {
+    //               network = item['data'];
+    //               _serverNameController.value = TextEditingValue(text: network['server_name']);
+    //               _dnsPrimaryController.value = TextEditingValue(text: network['dns_primary']);
+    //               _dnsSecondaryController.value = TextEditingValue(text: network['dns_secondary']);
+    //             }
+    //           });
+    //           break;
+    //         case "SYNO.Core.Network.Ethernet":
+    //           setState(() {
+    //             ethernets = item['data'];
+    //           });
+    //           break;
+    //         case "SYNO.Core.Network.PPPoE":
+    //           setState(() {
+    //             pppoes = item['data'];
+    //           });
+    //           break;
+    //         case "SYNO.Core.Network.Proxy":
+    //           setState(() {
+    //             proxy = item['data'];
+    //             _proxyHttpHostController.value = TextEditingValue(text: proxy['http_host']);
+    //             _proxyHttpPortController.value = TextEditingValue(text: proxy['http_port']);
+    //           });
+    //           break;
+    //         case "SYNO.Core.Network.Router.Gateway.List":
+    //           setState(() {
+    //             gateway = item['data'];
+    //           });
+    //           break;
+    //         case "SYNO.Core.Web.DSM":
+    //           setState(() {
+    //             dsm = item['data'];
+    //             print(dsm);
+    //           });
+    //           break;
+    //       }
+    //     }
+    //   });
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text("网络"),
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _tabController,
+          tabs: [
+            Tab(
+              text: "常规",
+            ),
+            Tab(
+              text: "网络界面",
+            ),
+            Tab(
+              text: "流量控制",
+            ),
+            Tab(
+              text: "静态路由",
+            ),
+          ],
+        ),
       ),
       body: loading
           ? Center(
-              child: Container(
-                padding: EdgeInsets.all(50),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: CupertinoActivityIndicator(
-                  radius: 14,
-                ),
+              child: LoadingWidget(
+                size: 30,
               ),
             )
-          : Column(
+          : TabBarView(
+              controller: _tabController,
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  child: TabBar(
-                    isScrollable: true,
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicator: BubbleTabIndicator(
-                      indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                      shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
+                ListView(
+                  children: [
+                    WidgetCard(
+                      title: "常规",
+                      body: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "请输入服务器名称、域名服务器 (DNS) 及默认网关。",
+                            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 14),
+                          ),
+                          TextField(
+                            controller: _serverNameController,
+                            onChanged: (v) => network.serverName = v,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: '服务器名称',
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "默认网关(gateway)",
+                            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                          ),
+                          Text(
+                            "${network.gateway} (${network.gatewayInfo?.ifnameEnum != InterfaceTypeEnum.unknown ? network.gatewayInfo?.ifnameEnum.label : network.gatewayInfo?.ifname})",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Divider(),
+                          Text(
+                            "IPv6默认网关",
+                            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                          ),
+                          Text(
+                            "${network.v6gateway == null || network.v6gateway == "" ? "-" : network.v6gateway}",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Divider(),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "手动配置DNS服务器",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: CupertinoSwitch(
+                                    value: network.dnsManual ?? false,
+                                    onChanged: (v) {
+                                      setState(() {
+                                        network.dnsManual = !network.dnsManual!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          TextField(
+                            controller: _dnsPrimaryController,
+                            enabled: network.dnsManual,
+                            onChanged: (v) => network.dnsPrimary = v,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: '首选DNS服务器',
+                            ),
+                          ),
+                          TextField(
+                            controller: _dnsSecondaryController,
+                            enabled: network.dnsManual,
+                            onChanged: (v) => network.dnsSecondary = v,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: '备用DNS服务器',
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                    tabs: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("常规"),
+                    WidgetCard(
+                      title: '代理服务器',
+                      body: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "通过代理服务器连接",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: CupertinoSwitch(
+                                    value: proxy.enable ?? false,
+                                    onChanged: (v) {
+                                      setState(() {
+                                        proxy.enable = !proxy.enable!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          TextField(
+                            controller: _proxyHttpHostController,
+                            enabled: proxy.enable ?? false,
+                            onChanged: (v) => proxy.httpHost = v,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: '地址',
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextField(
+                            controller: _proxyHttpPortController,
+                            enabled: proxy.enable ?? false,
+                            onChanged: (v) => proxy.httpPort = v,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: '端口',
+                            ),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("网络界面"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("流量控制"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("静态路由"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text("DSM设置"),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      ListView(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "常规",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text("请输入系统名称、域名服务器 (DNS) 及默认网关。"),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: TextField(
-                                      controller: _serverNameController,
-                                      onChanged: (v) => network['server_name'] = v,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        labelText: '系统名称',
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text("默认网关(gateway): ${network['gateway']}"),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text("IPv6默认网关: ${network['v6gateway'] == "" ? "-" : network['v6gateway']}"),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      FocusScope.of(context).unfocus();
-                                      setState(() {
-                                        network['dns_manual'] = !network['dns_manual'];
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          Text("手动配置DNS服务器"),
-                                          Spacer(),
-                                          if (network['dns_manual'])
-                                            Icon(
-                                              CupertinoIcons.checkmark_alt,
-                                              color: Color(0xffff9813),
-                                              size: 22,
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: TextField(
-                                      controller: _dnsPrimaryController,
-                                      enabled: network['dns_manual'],
-                                      onChanged: (v) => network['dns_primary'] = v,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        labelText: '首选DNS服务器',
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: TextField(
-                                      controller: _dnsSecondaryController,
-                                      enabled: network['dns_manual'],
-                                      onChanged: (v) => network['dns_secondary'] = v,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        labelText: '备用DNS服务器',
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                ListView(
+                  children: [
+                    if (ethernets.ethernets != null)
+                      ...ethernets.ethernets!.map((ethernet) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.of(context)?.cardColor,
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "代理服务器",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      FocusScope.of(context).unfocus();
-                                      setState(() {
-                                        proxy['enable'] = !proxy['enable'];
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          Text("手动配置DNS服务器"),
-                                          Spacer(),
-                                          if (proxy['enable'])
-                                            Icon(
-                                              CupertinoIcons.checkmark_alt,
-                                              color: Color(0xffff9813),
-                                              size: 22,
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: TextField(
-                                      controller: _proxyHttpHostController,
-                                      enabled: proxy['enable'],
-                                      onChanged: (v) => proxy['http_host'] = v,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        labelText: '地址',
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                                    child: TextField(
-                                      controller: _proxyHttpPortController,
-                                      enabled: proxy['enable'],
-                                      onChanged: (v) => proxy['http_port'] = v,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        labelText: '端口',
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                      ListView(
-                        children: [
-                          ...ethernets.map((ethernet) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                          margin: EdgeInsets.only(left: 16, right: 16, top: 14),
 
-                              // padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: ExpansionContainer(
-                                title: Column(
+                          // padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: ExpansionContainer(
+                            expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                            title: Column(
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "局域网${ethernets.indexOf(ethernet) + 1}",
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        if (ethernet['status'] == 'connected') Label("已联机", Colors.blue) else if (ethernet['status'] == 'disconnected') Label("尚未联机", Colors.grey) else Label(ethernet['status'], Colors.orangeAccent),
-                                      ],
+                                    Text(
+                                      "局域网${ethernets.ethernets!.indexOf(ethernet) + 1}",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    if (ethernet['status'] == 'connected')
-                                      Row(
-                                        children: [
-                                          Text(ethernet['use_dhcp'] ? 'DHCP' : '静态IP'),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(ethernet['ip']),
-                                        ],
-                                      ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    DotWidget(
+                                      size: 10,
+                                      color: ethernet.statusEnum.color,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${ethernet.statusEnum != NetworkStatusEnum.unknown ? ethernet.statusEnum.label : ethernet.status ?? '-'}",
+                                      style: TextStyle(color: ethernet.statusEnum.color, fontSize: 12),
+                                    ),
                                   ],
                                 ),
-                                showFirst: false,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text("子网掩码(mask)："),
-                                            Expanded(
-                                              child: Text(
-                                                ethernet['mask'] == '' ? '--' : ethernet['mask'],
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 10),
-                                          child: Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text("IPv6地址："),
-                                              Expanded(
-                                                child: ethernet['ipv6'] != null && ethernet['ipv6'].length > 0
-                                                    ? Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                        children: (ethernet['ipv6'] as List).map((ipv6) {
-                                                          return Text(ipv6);
-                                                        }).toList(),
-                                                      )
-                                                    : Text(
-                                                        "--",
-                                                        textAlign: TextAlign.right,
-                                                      ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text("网络状态："),
-                                            Expanded(
-                                              child: Text(
-                                                "${ethernet['max_supported_speed']} Mb/s,${ethernet['duplex'] ? '全双工' : '半双工'}, MTU ${ethernet['mtu']}",
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                          ...pppoes.map((pppoe) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-
-                              // padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: ExpansionContainer(
-                                title: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "PPPoE",
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        if (pppoe['status'] == 'connected') Label("已联机", Colors.blue) else if (pppoe['status'] == 'disconnected') Label("尚未联机", Colors.grey) else Label(pppoe['status'], Colors.orangeAccent),
-                                      ],
-                                    ),
-                                    if (pppoe['status'] == 'connected')
-                                      Row(
-                                        children: [
-                                          Text(pppoe['use_dhcp'] ? 'DHCP' : '静态IP'),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(pppoe['ip']),
-                                        ],
+                                if (ethernet.statusEnum == NetworkStatusEnum.connected)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        ethernet.ip ?? '',
+                                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                                       ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Label(ethernet.useDhcp == true ? 'DHCP' : '静态IP', AppTheme.of(context)?.primaryColor ?? Colors.blue),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            children: [
+                              Text(
+                                "子网掩码(mask)",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                              ),
+                              Text(
+                                ethernet.mask == '' ? '--' : ethernet.mask ?? '--',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              Divider(),
+                              Text(
+                                "IPv6地址",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                              ),
+                              ethernet.ipv6 != null && ethernet.ipv6!.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: ethernet.ipv6!.map((ipv6) {
+                                        return Text(ipv6);
+                                      }).toList(),
+                                    )
+                                  : Text(
+                                      "--",
+                                      textAlign: TextAlign.start,
+                                    ),
+                              Divider(),
+                              Text(
+                                "网络状态",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                              ),
+                              Text(
+                                "${ethernet.maxSupportedSpeed} Mb/s,${ethernet.duplex == true ? '全双工' : '半双工'}, MTU ${ethernet.mtu}",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: 14),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    if (pppoes.pppoes != null)
+                      ...pppoes.pppoes!.map((pppoe) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.of(context)?.cardColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          margin: EdgeInsets.only(left: 16, right: 16, top: 14),
+                          child: ExpansionContainer(
+                            title: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "PPPoE",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    DotWidget(
+                                      size: 10,
+                                      color: pppoe.statusEnum.color,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${pppoe.statusEnum != NetworkStatusEnum.unknown ? pppoe.statusEnum.label : pppoe.status ?? '-'}",
+                                      style: TextStyle(color: pppoe.statusEnum.color, fontSize: 12),
+                                    ),
                                   ],
                                 ),
-                                showFirst: false,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text("子网掩码(mask)："),
-                                            Expanded(
-                                              child: Text(
-                                                pppoe['mask'] == '' ? '--' : pppoe['mask'],
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 10),
-                                          child: Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text("IPv6地址："),
-                                              Expanded(
-                                                child: pppoe['ipv6'] != null && pppoe['ipv6'].length > 0
-                                                    ? Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                        children: (pppoe['ipv6'] as List).map((ipv6) {
-                                                          return Text(ipv6);
-                                                        }).toList(),
-                                                      )
-                                                    : Text(
-                                                        "--",
-                                                        textAlign: TextAlign.right,
-                                                      ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        if (pppoe['status'] == 'connected')
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Row(
-                                              children: [
-                                                Text("网络状态："),
-                                                Expanded(
-                                                  child: Text(
-                                                    "${pppoe['max_supported_speed']} Mb/s,${pppoe['duplex'] ? '全双工' : '半双工'}, MTU ${pppoe['mtu']}",
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                      ],
-                                    ),
+                                if (pppoe.statusEnum == NetworkStatusEnum.connected)
+                                  Row(
+                                    children: [
+                                      Text(pppoe.ip ?? '-'),
+                                    ],
                                   ),
-                                ],
+                              ],
+                            ),
+                            expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "子网掩码(mask)",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
                               ),
-                            );
-                          }).toList(),
-                        ],
-                      ),
-                      Center(
-                        child: Text("开发中"),
-                      ),
-                      Center(
-                        child: Text("开发中"),
-                      ),
-                      Center(
-                        child: Text("开发中"),
-                      ),
-                    ],
-                  ),
+                              Text(
+                                pppoe.mask == '' ? '--' : pppoe.mask ?? '--',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              Divider(),
+                              Text(
+                                "IPv6地址",
+                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                              ),
+                              pppoe.ipv6 != null && pppoe.ipv6!.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: pppoe.ipv6!.map((ipv6) {
+                                        return Text(ipv6);
+                                      }).toList(),
+                                    )
+                                  : Text(
+                                      "--",
+                                      textAlign: TextAlign.right,
+                                    ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                  ],
+                ),
+                Center(
+                  child: Text("开发中"),
+                ),
+                Center(
+                  child: Text("开发中"),
                 ),
               ],
             ),

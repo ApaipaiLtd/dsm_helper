@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class HttpUtil {
   Dio? dio;
-  // 工厂模式
+
   bool isShowLoginDialog = false;
 
   init(String baseUrl, {String? deviceId, String? sid}) {

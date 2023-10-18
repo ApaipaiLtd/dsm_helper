@@ -142,7 +142,7 @@ class Nif {
   num? mtu;
   num? speed;
   String? status;
-  NetworkNifStatusEnum get statusEnum => NetworkNifStatusEnum.fromValue(status ?? 'unknown');
+  NetworkStatusEnum get statusEnum => NetworkStatusEnum.fromValue(status ?? 'unknown');
   String? type;
   bool? useDhcp;
   Nif copyWith({

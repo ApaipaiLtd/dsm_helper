@@ -17,7 +17,7 @@ import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/button.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/page_body_widget.dart';
@@ -71,22 +71,22 @@ class _SelectServerState extends State<SelectServer> {
         actions: [
           CupertinoButton(
             onPressed: () {
-              context.push(AddServer());
-            },
-            child: Image.asset(
-              "assets/icons/plus_circle.png",
-              width: 24,
-              height: 24,
-            ),
-          ),
-          CupertinoButton(
-            onPressed: () {
               setState(() {
                 hide = !hide;
               });
             },
             child: Image.asset(
               "assets/icons/${hide ? "eye_slash" : "eye"}.png",
+              width: 24,
+              height: 24,
+            ),
+          ),
+          CupertinoButton(
+            onPressed: () {
+              context.push(AddServer());
+            },
+            child: Image.asset(
+              "assets/icons/plus_circle.png",
               width: 24,
               height: 24,
             ),
@@ -129,6 +129,15 @@ class _SelectServerState extends State<SelectServer> {
                   width: width,
                   height: height,
                   fit: BoxFit.cover,
+                )
+              else
+                ExtendedImage.asset(
+                  "assets/default_login_background.jpg",
+                  height: context.width / 16 * 9,
+                  width: context.width,
+                  fit: BoxFit.cover,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
                 ),
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
@@ -261,7 +270,7 @@ class _SelectServerState extends State<SelectServer> {
                                           ),
                                           PopupMenuItem(
                                             onTap: () async {
-                                              showCustomDialog(
+                                              showGlassDialog(
                                                 context: context,
                                                 builder: (context) {
                                                   return AlertDialog(
@@ -607,7 +616,7 @@ class _SelectServerState extends State<SelectServer> {
             CupertinoButton(
               minSize: 0,
               onPressed: () {
-                showCustomDialog(
+                showGlassDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(

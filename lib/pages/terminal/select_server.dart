@@ -1,6 +1,12 @@
 import 'dart:convert';
 
+import 'package:dsm_helper/themes/app_theme.dart';
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -125,43 +131,27 @@ class _SelectTerminalServerState extends State<SelectTerminalServer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text("选择服务器"),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: CupertinoButton(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(10),
-              padding: EdgeInsets.all(10),
-              onPressed: () {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(
-                        builder: (context) {
-                          return AddServer();
-                        },
-                        settings: RouteSettings(name: "add_ssh_server")))
-                    .then((value) {
-                  getData();
-                });
-              },
-              child: Icon(Icons.add),
+          CupertinoButton(
+            onPressed: () {
+              context.push(AddServer(), name: 'add_terminal_server').then((res) {
+                getData();
+              });
+            },
+            child: Image.asset(
+              "assets/icons/plus_circle.png",
+              width: 24,
             ),
           )
         ],
       ),
       body: loading
           ? Center(
-              child: Container(
-                padding: EdgeInsets.all(50),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: CupertinoActivityIndicator(
-                  radius: 14,
-                ),
+              child: LoadingWidget(
+                size: 30,
               ),
             )
           : servers.length > 0
@@ -176,8 +166,8 @@ class _SelectTerminalServerState extends State<SelectTerminalServer> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        "未添加服务器",
+                      EmptyWidget(
+                        text: "未添加服务器",
                       ),
                       SizedBox(
                         height: 20,
@@ -186,21 +176,15 @@ class _SelectTerminalServerState extends State<SelectTerminalServer> {
                         width: 200,
                         child: CupertinoButton(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppTheme.of(context)?.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
                           onPressed: () {
-                            Navigator.of(context)
-                                .push(CupertinoPageRoute(
-                                    builder: (context) {
-                                      return AddServer();
-                                    },
-                                    settings: RouteSettings(name: "add_ssh_server")))
-                                .then((value) {
+                            context.push(AddServer(), name: 'add_terminal_server').then((res) {
                               getData();
                             });
                           },
                           child: Text(
-                            ' 添加 ',
+                            '添加',
                             style: TextStyle(fontSize: 18),
                           ),
                         ),

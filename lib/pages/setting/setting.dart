@@ -1,11 +1,13 @@
 import 'dart:ui';
 
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/constants/dsm_image_url.dart';
+import 'package:dsm_helper/models/Syno/Core/NormalUser.dart';
 import 'package:dsm_helper/models/Syno/Core/Terminal.dart';
 import 'package:dsm_helper/pages/backup/backup.dart';
-import 'package:dsm_helper/pages/login/confirm_logout.dart';
 import 'package:dsm_helper/pages/server/select_server.dart';
 import 'package:dsm_helper/pages/setting/dialogs/feedback_dialog.dart';
+import 'package:dsm_helper/pages/setting/dialogs/logout_dialog.dart';
 import 'package:dsm_helper/pages/setting/dialogs/shutdown_dialog.dart';
 import 'package:dsm_helper/pages/setting/dialogs/ssh_dialog.dart';
 import 'package:dsm_helper/pages/setting/vip.dart';
@@ -20,6 +22,7 @@ import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:dsm_helper/widgets/terminal_button.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -115,15 +118,11 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
   Terminal terminal = Terminal();
+  NormalUser normalUser = NormalUser();
 
   bool terminalLoading = true;
   bool shuttingDown = false;
   bool rebooting = false;
-
-  bool otpEnable = false;
-  bool otpEnforced = false;
-
-  String email = "";
   @override
   void initState() {
     getTerminalInfo();
@@ -139,14 +138,8 @@ class _SettingState extends State<Setting> {
   }
 
   getNormalUser() async {
-    // var res = await Api.normalUser("get");
-    // if (res['success']) {
-    //   setState(() {
-    //     otpEnable = res['data']['OTP_enable'];
-    //     otpEnforced = res['data']['OTP_enforced'];
-    //     email = res['data']['email'];
-    //   });
-    // }
+    normalUser = await NormalUser.get();
+    setState(() {});
   }
 
   power(bool reboot, bool force) async {
@@ -371,9 +364,18 @@ class _SettingState extends State<Setting> {
                 height: 170,
                 child: Stack(
                   children: [
-                    if (initDataProvider.initData.userSettings?.desktop?.wallpaper != null && (initDataProvider.initData.userSettings!.desktop!.wallpaper!.customizeBackground! || initDataProvider.initData.userSettings!.desktop!.wallpaper!.customizeBackground!))
+                    if (initDataProvider.initData.userSettings?.desktop?.wallpaper != null && (initDataProvider.initData.userSettings!.desktop!.wallpaper!.customizeBackground == true))
                       ExtendedImage.network(
                         "${Api.dsm.baseUrl}/webapi/entry.cgi?api=SYNO.Core.PersonalSettings&method=wallpaper&version=1&path=%22%22&retina=true&_sid=${Api.dsm.sid}",
+                        height: 170,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(20),
+                      )
+                    else
+                      ExtendedImage.network(
+                        "${Api.dsm.baseUrl}/${(Utils.version == 7 ? DsmImage.v7() : DsmImage.v6()).desktopBackgroundImage}",
                         height: 170,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -419,9 +421,6 @@ class _SettingState extends State<Setting> {
                                       "${initDataProvider.initData.session?.user}",
                                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, shadows: [BoxShadow(color: Colors.white, spreadRadius: 30, blurRadius: 15)]),
                                     ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
                                     Text(
                                       "${Api.dsm.baseUrl}",
                                       maxLines: 1,
@@ -447,12 +446,7 @@ class _SettingState extends State<Setting> {
                                 children: [
                                   CupertinoButton(
                                     onPressed: () {
-                                      showCupertinoModalPopup(
-                                        context: context,
-                                        builder: (context) {
-                                          return ConfirmLogout(otpEnable);
-                                        },
-                                      );
+                                      LogoutDialog.show(context: context, otpEnable: normalUser.otpEnable == true);
                                     },
                                     child: Image.asset(
                                       "assets/icons/exit.png",
@@ -496,22 +490,28 @@ class _SettingState extends State<Setting> {
                                       ),
                                     ),
                                   CupertinoButton(
-                                    onPressed: () {
-                                      onShutdown(reboot: true);
-                                    },
-                                    child: Image.asset(
-                                      "assets/icons/reboot.png",
-                                      width: 20,
-                                      color: AppTheme.of(context)?.warningColor,
-                                    ),
+                                    onPressed: rebooting
+                                        ? null
+                                        : () {
+                                            onShutdown(reboot: true);
+                                          },
+                                    child: rebooting
+                                        ? LoadingWidget(size: 20)
+                                        : Image.asset(
+                                            "assets/icons/reboot.png",
+                                            width: 20,
+                                            color: AppTheme.of(context)?.warningColor,
+                                          ),
                                   ),
                                   CupertinoButton(
                                     onPressed: shuttingDown ? null : onShutdown,
-                                    child: Image.asset(
-                                      "assets/icons/shutdown.png",
-                                      width: 20,
-                                      color: AppTheme.of(context)?.errorColor,
-                                    ),
+                                    child: shuttingDown
+                                        ? LoadingWidget(size: 20)
+                                        : Image.asset(
+                                            "assets/icons/shutdown.png",
+                                            width: 20,
+                                            color: AppTheme.of(context)?.errorColor,
+                                          ),
                                   ),
                                 ],
                               ),

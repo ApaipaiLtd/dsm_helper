@@ -45,6 +45,11 @@ class Auth {
     return res.success!;
   }
 
+  static Future<bool> forget() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.TrustDevice", "delete", version: 1);
+    return res.success!;
+  }
+
   Auth.fromJson(dynamic json) {
     account = json['account'];
     deviceId = json['device_id'];

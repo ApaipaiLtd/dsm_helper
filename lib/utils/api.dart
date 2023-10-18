@@ -1252,16 +1252,6 @@ class Api {
     return await Utils.post("entry.cgi", data: data);
   }
 
-  static Future<Map> trustDevice(String method) async {
-    var data = {
-      "api": 'SYNO.Core.TrustDevice',
-      "method": method,
-      "version": 1,
-      "_sid": Utils.sid,
-    };
-    return await Utils.post("entry.cgi", data: data);
-  }
-
   //SYNO.Core.NormalUser
   static Future<Map> normalUser(String method, {Map<String, dynamic>? changedData}) async {
     Map<String, dynamic> data = {
@@ -1421,45 +1411,6 @@ class Api {
     return await Utils.post("entry.cgi", data: data);
   }
 
-  static Future<Map> fileService() async {
-    List apis = [
-      {"api": "SYNO.Core.FileServ.SMB", "method": "get", "version": 3},
-      {"api": "SYNO.Core.FileServ.AFP", "method": "get", "version": 1},
-      {"api": "SYNO.Core.FileServ.NFS", "method": "get", "version": 2},
-      {"api": "SYNO.Core.FileServ.FTP", "method": "get", "version": 3},
-      {"api": "SYNO.Core.FileServ.FTP.SFTP", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.BandwidthControl.Protocol", "method": "get", "version": 1, "protocol": "FTP"},
-      // {"api": "SYNO.Core.TFTP", "method": "get", "version": 1},
-      // {"api": "SYNO.Backup.Service.NetworkBackup", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.BandwidthControl.Protocol", "method": "get", "version": 1, "protocol": "NetworkBackup"},
-      // {"api": "SYNO.Core.Directory.Domain", "method": "get", "version": 1},
-      // {
-      //   "api": "SYNO.Core.Share",
-      //   "method": "list",
-      //   "version": 1,
-      //   "additional": ["is_service_share"],
-      //   "shareType": ["dec", "local", "usb", "sata", "cluster"]
-      // },
-      // {"api": "SYNO.Core.Service", "method": "get", "version": 1, "service_id": "pgsql"},
-      {"api": "SYNO.Core.SyslogClient.FileTransfer", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.Network", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.FileServ.ReflinkCopy", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.Web.DSM", "method": "get", "version": 2},
-      // {"api": "SYNO.Core.ExternalDevice.Printer.BonjourSharing", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.FileServ.ServiceDiscovery", "method": "get", "version": 1},
-      // {"api": "SYNO.Core.FileServ.ServiceDiscovery.WSTransfer", "method": "get", "version": 1}
-    ];
-    var result = await Utils.post("entry.cgi", data: {
-      "api": 'SYNO.Entry.Request',
-      "method": 'request',
-      "mode": '"sequential"',
-      "compound": jsonEncode(apis),
-      "version": 1,
-      "_sid": Utils.sid,
-    });
-    return result;
-  }
-
   static Future<Map> fileServiceLog(String protocol) async {
     var data = {
       "protocol": '"$protocol"',
@@ -1479,40 +1430,6 @@ class Api {
       "version": 1,
     };
     return await Utils.post("entry.cgi", data: data);
-  }
-
-  static Future<Map> fileServiceSave(Map? smb, Map? syslogClient, Map? afp, Map? nfs, Map? ftp, Map? sftp) async {
-    List apis = [
-      {"api": "SYNO.Core.FileServ.SMB", "method": "set", "version": 3, "enable_samba": smb?['enable_samba'], "workgroup": smb?['workgroup'], "disable_shadow_copy": smb?['disable_shadow_copy'], "smb_transfer_log_enable": syslogClient?['cifs']},
-      {"api": "SYNO.Core.FileServ.AFP", "method": "set", "version": 1, "enable_afp": afp?['enable_afp'], "afp_transfer_log_enable": syslogClient?['afp']},
-      {"api": "SYNO.Core.FileServ.NFS", "method": "set", "version": 2, "enable_nfs": nfs?['enable_nfs'], "enable_nfs_v4": nfs?['enable_nfs_v4'], "enable_nfs_v4_1": nfs?['enable_nfs_v4'], "nfs_v4_domain": nfs?['nfs_v4_domain']},
-      {"api": "SYNO.Core.SyslogClient.FileTransfer", "method": "set", "version": 1, "cifs": syslogClient?['cifs'], "afp": syslogClient?['afp']},
-      {
-        "api": "SYNO.Core.FileServ.FTP",
-        "method": "set",
-        "version": "3",
-        "enable_ftp": ftp?['enable_ftp'],
-        "enable_ftps": ftp?['enable_ftps'],
-        "timeout": ftp?['timeout'],
-        "portnum": ftp?['portnum'],
-        "custom_port_range": ftp?['custom_port_range'],
-        "use_ext_ip": ftp?['use_ext_ip'],
-        "enable_fxp": ftp?['enable_fxp'],
-        "enable_fips": ftp?['enable_fips'],
-        "enable_ascii": ftp?['enable_ascii'],
-        "utf8_mode": ftp?['utf8_mode']
-      },
-      {"api": "SYNO.Core.FileServ.FTP.SFTP", "method": "set", "version": "1", "enable": sftp?['enable'], "sftp_portnum": sftp?['portnum'], "portnum": sftp?['portnum']}
-    ];
-    var result = await Utils.post("entry.cgi", data: {
-      "api": 'SYNO.Entry.Request',
-      "method": 'request',
-      "mode": '"sequential"',
-      "compound": jsonEncode(apis),
-      "version": 1,
-      "_sid": Utils.sid,
-    });
-    return result;
   }
 
   static Future<Map> securityRule() async {
@@ -1580,85 +1497,6 @@ class Api {
       "_sid": Utils.sid,
     });
     return result;
-  }
-
-  static Future<Map> quickConnect(String connectConnectID, {String baseUrl = "global.quickconnect.cn"}) async {
-    Dio dio = new Dio(
-      new BaseOptions(
-        baseUrl: "https://$baseUrl/",
-        contentType: "text/plain",
-      ),
-    );
-    String data = '''{
-    "version":1,
-    "command":"get_server_info",
-    "serverID":"$connectConnectID",
-    "id":"dsm",
-    "get_ca_fingerprints":true
-}''';
-    // if (kDebugMode) {
-    //   (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
-    //     client.findProxy = (uri) {
-    //       return "PROXY 192.168.0.107:7890";
-    //     };
-    //     return client;
-    //   }; //
-    // }
-    Response response;
-    try {
-      response = await dio.post("Serv.php", data: data);
-      if (response.data is String) {
-        return json.decode(response.data);
-      } else if (response.data is Map) {
-        return response.data;
-      } else {
-        return response.data;
-      }
-    } on DioException catch (error) {
-      print("请求出错");
-      return {
-        "success": false,
-        "error": {"code": error.message},
-        "data": null
-      };
-    }
-  }
-
-  static Future<Map> quickConnectCn(String connectConnectID, {String baseUrl = "cnc.quickconnect.cn"}) async {
-    print("connectCN:" + baseUrl);
-    Dio dio = new Dio(
-      new BaseOptions(
-        baseUrl: "https://$baseUrl/",
-        contentType: "text/plain",
-      ),
-    );
-    String data = '''{"version":1,"command":"request_tunnel","serverID":"$connectConnectID","id":"dsm","location":"cn","platform":"Android 11"}''';
-    Response response;
-    // if (kDebugMode) {
-    //   (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
-    //     client.findProxy = (uri) {
-    //       return "PROXY 192.168.0.107:7890";
-    //     };
-    //     return client;
-    //   }; //
-    // }
-    try {
-      response = await dio.post("Serv.php", data: data);
-      if (response.data is String) {
-        return json.decode(response.data);
-      } else if (response.data is Map) {
-        return response.data;
-      } else {
-        return response.data;
-      }
-    } on DioException catch (error) {
-      print("请求出错");
-      return {
-        "success": false,
-        "error": {"code": error.message},
-        "data": null
-      };
-    }
   }
 
   static Future<void> pingpong(String host, Function callback) async {
@@ -1965,31 +1803,6 @@ class Api {
       data['passwd'] = '"${ddns['passwd']}"';
     }
     var result = await Utils.post("entry.cgi", data: data);
-    return result;
-  }
-
-  static Future<Map> networkStatus() async {
-    List apis = [
-      {
-        "api": "SYNO.Core.Network",
-        "method": "get",
-        "version": min(apiList['SYNO.Core.Network']?.minVersion ?? 1, 2),
-      },
-      {"api": "SYNO.Core.Network.Ethernet", "method": "list", "version": 2},
-      {"api": "SYNO.Core.Network.PPPoE", "method": "list", "version": 1},
-      {"api": "SYNO.Core.Network.Proxy", "method": "get", "version": 1},
-      {"api": "SYNO.Core.Network.Router.Gateway.List", "method": "get", "version": 1, "iptype": "ipv4", "type": "wan"},
-      {"api": "SYNO.Core.Web.DSM", "method": "get", "version": 2}
-    ];
-    var result = await Utils.post("entry.cgi", data: {
-      "stop_when_error": false,
-      "api": 'SYNO.Entry.Request',
-      "method": 'request',
-      "mode": '"sequential"',
-      "compound": jsonEncode(apis),
-      "version": 1,
-      "_sid": Utils.sid,
-    });
     return result;
   }
 }

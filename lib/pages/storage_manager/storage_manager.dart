@@ -23,9 +23,6 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
   late TabController _tabController;
   Storage storage = Storage();
   bool loading = true;
-  List ssdCaches = [];
-  List disks = [];
-  List storagePools = [];
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
@@ -144,7 +141,10 @@ class _StorageManagerState extends State<StorageManager> with SingleTickerProvid
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         child: ListView.separated(
                           itemBuilder: (context, i) {
-                            return DiskCardItemWidget(storage.disks![i]);
+                            return DiskCardItemWidget(
+                              storage.disks![i],
+                              usedByPool: storage.storagePools?.firstWhere((element) => element.id == storage.disks![i].usedBy, orElse: null),
+                            );
                           },
                           itemCount: storage.disks!.length,
                           separatorBuilder: (context, i) {

@@ -16,7 +16,7 @@ class DiskCardItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.of(context)?.cardColor,
         borderRadius: BorderRadius.circular(22),
       ),
       child: ExpansionContainer(
@@ -34,7 +34,7 @@ class DiskCardItemWidget extends StatelessWidget {
           ),
           Divider(indent: 0, endIndent: 0, height: 20),
           Text(
-            "存储池",
+            "配置用途",
             style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
           ),
           if (usedByPool != null) Text("存储池 ${usedByPool!.numId}") else if (usedBySsdCache != null) Text("${usedBySsdCache!.displayName}") else Text("-"),

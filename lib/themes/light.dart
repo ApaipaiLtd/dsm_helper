@@ -13,6 +13,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       successColor: Color(0xFF25B85F),
       warningColor: Color(0xFFFF8D1A),
       errorColor: Color(0xFFFF5733),
+      cardColor: Colors.white,
     ),
   ],
   platform: TargetPlatform.iOS,

@@ -2,6 +2,7 @@ import 'package:dsm_helper/models/Syno/Storage/Cgi/Storage.dart';
 import 'package:dsm_helper/pages/storage_manager/enums/disk_status_enum.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/dot_widget.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:flutter/material.dart';
 
@@ -45,14 +46,11 @@ class DiskItemWidget extends StatelessWidget {
         Row(
           children: [
             if (!showStatus) ...[
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
+              Padding(
+                padding: EdgeInsets.only(right: 3),
+                child: DotWidget(
                   color: disk.statusEnum.color,
-                  shape: BoxShape.circle,
                 ),
-                margin: EdgeInsets.only(right: 3),
               ),
               Text(
                 disk.statusEnum != DiskStatusEnum.unknown ? disk.statusEnum.label : disk.status!,
@@ -75,34 +73,38 @@ class DiskItemWidget extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "分配状态",
-                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                    ),
-                    Text(
-                      "${disk.statusEnum.label}",
-                      style: TextStyle(fontSize: 14, color: disk.statusEnum.color),
-                    ),
-                  ],
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "分配状态：",
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
+                      ),
+                      TextSpan(
+                        text: "${disk.statusEnum.label}",
+                        style: TextStyle(fontSize: 12, color: disk.statusEnum.color),
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
                 ),
               ),
               SizedBox(width: 10),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "健康状态",
-                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                    ),
-                    Text(
-                      "${disk.smartStatusEnum.label}",
-                      style: TextStyle(fontSize: 14, color: disk.smartStatusEnum.color),
-                    ),
-                  ],
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "健康状态：",
+                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
+                      ),
+                      TextSpan(
+                        text: "${disk.smartStatusEnum.label}",
+                        style: TextStyle(fontSize: 12, color: disk.smartStatusEnum.color),
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
                 ),
               ),
             ],

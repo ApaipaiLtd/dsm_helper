@@ -1,6 +1,6 @@
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/button.dart';
-import 'package:dsm_helper/widgets/custom_dialog/custom_dialog.dart';
+import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sp_util/sp_util.dart';
@@ -10,7 +10,7 @@ class FirstLaunchDialog {
   static show(BuildContext context) async {
     bool firstLaunch = SpUtil.getBool("first_launch_channel", defValue: true)!;
     if (firstLaunch && Utils.notReviewAccount) {
-      showCustomDialog(
+      showGlassDialog(
         context: context,
         builder: (context) {
           return Material(

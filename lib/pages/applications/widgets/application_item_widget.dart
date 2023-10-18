@@ -1,5 +1,6 @@
 import 'package:dsm_helper/pages/applications/application_enums.dart';
 import 'package:dsm_helper/pages/common/browser.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class ApplicationItemWidget extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.of(context)?.cardColor,
           borderRadius: BorderRadius.circular(22),
         ),
         child: Stack(

@@ -8,6 +8,7 @@ import 'package:dsm_helper/providers/utilization_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
+import 'package:dsm_helper/widgets/dot_widget.dart';
 import 'package:dsm_helper/widgets/line_progress_bar.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -253,12 +254,12 @@ class _ContainerPageState extends State<ContainerPage> with AutomaticKeepAliveCl
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(color: container.statusEnum.color, shape: BoxShape.circle),
+                      Padding(
+                        padding: EdgeInsets.only(right: 6),
+                        child: DotWidget(
+                          color: container.statusEnum.color,
+                        ),
                       ),
-                      SizedBox(width: 6),
                       Text(
                         container.statusEnum.label,
                         style: TextStyle(color: container.statusEnum.color, fontSize: 13),
