@@ -1,7 +1,7 @@
 import 'package:dsm_helper/models/Syno/Core/SyslogClient/Status.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/log_center/log_center.dart';
-import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';

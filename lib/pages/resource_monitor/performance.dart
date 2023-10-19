@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
 import 'package:dsm_helper/widgets/label.dart';
@@ -882,7 +882,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                             child: Padding(
                               padding: const EdgeInsets.all(20),
                               child: Container(
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
@@ -1230,7 +1229,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                             child: Padding(
                               padding: const EdgeInsets.all(20),
                               child: Container(
-                                
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(20),
@@ -1520,7 +1518,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           for (int i = 0; i < networkCount; i++)
                             Container(
                               margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                              
                               decoration: BoxDecoration(
                                 color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(20),
@@ -1543,7 +1540,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                       child: Container(
-                                        
                                         decoration: BoxDecoration(
                                           color: Theme.of(context).scaffoldBackgroundColor,
                                           borderRadius: BorderRadius.circular(20),
@@ -1728,7 +1724,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -1751,7 +1746,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -1858,7 +1852,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -1881,7 +1874,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2008,7 +2000,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2031,7 +2022,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2158,7 +2148,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2181,7 +2170,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2287,7 +2275,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2310,7 +2297,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2435,7 +2421,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2458,7 +2443,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2559,7 +2543,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2582,7 +2565,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2682,7 +2664,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2705,7 +2686,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2811,7 +2791,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2834,7 +2813,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),
@@ -2934,7 +2912,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                            
                             decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(20),
@@ -2957,7 +2934,6 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.circular(20),

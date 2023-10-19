@@ -781,42 +781,6 @@ class Api {
     return await Utils.post("entry.cgi", data: data);
   }
 
-  static Future<Map> taskScheduler() async {
-    var data = {
-      "api": "SYNO.Core.TaskScheduler",
-      "offset": 0,
-      "limit": -1,
-      "sort_by": "next_trigger_time",
-      "sort_direction": "DESC",
-      "version": 1,
-      "method": "list",
-      "_sid": Utils.sid,
-    };
-    return await Utils.post("entry.cgi", data: data);
-  }
-
-  static Future<Map> taskRun(List<int> task) async {
-    var data = {
-      "api": "SYNO.Core.TaskScheduler",
-      "version": 1,
-      "method": "run",
-      "task": jsonEncode(task),
-      "_sid": Utils.sid,
-    };
-    return await Utils.post("entry.cgi", data: data);
-  }
-
-  static Future<Map> eventRun(taskName) async {
-    var data = {
-      "api": "SYNO.Core.EventScheduler",
-      "version": 1,
-      "method": "run",
-      "task_name": taskName,
-      "_sid": Utils.sid,
-    };
-    return await Utils.post("entry.cgi", data: data);
-  }
-
   static Future<Map> taskRecord(int task) async {
     var data = {
       "api": "SYNO.Core.TaskScheduler",

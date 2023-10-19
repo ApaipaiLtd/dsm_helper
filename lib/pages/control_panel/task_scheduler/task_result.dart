@@ -1,16 +1,17 @@
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/label.dart';
+import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TaskRecord extends StatefulWidget {
+class TaskResult extends StatefulWidget {
   final int id;
-  TaskRecord(this.id);
+  TaskResult(this.id);
   @override
-  _TaskRecordState createState() => _TaskRecordState();
+  _TaskResultState createState() => _TaskResultState();
 }
 
-class _TaskRecordState extends State<TaskRecord> {
+class _TaskResultState extends State<TaskResult> {
   List records = [];
   bool loading = true;
   @override
@@ -102,22 +103,8 @@ class _TaskRecordState extends State<TaskRecord> {
         title: Text("查看结果"),
       ),
       body: loading
-          ? Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.all(50),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: CupertinoActivityIndicator(
-                    radius: 14,
-                  ),
-                ),
-              ),
+          ? Center(
+              child: LoadingWidget(size: 30),
             )
           : ListView.builder(
               padding: EdgeInsets.all(20),

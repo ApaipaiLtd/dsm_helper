@@ -17,12 +17,10 @@ import 'package:dsm_helper/pages/storage_manager/storage_manager.dart';
 import 'package:dsm_helper/pages/virtual_machine/virtual_machine.dart';
 import 'package:dsm_helper/providers/audio_player_provider.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
-import 'package:dsm_helper/providers/setting.dart';
-import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
-import 'package:dsm_helper/providers/wallpaper.dart';
 import 'package:dsm_helper/themes/light.dart';
 import 'package:dsm_helper/themes/dark.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -134,7 +132,7 @@ void main() async {
   bool launchAuth = SpUtil.getBool("launch_auth", defValue: false)!;
   bool password = SpUtil.getBool("launch_auth_password", defValue: false)!;
   bool biometrics = SpUtil.getBool("launch_auth_biometrics", defValue: false)!;
-  bool showShortcuts = SpUtil.getBool("show_shortcut", defValue: true)!;
+  bool showShortcut = SpUtil.getBool("show_shortcut", defValue: true)!;
   bool showWallpaper = SpUtil.getBool("show_wallpaper", defValue: true)!;
   int refreshDuration = SpUtil.getInt("refresh_duration", defValue: 10)!;
   bool launchAccountPage = SpUtil.getBool("launch_account_page", defValue: false)!;
@@ -156,9 +154,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: DarkModeProvider(darkMode)),
-        ChangeNotifierProvider.value(value: ShortcutProvider(showShortcuts)),
-        ChangeNotifierProvider.value(value: WallpaperProvider(showWallpaper)),
-        ChangeNotifierProvider.value(value: SettingProvider(refreshDuration)),
+        ChangeNotifierProvider.value(value: SettingProvider(refreshDuration: refreshDuration, showShortcut: showShortcut)),
         ChangeNotifierProvider.value(value: AudioPlayerProvider()),
         ChangeNotifierProvider.value(value: SystemInfoProvider()),
         ChangeNotifierProvider.value(value: InitDataProvider()),

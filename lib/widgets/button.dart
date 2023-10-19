@@ -1,3 +1,4 @@
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -106,8 +107,8 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    Color defaultTextColor = widget.fill ? Colors.white : Theme.of(context).primaryColor;
-    Color fillColor = widget.color ?? Theme.of(context).primaryColor;
+    Color fillColor = widget.color ?? AppTheme.of(context)?.primaryColor ?? Theme.of(context).primaryColor;
+    Color defaultTextColor = widget.fill ? Colors.white : fillColor;
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: _handleTapUp,
@@ -128,7 +129,7 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
                     ? fillColor.withOpacity(0.6)
                     : fillColor
                 : null,
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(15),
             border: widget.borderColor == null ? null : Border.all(color: widget.borderColor!.withOpacity(widget.disabled ? 0.6 : 1), width: 1),
           ),
           padding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 12),

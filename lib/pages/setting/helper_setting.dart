@@ -4,8 +4,9 @@ import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/pages/common/gesture_password.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/setting/about.dart';
+import 'package:dsm_helper/pages/setting/dialogs/launch_auth_popup.dart';
 import 'package:dsm_helper/pages/setting/logout.dart';
-import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -44,7 +45,7 @@ class _HelperSettingState extends State<HelperSetting> {
   Map<BiometricType, String> biometricTypeName = {
     BiometricType.face: "FaceId",
     BiometricType.fingerprint: "指纹",
-    BiometricType.iris: "人脸",
+    BiometricType.iris: "虹膜",
   };
   @override
   void initState() {
@@ -321,11 +322,9 @@ class _HelperSettingState extends State<HelperSetting> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      launchAuth = !launchAuth;
-                      SpUtil.putBool("launch_auth", launchAuth);
-                    });
+                    LaunchAuthPopup.show(context);
                   },
+                  behavior: HitTestBehavior.opaque,
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: Column(
@@ -338,21 +337,24 @@ class _HelperSettingState extends State<HelperSetting> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              "启动密码",
+                              "安全启动",
                               style: TextStyle(fontSize: 16),
                             ),
                             Spacer(),
                             Image.asset(
                               "assets/icons/gesture.png",
                               width: 20,
+                              color: AppTheme.of(context)?.placeholderColor,
                             ),
                             Image.asset(
                               "assets/icons/fingerprint.png",
                               width: 20,
+                              color: AppTheme.of(context)?.placeholderColor,
                             ),
                             Image.asset(
                               "assets/icons/faceid.png",
                               width: 20,
+                              color: AppTheme.of(context)?.placeholderColor,
                             ),
                             Icon(
                               CupertinoIcons.right_chevron,

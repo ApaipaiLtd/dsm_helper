@@ -1,4 +1,5 @@
 import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
+import 'package:dsm_helper/models/Syno/Core/TaskScheduler.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -8,19 +9,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
-class KickConnectDialog {
-  static Future<bool?> show({required BuildContext context, required UserItems user}) async {
+class DeleteTaskDialog {
+  static Future<bool?> show({required BuildContext context, required Tasks task}) async {
     Utils.vibrate(FeedbackType.warning);
     return await showGlassDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(
-            "终止连接",
+            "删除任务",
             textAlign: TextAlign.center,
           ),
           content: Text(
-            "是否确定要终止${user.who}的连接？",
+            "是否确定删除${task.name}？",
           ),
           actions: [
             Row(
@@ -31,7 +32,7 @@ class KickConnectDialog {
                       context.pop(true);
                     },
                     color: AppTheme.of(context)?.errorColor,
-                    child: Text("终止连接"),
+                    child: Text("删除任务"),
                   ),
                 ),
                 SizedBox(

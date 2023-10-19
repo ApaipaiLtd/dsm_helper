@@ -2,7 +2,7 @@ import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/Core/Desktop/InitData.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
-import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
@@ -59,7 +59,7 @@ class _WidgetSettingState extends State<WidgetSetting> {
 
   @override
   Widget build(BuildContext context) {
-    ShortcutProvider shortcutProvider = context.watch<ShortcutProvider>();
+    SettingProvider settingProvider = context.watch<SettingProvider>();
     return GlassScaffold(
       appBar: GlassAppBar(
         title: Text("控制台设置"),
@@ -131,9 +131,9 @@ class _WidgetSettingState extends State<WidgetSetting> {
                       child: Transform.scale(
                         scale: 0.8,
                         child: CupertinoSwitch(
-                          value: shortcutProvider.showShortcut,
+                          value: settingProvider.showShortcut,
                           onChanged: (v) {
-                            shortcutProvider.setShowShortcut(v);
+                            settingProvider.setShowShortcut(v);
                           },
                         ),
                       ),

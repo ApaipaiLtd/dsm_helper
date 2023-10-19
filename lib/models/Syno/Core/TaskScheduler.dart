@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:dsm_helper/apis/api.dart';
+import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/models/base_model.dart';
+import 'package:dsm_helper/pages/control_panel/task_scheduler/enums/task_type_enum.dart';
 
 /// tasks : [{"action":"清空所有的回收站","can_delete":true,"can_edit":true,"can_run":true,"enable":true,"id":3,"name":"recycle","next_trigger_time":"2023-09-17 02:00","owner":"root","type":"recycle"}]
 /// total : 1
@@ -94,7 +98,87 @@ class Tasks {
     this.nextTriggerTime,
     this.owner,
     this.type,
+    this.appName,
   });
+
+  Future<bool?> run() async {
+    if (['recycle', 'service', 'beep', 'script'].contains(type)) {
+      return await runTask();
+    } else if (type == 'event_script') {
+      return await runEvent();
+    } else {
+      throw DsmException(-1, "暂不支持此类型计划任务");
+    }
+  }
+
+  Future<bool?> runTask() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.TaskScheduler", "run", version: 1, data: {
+      "task": jsonEncode([id]),
+    });
+    return res.success;
+  }
+
+  Future<bool?> runEvent() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.EventScheduler", "run", version: 1, data: {
+      "task_name": name,
+    });
+    return res.success;
+  }
+
+  Future<bool?> delete() async {
+    if (['recycle', 'service', 'beep', 'script'].contains(type)) {
+      return await deleteTask();
+    } else if (type == 'event_script') {
+      return await deleteEvent();
+    } else {
+      throw DsmException(-1, "暂不支持此类型计划任务");
+    }
+  }
+
+  Future<bool?> deleteTask() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.TaskScheduler", "delete", version: 1, data: {
+      "task": jsonEncode([id]),
+    });
+    return res.success;
+  }
+
+  Future<bool?> deleteEvent() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.EventScheduler", "delete", version: 1, data: {
+      "task_name": name,
+    });
+    return res.success;
+  }
+
+  Future<bool?> setEnable() async {
+    if (['recycle', 'service', 'beep', 'script'].contains(type)) {
+      return await setEnableTask();
+    } else if (type == 'event_script') {
+      return await setEnableEvent();
+    } else {
+      throw DsmException(-1, "暂不支持此类型计划任务");
+    }
+  }
+
+  Future<bool?> setEnableTask() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.TaskScheduler", "set_enable", version: 1, data: {
+      "status": jsonEncode([
+        {
+          "id": id,
+          "real_owner": owner,
+          "enable": enable == true ? false : true,
+        }
+      ]),
+    });
+    return res.success;
+  }
+
+  Future<bool?> setEnableEvent() async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.EventScheduler", "set_enable", version: 1, data: {
+      "task_name": name,
+      "enable": enable == true ? false : true,
+    });
+    return res.success;
+  }
 
   Tasks.fromJson(dynamic json) {
     action = json['action'];
@@ -106,6 +190,7 @@ class Tasks {
     name = json['name'];
     nextTriggerTime = json['next_trigger_time'];
     owner = json['owner'];
+    appName = json['app_name'];
     type = json['type'];
   }
   String? action;
@@ -117,7 +202,9 @@ class Tasks {
   String? name;
   String? nextTriggerTime;
   String? owner;
+  String? appName;
   String? type;
+  TaskTypeEnum get typeEnum => TaskTypeEnum.fromValue(type ?? 'unknown');
 
   bool running = false;
   Tasks copyWith({
@@ -131,6 +218,7 @@ class Tasks {
     String? nextTriggerTime,
     String? owner,
     String? type,
+    String? appName,
   }) =>
       Tasks(
         action: action ?? this.action,
@@ -143,6 +231,7 @@ class Tasks {
         nextTriggerTime: nextTriggerTime ?? this.nextTriggerTime,
         owner: owner ?? this.owner,
         type: type ?? this.type,
+        appName: appName ?? this.appName,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

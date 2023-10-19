@@ -21,14 +21,14 @@ class WidgetCard extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        margin: EdgeInsets.only(top: 10),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: EdgeInsets.only(top: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         decoration: boxDecoration,
         child: Column(
           children: [
             if (icon != null || title != null)
               Padding(
-                padding: EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

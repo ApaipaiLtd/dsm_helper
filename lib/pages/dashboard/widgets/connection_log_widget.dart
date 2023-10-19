@@ -1,7 +1,7 @@
 import 'package:dsm_helper/models/Syno/Core/CurrentConnection.dart';
 import 'package:dsm_helper/pages/dashboard/dialogs/kick_connection_dialog.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
-import 'package:dsm_helper/providers/setting.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
@@ -124,7 +124,7 @@ class _ConnectionLogWidgetState extends State<ConnectionLogWidget> with Automati
           width: 5,
         ),
         CupertinoButton(
-          onPressed: user.running
+          onPressed: user.running || user.canBeKicked == false
               ? null
               : () async {
                   bool? res = await KickConnectDialog.show(context: context, user: user);

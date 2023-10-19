@@ -21,8 +21,7 @@ import 'package:dsm_helper/pages/dashboard/widgets/system_health_widget.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/task_scheduler_widget.dart';
 import 'package:dsm_helper/pages/notify/notify.dart';
 import 'package:dsm_helper/providers/init_data_provider.dart';
-import 'package:dsm_helper/providers/setting.dart';
-import 'package:dsm_helper/providers/shortcut.dart';
+import 'package:dsm_helper/providers/setting_provider.dart';
 import 'package:dsm_helper/providers/storage_provider.dart';
 import 'package:dsm_helper/providers/system_info_provider.dart';
 import 'package:dsm_helper/providers/utilization_provider.dart';
@@ -285,8 +284,7 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    refreshDuration = context.watch<SettingProvider>().refreshDuration;
-    bool showShortcut = context.watch<ShortcutProvider>().showShortcut;
+    SettingProvider settingProvider = context.watch<SettingProvider>();
     InitDataModel initData = context.watch<InitDataProvider>().initData;
     return GlassScaffold(
       key: _scaffoldKey,
@@ -446,7 +444,7 @@ class DashboardState extends State<Dashboard> {
               ? ListView(
                   // padding: EdgeInsets.only(top: context.padding.top + 60, bottom: 10),
                   children: [
-                    if (showShortcut) ShortcutList(),
+                    if (settingProvider.showShortcut) ShortcutList(),
                     if (initData.userSettings?.synoSDSWidgetInstance?.moduleList != null && initData.userSettings!.synoSDSWidgetInstance!.moduleList!.isNotEmpty)
                       ...initData.userSettings!.synoSDSWidgetInstance!.moduleList!.map((widget) {
                         return _buildWidgetItem(widget);
@@ -481,7 +479,8 @@ class DashboardState extends State<Dashboard> {
                             ),
                           ),
                         ],
-                      )
+                      ),
+                    SizedBox(height: 20),
                   ],
                 )
               : Center(

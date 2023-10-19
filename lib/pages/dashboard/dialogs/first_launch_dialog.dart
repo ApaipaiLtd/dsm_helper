@@ -1,3 +1,4 @@
+import 'package:dsm_helper/utils/extensions/navigator_ext.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/button.dart';
 import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
@@ -134,13 +135,11 @@ class FirstLaunchDialog {
                             Expanded(
                               child: Button(
                                 onPressed: () async {
-                                  Navigator.of(context).pop();
+                                  context.pop();
                                   SpUtil.putBool("first_launch_channel", false);
                                 },
-                                padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Text(
                                   "我知道了",
-                                  style: TextStyle(fontSize: 18),
                                 ),
                               ),
                             ),

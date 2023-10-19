@@ -7,7 +7,6 @@ import 'package:dsm_helper/pages/photos/timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class Photos extends StatefulWidget {
   const Photos({super.key});
 
@@ -32,7 +31,6 @@ class _PhotosState extends State<Photos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         // title: NeuSwitch(
         //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         //   thumbColor: Theme.of(context).scaffoldBackgroundColor,
@@ -82,9 +80,8 @@ class _PhotosState extends State<Photos> {
                                       albumTabKey.currentState?.getData(isTeam: isTeam);
                                       Navigator.of(context).pop();
                                     },
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(25),
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
                                       "切换到${isTeam ? '个人空间' : '共享空间'}",
@@ -107,9 +104,8 @@ class _PhotosState extends State<Photos> {
                                           folderKey.currentState?.getData(isTeam: isTeam);
                                         }
                                       },
-                                        color: Theme.of(context).scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.circular(25),
-
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(25),
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: Text(
                                         "切换到${isTimeline ? '文件夹' : '时间线'}视图",
@@ -124,9 +120,8 @@ class _PhotosState extends State<Photos> {
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                     },
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(25),
-
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(25),
                                     padding: EdgeInsets.symmetric(vertical: 10),
                                     child: Text(
                                       "取消",
@@ -146,11 +141,10 @@ class _PhotosState extends State<Photos> {
                   );
                 },
                 padding: EdgeInsets.all(10),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
-                  "assets/icons/actions.png",
+                  "assets/icons/more_vertical.png",
                   width: 20,
                   height: 20,
                 ),

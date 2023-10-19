@@ -226,6 +226,7 @@ class _LoginState extends State<Login> {
               Positioned(
                 left: 20,
                 top: context.width / 16 * 9 / 2 - 20,
+                right: 20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -237,6 +238,8 @@ class _LoginState extends State<Login> {
                     if (sessionDataModel?.loginWelcomeMsg != null)
                       Text(
                         "${sessionDataModel?.loginWelcomeMsg}",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
                       ),
                   ],
@@ -394,12 +397,11 @@ class _LoginState extends State<Login> {
                               forceStrutHeight: true,
                             ),
                           ),
-                          color: isDefault ? Colors.green : null,
+                          color: isDefault ? AppTheme.of(context)?.successColor : AppTheme.of(context)?.placeholderColor,
                           fill: isDefault,
-                          borderColor: isDefault ? Colors.green : Colors.black,
+                          borderColor: isDefault ? AppTheme.of(context)?.successColor : AppTheme.of(context)?.placeholderColor,
                           icon: Icon(
                             Icons.check,
-                            color: isDefault ? Colors.white : Colors.black,
                             size: 16,
                           ),
                           onPressed: () {

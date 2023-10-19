@@ -11,6 +11,8 @@ import 'package:dsm_helper/models/api_model.dart';
 import 'package:dsm_helper/pages/home.dart';
 import 'package:dsm_helper/pages/login/login.dart';
 import 'package:dsm_helper/pages/server/add_server.dart';
+import 'package:dsm_helper/pages/server/dialogs/delete_account_dialog.dart';
+import 'package:dsm_helper/pages/server/dialogs/delete_server_dialog.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/db_utils.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
@@ -110,7 +112,7 @@ class _SelectServerState extends State<SelectServer> {
     double height = width / 16 * 9;
     List<Account> serverAccounts = accounts.where((account) => account.serverId == server.id).toList();
     return Container(
-      margin: EdgeInsets.only(left: 16, right: 16, top: 20),
+      margin: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
       // padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -270,48 +272,13 @@ class _SelectServerState extends State<SelectServer> {
                                           ),
                                           PopupMenuItem(
                                             onTap: () async {
-                                              showGlassDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: Text(
-                                                      "删除服务器",
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                    content: Text("确定删除此服务器？"),
-                                                    actionsOverflowDirection: VerticalDirection.up,
-                                                    actions: [
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Button(
-                                                              color: Colors.red,
-                                                              child: Text("删除"),
-                                                              onPressed: () {
-                                                                DbUtils.db.deleteServer(server);
-                                                                // 删除服务器下关联账户
-                                                                DbUtils.db.deleteAccountByServerId(server.id);
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Expanded(
-                                                            child: Button(
-                                                              child: Text("取消"),
-                                                              onPressed: () {
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  );
-                                                },
-                                              );
+                                              DeleteServerDialog.show(context).then((res) {
+                                                if (res == true) {
+                                                  DbUtils.db.deleteServer(server);
+                                                  // 删除服务器下关联账户
+                                                  DbUtils.db.deleteAccountByServerId(server.id);
+                                                }
+                                              });
                                             },
                                             child: Row(
                                               children: [
@@ -616,46 +583,9 @@ class _SelectServerState extends State<SelectServer> {
             CupertinoButton(
               minSize: 0,
               onPressed: () {
-                showGlassDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                        "删除账号",
-                        textAlign: TextAlign.center,
-                      ),
-                      content: Text("确定删除账号：${account.account}？"),
-                      actionsOverflowDirection: VerticalDirection.up,
-                      actions: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Button(
-                                color: Colors.red,
-                                child: Text("删除"),
-                                onPressed: () {
-                                  DbUtils.db.deleteAccount(account);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Button(
-                                child: Text("取消"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    );
-                  },
-                );
+                DeleteAccountDialog.show(context, account: account).then((res) {
+                  DbUtils.db.deleteAccount(account);
+                });
               },
               padding: EdgeInsets.zero,
               child: Image.asset("assets/icons/remove_circle_fill.png", width: 20),
