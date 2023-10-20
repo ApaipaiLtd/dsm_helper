@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +38,11 @@ class _OtpBindState extends State<OtpBind> {
   getData() async {}
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("二步验证"),
+    return GlassScaffold(
+      appBar: GlassAppBar(
+        title: Text("双重验证"),
       ),
       body: ListView(
-        padding: EdgeInsets.all(20),
         children: [
           if (step == 0) ...[
             Text("请输入电子邮件地址。如果您的移动设备遗失，可将紧急验证代码发送到在此提供的电子邮件地址。"),

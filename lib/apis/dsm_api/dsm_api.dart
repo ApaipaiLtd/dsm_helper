@@ -24,6 +24,7 @@ class DsmApi extends HttpUtil {
     String method, {
     bool post = true,
     dynamic data,
+    String? path,
     int? version,
     Map<String, dynamic>? parameters,
     Options? options,
@@ -40,9 +41,17 @@ class DsmApi extends HttpUtil {
       body['api'] = api;
       body['method'] = method;
       body['_sid'] = sid;
-      response = await dio!.post("/webapi/entry.cgi", data: body, queryParameters: parameters, options: options);
+      response = await dio!.post("/webapi/entry.cgi${path == null ? '' : "/$path"}", data: body, queryParameters: parameters, options: options);
     } else {
-      response = await dio!.get("/webapi/entry.cgi", queryParameters: parameters, options: options);
+      Map<String, dynamic> query = {};
+      if (parameters != null) {
+        query.addAll(parameters);
+      }
+      query['version'] = version ?? ApiModel.apiInfo[api]?.version ?? 1;
+      query['api'] = api;
+      query['method'] = method;
+      query['_sid'] = sid;
+      response = await dio!.get("/webapi/entry.cgi${path == null ? '' : "/$path"}", queryParameters: query, options: options);
     }
     if (response.data['success']) {
       DsmResponse res = DsmResponse.fromJson(response.data, parser);

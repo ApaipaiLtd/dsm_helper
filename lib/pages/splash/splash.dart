@@ -29,7 +29,7 @@ class _SplashState extends State<Splash> {
   }
 
   initDownloader() async {
-    await FileDownloader(persistentStorage: SqlitePersistentStorage()).trackTasks();
+    FileDownloader(persistentStorage: SqlitePersistentStorage());
   }
 
   queryServers() async {

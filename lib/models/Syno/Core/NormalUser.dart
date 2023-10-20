@@ -26,6 +26,11 @@ class NormalUser {
     return res.data;
   }
 
+  static Future<bool?> set(Map<String, dynamic> data) async {
+    DsmResponse res = await Api.dsm.entry("SYNO.Core.NormalUser", "set", version: 2, data: data);
+    return res.success;
+  }
+
   NormalUser.fromJson(dynamic json) {
     otpEnable = json['OTP_enable'];
     otpEnforced = json['OTP_enforced'];

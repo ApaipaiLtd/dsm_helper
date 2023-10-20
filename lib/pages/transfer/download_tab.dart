@@ -18,7 +18,22 @@ class _DownloadTabState extends State<DownloadTab> {
   FileDownloader downloader = FileDownloader();
   @override
   void initState() {
-    // getDownloadTasks();
+    initDownloader();
+
+    bus.on<DownloadFileEvent>().listen((event) async {
+      print(event.task.filename);
+      // setState(() {
+      //   downloads.add(event.task);
+      // });
+      await downloader.enqueue(event.task);
+      getDownloadTasks();
+    });
+    super.initState();
+  }
+
+  initDownloader() async {
+    await downloader.trackTasks();
+    getDownloadTasks();
     downloader
         .registerCallbacks(taskNotificationTapCallback: myNotificationTapCallback)
         .configureNotificationForGroup(
@@ -68,15 +83,6 @@ class _DownloadTabState extends State<DownloadTab> {
         // update.networkSpeed;
       }
     });
-    bus.on<DownloadFileEvent>().listen((event) async {
-      print(event.task.filename);
-      // setState(() {
-      //   downloads.add(event.task);
-      // });
-      await downloader.enqueue(event.task);
-      getDownloadTasks();
-    });
-    super.initState();
   }
 
   void myNotificationTapCallback(Task task, NotificationType notificationType) {

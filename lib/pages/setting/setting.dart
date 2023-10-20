@@ -43,7 +43,7 @@ class SettingItem extends StatelessWidget {
         onPressed: onPressed,
         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         padding: EdgeInsets.all(16),
-        color: Colors.white,
+        color: AppTheme.of(context)?.cardColor,
         borderRadius: BorderRadius.circular(10),
 
         child: Row(

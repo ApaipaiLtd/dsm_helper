@@ -40,6 +40,9 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       fontSize: 16.0,
       color: Colors.grey,
     ),
+    disabledBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: Color(0xF000000)),
+    ),
     border: UnderlineInputBorder(
       borderSide: BorderSide(color: Color(0xF000000)),
     ),
