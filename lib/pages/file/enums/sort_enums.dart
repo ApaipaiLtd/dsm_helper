@@ -11,9 +11,11 @@ enum SortByEnum {
 
   final String label;
 
-  const SortByEnum({
-    required this.label,
-  });
+  const SortByEnum({required this.label});
+
+  static SortByEnum fromValue(String value) {
+    return SortByEnum.values.firstWhere((element) => element.name == value, orElse: () => SortByEnum.name);
+  }
 }
 
 enum SortDirectionEnum {
@@ -27,4 +29,8 @@ enum SortDirectionEnum {
     required this.label,
     required this.icon,
   });
+
+  static SortDirectionEnum fromValue(String value) {
+    return SortDirectionEnum.values.firstWhere((element) => element.name == value, orElse: () => SortDirectionEnum.ASC);
+  }
 }

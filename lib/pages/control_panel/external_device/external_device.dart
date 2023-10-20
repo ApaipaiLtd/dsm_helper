@@ -5,6 +5,7 @@ import 'package:dsm_helper/pages/control_panel/external_device/enums/partition_s
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart' hide Api;
+import 'package:dsm_helper/widgets/dot_widget.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -48,7 +49,7 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
   Widget _buildPartitionItem(Partitions partition) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).dividerColor,
+        color: Color(0xffEFEFEF),
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.only(top: 14),
@@ -56,30 +57,30 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            "${partition.partitionTitle}",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 5),
           Row(
             children: [
-              Text("${partition.partitionTitle}"),
+              DotWidget(
+                size: 10,
+                color: partition.statusEnum.color,
+              ),
+              SizedBox(width: 5),
               Text(
-                "${partition.shareName}",
-                style: TextStyle(fontSize: 13, color: AppTheme.of(context)?.placeholderColor),
+                partition.statusEnum != PartitionStatusEnum.unknown ? partition.statusEnum.label : (partition.status ?? '-'),
+                style: TextStyle(fontSize: 12, color: partition.statusEnum.color),
               ),
               SizedBox(width: 10),
-              partition.statusEnum != PartitionStatusEnum.unknown
-                  ? Label(
-                      partition.statusEnum.label,
-                      partition.statusEnum.color,
-                      fill: true,
-                    )
-                  : Label(
-                      partition.status ?? '-',
-                      partition.statusEnum.color,
-                      fill: true,
-                    ),
+              Text(
+                "${partition.shareName == null || partition.shareName == '' ? '未共享' : partition.shareName}",
+                style: TextStyle(fontSize: 13, color: AppTheme.of(context)?.placeholderColor),
+              ),
             ],
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 5),
           Text(
             "${partition.usedPercent.toStringAsFixed(1)}%",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -92,11 +93,11 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
             child: Row(
               children: [
                 Text(
-                  "已用 ${partition.usedSizeMb != null ? Utils.formatSize(partition.usedSizeMb! * 1024 * 1024) : '--'} ",
+                  "已用 ${partition.usedSizeMb != null ? Utils.formatSize(partition.usedSizeMb! * 1024 * 1024, showByte: true) : '--'} ",
                   style: TextStyle(color: partition.usedPercent > 80 ? AppTheme.of(context)?.errorColor : AppTheme.of(context)?.primaryColor),
                 ),
                 Text(
-                  "/ ${partition.totalSizeMb != null ? Utils.formatSize(partition.totalSizeMb! * 1024 * 1024) : '--'}",
+                  "/ ${partition.totalSizeMb != null ? Utils.formatSize(partition.totalSizeMb! * 1024 * 1024, showByte: true) : '--'}",
                   style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
                 ),
                 Spacer(),
@@ -254,19 +255,16 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
                   child: LoadingWidget(size: 30),
                 )
               : devices.length > 0
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      child: ListView.separated(
-                        itemBuilder: (context, i) {
-                          return _buildDeviceItem(devices[i]);
-                        },
-                        separatorBuilder: (context, i) {
-                          return SizedBox(
-                            height: 20,
-                          );
-                        },
-                        itemCount: devices.length,
-                      ),
+                  ? ListView.separated(
+                      itemBuilder: (context, i) {
+                        return _buildDeviceItem(devices[i]);
+                      },
+                      separatorBuilder: (context, i) {
+                        return SizedBox(
+                          height: 20,
+                        );
+                      },
+                      itemCount: devices.length,
                     )
                   : EmptyWidget(
                       text: "暂无外接设备",

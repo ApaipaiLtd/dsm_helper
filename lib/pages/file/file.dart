@@ -29,6 +29,7 @@ import 'package:dsm_helper/utils/overlay_util.dart';
 import 'package:dsm_helper/widgets/glass/glass_dialog.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_modal_popup.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
 import 'package:flutter_floating/floating/listener/event_listener.dart';
@@ -114,13 +115,13 @@ class FilesState extends State<Files> {
     Future.delayed(Duration(milliseconds: 200)).then((_) {
       _pathScrollController.animateTo(_pathScrollController.position.maxScrollExtent, duration: Duration(milliseconds: 200), curve: Curves.ease);
     });
-    String listTypeStr = SpUtil.getString("file_list_type", defValue: "")!;
+    String listTypeStr = SpUtil.getString("file_list_type", defValue: "list")!;
+    String sortByStr = SpUtil.getString("file_sort_by", defValue: "name")!;
+    String sortDirectionStr = SpUtil.getString("file_sort_direction", defValue: "ASC")!;
     setState(() {
-      if (listTypeStr == "grid") {
-        listType = ListType.grid;
-      } else {
-        listType = ListType.list;
-      }
+      listType = ListType.fromValue(listTypeStr);
+      sortBy = SortByEnum.fromValue(sortByStr);
+      sortDirection = SortDirectionEnum.fromValue(sortDirectionStr);
     });
     setState(() {
       paths = widget.path.isNotEmpty ? widget.path.split("/").sublist(1) : [];
@@ -715,7 +716,7 @@ class FilesState extends State<Files> {
 
   getShareList() async {
     try {
-      files = await FileStationList.shareList(sortBy: sortBy.name, sortDirection: sortDirection.name);
+      files = await FileStationList.shareList(sortBy: sortBy.name, sortDirection: sortDirection.name, additional: ["real_path", "owner", "time", "perm", "mount_point_type", "sync_share", "volume_status", "indexed", "hybrid_share"]);
       setState(() {
         loading = false;
         success = true;
@@ -1353,28 +1354,26 @@ class FilesState extends State<Files> {
   }
 
   Widget _buildPathItem(BuildContext context, int index, {bool isLast = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: CupertinoButton(
-        onPressed: () {
-          if (!isLast) {
-            String path = "";
-            List<String> items = [];
-            if (paths.length > 1 && paths[0].contains("//")) {
-              items = paths.getRange(0, index + 1).toList().cast<String>();
-              path = items.join("/");
-            } else {
-              items = paths.getRange(0, index + 1).toList().cast<String>();
-              path = "/" + items.join("/");
-            }
-            goPath(path);
+    return CupertinoButton(
+      onPressed: () {
+        if (!isLast) {
+          String path = "";
+          List<String> items = [];
+          if (paths.length > 1 && paths[0].contains("//")) {
+            items = paths.getRange(0, index + 1).toList().cast<String>();
+            path = items.join("/");
+          } else {
+            items = paths.getRange(0, index + 1).toList().cast<String>();
+            path = "/" + items.join("/");
           }
-        },
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        child: Text(
-          paths[index],
-          style: TextStyle(fontSize: 16, color: isLast ? AppTheme.of(context)?.primaryColor : Colors.black54),
-        ),
+          goPath(path);
+        }
+      },
+      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      child: Text(
+        paths[index],
+        strutStyle: StrutStyle(forceStrutHeight: true),
+        style: TextStyle(fontSize: 16, color: isLast ? AppTheme.of(context)?.primaryColor : Colors.black54),
       ),
     );
   }
@@ -1478,6 +1477,7 @@ class FilesState extends State<Files> {
                     child: Icon(
                       Icons.close,
                       size: 24,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                   Expanded(
@@ -1571,7 +1571,7 @@ class FilesState extends State<Files> {
                       setState(() {
                         listType = listType == ListType.list ? ListType.grid : ListType.list;
                       });
-                      SpUtil.putString("file_list_type", listType == ListType.list ? "list" : "grid");
+                      SpUtil.putString("file_list_type", listType.name);
                     },
                     child: Image.asset(
                       listType == ListType.list ? "assets/icons/file_grid.png" : "assets/icons/file_list.png",
@@ -1621,6 +1621,8 @@ class FilesState extends State<Files> {
                                         } else {
                                           sortDirection = sortDirection == SortDirectionEnum.ASC ? SortDirectionEnum.DESC : SortDirectionEnum.ASC;
                                         }
+                                        SpUtil.putString("file_sort_by", sortBy.name);
+                                        SpUtil.putString("file_sort_direction", sortDirection.name);
                                       });
                                       refresh();
                                     },
@@ -1758,7 +1760,7 @@ class FilesState extends State<Files> {
                                         SizedBox(
                                           width: 10,
                                         ),
-                                        Text("挂载远程"),
+                                        Text("装载远程"),
                                       ],
                                     ),
                                   ),
@@ -1878,18 +1880,20 @@ class FilesState extends State<Files> {
                   onPressed: () {
                     goPath("");
                   },
-                  borderRadius: BorderRadius.circular(20),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                  child: Image.asset(
-                    "assets/icons/home_line.png",
-                    width: 20,
-                    height: 20,
-                    color: widget.path.isEmpty ? AppTheme.of(context)?.primaryColor : null,
+                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  child: Text(
+                    "本机",
+                    style: TextStyle(fontSize: 16, color: widget.path.isEmpty ? AppTheme.of(context)?.primaryColor : Colors.black54),
                   ),
+                  // child: Image.asset(
+                  //   "assets/icons/home_line.png",
+                  //   width: 20,
+                  //   height: 20,
+                  //   color: widget.path.isEmpty ? AppTheme.of(context)?.primaryColor : null,
+                  // ),
                 ),
                 if (paths.length > 0)
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 21),
                     child: Icon(
                       CupertinoIcons.right_chevron,
                       size: 16,
@@ -1905,13 +1909,10 @@ class FilesState extends State<Files> {
                     itemCount: paths.length,
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, i) {
-                      return Container(
-                        padding: EdgeInsets.symmetric(vertical: 21),
-                        child: Icon(
-                          CupertinoIcons.right_chevron,
-                          size: 16,
-                          color: Colors.black54,
-                        ),
+                      return Icon(
+                        CupertinoIcons.right_chevron,
+                        size: 16,
+                        color: Colors.black54,
                       );
                     },
                   ),

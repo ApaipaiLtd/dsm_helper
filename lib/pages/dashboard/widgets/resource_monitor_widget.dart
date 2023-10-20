@@ -99,7 +99,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                               value: (utilization.cpu?.totalLoad ?? 0).toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
-                              gradient: SweepGradient(colors: <Color>[Color(0xFF00BAAD), Color(0xFF4BD6CD)]),
+                              gradient: SweepGradient(colors: (utilization.cpu?.totalLoad ?? 0) < 80 ? [Color(0xFF00BAAD), Color(0xFF4BD6CD)] : [AppTheme.of(context)!.errorColor!, AppTheme.of(context)!.warningColor!]),
                             ),
                             // MarkerPointer(
                             //   value: utilization.cpu!.totalLoad.toDouble() - 3,
@@ -176,7 +176,7 @@ class ResourceMonitorWidget extends StatelessWidget {
                               value: (utilization.memory?.realUsage ?? 0).toDouble(),
                               width: 8,
                               cornerStyle: CornerStyle.bothCurve,
-                              gradient: SweepGradient(colors: <Color>[AppTheme.of(context)!.primaryColor!, Color(0xFF75ACFF)]),
+                              gradient: SweepGradient(colors: (utilization.memory?.realUsage ?? 0) < 80 ? [AppTheme.of(context)!.primaryColor!, Color(0xFF75ACFF)] : [AppTheme.of(context)!.errorColor!, AppTheme.of(context)!.warningColor!]),
                             ),
                             // MarkerPointer(
                             //   value: utilization.cpu!.totalLoad.toDouble() - 3,

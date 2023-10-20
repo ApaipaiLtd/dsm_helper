@@ -1,12 +1,15 @@
+import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/bubble_tab_indicator.dart';
+import 'package:dsm_helper/widgets/button.dart';
+import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
+import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-
-
 
 class RemoteFolder extends StatefulWidget {
   @override
@@ -28,97 +31,45 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GlassScaffold(
+      appBar: GlassAppBar(
         title: Text("装载远程文件夹"),
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: [
+            Tab(
+              text: "CIFS",
+            ),
+            Tab(
+              text: "NFS",
+            ),
+          ],
+        ),
       ),
-      body: Column(
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: TabBar(
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicator: BubbleTabIndicator(
-                indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: Utils.getAdjustColor(Theme.of(context).scaffoldBackgroundColor, -20),
-              ),
-              tabs: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("CIFS"),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: Text("NFS"),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                ListView(
-                  padding: EdgeInsets.all(20),
+          ListView(
+            children: [
+              WidgetCard(
+                body: Column(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: TextField(
-                        onChanged: (v) => serverIp = v,
-                        decoration: InputDecoration(border: InputBorder.none, labelText: '远程文件夹', hintText: r"示例:\\192.168.1.1\share"),
+                    TextField(
+                      onChanged: (v) => serverIp = v,
+                      decoration: InputDecoration(labelText: '远程文件夹', hintText: r"示例:\\192.168.1.1\share"),
+                    ),
+                    TextField(
+                      onChanged: (v) => account = v,
+                      decoration: InputDecoration(
+                        labelText: '账号',
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
+                    TextField(
+                      onChanged: (v) => passwd = v,
+                      decoration: InputDecoration(
+                        labelText: '密码',
                       ),
-
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: TextField(
-                        onChanged: (v) => account = v,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: '账号',
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: TextField(
-                        onChanged: (v) => passwd = v,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: '密码',
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
                     ),
                     CupertinoButton(
                       onPressed: () {
@@ -138,8 +89,8 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                           }
                         });
                       },
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(20),
                       child: Row(
                         children: [
                           Expanded(
@@ -166,39 +117,35 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     SizedBox(
                       height: 20,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          autoMount = !autoMount;
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "开机时自动装载",
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        height: 60,
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                        child: Row(
-                          children: [
-                            Text("开机时自动装载"),
-                            Spacer(),
-                            if (autoMount)
-                              Icon(
-                                CupertinoIcons.checkmark_alt,
-                                color: Color(0xffff9813),
-                              ),
-                          ],
+                        SizedBox(
+                          height: 20,
+                          child: Transform.scale(
+                            scale: 0.8,
+                            child: CupertinoSwitch(
+                              value: autoMount,
+                              onChanged: (v) {
+                                setState(() {
+                                  autoMount = v;
+                                });
+                              },
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    CupertinoButton(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
+                    Button(
+                      color: AppTheme.of(context)?.primaryColor,
                       onPressed: () async {
                         if (mountPoint == "") {
                           Utils.toast("请选择保存位置");
@@ -229,11 +176,11 @@ class _RemoteFolderState extends State<RemoteFolder> with SingleTickerProviderSt
                     ),
                   ],
                 ),
-                Center(
-                  child: Text("开发中"),
-                ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          Center(
+            child: Text("开发中"),
           ),
         ],
       ),

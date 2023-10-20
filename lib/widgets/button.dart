@@ -8,6 +8,7 @@ class Button extends StatefulWidget {
   final Widget child;
   final Callback onPressed;
   final Color? borderColor;
+  final double? borderRadius;
   final Color? color;
   final TextStyle? textStyle;
   final EdgeInsets? padding;
@@ -21,6 +22,7 @@ class Button extends StatefulWidget {
     required this.child,
     required this.onPressed,
     this.borderColor,
+    this.borderRadius,
     this.color,
     this.padding,
     this.margin,
@@ -129,7 +131,7 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
                     ? fillColor.withOpacity(0.6)
                     : fillColor
                 : null,
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 15),
             border: widget.borderColor == null ? null : Border.all(color: widget.borderColor!.withOpacity(widget.disabled ? 0.6 : 1), width: 1),
           ),
           padding: widget.padding ?? EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -142,30 +144,48 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.only(right: 5),
                   child: LoadingWidget(
                     color: widget.textStyle?.color ?? defaultTextColor,
-                    size: widget.textStyle?.fontSize ?? 14,
+                    size: widget.textStyle?.fontSize ?? 16,
                   ),
                 )
               else if (widget.icon != null)
                 Padding(
                   padding: EdgeInsets.only(right: 5),
-                  child: Icon(
-                    (widget.icon as Icon).icon,
-                    size: (widget.icon as Icon).size ?? 14,
-                    color: ((widget.icon as Icon).color ?? defaultTextColor).withOpacity(widget.disabled ? 0.6 : 1),
-                  ),
+                  child: _buildIcon(),
                 ),
-              DefaultTextStyle(
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: defaultTextColor.withOpacity(widget.disabled ? 0.6 : 1),
-                ).merge(widget.textStyle),
-                child: widget.child,
+              Flexible(
+                child: DefaultTextStyle(
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: defaultTextColor.withOpacity(widget.disabled ? 0.6 : 1),
+                  ).merge(widget.textStyle),
+                  child: widget.child,
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildIcon() {
+    if (widget.icon is Icon) {
+      Icon icon = widget.icon as Icon;
+      return Icon(
+        icon.icon,
+        size: icon.size ?? widget.textStyle?.fontSize ?? 16,
+      );
+    } else if (widget.icon is Image) {
+      Image icon = widget.icon as Image;
+      return Image(
+        image: icon.image,
+        color: icon.color,
+        width: icon.width ?? widget.textStyle?.fontSize ?? 16,
+        height: icon.height ?? widget.textStyle?.fontSize ?? 16,
+      );
+    } else {
+      return widget.icon ?? SizedBox();
+    }
   }
 }

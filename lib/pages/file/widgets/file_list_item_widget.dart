@@ -101,356 +101,371 @@ class FileListItemWidget extends StatelessWidget {
                   : null,
             ),
           )
-        : shareFolder
-            ? SizedBox(
-                width: 52,
-                height: 52,
-              )
-            : CupertinoButton(
-                key: actionButtonKey,
-                onPressed: () {
-                  // fileAction(file, remote: remote);
-                  showPopupWindow(
-                    context,
-                    gravity: KumiPopupGravity.leftTop,
-                    bgColor: Colors.transparent,
-                    clickOutDismiss: true,
-                    clickBackDismiss: true,
-                    customAnimation: false,
-                    customPop: false,
-                    customPage: false,
-                    underStatusBar: true,
-                    underAppBar: true,
-                    needSafeDisplay: true,
-                    offsetX: 30,
-                    offsetY: 30,
-                    // curve: Curves.easeInSine,
-                    duration: Duration(milliseconds: 200),
-                    targetRenderBox: actionButtonKey.currentContext!.findRenderObject() as RenderBox,
-                    childFun: (pop) {
-                      return BackdropFilter(
-                        key: GlobalKey(),
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          width: 220,
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          margin: EdgeInsets.only(top: 50),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(23),
+        : CupertinoButton(
+            key: actionButtonKey,
+            onPressed: () {
+              // fileAction(file, remote: remote);
+              showPopupWindow(
+                context,
+                gravity: KumiPopupGravity.leftTop,
+                bgColor: Colors.transparent,
+                clickOutDismiss: true,
+                clickBackDismiss: true,
+                customAnimation: false,
+                customPop: false,
+                customPage: false,
+                underStatusBar: true,
+                underAppBar: true,
+                needSafeDisplay: true,
+                offsetX: 30,
+                offsetY: 30,
+                // curve: Curves.easeInSine,
+                duration: Duration(milliseconds: 200),
+                targetRenderBox: actionButtonKey.currentContext!.findRenderObject() as RenderBox,
+                childFun: (pop) {
+                  return BackdropFilter(
+                    key: GlobalKey(),
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: Container(
+                      width: 220,
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      margin: EdgeInsets.only(top: 50),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(23),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            child: fileInfo,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                child: fileInfo,
+                          Divider(height: 1),
+                          if (shareFolder) ...[
+                            PopupMenuItem(
+                              onTap: () async {
+                                context.push(FileDetail(file), rootNavigator: true);
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/info_file.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("属性"),
+                                ],
                               ),
-                              Divider(height: 1),
-                              if (favorite) ...[
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    bool? res = await RenameFileDialog.show(context: context, file: file);
-                                    if (res == true) {}
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/rename.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("重命名"),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    bool? res = await DeleteFavoriteDialog.show(context: context, favorite: file);
-                                    if (res == true) {}
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/delete.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        "取消收藏",
-                                        style: TextStyle(color: AppTheme.of(context)?.errorColor),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ] else ...[
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    context.push(FileDetail(file), rootNavigator: true);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/info_file.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("详情"),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/download_cloud.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("下载"),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  onTap: () {
-                                    context.push(Share(paths: [file.path!]), name: "share", rootNavigator: true);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/share.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("共享"),
-                                    ],
-                                  ),
-                                ),
-                                if (file.isdir == true)
-                                  PopupMenuItem(
-                                    onTap: () {
-                                      context.push(Share(paths: [file.path!], fileRequest: true), name: "share", rootNavigator: true);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/icons/upload_cloud.png",
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text("文件请求"),
-                                      ],
+                            ),
+                            if (file.additional?.realPath?.startsWith("/volumeUSB") ?? false)
+                              PopupMenuItem(
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/eject.png",
+                                      width: 20,
+                                      height: 20,
                                     ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text("弹出"),
+                                  ],
+                                ),
+                              ),
+                          ] else if (favorite) ...[
+                            PopupMenuItem(
+                              onTap: () async {
+                                bool? res = await RenameFileDialog.show(context: context, file: file);
+                                if (res == true) {}
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/rename.png",
+                                    width: 20,
+                                    height: 20,
                                   ),
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    var hide = showWeuiLoadingToast(context: context);
-                                    try {
-                                      var res = await file.addFavorite();
-                                      if (res.success == true) {
-                                        Utils.toast("添加收藏成功");
-                                      } else if (res.error != null) {
-                                        if (res.error!['code'] == 800) {
-                                          Utils.toast('添加收藏失败：“${file.path!}”已经被添加至“收藏夹”');
-                                        } else {
-                                          Utils.toast("添加收藏失败");
-                                        }
-                                      } else {
-                                        Utils.toast("添加收藏失败");
-                                      }
-                                    } finally {
-                                      hide();
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("重命名"),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () async {
+                                bool? res = await DeleteFavoriteDialog.show(context: context, favorite: file);
+                                if (res == true) {}
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/delete.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "取消收藏",
+                                    style: TextStyle(color: AppTheme.of(context)?.errorColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ] else ...[
+                            PopupMenuItem(
+                              onTap: () async {
+                                context.push(FileDetail(file), rootNavigator: true);
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/info_file.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("属性"),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/download_cloud.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("下载"),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () {
+                                context.push(Share(paths: [file.path!]), name: "share", rootNavigator: true);
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/share.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("共享"),
+                                ],
+                              ),
+                            ),
+                            if (file.isdir == true)
+                              PopupMenuItem(
+                                onTap: () {
+                                  context.push(Share(paths: [file.path!], fileRequest: true), name: "share", rootNavigator: true);
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/upload_cloud.png",
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text("文件请求"),
+                                  ],
+                                ),
+                              ),
+                            PopupMenuItem(
+                              onTap: () async {
+                                var hide = showWeuiLoadingToast(context: context);
+                                try {
+                                  var res = await file.addFavorite();
+                                  if (res.success == true) {
+                                    Utils.toast("添加收藏成功");
+                                  } else if (res.error != null) {
+                                    if (res.error!['code'] == 800) {
+                                      Utils.toast('添加收藏失败：“${file.path!}”已经被添加至“收藏夹”');
+                                    } else {
+                                      Utils.toast("添加收藏失败");
                                     }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/star.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("添加收藏"),
-                                    ],
+                                  } else {
+                                    Utils.toast("添加收藏失败");
+                                  }
+                                } finally {
+                                  hide();
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/star.png",
+                                    width: 20,
+                                    height: 20,
                                   ),
-                                ),
-                                if (!remote)
-                                  PopupMenuItem(
-                                    onTap: () async {
-                                      var hide = showWeuiLoadingToast(context: context);
-                                      String taskId = await FileItem.compress([file], destFolderPath: "${file.ownerPath}/${file.fileName}.zip");
-                                      hide();
-                                      if (taskId.isNotEmpty) {
-                                        Utils.toast("压缩任务创建成功");
-                                      }
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/icons/archive.png",
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text("压缩到"),
-                                              ExtendedText(
-                                                "${file.fileName}.zip",
-                                                maxLines: 1,
-                                                overflowWidget: TextOverflowWidget(
-                                                  position: TextOverflowPosition.middle,
-                                                  align: TextOverflowAlign.right,
-                                                  child: Text(
-                                                    "…",
-                                                    style: TextStyle(color: Colors.grey),
-                                                  ),
-                                                ),
-                                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("添加收藏"),
+                                ],
+                              ),
+                            ),
+                            if (!remote)
+                              PopupMenuItem(
+                                onTap: () async {
+                                  var hide = showWeuiLoadingToast(context: context);
+                                  String taskId = await FileItem.compress([file], destFolderPath: "${file.ownerPath}/${file.fileName}.zip");
+                                  hide();
+                                  if (taskId.isNotEmpty) {
+                                    Utils.toast("压缩任务创建成功");
+                                  }
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/archive.png",
+                                      width: 20,
+                                      height: 20,
                                     ),
-                                  ),
-                                if (file.fileType == FileTypeEnum.zip && !remote)
-                                  PopupMenuItem(
-                                    onTap: () async {
-                                      var hide = showWeuiLoadingToast(context: context);
-                                      String taskId = await file.extract(destFolderPath: "${file.ownerPath}/${file.fileName}", createSubfolder: true);
-                                      hide();
-                                      if (taskId.isNotEmpty) {
-                                        Utils.toast("解压任务创建成功");
-                                      }
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/icons/unzip.png",
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text("解压到"),
-                                              ExtendedText(
-                                                "${file.fileName}",
-                                                maxLines: 1,
-                                                overflowWidget: TextOverflowWidget(
-                                                  position: TextOverflowPosition.middle,
-                                                  align: TextOverflowAlign.right,
-                                                  child: Text(
-                                                    "…",
-                                                    style: TextStyle(color: Colors.grey),
-                                                  ),
-                                                ),
-                                                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      width: 10,
                                     ),
-                                  ),
-                                PopupMenuItem(
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/eject.png",
-                                        width: 20,
-                                        height: 20,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("压缩到"),
+                                          ExtendedText(
+                                            "${file.fileName}.zip",
+                                            maxLines: 1,
+                                            overflowWidget: TextOverflowWidget(
+                                              position: TextOverflowPosition.middle,
+                                              align: TextOverflowAlign.right,
+                                              child: Text(
+                                                "…",
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            ),
+                                            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("弹出"),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    bool? res = await RenameFileDialog.show(context: context, file: file);
-                                    if (res == true) {}
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/rename.png",
-                                        width: 20,
-                                        height: 20,
+                              ),
+                            if (file.fileType == FileTypeEnum.zip && !remote)
+                              PopupMenuItem(
+                                onTap: () async {
+                                  var hide = showWeuiLoadingToast(context: context);
+                                  String taskId = await file.extract(destFolderPath: "${file.ownerPath}/${file.fileName}", createSubfolder: true);
+                                  hide();
+                                  if (taskId.isNotEmpty) {
+                                    Utils.toast("解压任务创建成功");
+                                  }
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/unzip.png",
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("解压到"),
+                                          ExtendedText(
+                                            "${file.fileName}",
+                                            maxLines: 1,
+                                            overflowWidget: TextOverflowWidget(
+                                              position: TextOverflowPosition.middle,
+                                              align: TextOverflowAlign.right,
+                                              child: Text(
+                                                "…",
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            ),
+                                            style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 12),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("重命名"),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    String? res = await DeleteFileDialog.show(context: context, files: [file]);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/delete.png",
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        "删除",
-                                        style: TextStyle(color: AppTheme.of(context)?.errorColor),
-                                      ),
-                                    ],
+                              ),
+                            PopupMenuItem(
+                              onTap: () async {
+                                bool? res = await RenameFileDialog.show(context: context, file: file);
+                                if (res == true) {}
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/rename.png",
+                                    width: 20,
+                                    height: 20,
                                   ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("重命名"),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () async {
+                                String? res = await DeleteFileDialog.show(context: context, files: [file]);
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/icons/delete.png",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "删除",
+                                    style: TextStyle(color: AppTheme.of(context)?.errorColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
                   );
                 },
-                child: Image.asset(
-                  "assets/icons/more_horizontal.png",
-                  width: 20,
-                  height: 20,
-                ),
               );
+            },
+            child: Image.asset(
+              "assets/icons/more_horizontal.png",
+              width: 20,
+              height: 20,
+            ),
+          );
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onLongPress: onLongPress,

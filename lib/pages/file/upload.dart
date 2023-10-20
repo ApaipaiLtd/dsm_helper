@@ -6,6 +6,8 @@ import 'package:dsm_helper/pages/common/select_local_folder.dart';
 import 'package:dsm_helper/pages/file/select_folder.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
+import 'package:dsm_helper/widgets/button.dart';
+import 'package:dsm_helper/widgets/empty_widget.dart';
 import 'package:dsm_helper/widgets/file_icon.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -323,12 +325,7 @@ class _UploadState extends State<Upload> {
                       },
                       itemCount: uploads.length,
                     )
-                  : Center(
-                      child: Text(
-                        "暂无待上传文件",
-                        style: TextStyle(color: AppTheme.of(context)?.placeholderColor),
-                      ),
-                    ),
+                  : EmptyWidget(text: "暂无待上传文件"),
             ),
             SafeArea(
               child: Padding(
@@ -336,9 +333,12 @@ class _UploadState extends State<Upload> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: CupertinoButton(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(50),
+                      child: Button(
+                        color: AppTheme.of(context)?.successColor,
+                        icon: Image.asset(
+                          "assets/icons/plus_circle.png",
+                          color: Colors.white,
+                        ),
                         onPressed: () async {
                           showCupertinoModalPopup(
                             context: context,
@@ -502,9 +502,12 @@ class _UploadState extends State<Upload> {
                       width: 20,
                     ),
                     Expanded(
-                      child: CupertinoButton(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(50),
+                      child: Button(
+                        color: AppTheme.of(context)?.primaryColor,
+                        icon: Image.asset(
+                          "assets/icons/upload_cloud.png",
+                          color: Colors.white,
+                        ),
                         onPressed: () async {
                           if (savePath.isBlank) {
                             Utils.vibrate(FeedbackType.warning);

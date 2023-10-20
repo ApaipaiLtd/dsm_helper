@@ -57,11 +57,11 @@ class _FileDetailState extends State<FileDetail> {
         dirSize = await DirSize.result(taskId);
 
         if (dirSize!.finished == true) {
-          setState(() {
-            dirSizeLoading = false;
-          });
+          dirSizeLoading = false;
+
           dirSizeTimer?.cancel();
         }
+        setState(() {});
       });
     }
   }
@@ -171,7 +171,7 @@ class _FileDetailState extends State<FileDetail> {
                       ),
                       CupertinoButton(
                         onPressed: () async {
-                          ClipboardData data = new ClipboardData(text: widget.file.path!);
+                          ClipboardData data = ClipboardData(text: widget.file.path!);
                           Clipboard.setData(data);
                           Utils.toast("已复制到剪贴板");
                         },
@@ -318,25 +318,26 @@ class _FileDetailState extends State<FileDetail> {
               ),
             ),
           ),
-          WidgetCard(
-            title: "拥有者",
-            body: SizedBox(
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "拥有者",
-                    style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
-                  ),
-                  Text(
-                    "${widget.file.additional?.owner?.user ?? '--'}",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+          if (widget.file.additional?.owner?.user != null && widget.file.additional?.owner?.user != '')
+            WidgetCard(
+              title: "拥有者",
+              body: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "拥有者",
+                      style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 13),
+                    ),
+                    Text(
+                      "${widget.file.additional?.owner?.user ?? '--'}",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
