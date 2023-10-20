@@ -1,3 +1,4 @@
+import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/base_model.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/enums/device_status_enum.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/enums/partition_status_enums.dart';
@@ -19,13 +20,13 @@ class Device implements BaseModel {
     if (json['devices'] != null) {
       devices = [];
       json['devices'].forEach((v) {
-        devices?.add(Devices.fromJson(v));
+        devices?.add(ExternalDevices.fromJson(v));
       });
     }
   }
-  List<Devices>? devices;
+  List<ExternalDevices>? devices;
   Device copyWith({
-    List<Devices>? devices,
+    List<ExternalDevices>? devices,
   }) =>
       Device(
         devices: devices ?? this.devices,
@@ -63,8 +64,8 @@ class Device implements BaseModel {
 /// product : "Teclast CoolFlash"
 /// status : "init"
 
-class Devices {
-  Devices({
+class ExternalDevices {
+  ExternalDevices({
     this.devId,
     this.devTitle,
     this.devType,
@@ -74,7 +75,19 @@ class Devices {
     this.status,
   });
 
-  Devices.fromJson(dynamic json) {
+  Future<bool?> eject() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Core.ExternalDevice.Storage.USB",
+      "eject",
+      version: 1,
+      data: {
+        "dev_id": devId,
+      },
+    );
+    return res.success;
+  }
+
+  ExternalDevices.fromJson(dynamic json) {
     devId = json['dev_id'];
     devTitle = json['dev_title'];
     devType = json['dev_type'];
@@ -96,7 +109,7 @@ class Devices {
   String? producer;
   String? status; // init 初始化中 normal 正常运作
   DeviceStatusEnum get statusEnum => DeviceStatusEnum.fromValue(status ?? 'unknown');
-  Devices copyWith({
+  ExternalDevices copyWith({
     String? devId,
     String? devTitle,
     String? devType,
@@ -105,7 +118,7 @@ class Devices {
     String? producer,
     String? status,
   }) =>
-      Devices(
+      ExternalDevices(
         devId: devId ?? this.devId,
         devTitle: devTitle ?? this.devTitle,
         devType: devType ?? this.devType,

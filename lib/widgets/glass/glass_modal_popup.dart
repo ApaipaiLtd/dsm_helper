@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/extensions/media_query_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ Future<T?> showGlassModalPopup<T>(
               maxHeight: context.height * 0.8,
             ),
             padding: EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
             child: SafeArea(
               top: false,
               child: Column(

@@ -1,5 +1,6 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/models/Syno/Core/ExternalDevice/Storage/Device.dart';
+import 'package:dsm_helper/pages/control_panel/external_device/dialogs/eject_external_device_dialog.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/enums/device_status_enum.dart';
 import 'package:dsm_helper/pages/control_panel/external_device/enums/partition_status_enums.dart';
 import 'package:dsm_helper/pages/dashboard/widgets/widget_card.dart';
@@ -12,6 +13,7 @@ import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
 import 'package:dsm_helper/widgets/label.dart';
 import 'package:dsm_helper/widgets/line_progress_bar.dart';
 import 'package:dsm_helper/widgets/loading_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ExternalDevice extends StatefulWidget {
@@ -31,7 +33,7 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
     super.initState();
   }
 
-  List<Devices> get devices => (usbs.devices ?? []) + (esatas.devices ?? []);
+  List<ExternalDevices> get devices => (usbs.devices ?? []) + (esatas.devices ?? []);
 
   getData() async {
     try {
@@ -189,20 +191,36 @@ class _ExternalDeviceState extends State<ExternalDevice> with SingleTickerProvid
     );
   }
 
-  Widget _buildDeviceItem(Devices device) {
+  Widget _buildDeviceItem(ExternalDevices device) {
     return WidgetCard(
       title: "${device.devTitle}",
-      icon: device.statusEnum != DeviceStatusEnum.unknown
-          ? Label(
-              device.statusEnum.label,
-              device.statusEnum.color,
-              fill: true,
-            )
-          : Label(
-              device.status ?? '-',
-              device.statusEnum.color,
-              fill: true,
+      icon: Row(
+        children: [
+          device.statusEnum != DeviceStatusEnum.unknown
+              ? Label(
+                  device.statusEnum.label,
+                  device.statusEnum.color,
+                  fill: true,
+                )
+              : Label(
+                  device.status ?? '-',
+                  device.statusEnum.color,
+                  fill: true,
+                ),
+          SizedBox(width: 10),
+          CupertinoButton(
+            child: Image.asset(
+              "assets/icons/eject.png",
+              width: 24,
+              color: AppTheme.of(context)?.warningColor,
             ),
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              EjectExternalDeviceDialog.show(context: context, device: device);
+            },
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
