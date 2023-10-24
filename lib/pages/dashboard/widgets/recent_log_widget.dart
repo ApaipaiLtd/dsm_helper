@@ -63,7 +63,7 @@ class _RecentLogWidgetState extends State<RecentLogWidget> with AutomaticKeepAli
       //   width: 26,
       //   height: 26,
       // ),
-      padding: EdgeInsets.symmetric(vertical: 14),
+      bodyPadding: EdgeInsets.symmetric(vertical: 14),
       body: Column(
         children: [
           SizedBox(

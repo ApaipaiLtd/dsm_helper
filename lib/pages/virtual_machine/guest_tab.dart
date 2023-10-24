@@ -4,8 +4,9 @@ import 'package:cool_ui/cool_ui.dart';
 import 'package:dsm_helper/apis/dsm_api/dsm_exception.dart';
 import 'package:dsm_helper/models/Syno/Virtualization/VirtualizationGuest.dart';
 import 'package:dsm_helper/pages/virtual_machine/dialogs/guest_power_off_dialog.dart';
+import 'package:dsm_helper/pages/virtual_machine/dialogs/guest_save_dialog.dart';
 import 'package:dsm_helper/pages/virtual_machine/enums/guest_status_enums.dart';
-import 'package:dsm_helper/pages/virtual_machine/enums/guest_type_enums.dart';
+import 'package:dsm_helper/pages/virtual_machine/enums/guest_status_type_enums.dart';
 import 'package:dsm_helper/themes/app_theme.dart';
 import 'package:dsm_helper/utils/utils.dart';
 import 'package:dsm_helper/widgets/empty_widget.dart';
@@ -77,15 +78,14 @@ class _GuestTabState extends State<GuestTab> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
-                guest.statusTypeEnum == GuestTypeEnum.healthy
+                guest.statusTypeEnum == GuestStatusTypeEnum.healthy
                     ? (guest.statusEnum != GuestStatusEnum.unknown
                         ? Label(
                             guest.statusEnum.label,
                             guest.statusEnum.color,
-                            fill: true,
                           )
                         : Label("${guest.status}", guest.statusEnum.color))
-                    : guest.statusTypeEnum != GuestTypeEnum.unknown
+                    : guest.statusTypeEnum != GuestStatusTypeEnum.unknown
                         ? Label(guest.statusTypeEnum.label, guest.statusTypeEnum.color)
                         : Label("${guest.statusType}", guest.statusTypeEnum.color),
                 SizedBox(
@@ -204,6 +204,7 @@ class _GuestTabState extends State<GuestTab> {
                                       if (res == true) {
                                         hide();
                                       }
+                                      GuestSaveDialog.show(context, guest: guest);
                                     } on DsmException catch (e) {
                                       hide();
                                       if (e.code == 630) {
@@ -362,6 +363,35 @@ class _GuestTabState extends State<GuestTab> {
                     ),
                   ),
                 ],
+              ),
+              SizedBox(height: 5),
+              DefaultTextStyle(
+                style: TextStyle(color: AppTheme.of(context)?.placeholderColor, fontSize: 14),
+                child: Row(
+                  children: [
+                    Text("${guest.ip}"),
+                    Spacer(),
+                    Image.asset(
+                      "assets/icons/arrow_down.png",
+                      width: 15,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      "${Utils.formatSize(guest.totalNetReceive ?? 0, showByte: true)}",
+                      style: TextStyle(color: AppTheme.of(context)?.primaryColor),
+                    ),
+                    SizedBox(width: 10),
+                    Image.asset(
+                      "assets/icons/arrow_up.png",
+                      width: 15,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      "${Utils.formatSize(guest.totalNetSend ?? 0, showByte: true)}",
+                      style: TextStyle(color: AppTheme.of(context)?.successColor),
+                    ),
+                  ],
+                ),
               ),
               // ...networks.map((network) {
               //   return _buildNetworkItem(network, networks.indexOf(network));

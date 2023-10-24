@@ -1,6 +1,6 @@
-import 'package:dsm_helper/pages/control_panel/info/storage_tab.dart';
 import 'package:dsm_helper/pages/virtual_machine/guest_tab.dart';
 import 'package:dsm_helper/pages/virtual_machine/host_tab.dart';
+import 'package:dsm_helper/pages/virtual_machine/storage_tab.dart';
 import 'package:dsm_helper/pages/virtual_machine/summary_tab.dart';
 import 'package:dsm_helper/widgets/glass/glass_app_bar.dart';
 import 'package:dsm_helper/widgets/glass/glass_scaffold.dart';
@@ -23,48 +23,6 @@ class _VirtualMachineState extends State<VirtualMachine> with SingleTickerProvid
   void dispose() {
     super.dispose();
   }
-  //
-  // getHosts() async {
-  //   var res = await Api.cluster("get_host");
-  //   if (res['success']) {
-  //     if (mounted)
-  //       setState(() {
-  //         hosts = res['data']['hosts'];
-  //         hosts.sort((a, b) {
-  //           return a['name'].compareTo(b['name']);
-  //         });
-  //         hostLoading = false;
-  //       });
-  //   }
-  // }
-  //
-  // getGuests() async {
-  //   var res = await Api.cluster("get_guest");
-  //   if (res['success']) {
-  //     if (mounted)
-  //       setState(() {
-  //         guests = res['data']['guests'];
-  //         guests.sort((a, b) {
-  //           return a['name'].compareTo(b['name']);
-  //         });
-  //         guestLoading = false;
-  //       });
-  //   }
-  // }
-  //
-  // getRepos() async {
-  //   var res = await Api.cluster("get_repo");
-  //   if (res['success']) {
-  //     if (mounted)
-  //       setState(() {
-  //         repos = res['data']['repos'];
-  //         repos.sort((a, b) {
-  //           return a['name'].compareTo(b['name']);
-  //         });
-  //         repoLoading = false;
-  //       });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

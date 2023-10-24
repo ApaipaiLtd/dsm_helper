@@ -75,7 +75,7 @@ android {
     productFlavors {
         beta {
             dimension "app"
-            resValue "string", "app_name", "群晖助手"
+            resValue "string", "app_name", "群晖助手Beta"
             applicationId "top.apaipai.dsm_helper"
         }
         production {

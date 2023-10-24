@@ -1,6 +1,6 @@
 import 'package:dsm_helper/apis/api.dart';
 import 'package:dsm_helper/pages/virtual_machine/enums/guest_status_enums.dart';
-import 'package:dsm_helper/pages/virtual_machine/enums/guest_type_enums.dart';
+import 'package:dsm_helper/pages/virtual_machine/enums/guest_status_type_enums.dart';
 
 /// canHA : false
 /// canMove : true
@@ -193,6 +193,38 @@ class Guests {
     return res.success;
   }
 
+  Future<String?> save() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Virtualization.Guest.Action",
+      "save",
+      version: 1,
+      data: {
+        "guest_id": '"$guestId"',
+        "synovmm_ui_id": "",
+      },
+    );
+    if (res.success == true) {
+      return res.data?['task_id'];
+    }
+    return null;
+  }
+
+  Future<String?> restore() async {
+    DsmResponse res = await Api.dsm.entry(
+      "SYNO.Virtualization.Guest.Action",
+      "restore",
+      version: 1,
+      data: {
+        "guest_id": '"$guestId"',
+        "synovmm_ui_id": "",
+      },
+    );
+    if (res.success == true) {
+      return res.data?['task_id'];
+    }
+    return null;
+  }
+
   Guests.fromJson(dynamic json) {
     additional = json['additional'] != null ? Additional.fromJson(json['additional']) : null;
     autorun = json['autorun'];
@@ -242,7 +274,7 @@ class Guests {
     usbs = json['usbs'] != null ? json['usbs'].cast<String>() : [];
     useOvmf = json['use_ovmf'];
     vcpuNum = json['vcpu_num'];
-    vcpuUsage = json['vcpu_usage'];
+    vcpuUsage = json['vcpu_usage'] == "" ? 0 : json['vcpu_usage'];
     vdiskNum = json['vdisk_num'];
     videoCard = json['video_card'];
     vramSize = json['vram_size'];
@@ -288,7 +320,7 @@ class Guests {
   GuestStatusEnum get statusEnum => GuestStatusEnum.fromValue(status ?? 'unknown');
   String? statusDesc;
   String? statusType;
-  GuestTypeEnum get statusTypeEnum => GuestTypeEnum.fromValue(statusType ?? 'unknown');
+  GuestStatusTypeEnum get statusTypeEnum => GuestStatusTypeEnum.fromValue(statusType ?? 'unknown');
   num? totalDiskIops;
   num? totalDiskThroughput;
   num? totalNetReceive;

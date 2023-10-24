@@ -11,9 +11,11 @@ class WidgetCard extends StatelessWidget {
 
   final EdgeInsets? padding;
 
+  final EdgeInsets? bodyPadding;
+
   final BoxDecoration? boxDecoration;
 
-  const WidgetCard({this.icon, this.title, this.body, this.onTap, this.padding, this.boxDecoration, super.key});
+  const WidgetCard({this.icon, this.title, this.body, this.onTap, this.padding, this.bodyPadding, this.boxDecoration, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class WidgetCard extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         margin: EdgeInsets.only(top: 14),
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: 16),
         decoration: boxDecoration,
         child: Column(
           children: [
@@ -44,7 +46,7 @@ class WidgetCard extends StatelessWidget {
             if (body != null)
               Container(
                 width: double.infinity,
-                padding: padding ?? EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                padding: bodyPadding ?? EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),

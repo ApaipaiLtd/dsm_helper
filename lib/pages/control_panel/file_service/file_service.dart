@@ -170,7 +170,7 @@ class _FileServiceState extends State<FileService> with SingleTickerProviderStat
                   children: [
                     WidgetCard(
                       title: "SMB",
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      bodyPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       body: Column(
                         children: [
                           Row(

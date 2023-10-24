@@ -76,6 +76,7 @@ class StoragePoolItemWidget extends StatelessWidget {
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 14),
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -128,6 +129,7 @@ class StoragePoolItemWidget extends StatelessWidget {
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 14),
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -202,6 +204,7 @@ class StoragePoolItemWidget extends StatelessWidget {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
               ),
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 14),
               body: Column(
                 children: pool.missingDrives!.map((drive) => MissingDriveItemWidget(drive, isLast: pool.missingDrives!.last == drive)).toList(),
               ),
@@ -212,6 +215,7 @@ class StoragePoolItemWidget extends StatelessWidget {
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 14),
             body: Column(
               children: disks.map((disk) => DiskItemWidget(disk, showStatus: true, isLast: disks.last == disk)).toList(),
             ),
@@ -221,6 +225,7 @@ class StoragePoolItemWidget extends StatelessWidget {
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
             ),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 14),
             title: "存储分配",
             body: Column(
               children: volumes.map((volume) => VolumeItemWidget(volume, showFileSystem: true)).toList(),

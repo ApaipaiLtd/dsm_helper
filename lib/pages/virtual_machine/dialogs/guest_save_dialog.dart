@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
-class GuestPowerOffDialog {
+class GuestSaveDialog {
   static Future<bool?> show(BuildContext context, {required Guests guest}) async {
     Utils.vibrate(FeedbackType.warning);
     return await showGlassDialog<bool>(
@@ -30,7 +30,7 @@ class GuestPowerOffDialog {
                   child: CupertinoButton(
                     onPressed: () async {
                       var hide = showWeuiLoadingToast(context: context);
-                      bool? res = await guest.save();
+                      String? res = await guest.save();
                       hide();
                       if (res == true) {
                         Utils.toast("已发送暂停请求");

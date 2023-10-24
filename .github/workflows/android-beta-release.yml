@@ -2,7 +2,8 @@ name: DSM_helper_Android_DEV
 
 on:
   push:
-    branches: [dev]
+    tags:
+      - 'v*'
 
 jobs:
   build_android:
@@ -43,3 +44,12 @@ jobs:
           url: https://www.pgyer.com/apiv2/app/upload
           forms: '{"_api_key":"${{ secrets.PGY_API_KEY }}","buildName":"群晖助手Beta"}'
           fileForms: '{"file":"build/app/outputs/flutter-apk/app-beta-release.apk"}'
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/app/outputs/flutter-apk/app-beta-release.apk
+          tag: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          overwrite: true
+          body: ""

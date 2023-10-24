@@ -146,7 +146,7 @@ class _WidgetSettingState extends State<WidgetSetting> {
           if (selectedWidgets.isNotEmpty)
             WidgetCard(
               title: "小组件排序",
-              padding: EdgeInsets.symmetric(vertical: 14),
+              bodyPadding: EdgeInsets.symmetric(vertical: 14),
               body: ReorderableColumn(
                 children: selectedWidgets.map((widget) {
                   return Container(
